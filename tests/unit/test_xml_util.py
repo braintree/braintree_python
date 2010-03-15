@@ -48,5 +48,17 @@ class TestXmlUtil(unittest.TestCase):
         dict = {"a": "b"}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
+    def test_xml_from_dict_nested(self):
+        dict = {"container": {"item": "val"}}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
+    def test_xml_from_dict_with_array(self):
+        dict = {"container": {"elements": ["val1", "val2", "val3"]}}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
+    def test_xml_from_dict_with_array_of_hashes(self):
+        dict = {"container": {"elements": [{"val": "val1"}, {"val": "val2"}, {"val": "val3"}]}}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
     def __xml_and_back(self, dict):
         return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))

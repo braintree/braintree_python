@@ -15,6 +15,7 @@ class Http:
 
         conn = connection_type(Configuration.server_and_port())
         body = XmlUtil.xml_from_dict(params)
+        print(body)
         conn.request(http_verb, Configuration.base_merchant_path() + path, body, self.__headers())
 
     def __headers(self):
