@@ -27,13 +27,13 @@ class TestConfiguration(unittest.TestCase):
         Configuration.environment = Environment.DEVELOPMENT
         self.assertEquals("localhost:3000", Configuration.server_and_port())
 
-    def test_ssl_for_development(self):
+    def test_is_ssl_for_development(self):
         Configuration.environment = Environment.DEVELOPMENT
-        self.assertFalse(Configuration.ssl())
+        self.assertFalse(Configuration.is_ssl())
 
-    def test_ssl_for_production(self):
+    def test_is_ssl_for_production(self):
         Configuration.environment = Environment.PRODUCTION
-        self.assertTrue(Configuration.ssl())
+        self.assertTrue(Configuration.is_ssl())
 
     def test_base_merchant_path_for_development(self):
         self.assertTrue("/merchants/integration_merchnat_id", Configuration.base_merchant_path())

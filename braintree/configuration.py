@@ -11,7 +11,7 @@ class Configuration:
         return config.server() + ":" + str(config.port())
 
     @staticmethod
-    def ssl():
+    def is_ssl():
         if Configuration.environment == Environment.DEVELOPMENT:
             return False
         else:
