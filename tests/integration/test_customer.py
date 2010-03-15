@@ -25,3 +25,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.microsoft.com", customer.website)
 
+    def test_create_with_no_attributes(self):
+        result = Customer.create()
+        self.assertTrue(result.is_success)
+
