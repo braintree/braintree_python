@@ -49,4 +49,4 @@ class TestXmlUtil(unittest.TestCase):
         self.assertEqual(dict, self.__xml_and_back(dict))
 
     def __xml_and_back(self, dict):
-        XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))
+        return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))
