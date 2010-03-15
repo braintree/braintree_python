@@ -10,6 +10,8 @@ class Parser:
 
     def __parse_node(self, root):
         child = root.firstChild
+        if not child:
+            return None
 
         if (child.nodeType == minidom.Node.TEXT_NODE):
             return child.nodeValue
@@ -31,7 +33,7 @@ class Parser:
         d = {}
         while child is not None:
             if (child.nodeType == minidom.Node.ELEMENT_NODE):
-                if self.__get_type(child) == "array" or child.firstChild.nodeType == minidom.Node.TEXT_NODE:
+                if self.__get_type(child) == "array" or child.firstChild and child.firstChild.nodeType == minidom.Node.TEXT_NODE:
                     d[child.tagName] = self.__parse_node(child)
                 else:
                     if not self.__get_attribute(d, child.tagName):
