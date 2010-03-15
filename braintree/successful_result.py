@@ -4,3 +4,9 @@ class SuccessfulResult:
 
     def is_success(self):
         return True
+
+    def __getattr__(self, key):
+        if key in self.attributes:
+            return self.attributes[key]
+        else:
+            return None

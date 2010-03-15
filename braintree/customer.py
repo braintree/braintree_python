@@ -11,4 +11,10 @@ class Customer:
             pass
 
     def __init__(self, attributes):
-        self.attributes = attributes
+        self.attributes = attributes["customer"]
+
+    def __getattr__(self, key):
+        if key in self.attributes:
+            return self.attributes[key]
+        else:
+            return None

@@ -6,7 +6,7 @@ class Parser:
         self.doc = minidom.parseString("><".join(re.split(">\s+<", xml)).strip())
 
     def parse(self):
-        return {self.doc.documentElement.tagName: self.__parse_node(self.doc.documentElement)}
+        return {self.__underscored(self.doc.documentElement.tagName): self.__parse_node(self.doc.documentElement)}
 
     def __parse_node(self, root):
         child = root.firstChild
@@ -34,12 +34,12 @@ class Parser:
         while child is not None:
             if (child.nodeType == minidom.Node.ELEMENT_NODE):
                 if self.__get_type(child) == "array" or child.firstChild and child.firstChild.nodeType == minidom.Node.TEXT_NODE:
-                    d[child.tagName] = self.__parse_node(child)
+                    d[self.__underscored(child.tagName)] = self.__parse_node(child)
                 else:
                     if not self.__get_attribute(d, child.tagName):
-                        d[child.tagName] = []
+                        d[self.__underscored(child.tagName)] = []
 
-                    d[child.tagName].append(self.__parse_node(child))
+                    d[self.__underscored(child.tagName)].append(self.__parse_node(child))
             child = child.nextSibling
         return d
 
@@ -52,3 +52,6 @@ class Parser:
     def __get_type(self, node):
         type = self.__get_attribute(node.attributes, "type")
         return type and type.value
+
+    def __underscored(self, string):
+        return string.replace("-","_")

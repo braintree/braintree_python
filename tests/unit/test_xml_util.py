@@ -9,6 +9,13 @@ class TestXmlUtil(unittest.TestCase):
         expected = {"container": "val"}
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
 
+    def test_dict_from_xml_with_dashes(self):
+        xml = """
+        <my-item>val</my-item>
+        """
+        expected = {"my_item": "val"}
+        self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
     def test_dict_from_xml_nested(self):
         xml = """
         <container>
@@ -58,6 +65,10 @@ class TestXmlUtil(unittest.TestCase):
 
     def test_xml_from_dict_with_array_of_hashes(self):
         dict = {"container": {"elements": [{"val": "val1"}, {"val": "val2"}, {"val": "val3"}]}}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
+    def test_xml_from_dict_retains_underscores(self):
+        dict = {"container": {"my_element": "val"}}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
     def __xml_and_back(self, dict):

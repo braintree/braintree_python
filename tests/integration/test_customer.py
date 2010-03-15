@@ -15,4 +15,13 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
+        customer = result.customer
+
+        self.assertEqual("Bill", customer.first_name)
+        self.assertEqual("Gates", customer.last_name)
+        self.assertEqual("Microsoft", customer.company)
+        self.assertEqual("bill@microsoft.com", customer.email)
+        self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("614.555.5678", customer.fax)
+        self.assertEqual("www.microsoft.com", customer.website)
 
