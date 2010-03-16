@@ -10,7 +10,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
 
-class Http:
+class Http(object):
     def post(self, path, params):
         return self.__http_do("POST", path, params)
 

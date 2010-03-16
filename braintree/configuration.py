@@ -1,7 +1,7 @@
 import os
 from braintree.environment import Environment
 
-class Configuration:
+class Configuration(object):
     @staticmethod
     def base_merchant_path():
         return "/merchants/" + Configuration.merchant_id

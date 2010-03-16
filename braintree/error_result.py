@@ -1,6 +1,6 @@
 from braintree.errors import Errors
 
-class ErrorResult:
+class ErrorResult(object):
     def __init__(self, attributes):
         self.is_success = False
         self.params = attributes["params"]

@@ -1,4 +1,4 @@
-class Generator:
+class Generator(object):
     def __init__(self, dict):
         self.dict = dict
 

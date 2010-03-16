@@ -2,7 +2,7 @@ from xml.dom import minidom
 from datetime import datetime
 import re
 
-class Parser:
+class Parser(object):
     def __init__(self, xml):
         self.doc = minidom.parseString("><".join(re.split(">\s+<", xml)).strip())
 
