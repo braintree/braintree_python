@@ -26,7 +26,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.microsoft.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertTrue(re.match("\A\d{6,7}\Z", customer.id) != None)
+        self.assertNotEqual(None, re.match("\A\d{6,7}\Z", customer.id))
 
     def test_create_with_no_attributes(self):
         result = Customer.create()
@@ -47,9 +47,9 @@ class TestCustomer(unittest.TestCase):
             "first_name": "Mike",
             "last_name": "Jones",
             "credit_card": {
-              "number": "4111111111111111",
-              "expiration_date": "05/2010",
-              "cvv": "100"
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
             }
         })
 
