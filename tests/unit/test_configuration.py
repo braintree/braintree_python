@@ -1,4 +1,5 @@
 import unittest
+import tests.test_helper
 from braintree.environment import Environment
 from braintree.configuration import Configuration
 
