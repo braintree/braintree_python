@@ -7,7 +7,7 @@ from braintree.credit_card import CreditCard
 class Customer(Resource):
     @staticmethod
     def create(params={}):
-        Resource.verify_keys(params, Customer.__create_signature())
+        Resource.verify_keys(params, Customer.create_signature())
         response = Http().post("/customers", {"customer": params})
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(response["customer"])})
@@ -17,8 +17,11 @@ class Customer(Resource):
             pass
 
     @staticmethod
-    def __create_signature():
-        return ["company", "credit_card", "email", "fax", "first_name", "id", "last_name", "phone", "website"]
+    def create_signature():
+        return [
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website",
+            {"credit_card": CreditCard.create_signature()}
+        ]
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
