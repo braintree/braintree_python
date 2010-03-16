@@ -1,6 +1,5 @@
-class SuccessfulResult:
+class AttributeGetter:
     def __init__(self, attributes):
-        self.is_success = True
         self.attributes = attributes
 
     def __getattr__(self, key):

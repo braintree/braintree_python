@@ -1,5 +1,6 @@
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
+from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.exceptions.argument_error import ArgumentError
 
@@ -10,6 +11,8 @@ class Customer(Resource):
         response = Http().post("/customers", {"customer": params})
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(response["customer"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
         else:
             pass
 

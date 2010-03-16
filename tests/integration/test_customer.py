@@ -29,3 +29,11 @@ class TestCustomer(unittest.TestCase):
         result = Customer.create()
         self.assertTrue(result.is_success)
 
+    def test_create_returns_an_error_response_if_invalid(self):
+        result = Customer.create({
+            "email": "@invalid.com",
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(1, result.errors.size)
+        self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
