@@ -16,3 +16,13 @@ class TestErrorResult(unittest.TestCase):
         self.assertEquals("something is invalid", result.errors.for_object("scope")[0].message)
         self.assertEquals("something", result.errors.for_object("scope")[0].attribute)
         self.assertEquals(123, result.errors.for_object("scope")[0].code)
+
+    def test_it_ignores_other_params(self):
+        errors = {
+            "scope": {
+                "errors": [{"code": 123, "message": "something is invalid", "attribute": "something"}]
+            }
+        }
+
+        result = ErrorResult({"errors": errors, "params": "params", "other": "stuff"})
+        self.assertFalse(result.is_success)
