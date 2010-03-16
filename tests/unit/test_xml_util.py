@@ -1,4 +1,6 @@
 import unittest
+from datetime import datetime
+from braintree.util.utc import UTC
 from braintree.util.xml_util import XmlUtil
 
 class TestXmlUtil(unittest.TestCase):
@@ -8,6 +10,54 @@ class TestXmlUtil(unittest.TestCase):
         """
         expected = {"container": "val"}
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
+    def test_dict_from_xml_typecasts_ints(self):
+        xml = """
+        <container type="integer">1</container>
+        """
+        expected = {"container": 1}
+        self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
+    def test_dict_from_xml_typecasts_nils(self):
+        xml = """
+        <root>
+          <a_nil_value nil="true"></a_nil_value>
+          <an_empty_string></an_empty_string>
+        </root>
+        """
+        expected = {"root": {"a_nil_value": None, "an_empty_string": ""}}
+        self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
+    def test_dict_from_xml_typecasts_booleans(self):
+        xml = """
+        <root>
+          <casted-true type="boolean">true</casted-true>
+          <casted-one type="boolean">1</casted-one>
+          <casted-false type="boolean">false</casted-false>
+          <casted-anything type="boolean">anything</casted-anything>
+          <uncasted-true>true</uncasted-true>
+        </root>
+        """
+        expected = {
+            "root": {
+                "casted_true": True,
+                "casted_one": True,
+                "casted_false": False,
+                "casted_anything": False,
+                "uncasted_true": "true"
+            }
+        }
+        self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
+    def test_dict_from_xml_typecasts_dates_and_times(self):
+        xml = """
+        <root>
+          <created-at type="datetime">2009-10-28T10:19:49Z</created-at>
+        </root>
+        """
+        expected = {"root": {"created_at": datetime(2009, 10, 28, 10, 19, 49)}}
+        self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
 
     def test_dict_from_xml_with_dashes(self):
         xml = """

@@ -1,3 +1,4 @@
+import os
 from braintree.environment import Environment
 
 class Configuration:
@@ -19,7 +20,11 @@ class Configuration:
 
     def port(self):
         if Configuration.environment == Environment.DEVELOPMENT:
-            return 3000
+            port = os.getenv("GATEWAY_PORT")
+            if port:
+                return int(port)
+            else:
+                return 3000
         else:
             return 443
 
