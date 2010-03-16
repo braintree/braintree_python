@@ -1,4 +1,5 @@
 import unittest
+import re
 import tests.test_helper
 from braintree.customer import Customer
 
@@ -24,10 +25,13 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("312.555.1234", customer.phone)
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.microsoft.com", customer.website)
+        self.assertNotEqual(None, customer.id)
+        self.assertTrue(re.match("\A\d{6,7}\Z", customer.id) != None)
 
     def test_create_with_no_attributes(self):
         result = Customer.create()
         self.assertTrue(result.is_success)
+        self.assertNotEqual(None, result.customer.id)
 
     def test_create_returns_an_error_response_if_invalid(self):
         result = Customer.create({

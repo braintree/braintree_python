@@ -21,11 +21,13 @@ class Generator:
         open_tag = "<" + key + ">"
         close_tag = "</" + key + ">"
 
-        if type(value) == str:
+        if type(value) == str or type(value) == unicode:
             return open_tag + value + close_tag
         elif type(value) == dict:
             return open_tag + self.__generate_dict(value) + close_tag
         elif type(value) == list:
             open_tag = "<" + key + " type=\"array\">"
             return open_tag + self.__generate_list(value) + close_tag
+        else:
+            raise RuntimeError("Unexpected XML node type")
 
