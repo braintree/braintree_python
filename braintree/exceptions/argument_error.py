@@ -1,6 +1,6 @@
 class ArgumentError(Exception):
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, text):
+        self.test = text
 
     def __str__(self):
-        return "ArgumentError: " + self.message
+        return "ArgumentError: " + self.text

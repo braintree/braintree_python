@@ -1,6 +1,6 @@
 class UnexpectedError:
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, text):
+        self.text = text
 
     def __str__(self):
-        return message
+        return text
