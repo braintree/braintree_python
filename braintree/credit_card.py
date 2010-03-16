@@ -7,7 +7,7 @@ from braintree.exceptions.argument_error import ArgumentError
 class CreditCard(Resource):
     @staticmethod
     def create(params={}):
-        # Resource.verify_keys(params, CreditCard.__create_signature())
+        Resource.verify_keys(params, CreditCard.__create_signature())
         response = Http().post("/payment_methods", {"credit_card": params})
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
@@ -15,6 +15,10 @@ class CreditCard(Resource):
             return ErrorResult(response["api_error_response"])
         else:
             pass
+
+    @staticmethod
+    def __create_signature():
+        return ["customer_id", "cardholder_name", "cvv", "number", "expiration_date", "token"]
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
