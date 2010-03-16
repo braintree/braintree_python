@@ -2,7 +2,6 @@ from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
-from braintree.exceptions.argument_error import ArgumentError
 
 class CreditCard(Resource):
     @staticmethod

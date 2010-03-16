@@ -41,3 +41,25 @@ class TestCustomer(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(1, result.errors.size)
         self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
+
+    def test_create_customer_and_payment_method_at_the_same_time(self):
+        result = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+              "number": "4111111111111111",
+              "expiration_date": "05/2010",
+              "cvv": "100"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertEqual("Mike", customer.first_name)
+        self.assertEqual("Jones", customer.last_name)
+
+        credit_card = customer.credit_cards[0]
+        self.assertEqual("411111", credit_card.bin)
+        self.assertEqual("1111", credit_card.last_4)
+        self.assertEqual("05/2010", credit_card.expiration_date)

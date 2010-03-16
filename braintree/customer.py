@@ -2,7 +2,7 @@ from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
-from braintree.exceptions.argument_error import ArgumentError
+from braintree.credit_card import CreditCard
 
 class Customer(Resource):
     @staticmethod
@@ -18,5 +18,8 @@ class Customer(Resource):
 
     @staticmethod
     def __create_signature():
-        return ["company", "email", "fax", "first_name", "id", "last_name", "phone", "website"]
+        return ["company", "credit_card", "email", "fax", "first_name", "id", "last_name", "phone", "website"]
 
+    def __init__(self, attributes):
+        Resource.__init__(self, attributes)
+        self.credit_cards = [CreditCard(credit_card) for credit_card in self.credit_cards]
