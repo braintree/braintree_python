@@ -33,3 +33,21 @@ class TestAddress(unittest.TestCase):
         self.assertEquals("60622", address.postal_code)
         self.assertEquals("United States of America", address.country_name)
 
+    def test_error_response_if_invalid(self):
+        customer = Customer.create().customer
+        result = Address.create({
+            "customer_id": customer.id,
+            "country_name": "United States of Invalid"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("91803", result.errors.for_object("address").on("country_name")[0].code)
+
+    def test_delete_with_valid_customer_id_and_address_id(self):
+        customer = Customer.create().customer
+        address = Address.create({"customer_id": customer.id, "street_address": "123 Main St."}).address
+        result = Address.delete(customer.id, address.id)
+
+        self.assertTrue(result.is_success)
+
+

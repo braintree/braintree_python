@@ -14,24 +14,35 @@ class Http(object):
     def post(self, path, params):
         return self.__http_do("POST", path, params)
 
-    def __http_do(self, http_verb, path, params):
+    def delete(self, path):
+        return self.__http_do("DELETE", path)
+
+    def __http_do(self, http_verb, path, params=None):
         if Configuration.is_ssl():
             connection_type = httplib.HTTPSConnection
         else:
             connection_type = httplib.HTTPConnection
 
         conn = connection_type(Configuration.server_and_port())
-        conn.request(http_verb, Configuration.base_merchant_path() + path, XmlUtil.xml_from_dict(params), self.__headers())
+        conn.request(
+            http_verb,
+            Configuration.base_merchant_path() + path,
+            params and XmlUtil.xml_from_dict(params),
+            self.__headers()
+        )
         response = conn.getresponse()
         status = response.status
 
         if status in [200, 201, 422]:
             data = response.read()
             conn.close()
-            return XmlUtil.dict_from_xml(data)
+            if len(data.strip()) == 0:
+                return {}
+            else:
+                return XmlUtil.dict_from_xml(data)
         else:
             conn.close()
-            __raise_exception_from_status(status)
+            self.__raise_exception_from_status(status)
 
     def __authorization_header(self):
         return "Basic " + base64.encodestring(Configuration.public_key + ":" + Configuration.private_key).strip()
