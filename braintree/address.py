@@ -22,7 +22,7 @@ class Address(Resource):
 
     @staticmethod
     def delete(customer_id, address_id):
-        response = Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
+        Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
 
     @staticmethod

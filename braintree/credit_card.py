@@ -17,13 +17,18 @@ class CreditCard(Resource):
             pass
 
     @staticmethod
-    def update(credit_card_id, params={}):
+    def update(credit_card_token, params={}):
         Resource.verify_keys(params, CreditCard.update_signature())
-        response = Http().put("/payment_methods/" + credit_card_id, {"credit_card": params})
+        response = Http().put("/payment_methods/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
         elif "api_error_response" in response:
             return ErrorResult(response["api_error_response"])
+
+    @staticmethod
+    def delete(credit_card_token):
+        Http().delete("/payment_methods/" + credit_card_token)
+        return SuccessfulResult()
 
     @staticmethod
     def create_signature():

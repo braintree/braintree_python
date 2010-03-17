@@ -1,10 +1,12 @@
 import unittest
 import tests.test_helper
+from nose.tools import raises
 import re
 import random
 from datetime import datetime
 from braintree.customer import Customer
 from braintree.credit_card import CreditCard
+from braintree.exceptions.not_found_error import NotFoundError
 
 class TestCreditCard(unittest.TestCase):
     def test_create_adds_credit_card_to_existing_customer(self):
@@ -195,3 +197,31 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals("81710", result.errors.for_object("credit_card").on("expiration_date")[0].code)
+
+    def test_delete_with_valid_token(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009"
+        }).credit_card
+
+        result = CreditCard.delete(credit_card.token)
+        self.assertTrue(result.is_success)
+
+    @raises(NotFoundError)
+    def test_delete_raises_error_when_deleting_twice(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009"
+        }).credit_card
+
+        CreditCard.delete(credit_card.token)
+        CreditCard.delete(credit_card.token)
+
+    @raises(NotFoundError)
+    def test_delete_with_invalid_token(self):
+        result = CreditCard.delete("notreal")
+
