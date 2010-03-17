@@ -162,3 +162,21 @@ class TestCustomer(unittest.TestCase):
         Customer.delete(customer.id)
         Customer.delete(customer.id)
 
+    def test_find_with_valid_customer(self):
+        customer = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Cool"
+        }).customer
+
+        found_customer = Customer.find(customer.id)
+        self.assertEquals(customer.id, found_customer.id)
+        self.assertEquals(customer.first_name, found_customer.first_name)
+        self.assertEquals(customer.last_name, found_customer.last_name)
+
+    def test_find_with_invalid_customer(self):
+        try:
+            Customer.find("badid")
+            self.assertTrue(False)
+        except NotFoundError as e:
+            self.assertEquals("customer with id badid not found", str(e))
+

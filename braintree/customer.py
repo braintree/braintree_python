@@ -3,6 +3,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.credit_card import CreditCard
+from braintree.exceptions.not_found_error import NotFoundError
 
 class Customer(Resource):
     @staticmethod
@@ -20,6 +21,14 @@ class Customer(Resource):
     def delete(customer_id):
         Http().delete("/customers/" + customer_id)
         return SuccessfulResult()
+
+    @staticmethod
+    def find(customer_id):
+        try:
+            response = Http().get("/customers/" + customer_id)
+            return Customer(response["customer"])
+        except NotFoundError:
+            raise NotFoundError("customer with id " + customer_id + " not found")
 
     @staticmethod
     def create_signature():
