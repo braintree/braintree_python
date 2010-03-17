@@ -17,12 +17,35 @@ class CreditCard(Resource):
             pass
 
     @staticmethod
+    def update(credit_card_id, params={}):
+        Resource.verify_keys(params, CreditCard.update_signature())
+        response = Http().put("/payment_methods/" + credit_card_id, {"credit_card": params})
+        if "credit_card" in response:
+            return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def create_signature():
         return [
             "customer_id", "cardholder_name", "cvv", "number", "expiration_date", "token",
             {"billing_address": Address.create_signature()},
             {"options": ["verify_card"]}
         ]
+
+    @staticmethod
+    def update_signature():
+        return [
+            "cardholder_name", "cvv", "number", "expiration_date", "token",
+            {"options": ["verify_card"]},
+            {"billing_address":
+                [
+                    "first_name", "last_name", "company", "country_name", "extended_address", "locality", "region",
+                    "postal_code", "street_address"
+                ]
+            }
+        ]
+
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
