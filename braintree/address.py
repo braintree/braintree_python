@@ -36,6 +36,22 @@ class Address(Resource):
             raise NotFoundError("address for customer " + customer_id + " with id " + address_id + " not found")
 
     @staticmethod
+    def update(customer_id, address_id, params={}):
+        Resource.verify_keys(params, Address.update_signature())
+        response = Http().put(
+            "/customers/" + customer_id + "/addresses/" + address_id,
+            {"address": params}
+        )
+        if "address" in response:
+            return SuccessfulResult({"address": Address(response["address"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def create_signature():
         return ["company", "country_name", "customer_id", "extended_address", "first_name",
                 "last_name", "locality", "postal_code", "region", "street_address"]
+
+    @staticmethod
+    def update_signature():
+        return Address.create_signature()

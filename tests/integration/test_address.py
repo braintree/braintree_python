@@ -70,3 +70,54 @@ class TestAddress(unittest.TestCase):
         address = Address.create({"customer_id": customer.id, "street_address": "123 Main St."}).address
         Address.find("notreal", "badaddress")
 
+    def test_update_with_valid_values(self):
+        customer = Customer.create().customer
+        address = Address.create({
+            "customer_id": customer.id,
+            "street_address": "1811 E Main St",
+            "extended_address": "Suite 200",
+            "locality": "Chicago",
+            "region": "Illinois",
+            "postal_code": "60622",
+            "country_name": "United States of America"
+        }).address
+
+        result = Address.update(customer.id, address.id, {
+            "street_address": "123 E New St",
+            "extended_address": "New Suite 3",
+            "locality": "Chicago",
+            "region": "Illinois",
+            "postal_code": "60621",
+            "country_name": "United States of America"
+        })
+
+        self.assertTrue(result.is_success)
+        address = result.address
+        self.assertEquals(customer.id, address.customer_id)
+        self.assertEquals("123 E New St", address.street_address)
+        self.assertEquals("New Suite 3", address.extended_address)
+        self.assertEquals("Chicago", address.locality)
+        self.assertEquals("Illinois", address.region)
+        self.assertEquals("60621", address.postal_code)
+        self.assertEquals("United States of America", address.country_name)
+
+    def test_update_with_invalid_values(self):
+        customer = Customer.create().customer
+        address = Address.create({
+            "customer_id": customer.id,
+            "street_address": "1811 E Main St",
+            "extended_address": "Suite 200",
+            "locality": "Chicago",
+            "region": "Illinois",
+            "postal_code": "60622",
+            "country_name": "United States of America"
+        }).address
+
+        result = Address.update(customer.id, address.id, {
+            "street_address": "123 E New St",
+            "country_name": "United States of Invalid"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("91803", result.errors.for_object("address").on("country_name")[0].code)
+

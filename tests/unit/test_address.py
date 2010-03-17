@@ -14,3 +14,7 @@ class TestAddress(unittest.TestCase):
     @raises(KeyError)
     def test_create_raises_key_error_if_given_invalid_customer_id(self):
         Address.create({"customer_id": "!@#$%"})
+
+    @raises(KeyError)
+    def test_update_raise_exception_with_bad_keys(self):
+        Address.update("customer_id", "address_id", {"bad_key": "value"})
