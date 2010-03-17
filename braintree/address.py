@@ -1,5 +1,6 @@
 import re
 from braintree.util.http import Http
+from braintree.exceptions.not_found_error import NotFoundError
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
@@ -25,6 +26,14 @@ class Address(Resource):
     def delete(customer_id, address_id):
         response = Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
+
+    @staticmethod
+    def find(customer_id, address_id):
+        try:
+            response = Http().get("/customers/" + customer_id + "/addresses/" + address_id)
+            return Address(response["address"])
+        except NotFoundError:
+            raise NotFoundError("address for customer " + customer_id + " with id " + address_id + " not found")
 
     @staticmethod
     def create_signature():

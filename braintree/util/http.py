@@ -17,6 +17,9 @@ class Http(object):
     def delete(self, path):
         return self.__http_do("DELETE", path)
 
+    def get(self, path):
+        return self.__http_do("GET", path)
+
     def __http_do(self, http_verb, path, params=None):
         if Configuration.is_ssl():
             connection_type = httplib.HTTPSConnection

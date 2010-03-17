@@ -1,8 +1,10 @@
 import unittest
 import tests.test_helper
+from nose.tools import raises
 import re
 from braintree.customer import Customer
 from braintree.address import Address
+from braintree.exceptions.not_found_error import NotFoundError
 
 class TestAddress(unittest.TestCase):
     def test_create_returns_successful_result_if_valid(self):
@@ -50,4 +52,21 @@ class TestAddress(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    @raises(NotFoundError)
+    def test_delete_with_valid_customer_id_and_non_existing_address(self):
+        customer = Customer.create().customer
+        result = Address.delete(customer.id, "notreal")
+
+    def test_find_with_valid_customer_id_and_address_id(self):
+        customer = Customer.create().customer
+        address = Address.create({"customer_id": customer.id, "street_address": "123 Main St."}).address
+        found_address = Address.find(customer.id, address.id)
+
+        self.assertEquals(address.street_address, found_address.street_address)
+
+    @raises(NotFoundError)
+    def test_find_with_invalid_customer_id_and_address_id(self):
+        customer = Customer.create().customer
+        address = Address.create({"customer_id": customer.id, "street_address": "123 Main St."}).address
+        Address.find("notreal", "badaddress")
 
