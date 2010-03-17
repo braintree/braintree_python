@@ -225,3 +225,26 @@ class TestCreditCard(unittest.TestCase):
     def test_delete_with_invalid_token(self):
         result = CreditCard.delete("notreal")
 
+    def test_find_with_valid_token(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009"
+        }).credit_card
+
+        found_credit_card = CreditCard.find(credit_card.token)
+        self.assertTrue(re.match("\A\w{4,5}\Z", credit_card.token) != None)
+        self.assertEquals("411111", credit_card.bin)
+        self.assertEquals("1111", credit_card.last_4)
+        self.assertEquals("05", credit_card.expiration_month)
+        self.assertEquals("2009", credit_card.expiration_year)
+        self.assertEquals("05/2009", credit_card.expiration_date)
+
+    def test_find_with_invalid_token(self):
+        try:
+            CreditCard.find("bad_token")
+            self.assertTrue(False)
+        except Exception as e:
+            self.assertEquals("payment method with token bad_token not found", str(e))
+

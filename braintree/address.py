@@ -9,10 +9,10 @@ class Address(Resource):
     @staticmethod
     def create(params={}):
         Resource.verify_keys(params, Address.create_signature())
-        if not params["customer_id"]:
+        if not "customer_id" in params:
             raise KeyError("customer_id must be provided")
         if not re.match("\A[0-9A-Za-z_-]+\Z", params["customer_id"]):
-            raise KeyError("customer_id contains invalid charaters")
+            raise KeyError("customer_id contains invalid characters")
 
         response = Http().post("/customers/" + params.pop("customer_id") + "/addresses", {"address": params})
         if "address" in response:

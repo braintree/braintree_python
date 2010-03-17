@@ -3,6 +3,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.address import Address
+from braintree.exceptions.not_found_error import NotFoundError
 
 class CreditCard(Resource):
     @staticmethod
@@ -29,6 +30,14 @@ class CreditCard(Resource):
     def delete(credit_card_token):
         Http().delete("/payment_methods/" + credit_card_token)
         return SuccessfulResult()
+
+    @staticmethod
+    def find(credit_card_token):
+        try:
+            response = Http().get("/payment_methods/" + credit_card_token)
+            return CreditCard(response["credit_card"])
+        except NotFoundError:
+            raise NotFoundError("payment method with token " + credit_card_token + " not found")
 
     @staticmethod
     def create_signature():

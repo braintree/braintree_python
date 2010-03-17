@@ -1,12 +1,17 @@
 import unittest
-from nose.tools import raises
 from braintree.credit_card import CreditCard
 
 class TestCreditCard(unittest.TestCase):
-    @raises(KeyError)
     def test_create_raises_exception_with_bad_keys(self):
-        CreditCard.create({"bad_key": "value"})
+        try:
+            CreditCard.create({"bad_key": "value"})
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'bad_key is not an allowed key'", str(e))
 
-    @raises(KeyError)
     def test_update_raises_exception_with_bad_keys(self):
-        CreditCard.update("token", {"bad_key": "value"})
+        try:
+            CreditCard.update("token", {"bad_key": "value"})
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'bad_key is not an allowed key'", str(e))

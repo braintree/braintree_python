@@ -1,20 +1,32 @@
 import unittest
-from nose.tools import raises
 from braintree.address import Address
 
 class TestAddress(unittest.TestCase):
-    @raises(KeyError)
     def test_create_raise_exception_with_bad_keys(self):
-        Address.create({"customer_id": "12345", "bad_key": "value"})
+        try:
+            Address.create({"customer_id": "12345", "bad_key": "value"})
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'bad_key is not an allowed key'", str(e))
 
-    @raises(KeyError)
     def test_create_raises_error_if_no_customer_id_given(self):
-        Address.create({"country_name": "United States of America"})
+        try:
+            Address.create({"country_name": "United States of America"})
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'customer_id must be provided'", str(e))
 
-    @raises(KeyError)
     def test_create_raises_key_error_if_given_invalid_customer_id(self):
-        Address.create({"customer_id": "!@#$%"})
+        try:
+            Address.create({"customer_id": "!@#$%"})
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'customer_id contains invalid characters'", str(e))
 
-    @raises(KeyError)
     def test_update_raise_exception_with_bad_keys(self):
-        Address.update("customer_id", "address_id", {"bad_key": "value"})
+        try:
+            Address.update("customer_id", "address_id", {"bad_key": "value"})
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'bad_key is not an allowed key'", str(e))
+
