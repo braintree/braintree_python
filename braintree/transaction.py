@@ -16,12 +16,47 @@ class Transaction(Resource):
 
     @staticmethod
     def __create(params):
-        #Resource.verify_keys(params, CreditCard.create_signature())
+        Resource.verify_keys(params, Transaction.create_signature())
         response = Http().post("/transactions", {"transaction": params})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(response["api_error_response"])
+
+    @staticmethod
+    def create_signature():
+        return [
+            "amount", "customer_id", "order_id", "payment_method_token", "type",
+            {
+                "credit_card": [
+                    "token", "cvv", "expiration_date", "number"
+                ]
+            },
+            {
+                "customer": [
+                    "id", "company", "email", "fax", "first_name", "last_name", "phone", "website"
+                ]
+            },
+            {
+                "billing": [
+                    "first_name", "last_name", "company", "country_name", "extended_address", "locality",
+                    "postal_code", "region", "street_address"
+                ]
+            },
+            {
+                "shipping": [
+                    "first_name", "last_name", "company", "country_name", "extended_address", "locality",
+                    "postal_code", "region", "street_address"
+                ]
+            },
+            {
+                "options": [
+                    "store_in_vault", "submit_for_settlement", "add_billing_address_to_payment_method",
+                    "store_shipping_address_in_vault"
+                ]
+            },
+            {"custom_fields": ["_any_key_"]}
+        ]
 
     def __init__(self, attributes):
         if "billing" in attributes:
