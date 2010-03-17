@@ -1,3 +1,5 @@
+import types
+
 class Generator(object):
     def __init__(self, dict):
         self.dict = dict
@@ -34,6 +36,8 @@ class Generator(object):
         elif type(value) == bool:
             open_tag = "<" + key + " type=\"boolean\">"
             return open_tag + self.__generate_boolean(value) + close_tag
+        elif type(value) == types.NoneType:
+            return open_tag + close_tag
         else:
             raise RuntimeError("Unexpected XML node type: " + str(type(value)))
 

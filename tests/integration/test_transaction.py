@@ -1,5 +1,6 @@
 import unittest
 import tests.test_helper
+import random
 from datetime import datetime
 import re
 from decimal import Decimal
@@ -223,106 +224,62 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("60622", shipping_address.postal_code)
         self.assertEquals("United States of America", shipping_address.country_name)
 
-  #  it "can store the shipping address in the vault" do
-  #    result = Braintree::Transaction.sale(
-  #      :amount => "100",
-  #      :customer => {
-  #        :first_name => "Adam",
-  #        :last_name => "Williams"
-  #      },
-  #      :credit_card => {
-  #        :number => "5105105105105100",
-  #        :expiration_date => "05/2012"
-  #      },
-  #      :shipping => {
-  #        :first_name => "Carl",
-  #        :last_name => "Jones",
-  #        :company => "Braintree",
-  #        :street_address => "123 E Main St",
-  #        :extended_address => "Suite 403",
-  #        :locality => "Chicago",
-  #        :region => "IL",
-  #        :postal_code => "60622",
-  #        :country_name => "United States of America"
-  #      },
-  #      :options => {
-  #        :store_in_vault => true,
-  #        :store_shipping_address_in_vault => true,
-  #      }
-  #    )
-  #    result.success?.should == true
-  #    transaction = result.transaction
-  #    transaction.customer_details.id.should =~ /\A\d{6,7}\z/
-  #    transaction.vault_customer.id.should == transaction.customer_details.id
-  #    transaction.vault_shipping_address.id.should == transaction.vault_customer.addresses[0].id
-  #    shipping_address = transaction.vault_customer.addresses[0]
-  #    shipping_address.first_name.should == "Carl"
-  #    shipping_address.last_name.should == "Jones"
-  #    shipping_address.company.should == "Braintree"
-  #    shipping_address.street_address.should == "123 E Main St"
-  #    shipping_address.extended_address.should == "Suite 403"
-  #    shipping_address.locality.should == "Chicago"
-  #    shipping_address.region.should == "IL"
-  #    shipping_address.postal_code.should == "60622"
-  #    shipping_address.country_name.should == "United States of America"
-  #  end
+    def test_create_submits_for_settlement_if_given_submit_for_settlement_option(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2012"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        })
 
-  #  it "submits for settlement if given transaction[options][submit_for_settlement]" do
-  #    result = Braintree::Transaction.sale(
-  #      :amount => "100",
-  #      :credit_card => {
-  #        :number => "5105105105105100",
-  #        :expiration_date => "05/2012"
-  #      },
-  #      :options => {
-  #        :submit_for_settlement => true
-  #      }
-  #    )
-  #    result.success?.should == true
-  #    result.transaction.status.should == "submitted_for_settlement"
-  #  end
+        self.assertTrue(result.is_success)
+        self.assertEquals("submitted_for_settlement", result.transaction.status)
 
-  #  it "can specify the customer id and payment method token" do
-  #    customer_id = "customer_#{rand(1000000)}"
-  #    payment_mehtod_token = "credit_card_#{rand(1000000)}"
-  #    result = Braintree::Transaction.sale(
-  #      :amount => "100",
-  #      :customer => {
-  #        :id => customer_id,
-  #        :first_name => "Adam",
-  #        :last_name => "Williams"
-  #      },
-  #      :credit_card => {
-  #        :token => payment_mehtod_token,
-  #        :number => "5105105105105100",
-  #        :expiration_date => "05/2012"
-  #      },
-  #      :options => {
-  #        :store_in_vault => true
-  #      }
-  #    )
-  #    result.success?.should == true
-  #    transaction = result.transaction
-  #    transaction.customer_details.id.should == customer_id
-  #    transaction.vault_customer.id.should == customer_id
-  #    transaction.credit_card_details.token.should == payment_mehtod_token
-  #    transaction.vault_credit_card.token.should == payment_mehtod_token
-  #  end
+    def test_create_can_specify_the_customer_id_and_payment_method_token(self):
+        customer_id = "customer_" + str(random.randint(1, 1000000))
+        payment_method_token = "credit_card_" + str(random.randint(1, 1000000))
 
-  #  it "returns an error result if validations fail" do
-  #    params = {
-  #      :transaction => {
-  #        :amount => nil,
-  #        :credit_card => {
-  #          :number => Braintree::Test::CreditCardNumbers::Visa,
-  #          :expiration_date => "05/2009"
-  #        }
-  #      }
-  #    }
-  #    result = Braintree::Transaction.sale(params[:transaction])
-  #    result.success?.should == false
-  #    result.params.should == {:transaction => {:type => 'sale', :amount => nil, :credit_card => {:expiration_date => "05/2009"}}}
-  #    result.errors.for(:transaction).on(:amount)[0].code.should == Braintree::ErrorCodes::Transaction::AmountIsRequired
-  #  end
-  #end
-  #  
+        result = Transaction.sale({
+            "amount": "100",
+            "customer": {
+              "id": customer_id,
+              "first_name": "Adam",
+              "last_name": "Williams"
+            },
+            "credit_card": {
+              "token": payment_method_token,
+              "number": "5105105105105100",
+              "expiration_date": "05/2012"
+            },
+            "options": {
+              "store_in_vault": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(customer_id, transaction.customer_details.id)
+        self.assertEquals(customer_id, transaction.vault_customer.id)
+        self.assertEquals(payment_method_token, transaction.credit_card_details.token)
+        self.assertEquals(payment_method_token, transaction.vault_credit_card.token)
+
+    def test_create_with_failing_validations(self):
+        params = {
+            "transaction": {
+                "amount": None,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                }
+            }
+        }
+        result = Transaction.sale(params["transaction"])
+        params["transaction"]["credit_card"].pop("number")
+        self.assertFalse(result.is_success)
+        self.assertEquals(params, result.params)
+        self.assertEquals("81502", result.errors.for_object("transaction").on("amount")[0].code)
+

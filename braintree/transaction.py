@@ -18,10 +18,10 @@ class Transaction(Resource):
     def __create(params):
         #Resource.verify_keys(params, CreditCard.create_signature())
         response = Http().post("/transactions", {"transaction": params})
-        #if "credit_card" in response:
-        return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        #elif "api_error_response" in response:
-        #    return ErrorResult(response["api_error_response"])
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
 
     def __init__(self, attributes):
         if "billing" in attributes:
