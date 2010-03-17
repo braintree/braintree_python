@@ -122,6 +122,34 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEquals("custom value", result.customer.custom_fields["store_me"])
 
+    def test_create_returns_nested_errors(self):
+        result = Customer.create({
+            "email": "invalid",
+            "credit_card": {
+                "number": "invalid",
+                "billing_address": {
+                    "country_name": "invalid"
+                }
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
+        self.assertEquals("81716", result.errors.for_object("customer").for_object("credit_card").on("number")[0].code)
+        self.assertEquals("91803", result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("country_name")[0].code)
+
+    def test_create_returns_errors_if_custom_fields_are_not_registered(self):
+        result = Customer.create({
+            "first_name": "Jack",
+            "last_name": "Kennedy",
+            "custom_fields": {
+                "spouse_name": "Jacqueline"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("91602", result.errors.for_object("customer").on("custom_fields")[0].code)
+
     def test_delete_with_valid_customer(self):
         customer = Customer.create().customer
         result = Customer.delete(customer.id)
