@@ -14,8 +14,6 @@ class CreditCard(Resource):
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
         elif "api_error_response" in response:
             return ErrorResult(response["api_error_response"])
-        else:
-            pass
 
     @staticmethod
     def update(credit_card_token, params={}):
@@ -65,5 +63,12 @@ class CreditCard(Resource):
         Resource.__init__(self, attributes)
         if "billing_address" in attributes:
             self.billing_address = Address(self.billing_address)
-        self.expiration_date = self.expiration_month + "/" + self.expiration_year
+
+    @property
+    def expiration_date(self):
+        return self.expiration_month + "/" + self.expiration_year
+
+    @property
+    def masked_number(self):
+        return self.bin + "******" + self.last_4
 

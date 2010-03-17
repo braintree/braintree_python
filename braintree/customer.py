@@ -3,6 +3,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.credit_card import CreditCard
+from braintree.address import Address
 from braintree.exceptions.not_found_error import NotFoundError
 
 class Customer(Resource):
@@ -58,3 +59,5 @@ class Customer(Resource):
         Resource.__init__(self, attributes)
         if "credit_cards" in attributes:
             self.credit_cards = [CreditCard(credit_card) for credit_card in self.credit_cards]
+        if "addresses" in attributes:
+            self.addresses = [Address(address) for address in self.addresses]
