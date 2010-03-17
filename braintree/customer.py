@@ -31,10 +31,26 @@ class Customer(Resource):
             raise NotFoundError("customer with id " + customer_id + " not found")
 
     @staticmethod
+    def update(customer_id, params={}):
+        Resource.verify_keys(params, Customer.update_signature())
+        response = Http().put("/customers/" + customer_id, {"customer": params})
+        if "customer" in response:
+            return SuccessfulResult({"customer": Customer(response["customer"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def create_signature():
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website",
             {"credit_card": CreditCard.create_signature()},
+            {"custom_fields": ["__any_key__"]}
+        ]
+
+    @staticmethod
+    def update_signature():
+        return [
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website",
             {"custom_fields": ["__any_key__"]}
         ]
 

@@ -180,3 +180,66 @@ class TestCustomer(unittest.TestCase):
         except NotFoundError as e:
             self.assertEquals("customer with id badid not found", str(e))
 
+    def test_update_with_valid_options(self):
+        customer = Customer.create({
+            "first_name": "Steve",
+            "last_name": "Jobs",
+            "company": "Apple",
+            "email": "steve@apple.com",
+            "phone": "312.555.5555",
+            "fax": "614.555.5555",
+            "website": "www.apple.com"
+        }).customer
+
+        result = Customer.update(customer.id, {
+            "first_name": "Bill",
+            "last_name": "Gates",
+            "company": "Microsoft",
+            "email": "bill@microsoft.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.microsoft.com"
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        self.assertEqual("Bill", customer.first_name)
+        self.assertEqual("Gates", customer.last_name)
+        self.assertEqual("Microsoft", customer.company)
+        self.assertEqual("bill@microsoft.com", customer.email)
+        self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("614.555.5678", customer.fax)
+        self.assertEqual("www.microsoft.com", customer.website)
+        self.assertNotEqual(None, customer.id)
+        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
+
+    def test_update_with_invalid_options(self):
+        customer = Customer.create({
+            "first_name": "Steve",
+            "last_name": "Jobs",
+            "company": "Apple",
+            "email": "steve@apple.com",
+            "phone": "312.555.5555",
+            "fax": "614.555.5555",
+            "website": "www.apple.com"
+        }).customer
+
+        result = Customer.update(customer.id, {
+            "email": "@microsoft.com",
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
+
+  #   it "returns an error response if invalid" do
+  #     customer = Braintree::Customer.create!(:email => "valid@email.com")
+  #     result = Braintree::Customer.update(
+  #       customer.id,
+  #       :email => "@invalid.com"
+  #     )
+  #     result.success?.should == false
+  #     result.errors.for(:customer).on(:email)[0].message.should == "Email is an invalid format."
+  #   end
+  # end
+
