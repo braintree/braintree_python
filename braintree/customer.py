@@ -17,10 +17,16 @@ class Customer(Resource):
             pass
 
     @staticmethod
+    def delete(customer_id):
+        Http().delete("/customers/" + customer_id)
+        return SuccessfulResult()
+
+    @staticmethod
     def create_signature():
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website",
-            {"credit_card": CreditCard.create_signature()}
+            {"credit_card": CreditCard.create_signature()},
+            {"custom_fields": ["__any_key__"]}
         ]
 
     def __init__(self, attributes):

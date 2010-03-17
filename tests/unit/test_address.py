@@ -7,7 +7,7 @@ class TestAddress(unittest.TestCase):
             Address.create({"customer_id": "12345", "bad_key": "value"})
             self.assertTrue(False)
         except KeyError as e:
-            self.assertEquals("'bad_key is not an allowed key'", str(e))
+            self.assertEquals("'Invalid keys: bad_key'", str(e))
 
     def test_create_raises_error_if_no_customer_id_given(self):
         try:
@@ -28,5 +28,5 @@ class TestAddress(unittest.TestCase):
             Address.update("customer_id", "address_id", {"bad_key": "value"})
             self.assertTrue(False)
         except KeyError as e:
-            self.assertEquals("'bad_key is not an allowed key'", str(e))
+            self.assertEquals("'Invalid keys: bad_key'", str(e))
 

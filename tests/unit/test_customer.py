@@ -7,11 +7,11 @@ class TestCustomer(unittest.TestCase):
             Customer.create({"bad_key": "value"})
             self.assertTrue(False)
         except KeyError as e:
-            self.assertEquals("'bad_key is not an allowed key'", str(e))
+            self.assertEquals("'Invalid keys: bad_key'", str(e))
 
     def test_create_raise_exception_with_bad_nested_keys(self):
         try:
             Customer.create({"credit_card": {"bad_key": "value"}})
             self.assertTrue(False)
         except KeyError as e:
-            self.assertEquals("'bad_key is not an allowed key'", str(e))
+            self.assertEquals("'Invalid keys: credit_card[bad_key]'", str(e))

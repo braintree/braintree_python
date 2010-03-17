@@ -1,7 +1,9 @@
 import unittest
 import re
 import tests.test_helper
+from nose.tools import raises
 from braintree.customer import Customer
+from braintree.exceptions.not_found_error import NotFoundError
 
 class TestCustomer(unittest.TestCase):
     def test_create(self):
@@ -26,7 +28,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.microsoft.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.match("\A\d{6,7}\Z", customer.id))
+        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
     def test_create_with_no_attributes(self):
         result = Customer.create()
@@ -64,6 +66,21 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("1111", credit_card.last_4)
         self.assertEqual("05/2010", credit_card.expiration_date)
 
+    def test_create_customer_and_verify_payment_method(self):
+        result = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4222222222222",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "options": {"verify_card": True}
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("processor_declined", result.credit_card_verification.status)
+
     def test_create_customer_with_payment_method_and_billing_address(self):
         result = Customer.create({
             "first_name": "Mike",
@@ -92,3 +109,28 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("Chicago", address.locality)
         self.assertEqual("Illinois", address.region)
         self.assertEqual("60622", address.postal_code)
+
+    def test_create_with_customer_fields(self):
+        result = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "custom_fields": {
+                "store_me": "custom value"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals("custom value", result.customer.custom_fields["store_me"])
+
+    def test_delete_with_valid_customer(self):
+        customer = Customer.create().customer
+        result = Customer.delete(customer.id)
+
+        self.assertTrue(result.is_success)
+
+    @raises(NotFoundError)
+    def test_delete_with_invalid_customer(self):
+        customer = Customer.create().customer
+        Customer.delete(customer.id)
+        Customer.delete(customer.id)
+
