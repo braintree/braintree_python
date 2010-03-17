@@ -105,6 +105,10 @@ class TestXmlUtil(unittest.TestCase):
         dict = {"a": "b"}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
+    def test_xml_from_dict_with_boolean(self):
+        dict = {"a": True}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
     def test_xml_from_dict_simple_xml_and_back_twice(self):
         dict = {"a": "b"}
         self.assertEqual(dict, self.__xml_and_back(self.__xml_and_back(dict)))

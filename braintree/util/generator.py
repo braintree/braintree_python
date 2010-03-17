@@ -5,6 +5,9 @@ class Generator(object):
     def generate(self):
         return self.__generate_dict(self.dict)
 
+    def __generate_boolean(self, value):
+        return str(value).lower()
+
     def __generate_dict(self, dictionary):
         xml = ""
         for key in dictionary.keys():
@@ -28,6 +31,9 @@ class Generator(object):
         elif type(value) == list:
             open_tag = "<" + key + " type=\"array\">"
             return open_tag + self.__generate_list(value) + close_tag
+        elif type(value) == bool:
+            open_tag = "<" + key + " type=\"boolean\">"
+            return open_tag + self.__generate_boolean(value) + close_tag
         else:
-            raise RuntimeError("Unexpected XML node type")
+            raise RuntimeError("Unexpected XML node type: " + str(type(value)))
 

@@ -20,7 +20,8 @@ class CreditCard(Resource):
     def create_signature():
         return [
             "customer_id", "cardholder_name", "cvv", "number", "expiration_date", "token",
-            {"billing_address": Address.create_signature()}
+            {"billing_address": Address.create_signature()},
+            {"options": ["verify_card"]}
         ]
 
     def __init__(self, attributes):
