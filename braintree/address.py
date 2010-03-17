@@ -19,8 +19,6 @@ class Address(Resource):
             return SuccessfulResult({"address": Address(response["address"])})
         elif "api_error_response" in response:
             return ErrorResult(response["api_error_response"])
-        else:
-            pass
 
     @staticmethod
     def delete(customer_id, address_id):

@@ -121,3 +121,8 @@ class TestAddress(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals("91803", result.errors.for_object("address").on("country_name")[0].code)
 
+    @raises(NotFoundError)
+    def test_update_raises_not_found_error_if_given_bad_address(self):
+        customer = Customer.create().customer
+        Address.update(customer.id, "notfound", {"street_address": "123 Main St."})
+
