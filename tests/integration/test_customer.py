@@ -63,3 +63,32 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("411111", credit_card.bin)
         self.assertEqual("1111", credit_card.last_4)
         self.assertEqual("05/2010", credit_card.expiration_date)
+
+    def test_create_customer_with_payment_method_and_billing_address(self):
+        result = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "billing_address": {
+                    "street_address": "123 Abc Way",
+                    "locality": "Chicago",
+                    "region": "Illinois",
+                    "postal_code": "60622"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertEqual("Mike", customer.first_name)
+        self.assertEqual("Jones", customer.last_name)
+
+        address = customer.credit_cards[0].billing_address
+        self.assertEqual("123 Abc Way", address.street_address)
+        self.assertEqual("Chicago", address.locality)
+        self.assertEqual("Illinois", address.region)
+        self.assertEqual("60622", address.postal_code)

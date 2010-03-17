@@ -2,6 +2,7 @@ from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
+from braintree.address import Address
 
 class CreditCard(Resource):
     @staticmethod
@@ -17,9 +18,14 @@ class CreditCard(Resource):
 
     @staticmethod
     def create_signature():
-        return ["customer_id", "cardholder_name", "cvv", "number", "expiration_date", "token"]
+        return [
+            "customer_id", "cardholder_name", "cvv", "number", "expiration_date", "token",
+            {"billing_address": Address.create_signature()}
+        ]
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
+        if "billing_address" in attributes:
+            self.billing_address = Address(self.billing_address)
         self.expiration_date = self.expiration_month + "/" + self.expiration_year
 

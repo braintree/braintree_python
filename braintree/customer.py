@@ -25,4 +25,5 @@ class Customer(Resource):
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
-        self.credit_cards = [CreditCard(credit_card) for credit_card in self.credit_cards]
+        if "credit_cards" in attributes:
+            self.credit_cards = [CreditCard(credit_card) for credit_card in self.credit_cards]
