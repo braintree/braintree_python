@@ -28,6 +28,9 @@ class Parser(object):
         else:
             return False
 
+    def __convert_to_date(self, value):
+        return datetime.strptime(value, "%Y-%m-%d")
+
     def __convert_to_datetime(self, value):
         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
 
@@ -81,6 +84,8 @@ class Parser(object):
             return self.__convert_to_boolean(content)
         elif parent_type == "datetime":
             return self.__convert_to_datetime(content)
+        elif parent_type == "date":
+            return self.__convert_to_date(content)
         elif parent_nil == "true":
             return None
         else:

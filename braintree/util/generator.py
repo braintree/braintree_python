@@ -31,6 +31,9 @@ class Generator(object):
             return open_tag + value + close_tag
         elif type(value) == Decimal:
             return open_tag + str(value) + close_tag
+        elif type(value) == int:
+            open_tag = "<" + key + " type=\"integer\">"
+            return open_tag + str(value) + close_tag
         elif type(value) == dict:
             return open_tag + self.__generate_dict(value) + close_tag
         elif type(value) == list:
