@@ -15,6 +15,14 @@ class Transaction(Resource):
         return Transaction.__create(params)
 
     @staticmethod
+    def find(transaction_id):
+        try:
+            response = Http().get("/transactions/" + transaction_id)
+            return Transaction(response["transaction"])
+        except NotFoundError:
+            raise NotFoundError("transaction with id " + transaction_id + " not found")
+
+    @staticmethod
     def sale(params={}):
         params["type"] = "sale"
         return Transaction.__create(params)

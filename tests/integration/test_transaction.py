@@ -343,3 +343,21 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(params, result.params)
         self.assertEquals("81502", result.errors.for_object("transaction").on("amount")[0].code)
 
+    def test_find_returns_a_found_transaction(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+        found_transaction = Transaction.find(transaction.id)
+        self.assertEquals(transaction.id, found_transaction.id)
+
+    def test_find_for_bad_transaction_raises_not_found_error(self):
+        try:
+            Transaction.find("notreal")
+            self.assertTrue(False)
+        except NotFoundError as e:
+            self.assertEquals("transaction with id notreal not found", str(e))
+

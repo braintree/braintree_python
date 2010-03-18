@@ -64,11 +64,12 @@ class TestAddress(unittest.TestCase):
 
         self.assertEquals(address.street_address, found_address.street_address)
 
-    @raises(NotFoundError)
     def test_find_with_invalid_customer_id_and_address_id(self):
-        customer = Customer.create().customer
-        address = Address.create({"customer_id": customer.id, "street_address": "123 Main St."}).address
-        Address.find("notreal", "badaddress")
+        try:
+            Address.find("notreal", "badaddress")
+            self.assertTrue(False)
+        except NotFoundError as e:
+            self.assertEquals("address for customer notreal with id badaddress not found", str(e))
 
     def test_update_with_valid_values(self):
         customer = Customer.create().customer
