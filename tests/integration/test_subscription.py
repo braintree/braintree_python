@@ -6,6 +6,7 @@ import random
 from datetime import datetime
 from decimal import Decimal
 from braintree.customer import Customer
+from braintree.transaction import Transaction
 from braintree.subscription import Subscription
 from braintree.exceptions.not_found_error import NotFoundError
 
@@ -99,3 +100,32 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(True, subscription.trial_period)
         self.assertEquals(5, subscription.trial_duration)
         self.assertEquals(Subscription.TrialDurationUnit.MONTH, subscription.trial_duration_unit)
+
+    def test_create_and_override_trial_period(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"],
+            "trial_period": False
+        }).subscription
+
+        self.assertEquals(False, subscription.trial_period)
+
+    def test_create_creates_a_transaction_if_no_trial_period(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trialless_plan["id"],
+        }).subscription
+
+        self.assertEquals(1, len(subscription.transactions))
+        transaction = subscription.transactions[0]
+        self.assertEquals(Transaction, type(transaction))
+        self.assertEquals(self.trialless_plan["price"], transaction.amount)
+        self.assertEquals("sale", transaction.type)
+
+    def test_create_doesnt_creates_a_transaction_if_trial_period(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"],
+        }).subscription
+
+        self.assertEquals(0, len(subscription.transactions))

@@ -2,6 +2,7 @@ from braintree.util.http import Http
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
+from braintree.transaction import Transaction
 from braintree.resource import Resource
 
 class Subscription(Resource):
@@ -22,3 +23,8 @@ class Subscription(Resource):
         return SuccessfulResult({"subscription": Subscription(response["subscription"])})
         #elif "api_error_response" in response:
         #    return ErrorResult(response["api_error_response"])
+
+    def __init__(self, attributes):
+        Resource.__init__(self, attributes)
+        if "transactions" in attributes:
+            self.transactions = [Transaction(transaction) for transaction in self.transactions]
