@@ -3,7 +3,7 @@ import tests.test_helper
 from nose.tools import raises
 import re
 import random
-from datetime import datetime
+from datetime import date
 from decimal import Decimal
 from braintree.customer import Customer
 from braintree.transaction import Transaction
@@ -56,10 +56,10 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Subscription.Status.ACTIVE, subscription.status)
         self.assertEquals("integration_trialless_plan", subscription.plan_id)
 
-        self.assertEquals(datetime, type(subscription.first_billing_date))
-        self.assertEquals(datetime, type(subscription.next_billing_date))
-        self.assertEquals(datetime, type(subscription.billing_period_start_date))
-        self.assertEquals(datetime, type(subscription.billing_period_end_date))
+        self.assertEquals(date, type(subscription.first_billing_date))
+        self.assertEquals(date, type(subscription.next_billing_date))
+        self.assertEquals(date, type(subscription.billing_period_start_date))
+        self.assertEquals(date, type(subscription.billing_period_end_date))
 
         self.assertEquals(0, subscription.failure_count)
         self.assertEquals(self.credit_card.token, subscription.payment_method_token)

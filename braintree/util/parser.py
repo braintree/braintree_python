@@ -29,7 +29,7 @@ class Parser(object):
             return False
 
     def __convert_to_date(self, value):
-        return datetime.strptime(value, "%Y-%m-%d")
+        return datetime.strptime(value, "%Y-%m-%d").date()
 
     def __convert_to_datetime(self, value):
         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
