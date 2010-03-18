@@ -301,3 +301,45 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(params, result.params)
         self.assertEquals("81502", result.errors.for_object("transaction").on("amount")[0].code)
 
+    def test_credit_with_a_successful_result(self):
+        result = Transaction.credit({
+            "amount": Decimal("1000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertEquals("credit", transaction.type)
+        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        cc_details = transaction.credit_card_details
+        self.assertEquals("411111", cc_details.bin)
+        self.assertEquals("1111", cc_details.last_4)
+        self.assertEquals("05/2009", cc_details.expiration_date)
+
+    def test_credit_with_unsuccessful_result(self):
+        result = Transaction.credit({
+            "amount": None,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        params = {
+            "transaction": {
+                "type": "credit",
+                "amount": None,
+                "credit_card": {
+                    "expiration_date": "05/2009"
+                }
+            }
+        }
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(params, result.params)
+        self.assertEquals("81502", result.errors.for_object("transaction").on("amount")[0].code)
+

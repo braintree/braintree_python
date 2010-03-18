@@ -10,6 +10,11 @@ from braintree.exceptions.not_found_error import NotFoundError
 
 class Transaction(Resource):
     @staticmethod
+    def credit(params={}):
+        params["type"] = "credit"
+        return Transaction.__create(params)
+
+    @staticmethod
     def sale(params={}):
         params["type"] = "sale"
         return Transaction.__create(params)
