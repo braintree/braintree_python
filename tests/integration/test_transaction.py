@@ -5,6 +5,7 @@ from datetime import datetime
 import re
 from decimal import Decimal
 from nose.tools import raises
+from braintree.error_codes import ErrorCodes
 from braintree.transaction import Transaction
 from braintree.credit_card import CreditCard
 from braintree.exceptions.not_found_error import NotFoundError
@@ -22,7 +23,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
-        self.assertEquals("sale", transaction.type)
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Decimal("1000.00"), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
@@ -40,7 +41,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
-        self.assertEquals("sale", transaction.type)
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Decimal("1000.00"), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
@@ -91,8 +92,8 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
-        self.assertEquals("sale", transaction.type)
-        self.assertEquals("authorized", transaction.status)
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals(Transaction.Status.Authorized, transaction.status)
         self.assertEquals(Decimal("100.00"), transaction.amount)
         self.assertEquals("123", transaction.order_id)
         self.assertEquals("1000", transaction.processor_response_code)
@@ -255,7 +256,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals("submitted_for_settlement", result.transaction.status)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, result.transaction.status)
 
     def test_create_can_specify_the_customer_id_and_payment_method_token(self):
         customer_id = "customer_" + str(random.randint(1, 1000000))
@@ -299,7 +300,10 @@ class TestTransaction(unittest.TestCase):
         params["transaction"]["credit_card"].pop("number")
         self.assertFalse(result.is_success)
         self.assertEquals(params, result.params)
-        self.assertEquals("81502", result.errors.for_object("transaction").on("amount")[0].code)
+        self.assertEquals(
+            ErrorCodes.Transaction.AmountIsRequired,
+            result.errors.for_object("transaction").on("amount")[0].code
+        )
 
     def test_credit_with_a_successful_result(self):
         result = Transaction.credit({
@@ -313,7 +317,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
-        self.assertEquals("credit", transaction.type)
+        self.assertEquals(Transaction.Type.Credit, transaction.type)
         self.assertEquals(Decimal("1000.00"), transaction.amount)
         cc_details = transaction.credit_card_details
         self.assertEquals("411111", cc_details.bin)
@@ -331,7 +335,7 @@ class TestTransaction(unittest.TestCase):
 
         params = {
             "transaction": {
-                "type": "credit",
+                "type": Transaction.Type.Credit,
                 "amount": None,
                 "credit_card": {
                     "expiration_date": "05/2009"
@@ -341,7 +345,10 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals(params, result.params)
-        self.assertEquals("81502", result.errors.for_object("transaction").on("amount")[0].code)
+        self.assertEquals(
+            ErrorCodes.Transaction.AmountIsRequired,
+            result.errors.for_object("transaction").on("amount")[0].code
+        )
 
     def test_find_returns_a_found_transaction(self):
         transaction = Transaction.sale({
@@ -373,7 +380,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.void(transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(transaction.id, result.transaction.id)
-        self.assertEquals("voided", result.transaction.status)
+        self.assertEquals(Transaction.Status.Voided, result.transaction.status)
 
     def test_void_with_unsuccessful_result(self):
         transaction = Transaction.sale({
@@ -386,5 +393,8 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.void(transaction.id)
         self.assertFalse(result.is_success)
-        self.assertEquals("91504", result.errors.for_object("transaction").on("base")[0].code)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotBeVoided,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
 

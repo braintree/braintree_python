@@ -4,6 +4,7 @@ from nose.tools import raises
 import re
 import random
 from datetime import datetime
+from braintree.error_codes import ErrorCodes
 from braintree.customer import Customer
 from braintree.credit_card import CreditCard
 from braintree.exceptions.not_found_error import NotFoundError
@@ -103,7 +104,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("81710", result.errors.for_object("credit_card").on("expiration_date")[0].code)
+        self.assertEquals(ErrorCodes.CreditCard.ExpirationDateIsInvalid, result.errors.for_object("credit_card").on("expiration_date")[0].code)
 
     def test_update_with_valid_options(self):
         customer = Customer.create().customer
@@ -196,7 +197,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("81710", result.errors.for_object("credit_card").on("expiration_date")[0].code)
+        self.assertEquals(ErrorCodes.CreditCard.ExpirationDateIsInvalid, result.errors.for_object("credit_card").on("expiration_date")[0].code)
 
     def test_delete_with_valid_token(self):
         customer = Customer.create().customer

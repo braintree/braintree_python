@@ -2,6 +2,7 @@ import unittest
 import tests.test_helper
 from nose.tools import raises
 import re
+from braintree.error_codes import ErrorCodes
 from braintree.customer import Customer
 from braintree.address import Address
 from braintree.exceptions.not_found_error import NotFoundError
@@ -43,7 +44,7 @@ class TestAddress(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("91803", result.errors.for_object("address").on("country_name")[0].code)
+        self.assertEquals(ErrorCodes.Address.CountryNameIsNotAccepted, result.errors.for_object("address").on("country_name")[0].code)
 
     def test_delete_with_valid_customer_id_and_address_id(self):
         customer = Customer.create().customer
@@ -120,7 +121,7 @@ class TestAddress(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("91803", result.errors.for_object("address").on("country_name")[0].code)
+        self.assertEquals(ErrorCodes.Address.CountryNameIsNotAccepted, result.errors.for_object("address").on("country_name")[0].code)
 
     @raises(NotFoundError)
     def test_update_raises_not_found_error_if_given_bad_address(self):

@@ -9,9 +9,18 @@ from braintree.customer import Customer
 from braintree.exceptions.not_found_error import NotFoundError
 
 class Transaction(Resource):
+    class Type(object):
+        Sale = "sale"
+        Credit = "credit"
+
+    class Status(object):
+        Authorized = "authorized"
+        SubmittedForSettlement = "submitted_for_settlement"
+        Voided = "voided"
+
     @staticmethod
     def credit(params={}):
-        params["type"] = "credit"
+        params["type"] = Transaction.Type.Credit
         return Transaction.__create(params)
 
     @staticmethod
@@ -24,7 +33,7 @@ class Transaction(Resource):
 
     @staticmethod
     def sale(params={}):
-        params["type"] = "sale"
+        params["type"] = Transaction.Type.Sale
         return Transaction.__create(params)
 
     @staticmethod

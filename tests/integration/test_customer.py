@@ -2,6 +2,7 @@ import unittest
 import re
 import tests.test_helper
 from nose.tools import raises
+from braintree.error_codes import ErrorCodes
 from braintree.customer import Customer
 from braintree.exceptions.not_found_error import NotFoundError
 
@@ -42,7 +43,7 @@ class TestCustomer(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals(1, result.errors.size)
-        self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
+        self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
 
     def test_create_customer_and_payment_method_at_the_same_time(self):
         result = Customer.create({
@@ -134,9 +135,18 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
-        self.assertEquals("81716", result.errors.for_object("customer").for_object("credit_card").on("number")[0].code)
-        self.assertEquals("91803", result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("country_name")[0].code)
+        self.assertEquals(
+            ErrorCodes.Customer.EmailIsInvalid,
+            result.errors.for_object("customer").on("email")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.CreditCard.NumberHasInvalidLength,
+            result.errors.for_object("customer").for_object("credit_card").on("number")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryNameIsNotAccepted,
+            result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("country_name")[0].code
+        )
 
     def test_create_returns_errors_if_custom_fields_are_not_registered(self):
         result = Customer.create({
@@ -148,7 +158,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("91602", result.errors.for_object("customer").on("custom_fields")[0].code)
+        self.assertEquals(ErrorCodes.Customer.CustomFieldIsInvalid, result.errors.for_object("customer").on("custom_fields")[0].code)
 
     def test_delete_with_valid_customer(self):
         customer = Customer.create().customer
@@ -230,7 +240,10 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("81604", result.errors.for_object("customer").on("email")[0].code)
+        self.assertEquals(
+            ErrorCodes.Customer.EmailIsInvalid,
+            result.errors.for_object("customer").on("email")[0].code
+        )
 
   #   it "returns an error response if invalid" do
   #     customer = Braintree::Customer.create!(:email => "valid@email.com")
