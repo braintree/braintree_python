@@ -1,5 +1,6 @@
 import unittest
 import tests.test_helper
+from tests.test_helper import TestHelper
 from nose.tools import raises
 import re
 import random
@@ -264,3 +265,54 @@ class TestCreditCard(unittest.TestCase):
         except Exception as e:
             self.assertEquals("payment method with token bad_token not found", str(e))
 
+    def test_create_from_transparent_redirect(self):
+        customer = Customer.create().customer
+        params = {
+            "credit_card": {
+                "cardholder_name": "Card Holder",
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }
+        tr_data = {
+            "credit_card": {
+                "customer_id": customer.id
+            }
+        }
+
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.create_url)
+        result = CreditCard.create_from_transparent_redirect(query_string)
+        self.assertTrue(result.is_success)
+        credit_card = result.credit_card
+        self.assertEquals("411111", credit_card.bin)
+        self.assertEquals("1111", credit_card.last_4)
+        self.assertEquals("05", credit_card.expiration_month)
+        self.assertEquals("2012", credit_card.expiration_year)
+        self.assertEquals(customer.id, credit_card.customer_id)
+
+    def test_create_from_transparent_redirect_with_error_result(self):
+        customer = Customer.create().customer
+        params = {
+            "credit_card": {
+                "cardholder_name": "Card Holder",
+                "number": "eleventy",
+                "expiration_date": "y2k"
+            }
+        }
+        tr_data = {
+            "credit_card": {
+                "customer_id": customer.id
+            }
+        }
+
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.create_url)
+        result = CreditCard.create_from_transparent_redirect(query_string)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.CreditCard.NumberHasInvalidLength,
+            result.errors.for_object("credit_card").on("number")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.CreditCard.ExpirationDateIsInvalid,
+            result.errors.for_object("credit_card").on("expiration_date")[0].code
+        )

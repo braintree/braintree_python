@@ -1,15 +1,28 @@
+import urlparse
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.address import Address
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.configuration import Configuration
 
 class CreditCard(Resource):
+    create_url = Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
+
     @staticmethod
     def create(params={}):
         Resource.verify_keys(params, CreditCard.create_signature())
-        response = Http().post("/payment_methods", {"credit_card": params})
+        return CreditCard.__create("/payment_methods", {"credit_card": params})
+
+    @staticmethod
+    def create_from_transparent_redirect(query_string):
+        id = urlparse.parse_qs(query_string)["id"][0]
+        return CreditCard.__create("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
+
+    @staticmethod
+    def __create(url, params):
+        response = Http().post(url, params)
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
         elif "api_error_response" in response:
