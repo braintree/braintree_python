@@ -13,6 +13,14 @@ Configuration.private_key = "integration_private_key"
 class TestHelper(object):
     @staticmethod
     def create_via_tr(params, tr_data, url):
+        return TestHelper.__post_form_data("POST", params, tr_data, url)
+
+    @staticmethod
+    def update_via_tr(params, tr_data, url):
+        return TestHelper.__post_form_data("PUT", params, tr_data, url)
+
+    @staticmethod
+    def __post_form_data(http_verb, params, tr_data, url):
         params = TransparentRedirect.flatten_dictionary(params)
         params["tr_data"] = TransparentRedirect.tr_data(tr_data, "http://example.com/path/to/something?foo=bar")
         form_data = urllib.urlencode(params)
@@ -24,7 +32,7 @@ class TestHelper(object):
 
         conn = connection_type(Configuration.server_and_port())
         conn.request(
-            "POST",
+            http_verb,
             url,
             form_data,
             TestHelper.__headers()
