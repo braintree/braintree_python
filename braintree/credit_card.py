@@ -8,7 +8,8 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.configuration import Configuration
 
 class CreditCard(Resource):
-    create_url = Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
+    transparent_redirect_create_url = Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
+    transparent_redirect_update_url = Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
 
     @staticmethod
     def create(params={}):
@@ -17,8 +18,7 @@ class CreditCard(Resource):
 
     @staticmethod
     def create_from_transparent_redirect(query_string):
-        id = urlparse.parse_qs(query_string)["id"][0]
-        return CreditCard.__create("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
+        return CreditCard.__confirm_transparent_redirect(query_string)
 
     @staticmethod
     def __create(url, params):
@@ -36,6 +36,10 @@ class CreditCard(Resource):
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
         elif "api_error_response" in response:
             return ErrorResult(response["api_error_response"])
+
+    @staticmethod
+    def update_from_transparent_redirect(query_string):
+        return CreditCard.__confirm_transparent_redirect(query_string)
 
     @staticmethod
     def delete(credit_card_token):
@@ -72,6 +76,10 @@ class CreditCard(Resource):
             }
         ]
 
+    @staticmethod
+    def __confirm_transparent_redirect(query_string):
+        id = urlparse.parse_qs(query_string)["id"][0]
+        return CreditCard.__create("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)

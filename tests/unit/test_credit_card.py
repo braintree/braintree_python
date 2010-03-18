@@ -17,8 +17,14 @@ class TestCreditCard(unittest.TestCase):
         except KeyError as e:
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
-    def test_create_url(self):
+    def test_transparent_redirect_create_url(self):
         self.assertEquals(
             "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/create_via_transparent_redirect_request",
-            CreditCard.create_url
+            CreditCard.transparent_redirect_create_url
+        )
+
+    def test_transparent_redirect_create_url(self):
+        self.assertEquals(
+            "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/update_via_transparent_redirect_request",
+            CreditCard.transparent_redirect_update_url
         )

@@ -280,7 +280,7 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.create_url)
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url)
         result = CreditCard.create_from_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
@@ -305,7 +305,7 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.create_url)
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url)
         result = CreditCard.create_from_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(
@@ -316,3 +316,38 @@ class TestCreditCard(unittest.TestCase):
             ErrorCodes.CreditCard.ExpirationDateIsInvalid,
             result.errors.for_object("credit_card").on("expiration_date")[0].code
         )
+
+    def test_update_from_transparent_redirect_with_successful_result(self):
+        old_token = str(random.randint(1, 1000000))
+        new_token = str(random.randint(1, 1000000))
+        credit_card = Customer.create({
+            "credit_card": {
+                "cardholder_name": "Old Cardholder Name",
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "token": old_token
+            }
+        }).customer.credit_cards[0]
+
+        params = {
+            "credit_card": {
+                "cardholder_name": "New Cardholder Name",
+                "expiration_date": "05/2014"
+            }
+        }
+        tr_data = {
+            "payment_method_token": old_token,
+            "credit_card": {
+                "token": new_token
+            }
+        }
+
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_update_url)
+        result = CreditCard.update_from_transparent_redirect(query_string)
+        self.assertTrue(result.is_success)
+        credit_card = result.credit_card
+        self.assertEquals(new_token, credit_card.token)
+        self.assertEquals("411111", credit_card.bin)
+        self.assertEquals("1111", credit_card.last_4)
+        self.assertEquals("05", credit_card.expiration_month)
+        self.assertEquals("2014", credit_card.expiration_year)
