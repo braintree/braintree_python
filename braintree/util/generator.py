@@ -1,4 +1,5 @@
 import types
+from decimal import Decimal
 
 class Generator(object):
     def __init__(self, dict):
@@ -28,6 +29,8 @@ class Generator(object):
 
         if type(value) == str or type(value) == unicode:
             return open_tag + value + close_tag
+        elif type(value) == Decimal:
+            return open_tag + str(value) + close_tag
         elif type(value) == dict:
             return open_tag + self.__generate_dict(value) + close_tag
         elif type(value) == list:

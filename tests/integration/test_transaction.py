@@ -28,6 +28,24 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
 
+    def test_sale_allows_amount_as_a_decimal(self):
+        result = Transaction.sale({
+            "amount": Decimal("1000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertEquals("sale", transaction.type)
+        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals("411111", transaction.credit_card_details.bin)
+        self.assertEquals("1111", transaction.credit_card_details.last_4)
+        self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
+
     def test_sale_works_with_all_attributes(self):
         result = Transaction.sale({
             "amount": "100.00",
