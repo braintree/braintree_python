@@ -190,3 +190,24 @@ class TestSubscription(unittest.TestCase):
         Subscription.update("notfound", {
             "id": "newid",
         })
+
+    def test_cancel_with_successful_response(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trialless_plan["id"]
+        }).subscription
+
+        result = Subscription.cancel(subscription.id)
+        self.assertTrue(result.is_success)
+        self.assertEqual("Canceled", result.subscription.status)
+
+    def test_unsuccessful_cancel_returns_validation_error(self):
+        Subscription.cancel(self.updateable_subscription.id)
+        result = Subscription.cancel(self.updateable_subscription.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("81905", result.errors.for_object("subscription").on("status")[0].code)
+
+    @raises(NotFoundError)
+    def test_cancel_raises_not_found_error_with_bad_subscription(self):
+        Subscription.cancel("notreal")

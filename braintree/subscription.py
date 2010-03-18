@@ -55,6 +55,14 @@ class Subscription(Resource):
             return ErrorResult(response["api_error_response"])
 
     @staticmethod
+    def cancel(subscription_id):
+        response = Http().put("/subscriptions/" + subscription_id + "/cancel")
+        if "subscription" in response:
+            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def update_signature():
         return [
             "id",
