@@ -30,6 +30,21 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("05/2009", credit_card.expiration_date)
         self.assertEquals("John Doe", credit_card.cardholder_name)
 
+    def test_create_with_expiration_month_and_year(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        })
+
+        self.assertTrue(result.is_success)
+        credit_card = result.credit_card
+        self.assertEquals("05/2009", credit_card.expiration_date)
+
     def test_create_can_specify_the_desired_token(self):
         token = str(random.randint(1, 1000000))
         customer = Customer.create().customer

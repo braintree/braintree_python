@@ -398,3 +398,28 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
+    def test_create_with_successful_result(self):
+        result = Transaction.create({
+            "type": Transaction.Type.Sale,
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+
+    def test_create_with_error_result(self):
+        result = Transaction.create({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.Transaction.TypeIsRequired, result.errors.for_object("transaction").on("type")[0].code)

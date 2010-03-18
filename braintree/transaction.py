@@ -21,7 +21,7 @@ class Transaction(Resource):
     @staticmethod
     def credit(params={}):
         params["type"] = Transaction.Type.Credit
-        return Transaction.__create(params)
+        return Transaction.create(params)
 
     @staticmethod
     def find(transaction_id):
@@ -34,7 +34,7 @@ class Transaction(Resource):
     @staticmethod
     def sale(params={}):
         params["type"] = Transaction.Type.Sale
-        return Transaction.__create(params)
+        return Transaction.create(params)
 
     @staticmethod
     def void(transaction_id):
@@ -45,7 +45,7 @@ class Transaction(Resource):
             return ErrorResult(response["api_error_response"])
 
     @staticmethod
-    def __create(params):
+    def create(params):
         Resource.verify_keys(params, Transaction.create_signature())
         response = Http().post("/transactions", {"transaction": params})
         if "transaction" in response:
