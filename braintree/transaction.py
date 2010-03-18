@@ -28,6 +28,14 @@ class Transaction(Resource):
         return Transaction.__create(params)
 
     @staticmethod
+    def void(transaction_id):
+        response = Http().put("/transactions/" + transaction_id + "/void")
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def __create(params):
         Resource.verify_keys(params, Transaction.create_signature())
         response = Http().post("/transactions", {"transaction": params})

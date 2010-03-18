@@ -20,7 +20,7 @@ class Http(object):
     def get(self, path):
         return self.__http_do("GET", path)
 
-    def put(self, path, params):
+    def put(self, path, params={}):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):

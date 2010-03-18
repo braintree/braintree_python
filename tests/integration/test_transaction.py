@@ -361,3 +361,30 @@ class TestTransaction(unittest.TestCase):
         except NotFoundError as e:
             self.assertEquals("transaction with id notreal not found", str(e))
 
+    def test_void_with_successful_result(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        result = Transaction.void(transaction.id)
+        self.assertTrue(result.is_success)
+        self.assertEquals(transaction.id, result.transaction.id)
+        self.assertEquals("voided", result.transaction.status)
+
+    def test_void_with_unsuccessful_result(self):
+        transaction = Transaction.sale({
+            "amount": "2000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        result = Transaction.void(transaction.id)
+        self.assertFalse(result.is_success)
+        self.assertEquals("91504", result.errors.for_object("transaction").on("base")[0].code)
+

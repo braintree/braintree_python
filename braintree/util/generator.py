@@ -13,8 +13,8 @@ class Generator(object):
 
     def __generate_dict(self, dictionary):
         xml = ""
-        for key in dictionary.keys():
-            xml += self.__generate_node(key, dictionary[key])
+        for key, val in dictionary.iteritems():
+            xml += self.__generate_node(key, val)
         return xml
 
     def __generate_list(self, list):
