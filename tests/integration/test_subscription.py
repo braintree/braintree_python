@@ -38,6 +38,12 @@ class TestSubscription(unittest.TestCase):
             "trial_period": False
         }
 
+        self.updateable_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "price": Decimal("54.32"),
+            "plan_id": self.trialless_plan["id"]
+        }).subscription
+
     def test_create_returns_successful_result_if_valid(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -129,3 +135,58 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         self.assertEquals(0, len(subscription.transactions))
+
+    def test_create_with_error_result(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"],
+            "id": "invalid token"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("81906", result.errors.for_object("subscription").on("id")[0].code)
+
+    def test_find_with_valid_id(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"],
+        }).subscription
+
+        found_subscription = Subscription.find(subscription.id)
+        self.assertEquals(subscription.id, found_subscription.id)
+
+    def test_find_with_invalid_token(self):
+        try:
+            Subscription.find("bad_token")
+            self.assertTrue(False)
+        except Exception as e:
+            self.assertEquals("subscription with id bad_token not found", str(e))
+
+    def test_update_with_successful_result(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "id": new_id,
+            "price": Decimal("9999.88"),
+            "plan_id": self.trial_plan["id"]
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(new_id, subscription.id)
+        self.assertEquals(self.trial_plan["id"], subscription.plan_id)
+        self.assertEquals(Decimal("9999.88"), subscription.price)
+
+    def test_update_with_error_result(self):
+        result = Subscription.update(self.updateable_subscription.id, {
+            "id": "bad id",
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("81906", result.errors.for_object("subscription").on("id")[0].code)
+
+    @raises(NotFoundError)
+    def test_update_raises_error_when_subscription_not_found(self):
+        Subscription.update("notfound", {
+            "id": "newid",
+        })
