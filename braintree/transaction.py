@@ -45,8 +45,10 @@ class Transaction(Resource):
 
     @staticmethod
     def tr_data_for_sale(tr_data, redirect_url):
+        if "transaction" not in tr_data:
+            tr_data["transaction"] = {}
         tr_data["transaction"]["type"] = Transaction.Type.Sale
-        #Resource.verify_keys(tr_data, [{"customer": Customer.update_signature()}])
+        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod

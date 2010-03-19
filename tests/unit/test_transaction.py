@@ -15,3 +15,10 @@ class TestTransaction(unittest.TestCase):
             self.assertTrue(False)
         except KeyError as e:
             self.assertEquals("'Invalid keys: credit_card[bad_key]'", str(e))
+
+    def test_tr_data_for_sale_raises_error_with_bad_keys(self):
+        try:
+            Transaction.tr_data_for_sale({"bad_key": "value"}, "http://example.com")
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'Invalid keys: bad_key'", str(e))

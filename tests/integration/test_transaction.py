@@ -447,7 +447,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2010", transaction.credit_card_details.expiration_date)
 
-    def test_sale_from_transparent_redirect_with_successful_result(self):
+    def test_sale_from_transparent_redirect_with_error_result(self):
         tr_data = {
             "transaction": {
                 "amount": "1000.00",
