@@ -3,16 +3,16 @@ from braintree.environment import Environment
 
 class Configuration(object):
     @staticmethod
+    def configure(environment, merchant_id, public_key, private_key):
+        Configuration.environment = environment
+        Configuration.merchant_id = merchant_id
+        Configuration.public_key = public_key
+        Configuration.private_key = private_key
+
+    @staticmethod
     def base_merchant_path():
         return "/merchants/" + Configuration.merchant_id
 
     @staticmethod
     def base_merchant_url():
-        return Configuration.protocol() + Configuration.environment.server_and_port + Configuration.base_merchant_path()
-
-    @staticmethod
-    def protocol():
-        if Configuration.environment.is_ssl:
-            return "https://"
-        else:
-            return "http://"
+        return Configuration.environment.protocol + Configuration.environment.server_and_port + Configuration.base_merchant_path()

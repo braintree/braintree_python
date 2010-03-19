@@ -5,10 +5,12 @@ from braintree.configuration import Configuration
 from braintree.environment import Environment
 from braintree.transparent_redirect import TransparentRedirect
 
-Configuration.environment = Environment.DEVELOPMENT
-Configuration.merchant_id = "integration_merchant_id"
-Configuration.public_key = "integration_public_key"
-Configuration.private_key = "integration_private_key"
+Configuration.configure(
+    Environment.DEVELOPMENT,
+    "integration_merchant_id",
+    "integration_public_key",
+    "integration_private_key"
+)
 
 class TestHelper(object):
     @staticmethod
