@@ -11,6 +11,21 @@ from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
 
 class Http(object):
+    @staticmethod
+    def raise_exception_from_status(status):
+        if status == 401:
+            raise AuthenticationError()
+        elif status == 403:
+            raise AuthorizationError()
+        elif status == 404:
+            raise NotFoundError()
+        elif status == 500:
+            raise ServerError()
+        elif status == 503:
+            raise DownForMaintenanceError()
+        else:
+            raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
+
     def post(self, path, params):
         return self.__http_do("POST", path, params)
 
@@ -48,7 +63,7 @@ class Http(object):
                 return XmlUtil.dict_from_xml(data)
         else:
             conn.close()
-            self.__raise_exception_from_status(status)
+            Http.raise_exception_from_status(status)
 
     def __authorization_header(self):
         return "Basic " + base64.encodestring(Configuration.public_key + ":" + Configuration.private_key).strip()
@@ -61,18 +76,3 @@ class Http(object):
             "User-Agent": "Braintree Python 1.0.0",
             "X-ApiVersion": "1"
         }
-
-    def __raise_exception_from_status(self, status):
-        if status == 401:
-            raise AuthenticationError()
-        elif status == 403:
-            raise AuthorizationError()
-        elif status == 404:
-            raise NotFoundError()
-        elif status == 500:
-            raise ServerError()
-        elif status == 503:
-            raise DownForMaintenanceError()
-        else:
-            raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
-

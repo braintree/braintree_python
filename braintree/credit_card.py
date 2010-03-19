@@ -69,10 +69,12 @@ class CreditCard(Resource):
 
     @staticmethod
     def tr_data_for_create(tr_data, redirect_url):
+        Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
     def tr_data_for_update(tr_data, redirect_url):
+        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.create_signature()}])
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
