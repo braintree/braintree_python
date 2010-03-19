@@ -7,6 +7,13 @@ class ValidationErrorCollection(object):
         self.deep_size = self.__deep_size()
         self.size = len(self.errors)
 
+    def all(self):
+        result = []
+        result.extend(self.errors)
+        for nested_error in self.nested_errors.values():
+            result.extend(nested_error.all())
+        return result
+
     def for_object(self, nested_key):
         return self.__get_nested_errrors(nested_key)
 

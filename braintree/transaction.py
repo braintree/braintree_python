@@ -4,8 +4,10 @@ from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.address import Address
+from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 
 class Transaction(Resource):
@@ -17,6 +19,11 @@ class Transaction(Resource):
         Authorized = "authorized"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided = "voided"
+
+    @staticmethod
+    def confirm_transparent_redirect(query_string):
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)
+        return Transaction.__post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def credit(params={}):
@@ -37,6 +44,16 @@ class Transaction(Resource):
         return Transaction.create(params)
 
     @staticmethod
+    def tr_data_for_sale(tr_data, redirect_url):
+        tr_data["transaction"]["type"] = Transaction.Type.Sale
+        #Resource.verify_keys(tr_data, [{"customer": Customer.update_signature()}])
+        return TransparentRedirect.tr_data(tr_data, redirect_url)
+
+    @staticmethod
+    def transparent_redirect_create_url():
+        return Configuration.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
+
+    @staticmethod
     def void(transaction_id):
         response = Http().put("/transactions/" + transaction_id + "/void")
         if "transaction" in response:
@@ -47,11 +64,7 @@ class Transaction(Resource):
     @staticmethod
     def create(params):
         Resource.verify_keys(params, Transaction.create_signature())
-        response = Http().post("/transactions", {"transaction": params})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Transaction.__post("/transactions", {"transaction": params})
 
     @staticmethod
     def create_signature():
@@ -87,6 +100,14 @@ class Transaction(Resource):
             },
             {"custom_fields": ["_any_key_"]}
         ]
+
+    @staticmethod
+    def __post(url, params):
+        response = Http().post(url, params)
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
 
     def __init__(self, attributes):
         if "billing" in attributes:

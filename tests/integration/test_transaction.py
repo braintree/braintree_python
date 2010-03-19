@@ -1,5 +1,6 @@
 import unittest
 import tests.test_helper
+from tests.test_helper import TestHelper
 import random
 from datetime import datetime
 import re
@@ -423,3 +424,42 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Transaction.TypeIsRequired, result.errors.for_object("transaction").on("type")[0].code)
+
+    def test_sale_from_transparent_redirect_with_successful_result(self):
+        tr_data = {
+            "transaction": {
+                "amount": "1000.00",
+            }
+        }
+        post_params = {
+            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
+            "transaction[credit_card][number]": "4111111111111111",
+            "transaction[credit_card][expiration_date]": "05/2010",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
+        result = Transaction.confirm_transparent_redirect(query_string)
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals("411111", transaction.credit_card_details.bin)
+        self.assertEquals("1111", transaction.credit_card_details.last_4)
+        self.assertEquals("05/2010", transaction.credit_card_details.expiration_date)
+
+    def test_sale_from_transparent_redirect_with_successful_result(self):
+        tr_data = {
+            "transaction": {
+                "amount": "1000.00",
+            }
+        }
+        post_params = {
+            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
+            "transaction[credit_card][number]": "booya",
+            "transaction[credit_card][expiration_date]": "05/2010",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
+        result = Transaction.confirm_transparent_redirect(query_string)
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)

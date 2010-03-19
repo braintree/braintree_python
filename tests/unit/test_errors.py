@@ -34,3 +34,19 @@ class TestErrors(unittest.TestCase):
         self.assertEqual(3, Errors(hash).size)
         self.assertEqual(3, len(Errors(hash)))
 
+    def test_all_returns_all_errors(self):
+        hash = {
+            "level1": {
+                "errors": [{"code": "code1", "attribute": "attr", "message": "message"}],
+                "level2": {
+                    "errors": [
+                        {"code": "code2", "attribute": "attr", "message": "message"},
+                        {"code": "code3", "attribute": "attr", "message": "message"}
+                    ]
+                }
+            }
+        }
+
+        errors = Errors(hash).all
+        self.assertEquals(["code1", "code2", "code3"], [error.code for error in errors])
+

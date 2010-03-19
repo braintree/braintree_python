@@ -6,6 +6,10 @@ class Errors(object):
         self.errors = ValidationErrorCollection(data)
         self.size = self.errors.deep_size
 
+    @property
+    def all(self):
+        return self.errors.all()
+
     def for_object(self, key):
         return self.errors.for_object(key)
 
