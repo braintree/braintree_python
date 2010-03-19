@@ -8,9 +8,6 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.configuration import Configuration
 
 class CreditCard(Resource):
-    transparent_redirect_create_url = Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
-    transparent_redirect_update_url = Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
-
     @staticmethod
     def create(params={}):
         Resource.verify_keys(params, CreditCard.create_signature())
@@ -75,6 +72,14 @@ class CreditCard(Resource):
                 ]
             }
         ]
+
+    @staticmethod
+    def transparent_redirect_create_url():
+        return Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
+
+    @staticmethod
+    def transparent_redirect_update_url():
+        return Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
 
     @staticmethod
     def __confirm_transparent_redirect(query_string):

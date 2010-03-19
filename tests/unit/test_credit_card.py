@@ -1,5 +1,7 @@
 import unittest
 import tests.test_helper
+from braintree.configuration import Configuration
+from braintree.environment import Environment
 from braintree.credit_card import CreditCard
 
 class TestCreditCard(unittest.TestCase):
@@ -18,13 +20,15 @@ class TestCreditCard(unittest.TestCase):
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
     def test_transparent_redirect_create_url(self):
+        Configuration.environment = Environment.DEVELOPMENT
         self.assertEquals(
             "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/create_via_transparent_redirect_request",
-            CreditCard.transparent_redirect_create_url
+            CreditCard.transparent_redirect_create_url()
         )
 
-    def test_transparent_redirect_create_url(self):
+    def test_transparent_redirect_update_url(self):
+        Configuration.environment = Environment.DEVELOPMENT
         self.assertEquals(
             "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/update_via_transparent_redirect_request",
-            CreditCard.transparent_redirect_update_url
+            CreditCard.transparent_redirect_update_url()
         )

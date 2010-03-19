@@ -280,7 +280,7 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url)
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url())
         result = CreditCard.create_from_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
@@ -305,7 +305,7 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url)
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url())
         result = CreditCard.create_from_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(
@@ -342,7 +342,7 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_update_url)
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_update_url())
         result = CreditCard.update_from_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
@@ -376,7 +376,7 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url)
+        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url())
         result = CreditCard.create_from_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(
