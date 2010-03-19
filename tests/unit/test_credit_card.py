@@ -1,5 +1,7 @@
 import unittest
 import tests.test_helper
+from nose.tools import raises
+from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
 from braintree.configuration import Configuration
 from braintree.environment import Environment
 from braintree.credit_card import CreditCard
@@ -34,15 +36,19 @@ class TestCreditCard(unittest.TestCase):
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
     def test_transparent_redirect_create_url(self):
-        Configuration.environment = Environment.DEVELOPMENT
         self.assertEquals(
             "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/create_via_transparent_redirect_request",
             CreditCard.transparent_redirect_create_url()
         )
 
     def test_transparent_redirect_update_url(self):
-        Configuration.environment = Environment.DEVELOPMENT
         self.assertEquals(
             "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/update_via_transparent_redirect_request",
             CreditCard.transparent_redirect_update_url()
+        )
+
+    @raises(DownForMaintenanceError)
+    def test_confirm_transaprant_redirect_raises_error_given_503_status_in_query_string(self):
+        CreditCard.confirm_transparent_redirect(
+            "http_status=503&id=6kdj469tw7yck32j&hash=1b3d29199a282e63074a7823b76bccacdf732da6"
         )

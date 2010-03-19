@@ -1,0 +1,2 @@
+class ForgedQueryStringError(Exception):
+    pass

@@ -1,12 +1,25 @@
 from datetime import datetime
 import urllib
+import urlparse
 from braintree.configuration import Configuration
 from braintree.util.crypto import Crypto
+from braintree.util.http import Http
+from braintree.exceptions.forged_query_string import ForgedQueryStringError
 
 class TransparentRedirect:
     @staticmethod
+    def parse_and_validate_query_string(query_string):
+        if not TransparentRedirect.is_valid_tr_query_string(query_string):
+            raise ForgedQueryStringError
+        query_params = urlparse.parse_qs(query_string)
+        http_status = int(query_params["http_status"][0])
+        if Http.is_error_status(http_status):
+            Http.raise_exception_from_status(http_status)
+        return query_params["id"][0]
+
+    @staticmethod
     def tr_data(data, redirect_url):
-        data = TransparentRedirect.flatten_dictionary(data)
+        data = TransparentRedirect.__flatten_dictionary(data)
         date_string = datetime.utcnow().strftime("%Y%m%d%H%M%S")
         data["time"] = date_string
         data["redirect_url"] = redirect_url
@@ -18,12 +31,18 @@ class TransparentRedirect:
         return tr_hash + "|" + tr_content
 
     @staticmethod
-    def flatten_dictionary(params, parent=None):
+    def is_valid_tr_query_string(query_string):
+        content, hash = query_string.split("&hash=")
+        return hash == Crypto.hmac_hash(Configuration.private_key, content)
+
+    @staticmethod
+    def __flatten_dictionary(params, parent=None):
         data = {}
         for key, val in params.iteritems():
             full_key = parent + "[" + key + "]" if parent else key
             if type(val) == dict:
-                data.update(TransparentRedirect.flatten_dictionary(val, full_key))
+                data.update(TransparentRedirect.__flatten_dictionary(val, full_key))
             else:
                 data[full_key] = val
         return data
+

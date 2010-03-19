@@ -1,4 +1,3 @@
-import urlparse
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -11,7 +10,7 @@ from braintree.transparent_redirect import TransparentRedirect
 class CreditCard(Resource):
     @staticmethod
     def confirm_transparent_redirect(query_string):
-        id = urlparse.parse_qs(query_string)["id"][0]
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)
         return CreditCard.__post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod

@@ -12,6 +12,10 @@ from braintree.exceptions.unexpected_error import UnexpectedError
 
 class Http(object):
     @staticmethod
+    def is_error_status(status):
+        return status not in [200, 201, 422]
+
+    @staticmethod
     def raise_exception_from_status(status):
         if status == 401:
             raise AuthenticationError()
@@ -54,16 +58,16 @@ class Http(object):
         response = conn.getresponse()
         status = response.status
 
-        if status in [200, 201, 422]:
+        if Http.is_error_status(status):
+            conn.close()
+            Http.raise_exception_from_status(status)
+        else:
             data = response.read()
             conn.close()
             if len(data.strip()) == 0:
                 return {}
             else:
                 return XmlUtil.dict_from_xml(data)
-        else:
-            conn.close()
-            Http.raise_exception_from_status(status)
 
     def __authorization_header(self):
         return "Basic " + base64.encodestring(Configuration.public_key + ":" + Configuration.private_key).strip()
