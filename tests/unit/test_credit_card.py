@@ -52,3 +52,9 @@ class TestCreditCard(unittest.TestCase):
         CreditCard.confirm_transparent_redirect(
             "http_status=503&id=6kdj469tw7yck32j&hash=1b3d29199a282e63074a7823b76bccacdf732da6"
         )
+
+    def test_create_signature_includes_customer_id(self):
+        self.assertTrue("customer_id" in CreditCard.create_signature())
+
+    def test_update_signature_does_not_include_customer_id(self):
+        self.assertFalse("customer_id" in CreditCard.update_signature())

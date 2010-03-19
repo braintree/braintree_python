@@ -1,6 +1,7 @@
 import unittest
 import re
 import tests.test_helper
+from tests.test_helper import TestHelper
 from nose.tools import raises
 from braintree.error_codes import ErrorCodes
 from braintree.customer import Customer
@@ -245,14 +246,90 @@ class TestCustomer(unittest.TestCase):
             result.errors.for_object("customer").on("email")[0].code
         )
 
-  #   it "returns an error response if invalid" do
-  #     customer = Braintree::Customer.create!(:email => "valid@email.com")
-  #     result = Braintree::Customer.update(
-  #       customer.id,
-  #       :email => "@invalid.com"
-  #     )
-  #     result.success?.should == false
-  #     result.errors.for(:customer).on(:email)[0].message.should == "Email is an invalid format."
-  #   end
-  # end
+    def test_create_from_transparent_redirect_with_successful_result(self):
+        tr_data = {
+            "customer": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "company": "Doe Co",
+            }
+        }
+        post_params = {
+            "tr_data": Customer.tr_data_for_create(tr_data, "http://example.com/path"),
+            "customer[email]": "john@doe.com",
+            "customer[phone]": "312.555.2323",
+            "customer[fax]": "614.555.5656",
+            "customer[website]": "www.johndoe.com"
+        }
 
+        query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_create_url())
+        result = Customer.confirm_transparent_redirect(query_string)
+        self.assertTrue(result.is_success)
+        customer = result.customer
+        self.assertEquals("John", customer.first_name)
+        self.assertEquals("Doe", customer.last_name)
+        self.assertEquals("Doe Co", customer.company)
+        self.assertEquals("john@doe.com", customer.email)
+        self.assertEquals("312.555.2323", customer.phone)
+        self.assertEquals("614.555.5656", customer.fax)
+        self.assertEquals("www.johndoe.com", customer.website)
+
+    def test_create_from_transparent_redirect_with_error_result(self):
+        tr_data = {
+            "customer": {
+                "company": "Doe Co",
+            }
+        }
+        post_params = {
+            "tr_data": Customer.tr_data_for_create(tr_data, "http://example.com/path"),
+            "customer[email]": "john#doe.com",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_create_url())
+        result = Customer.confirm_transparent_redirect(query_string)
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
+
+    def test_update_from_transparent_redirect_with_successful_result(self):
+        customer = Customer.create({
+            "first_name": "Jane",
+        }).customer
+
+        tr_data = {
+            "customer": {
+                "first_name": "John",
+            }
+        }
+        post_params = {
+            "tr_data": Customer.tr_data_for_update(tr_data, "http://example.com/path"),
+            "customer_id": customer.id,
+            "customer[email]": "john@doe.com",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_update_url())
+        result = Customer.confirm_transparent_redirect(query_string)
+        self.assertTrue(result.is_success)
+        customer = result.customer
+        self.assertEquals("John", customer.first_name)
+        self.assertEquals("john@doe.com", customer.email)
+
+    def test_update_from_transparent_redirect_with_error_result(self):
+        customer = Customer.create({
+            "first_name": "Jane",
+        }).customer
+
+        tr_data = {
+            "customer": {
+                "first_name": "John",
+            }
+        }
+        post_params = {
+            "tr_data": Customer.tr_data_for_update(tr_data, "http://example.com/path"),
+            "customer_id": customer.id,
+            "customer[email]": "john#doe.com",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_update_url())
+        result = Customer.confirm_transparent_redirect(query_string)
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)

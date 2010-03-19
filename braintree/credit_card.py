@@ -42,24 +42,14 @@ class CreditCard(Resource):
 
     @staticmethod
     def create_signature():
-        return [
-            "customer_id", "cardholder_name", "cvv", "number", "expiration_date", "expiration_month",
-            "expiration_year", "token",
-            {"billing_address": Address.create_signature()},
-            {"options": ["verify_card"]}
-        ]
+        return CreditCard.update_signature() + ["customer_id"]
 
     @staticmethod
     def update_signature():
         return [
-            "cardholder_name", "cvv", "number", "expiration_date", "expiration_month", "expiration_year", "token",
-            {"options": ["verify_card"]},
-            {"billing_address":
-                [
-                    "first_name", "last_name", "company", "country_name", "extended_address", "locality", "region",
-                    "postal_code", "street_address"
-                ]
-            }
+            "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+            {"billing_address": Address.create_signature()},
+            {"options": ["verify_card"]}
         ]
 
     @staticmethod
