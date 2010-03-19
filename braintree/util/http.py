@@ -24,12 +24,12 @@ class Http(object):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        if Configuration.is_ssl():
+        if Configuration.environment.is_ssl:
             connection_type = httplib.HTTPSConnection
         else:
             connection_type = httplib.HTTPConnection
 
-        conn = connection_type(Configuration.server_and_port())
+        conn = connection_type(Configuration.environment.server_and_port)
         conn.request(
             http_verb,
             Configuration.base_merchant_path() + path,
