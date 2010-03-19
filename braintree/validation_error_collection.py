@@ -28,6 +28,9 @@ class ValidationErrorCollection(object):
     def __getitem__(self, index):
         return self.errors[index]
 
+    def __len__(self):
+        return self.size
+
     def __nested_errors(self, data):
         nested_errors = {}
         for key in data.keys():

@@ -50,7 +50,7 @@ class TestValidationErrorCollection(unittest.TestCase):
             "errors": [{"attribute": "one", "code": 1, "message": "is too long"}],
             "nested": {
                 "errors": [{"attribute": "two", "code": 2, "message": "contains invalid chars"}],
-                "nested_agin": {
+                "nested_again": {
                     "errors": [
                         {"attribute": "three", "code": 3, "message": "super nested"},
                         {"attribute": "four", "code": 4, "message": "super nested 2"}
@@ -61,3 +61,20 @@ class TestValidationErrorCollection(unittest.TestCase):
 
         self.assertEquals(4, ValidationErrorCollection(hash).deep_size)
 
+    def test_deep_len_multiple_nestings(self):
+        hash = {
+            "errors": [{"attribute": "one", "code": 1, "message": "is too long"}],
+            "nested": {
+                "errors": [{"attribute": "two", "code": 2, "message": "contains invalid chars"}],
+                "nested_again": {
+                    "errors": [
+                        {"attribute": "three", "code": 3, "message": "super nested"},
+                        {"attribute": "four", "code": 4, "message": "super nested 2"}
+                    ]
+                }
+            }
+        }
+        validation_error_collection = ValidationErrorCollection(hash)
+        self.assertEquals(1, len(validation_error_collection))
+        self.assertEquals(1, len(validation_error_collection.for_object('nested')))
+        self.assertEquals(2, len(validation_error_collection.for_object('nested').for_object('nested_again')))

@@ -8,3 +8,6 @@ class Errors(object):
 
     def for_object(self, key):
         return self.errors.for_object(key)
+
+    def __len__(self):
+        return self.size
