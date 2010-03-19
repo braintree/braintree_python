@@ -14,17 +14,9 @@ Configuration.configure(
 
 class TestHelper(object):
     @staticmethod
-    def create_via_tr(params, tr_data, url):
-        params = TransparentRedirect.flatten_dictionary(params)
-        params["tr_data"] = TransparentRedirect.tr_data(tr_data, "http://example.com/path/to/something?foo=bar")
-        form_data = urllib.urlencode(params)
-
-        if Configuration.environment.is_ssl:
-            connection_type = httplib.HTTPSConnection
-        else:
-            connection_type = httplib.HTTPConnection
-
-        conn = connection_type(Configuration.environment.server_and_port)
+    def simulate_tr_form_post(post_params, url):
+        form_data = urllib.urlencode(post_params)
+        conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
         response = conn.getresponse()
         query_string = response.getheader('location').split("?", 1)[1]

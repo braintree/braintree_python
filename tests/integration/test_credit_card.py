@@ -267,21 +267,20 @@ class TestCreditCard(unittest.TestCase):
 
     def test_create_from_transparent_redirect(self):
         customer = Customer.create().customer
-        params = {
-            "credit_card": {
-                "cardholder_name": "Card Holder",
-                "number": "4111111111111111",
-                "expiration_date": "05/2012"
-            }
-        }
         tr_data = {
             "credit_card": {
                 "customer_id": customer.id
             }
         }
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_create(tr_data, "http://example.com/path?foo=bar"),
+            "credit_card[cardholder_name]": "Card Holder",
+            "credit_card[number]": "4111111111111111",
+            "credit_card[expiration_date]": "05/2012",
+        }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url())
-        result = CreditCard.create_from_transparent_redirect(query_string)
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_create_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
         self.assertEquals("411111", credit_card.bin)
@@ -292,21 +291,21 @@ class TestCreditCard(unittest.TestCase):
 
     def test_create_from_transparent_redirect_with_error_result(self):
         customer = Customer.create().customer
-        params = {
-            "credit_card": {
-                "cardholder_name": "Card Holder",
-                "number": "eleventy",
-                "expiration_date": "y2k"
-            }
-        }
         tr_data = {
             "credit_card": {
                 "customer_id": customer.id
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url())
-        result = CreditCard.create_from_transparent_redirect(query_string)
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_create(tr_data, "http://example.com/path"),
+            "credit_card[cardholder_name]": "Card Holder",
+            "credit_card[number]": "eleventy",
+            "credit_card[expiration_date]": "y2k"
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_create_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(
             ErrorCodes.CreditCard.NumberHasInvalidLength,
@@ -329,12 +328,6 @@ class TestCreditCard(unittest.TestCase):
             }
         }).customer.credit_cards[0]
 
-        params = {
-            "credit_card": {
-                "cardholder_name": "New Cardholder Name",
-                "expiration_date": "05/2014"
-            }
-        }
         tr_data = {
             "payment_method_token": old_token,
             "credit_card": {
@@ -342,8 +335,14 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_update_url())
-        result = CreditCard.update_from_transparent_redirect(query_string)
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_update(tr_data, "http://example.com/path"),
+            "credit_card[cardholder_name]": "New Cardholder Name",
+            "credit_card[expiration_date]": "05/2014"
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
         self.assertEquals(new_token, credit_card.token)
@@ -363,12 +362,6 @@ class TestCreditCard(unittest.TestCase):
             }
         }).customer.credit_cards[0]
 
-        params = {
-            "credit_card": {
-                "cardholder_name": "New Cardholder Name",
-                "expiration_date": "05/2014"
-            }
-        }
         tr_data = {
             "payment_method_token": old_token,
             "credit_card": {
@@ -376,8 +369,14 @@ class TestCreditCard(unittest.TestCase):
             }
         }
 
-        query_string = TestHelper.create_via_tr(params, tr_data, CreditCard.transparent_redirect_create_url())
-        result = CreditCard.create_from_transparent_redirect(query_string)
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_update(tr_data, "http://example.com/path"),
+            "credit_card[cardholder_name]": "New Cardholder Name",
+            "credit_card[expiration_date]": "05/2014"
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(
             ErrorCodes.CreditCard.TokenInvalid,
