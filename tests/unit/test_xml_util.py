@@ -1,6 +1,5 @@
 import unittest
 from datetime import datetime
-from braintree.util.utc import UTC
 from braintree.util.xml_util import XmlUtil
 
 class TestXmlUtil(unittest.TestCase):

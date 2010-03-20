@@ -12,9 +12,9 @@ class Subscription(Resource):
         MONTH = "month"
 
     class Status(object):
-      ACTIVE = 'Active'
-      CANCELED = 'Canceled'
-      PAST_DUE = 'Past Due'
+        ACTIVE = 'Active'
+        CANCELED = 'Canceled'
+        PAST_DUE = 'Past Due'
 
     @staticmethod
     def create(params={}):
