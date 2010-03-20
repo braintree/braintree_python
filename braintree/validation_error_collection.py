@@ -2,10 +2,7 @@ from braintree.validation_error import ValidationError
 
 class ValidationErrorCollection(object):
     def __init__(self, data={"errors": []}):
-        self.errors = [ValidationError(error) for error in data["errors"]]
-        self.nested_errors = self.__nested_errors(data)
-        self.deep_size = self.__deep_size()
-        self.size = len(self.errors)
+        self.data = data
 
     def all(self):
         result = []
@@ -20,11 +17,28 @@ class ValidationErrorCollection(object):
     def on(self, attribute):
         return [error for error in self.errors if error.attribute == attribute]
 
-    def __deep_size(self):
+    @property
+    def deep_size(self):
         size = len(self.errors)
         for error in self.nested_errors.values():
             size += error.deep_size
         return size
+
+    @property
+    def errors(self):
+        return [ValidationError(error) for error in self.data["errors"]]
+
+    @property
+    def nested_errors(self):
+        nested_errors = {}
+        for key in self.data.keys():
+            if key == "errors": continue
+            nested_errors[key] = ValidationErrorCollection(self.data[key])
+        return nested_errors
+
+    @property
+    def size(self):
+        return len(self.errors)
 
     def __get_nested_errrors(self, nested_key):
         if nested_key in self.nested_errors:
@@ -38,9 +52,3 @@ class ValidationErrorCollection(object):
     def __len__(self):
         return self.size
 
-    def __nested_errors(self, data):
-        nested_errors = {}
-        for key in data.keys():
-            if key == "errors": continue
-            nested_errors[key] = ValidationErrorCollection(data[key])
-        return nested_errors
