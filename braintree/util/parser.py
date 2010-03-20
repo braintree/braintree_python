@@ -55,7 +55,7 @@ class Parser(object):
                 if self.__get_node_attribute(child, "type") == "array" or child.firstChild and child.firstChild.nodeType == minidom.Node.TEXT_NODE:
                     d[child_tag] = self.__parse_node(child)
                 else:
-                    if not self.__get_attribute(d, child_tag):
+                    if not d.get(child_tag):
                         d[child_tag] = self.__parse_node(child)
                     else:
                         self.__convert_to_list(d, child_tag)
