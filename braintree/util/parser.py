@@ -64,14 +64,8 @@ class Parser(object):
             child = child.nextSibling
         return d
 
-    def __get_attribute(self, dict, attribute):
-        try:
-            return dict[attribute]
-        except:
-            return None
-
     def __get_node_attribute(self, node, attribute):
-        attribute_node = self.__get_attribute(node.attributes, attribute)
+        attribute_node = node.attributes.get(attribute)
         return attribute_node and attribute_node.value
 
     def __node_content(self, parent, content):
