@@ -28,13 +28,3 @@ class TestEnvironment(unittest.TestCase):
 
     def test_protocol_for_production(self):
         self.assertEquals("https://", Environment.PRODUCTION.protocol)
-
-    def test_cert_file_for_development(self):
-        self.assertEquals(None, Environment.DEVELOPMENT.cert_file)
-
-    def test_cert_file_for_sandbox(self):
-        self.assertEquals("braintree/ssl/valicert_ca.crt", Environment.SANDBOX.cert_file)
-
-    def test_cert_file_for_production(self):
-        self.assertEquals("braintree/ssl/securetrust_ca.crt", Environment.PRODUCTION.cert_file)
-

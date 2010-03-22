@@ -2,9 +2,6 @@ import httplib
 import os
 import random
 import re
-import signal
-import ssl
-import subprocess
 import unittest
 import urllib
 from braintree import *
