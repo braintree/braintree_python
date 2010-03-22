@@ -44,6 +44,14 @@ class Transaction(Resource):
         return Transaction.create(params)
 
     @staticmethod
+    def tr_data_for_credit(tr_data, redirect_url):
+        if "transaction" not in tr_data:
+            tr_data["transaction"] = {}
+        tr_data["transaction"]["type"] = Transaction.Type.Credit
+        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        return TransparentRedirect.tr_data(tr_data, redirect_url)
+
+    @staticmethod
     def tr_data_for_sale(tr_data, redirect_url):
         if "transaction" not in tr_data:
             tr_data["transaction"] = {}
