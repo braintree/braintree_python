@@ -1,5 +1,7 @@
 import httplib
 import base64
+import socket
+import ssl
 import string
 from braintree.configuration import Configuration
 from braintree.util.xml_util import XmlUtil
@@ -30,6 +32,15 @@ class Http(object):
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 
+    def __init__(self, server_and_port=None, is_ssl=None, cert_file=None):
+        self.server_and_port = server_and_port or Configuration.environment.server_and_port
+        if is_ssl == None:
+            is_ssl = Configuration.environment.is_ssl
+        self.is_ssl = is_ssl
+        if cert_file == None:
+            cert_file = Configuration.environment.cert_file
+        self.cert_file = cert_file
+
     def post(self, path, params):
         return self.__http_do("POST", path, params)
 
@@ -43,12 +54,13 @@ class Http(object):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        if Configuration.environment.is_ssl:
-            connection_type = httplib.HTTPSConnection
+        if self.is_ssl:
+            conn = httplib.HTTPSConnection(self.server_and_port)
+            sock = socket.create_connection((conn.host, conn.port), conn.timeout)
+            conn.sock = ssl.wrap_socket(sock, ca_certs=self.cert_file, cert_reqs=ssl.CERT_REQUIRED)
         else:
-            connection_type = httplib.HTTPConnection
+            conn = httplib.HTTPConnection(self.server_and_port)
 
-        conn = connection_type(Configuration.environment.server_and_port)
         conn.request(
             http_verb,
             Configuration.base_merchant_path() + path,
@@ -67,6 +79,7 @@ class Http(object):
             if len(data.strip()) == 0:
                 return {}
             else:
+                print data
                 return XmlUtil.dict_from_xml(data)
 
     def __authorization_header(self):
