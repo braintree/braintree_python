@@ -149,7 +149,7 @@ class TestSubscription(unittest.TestCase):
         try:
             Subscription.find("bad_token")
             self.assertTrue(False)
-        except Exception as e:
+        except Exception, e:
             self.assertEquals("subscription with id bad_token not found", str(e))
 
     def test_update_with_successful_result(self):

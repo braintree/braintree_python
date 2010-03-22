@@ -1,4 +1,5 @@
 from datetime import datetime
+import cgi
 import urllib
 import urlparse
 from braintree.configuration import Configuration
@@ -11,7 +12,7 @@ class TransparentRedirect:
     def parse_and_validate_query_string(query_string):
         if not TransparentRedirect.is_valid_tr_query_string(query_string):
             raise ForgedQueryStringError
-        query_params = urlparse.parse_qs(query_string)
+        query_params = cgi.parse_qs(query_string)
         http_status = int(query_params["http_status"][0])
         if Http.is_error_status(http_status):
             Http.raise_exception_from_status(http_status)

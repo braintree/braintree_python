@@ -181,7 +181,7 @@ class TestCustomer(unittest.TestCase):
         try:
             Customer.find("badid")
             self.assertTrue(False)
-        except NotFoundError as e:
+        except NotFoundError, e:
             self.assertEquals("customer with id badid not found", str(e))
 
     def test_update_with_valid_options(self):

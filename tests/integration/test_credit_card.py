@@ -252,7 +252,7 @@ class TestCreditCard(unittest.TestCase):
         try:
             CreditCard.find("bad_token")
             self.assertTrue(False)
-        except Exception as e:
+        except Exception, e:
             self.assertEquals("payment method with token bad_token not found", str(e))
 
     def test_create_from_transparent_redirect(self):
