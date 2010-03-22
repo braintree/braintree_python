@@ -1,11 +1,4 @@
-import unittest
-import re
-import tests.test_helper
-from tests.test_helper import TestHelper
-from nose.tools import raises
-from braintree.error_codes import ErrorCodes
-from braintree.customer import Customer
-from braintree.exceptions.not_found_error import NotFoundError
+from tests.test_helper import *
 
 class TestCustomer(unittest.TestCase):
     def test_create(self):

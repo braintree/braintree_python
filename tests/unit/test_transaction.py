@@ -1,5 +1,4 @@
-import unittest
-from braintree.transaction import Transaction
+from tests.test_helper import *
 
 class TestTransaction(unittest.TestCase):
     def test_sale_raises_exception_with_bad_keys(self):

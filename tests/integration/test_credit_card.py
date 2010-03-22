@@ -1,14 +1,4 @@
-import unittest
-import tests.test_helper
-from tests.test_helper import TestHelper
-from nose.tools import raises
-import re
-import random
-from datetime import datetime
-from braintree.error_codes import ErrorCodes
-from braintree.customer import Customer
-from braintree.credit_card import CreditCard
-from braintree.exceptions.not_found_error import NotFoundError
+from tests.test_helper import *
 
 class TestCreditCard(unittest.TestCase):
     def test_create_adds_credit_card_to_existing_customer(self):

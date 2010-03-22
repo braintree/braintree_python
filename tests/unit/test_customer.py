@@ -1,5 +1,4 @@
-import unittest
-from braintree.customer import Customer
+from tests.test_helper import *
 
 class TestCustomer(unittest.TestCase):
     def test_create_raise_exception_with_bad_keys(self):

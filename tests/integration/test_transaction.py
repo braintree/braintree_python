@@ -1,15 +1,4 @@
-import unittest
-import tests.test_helper
-from tests.test_helper import TestHelper
-import random
-from datetime import datetime
-import re
-from decimal import Decimal
-from nose.tools import raises
-from braintree.error_codes import ErrorCodes
-from braintree.transaction import Transaction
-from braintree.credit_card import CreditCard
-from braintree.exceptions.not_found_error import NotFoundError
+from tests.test_helper import *
 
 class TestTransaction(unittest.TestCase):
     def test_sale_returns_a_successful_result_with_type_of_sale(self):

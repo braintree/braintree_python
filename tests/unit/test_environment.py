@@ -1,7 +1,4 @@
-import os
-import unittest
-import tests.test_helper
-from braintree.environment import Environment
+from tests.test_helper import *
 
 class TestEnvironment(unittest.TestCase):
     def test_server_and_port_for_development(self):

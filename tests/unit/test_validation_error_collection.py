@@ -1,5 +1,4 @@
-import unittest
-from braintree.validation_error_collection import ValidationErrorCollection
+from tests.test_helper import *
 
 class TestValidationErrorCollection(unittest.TestCase):
     def test_it_builds_an_array_of_errors_given_an_array_of_hashes(self):

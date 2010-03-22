@@ -1,16 +1,4 @@
-import unittest
-import tests.test_helper
-from nose.tools import raises
-from braintree.util.crypto import Crypto
-from braintree.configuration import Configuration
-from braintree.exceptions.authentication_error import AuthenticationError
-from braintree.exceptions.authorization_error import AuthorizationError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
-from braintree.exceptions.forged_query_string import ForgedQueryStringError
-from braintree.exceptions.not_found_error import NotFoundError
-from braintree.exceptions.server_error import ServerError
-from braintree.exceptions.unexpected_error import UnexpectedError
-from braintree.transparent_redirect import TransparentRedirect
+from tests.test_helper import *
 
 class TestTransparentRedirect(unittest.TestCase):
     def test_tr_data(self):

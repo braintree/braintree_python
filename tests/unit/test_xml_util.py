@@ -1,6 +1,4 @@
-import unittest
-from datetime import datetime
-from braintree.util.xml_util import XmlUtil
+from tests.test_helper import *
 
 class TestXmlUtil(unittest.TestCase):
     def test_dict_from_xml_simple(self):

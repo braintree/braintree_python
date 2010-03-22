@@ -1,7 +1,4 @@
-import unittest
-import tests.test_helper
-from braintree.environment import Environment
-from braintree.configuration import Configuration
+from tests.test_helper import *
 
 class TestConfiguration(unittest.TestCase):
     def test_base_merchant_path_for_development(self):

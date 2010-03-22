@@ -1,5 +1,4 @@
-import unittest
-from braintree.errors import Errors
+from tests.test_helper import *
 
 class TestErrors(unittest.TestCase):
     def test_errors_for_the_given_scope(self):

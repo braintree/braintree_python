@@ -1,11 +1,4 @@
-import unittest
-import tests.test_helper
-from nose.tools import raises
-import re
-from braintree.error_codes import ErrorCodes
-from braintree.customer import Customer
-from braintree.address import Address
-from braintree.exceptions.not_found_error import NotFoundError
+from tests.test_helper import *
 
 class TestAddress(unittest.TestCase):
     def test_create_returns_successful_result_if_valid(self):

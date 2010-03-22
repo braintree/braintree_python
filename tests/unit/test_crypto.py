@@ -1,6 +1,4 @@
-import unittest
-import tests.test_helper
-from braintree.util.crypto import Crypto
+from tests.test_helper import *
 
 class TestCrypto(unittest.TestCase):
     def test_hmac_hash(self):

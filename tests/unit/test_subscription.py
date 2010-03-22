@@ -1,5 +1,4 @@
-import unittest
-from braintree.subscription import Subscription
+from tests.test_helper import *
 
 class TestSubscription(unittest.TestCase):
     def test_create_raises_exception_with_bad_keys(self):

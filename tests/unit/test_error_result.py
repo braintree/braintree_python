@@ -1,5 +1,4 @@
-import unittest
-from braintree.error_result import ErrorResult
+from tests.test_helper import *
 
 class TestErrorResult(unittest.TestCase):
     def test_it_initializes_params_and_errors(self):

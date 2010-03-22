@@ -1,10 +1,4 @@
-import unittest
-import tests.test_helper
-from nose.tools import raises
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
-from braintree.configuration import Configuration
-from braintree.environment import Environment
-from braintree.credit_card import CreditCard
+from tests.test_helper import *
 
 class TestCreditCard(unittest.TestCase):
     def test_create_raises_exception_with_bad_keys(self):

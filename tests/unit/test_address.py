@@ -1,5 +1,4 @@
-import unittest
-from braintree.address import Address
+from tests.test_helper import *
 
 class TestAddress(unittest.TestCase):
     def test_create_raise_exception_with_bad_keys(self):
