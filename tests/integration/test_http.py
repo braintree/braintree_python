@@ -33,3 +33,15 @@ class TestHttp(unittest.TestCase):
             self.assertTrue(False)
         except SSL.Checker.WrongHost, e:
             self.assertTrue(re.search("Peer certificate commonName does not match host", str(e)))
+
+    def test_unsafe_ssl_connection(self):
+        try:
+            Configuration.use_unsafe_ssl = True;
+            environment = Environment(Environment.SANDBOX.server, "443", True, Environment.PRODUCTION.ssl_certificate)
+            http = Http(environment)
+            http.get("/")
+        except AuthenticationError:
+            pass
+        finally:
+            Configuration.use_unsafe_ssl = False;
+

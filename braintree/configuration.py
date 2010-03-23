@@ -8,6 +8,7 @@ class Configuration(object):
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
+        Configuration.use_unsafe_ssl = False
 
     @staticmethod
     def base_merchant_path():

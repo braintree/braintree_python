@@ -49,13 +49,8 @@ class Http(object):
 
     def __http_do(self, http_verb, path, params=None):
         if self.environment.is_ssl:
+            self.__verify_ssl()
             conn = httplib.HTTPSConnection(self.environment.server, self.environment.port)
-            from M2Crypto import SSL
-            ctx = SSL.Context()
-            ctx.set_verify(SSL.verify_peer | SSL.verify_fail_if_no_peer_cert, depth=9)
-            ctx.load_verify_locations(self.environment.ssl_certificate)
-            s = SSL.Connection(ctx)
-            s.connect((self.environment.server, self.environment.port))
         else:
             conn = httplib.HTTPConnection(self.environment.server, self.environment.port)
 
@@ -90,3 +85,25 @@ class Http(object):
             "User-Agent": "Braintree Python 1.0.0",
             "X-ApiVersion": "1"
         }
+
+    def __verify_ssl(self):
+        if not Configuration.use_unsafe_ssl:
+            try:
+                from M2Crypto import SSL
+            except ImportError, e:
+                print "Cannot load M2Crypto.  Please refer to Braintree documentation."
+                print """
+If you are in an environment where you absolutely cannot load M2Crypto
+(such as Google App Engine), you can turn off SSL Verification by setting:
+
+    Configuration.use_unsafe_ssl = True
+
+This is highly discouraged, however, since it leaves you susceptible to
+man-in-the-middle attacks."""
+                raise e
+
+            ctx = SSL.Context()
+            ctx.set_verify(SSL.verify_peer | SSL.verify_fail_if_no_peer_cert, depth=9)
+            ctx.load_verify_locations(self.environment.ssl_certificate)
+            s = SSL.Connection(ctx)
+            s.connect((self.environment.server, self.environment.port))
