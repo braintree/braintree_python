@@ -48,3 +48,12 @@ class TestEnvironment(unittest.TestCase):
 
     def test_protocol_for_production(self):
         self.assertEquals("https://", Environment.PRODUCTION.protocol)
+
+    def test_ssl_certificate_for_development(self):
+        self.assertEquals(None, Environment.DEVELOPMENT.ssl_certificate)
+
+    def test_ssl_certificate_for_sandbox(self):
+        self.assertEquals("braintree/ssl/valicert_ca.crt", Environment.SANDBOX.ssl_certificate)
+
+    def test_ssl_certificate_for_production(self):
+        self.assertEquals("braintree/ssl/securetrust_ca.crt", Environment.PRODUCTION.ssl_certificate)
