@@ -30,6 +30,11 @@ class Http(object):
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 
+    def __init__(self, environment=None):
+        if environment == None:
+            environment = Configuration.environment
+        self.environment = environment
+
     def post(self, path, params):
         return self.__http_do("POST", path, params)
 
@@ -43,12 +48,17 @@ class Http(object):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        if Configuration.environment.is_ssl:
-            connection_type = httplib.HTTPSConnection
+        if self.environment.is_ssl:
+            conn = httplib.HTTPSConnection(self.environment.server, self.environment.port)
+            from M2Crypto import SSL
+            ctx = SSL.Context()
+            ctx.set_verify(SSL.verify_peer | SSL.verify_fail_if_no_peer_cert, depth=9)
+            ctx.load_verify_locations(self.environment.ssl_certificate)
+            s = SSL.Connection(ctx)
+            s.connect((self.environment.server, self.environment.port))
         else:
-            connection_type = httplib.HTTPConnection
+            conn = httplib.HTTPConnection(self.environment.server, self.environment.port)
 
-        conn = connection_type(Configuration.environment.server_and_port)
         conn.request(
             http_verb,
             Configuration.base_merchant_path() + path,

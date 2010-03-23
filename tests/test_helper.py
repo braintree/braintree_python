@@ -10,6 +10,7 @@ from braintree.util import *
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
+from M2Crypto import SSL
 from nose.tools import raises
 
 Configuration.configure(
