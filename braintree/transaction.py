@@ -49,6 +49,15 @@ class Transaction(Resource):
             raise NotFoundError("transaction with id " + transaction_id + " not found")
 
     @staticmethod
+    def refund(transaction_id):
+        response = Http().post("/transactions/" + transaction_id + "/refund", {})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+
+    @staticmethod
     def sale(params={}):
         params["type"] = Transaction.Type.Sale
         return Transaction.create(params)

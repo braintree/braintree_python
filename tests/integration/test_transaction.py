@@ -581,3 +581,59 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.SubmittedForSettlement, Transaction.search("submitted_for_settlement")[0].status)
         self.assertEquals(Transaction.Status.Unknown,                Transaction.search("unknown")[0].status)
         self.assertEquals(Transaction.Status.Voided,                 Transaction.search("voided")[0].status)
+
+    def test_successful_refund(self):
+        transaction = self.__create_transaction_to_refund()
+
+        result = Transaction.refund(transaction.id)
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
+        self.assertEquals(Decimal("1000.00"), result.transaction.amount)
+
+    def test_refund_already_refunded_transation_fails(self):
+        transaction = self.__create_transaction_to_refund()
+
+        Transaction.refund(transaction.id)
+        result = Transaction.refund(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.HasAlreadyBeenRefunded,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_refund_returns_an_error_if_unsettled(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        result = Transaction.refund(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotRefundUnlessSettled,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def __create_transaction_to_refund(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        Http().put("/transactions/" + transaction.id + "/settle")
+        return transaction
