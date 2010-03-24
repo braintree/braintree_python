@@ -540,20 +540,20 @@ class TestTransaction(unittest.TestCase):
         )
 
     def test_search_returns_some_results(self):
-        collection = Transaction.search('411111')
+        collection = Transaction.search("411111")
 
         self.assertEquals(1, collection.current_page_number)
         self.assertTrue(collection.page_size > 0)
         self.assertTrue(collection.total_items > 0)
-        self.assertEquals('411111', collection[0].credit_card_details.bin)
+        self.assertEquals("411111", collection[0].credit_card_details.bin)
 
     def test_search_can_traverse_pages(self):
-        first_page = Transaction.search('411111')
+        first_page = Transaction.search("411111")
         self.assertEquals(1, first_page.current_page_number)
 
         next_page = first_page.next_page()
         self.assertEquals(2, next_page.current_page_number)
-        self.assertEquals('411111', next_page[0].credit_card_details.bin)
+        self.assertEquals("411111", next_page[0].credit_card_details.bin)
 
         self.assertNotEquals(first_page[0].id, next_page[0].id)
 

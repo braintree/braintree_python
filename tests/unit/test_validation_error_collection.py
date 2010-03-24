@@ -75,5 +75,5 @@ class TestValidationErrorCollection(unittest.TestCase):
         }
         validation_error_collection = ValidationErrorCollection(hash)
         self.assertEquals(1, len(validation_error_collection))
-        self.assertEquals(1, len(validation_error_collection.for_object('nested')))
-        self.assertEquals(2, len(validation_error_collection.for_object('nested').for_object('nested_again')))
+        self.assertEquals(1, len(validation_error_collection.for_object("nested")))
+        self.assertEquals(2, len(validation_error_collection.for_object("nested").for_object("nested_again")))

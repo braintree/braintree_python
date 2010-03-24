@@ -27,7 +27,7 @@ class TestHelper(object):
         conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
         response = conn.getresponse()
-        query_string = response.getheader('location').split("?", 1)[1]
+        query_string = response.getheader("location").split("?", 1)[1]
         conn.close()
         return query_string
 

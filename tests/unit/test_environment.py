@@ -2,7 +2,7 @@ from tests.test_helper import *
 
 class TestEnvironment(unittest.TestCase):
     def test_server_and_port_for_development(self):
-        port = os.getenv("GATEWAY_PORT") or '3000'
+        port = os.getenv("GATEWAY_PORT") or "3000"
         self.assertEquals("localhost:" + port, Environment.DEVELOPMENT.server_and_port)
 
     def test_server_and_port_for_sandbox(self):
@@ -21,7 +21,7 @@ class TestEnvironment(unittest.TestCase):
         self.assertEquals("www.braintreegateway.com", Environment.PRODUCTION.server)
 
     def test_port_for_development(self):
-        port = os.getenv("GATEWAY_PORT") or '3000'
+        port = os.getenv("GATEWAY_PORT") or "3000"
         port = int(port)
         self.assertEquals(port, Environment.DEVELOPMENT.port)
 
