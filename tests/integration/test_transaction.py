@@ -494,6 +494,51 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
 
+    def test_submit_for_settlement_without_amount(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals(Decimal("1000.00"), submitted_transaction.amount)
+
+    def test_submit_for_settlement_with_amount(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900")).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals(Decimal("900.00"), submitted_transaction.amount)
+
+    def test_submit_for_settlement_with_validation_error(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        result = Transaction.submit_for_settlement(transaction.id, Decimal("1200"))
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(
+            ErrorCodes.Transaction.SettlementAmountIsTooLarge,
+            result.errors.for_object("transaction").on("amount")[0].code
+        )
+
     def test_search_returns_some_results(self):
         collection = Transaction.search('411111')
 

@@ -52,6 +52,15 @@ class Transaction(Resource):
         return PagedCollection(query, response["credit_card_transactions"], Transaction, "transaction")
 
     @staticmethod
+    def submit_for_settlement(transaction_id, amount=None):
+        response = Http().put("/transactions/" + transaction_id + "/submit_for_settlement",
+                {"transaction": {"amount": amount}})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
         if "transaction" not in tr_data:
             tr_data["transaction"] = {}
