@@ -142,7 +142,7 @@ class Transaction(Resource):
                     "store_shipping_address_in_vault"
                 ]
             },
-            {"custom_fields": ["_any_key_"]}
+            {"custom_fields": ["__any_key__"]}
         ]
 
     @staticmethod

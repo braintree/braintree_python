@@ -122,6 +122,42 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("60103", transaction.shipping_details.postal_code)
         self.assertEquals("United States of America", transaction.shipping_details.country_name)
 
+    def test_sale_with_custom_fields(self):
+        result = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "custom_fields": {
+                "store_me": "some extra stuff"
+            }
+
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("some extra stuff", transaction.custom_fields["store_me"])
+
+    def test_validation_error_on_invalid_custom_fields(self):
+        result = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "custom_fields": {
+                "invalid_key": "some extra stuff"
+            }
+
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CustomFieldIsInvalid,
+            result.errors.for_object("transaction").on("custom_fields")[0].code
+        )
+
     def test_create_can_stuff_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({
             "amount": "100",
