@@ -11,7 +11,7 @@ class TestCreditCard(unittest.TestCase):
                 }],
             "page_size": 15
         }
-        collection = PagedCollection(collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
         self.assertEquals(2, collection.total_items)
         self.assertEquals(3, collection.current_page_number)
         self.assertEquals(15, collection.page_size)
@@ -26,7 +26,7 @@ class TestCreditCard(unittest.TestCase):
                 }],
             "page_size": 15
         }
-        collection = PagedCollection(collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
         self.assertEquals("m_id", collection[0].merchant_account_id)
         self.assertEquals(Decimal("91.23"), collection[0].amount)
 
@@ -43,6 +43,6 @@ class TestCreditCard(unittest.TestCase):
                 }],
             "page_size": 15
         }
-        collection = PagedCollection(collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
         self.assertEquals(Decimal("91.23"), collection[0].amount)
         self.assertEquals(Decimal("12.34"), collection[1].amount)

@@ -46,10 +46,10 @@ class Transaction(Resource):
         return Transaction.create(params)
 
     @staticmethod
-    def search(query):
-        query_string = urllib.urlencode([("q", query)])
+    def search(query, page=1):
+        query_string = urllib.urlencode([("q", query), ("page", page)])
         response = Http().get("/transactions/all/search?" + query_string)
-        return PagedCollection(response["credit_card_transactions"], Transaction, "transaction")
+        return PagedCollection(query, response["credit_card_transactions"], Transaction, "transaction")
 
     @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
