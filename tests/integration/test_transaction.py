@@ -493,3 +493,11 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
+
+    def test_search_returns_some_results(self):
+        collection = Transaction.search('411111')
+
+        self.assertEquals(1, collection.current_page_number)
+        self.assertTrue(collection.page_size > 0)
+        self.assertTrue(collection.total_items > 0)
+        self.assertEquals('411111', collection[0].credit_card_details.bin)

@@ -6,6 +6,7 @@ from error_codes import ErrorCodes
 from error_result import ErrorResult
 from errors import Errors
 from environment import Environment
+from paged_collection import PagedCollection
 from subscription import Subscription
 from transaction import Transaction
 from successful_result import SuccessfulResult

@@ -1,3 +1,4 @@
+import urllib
 from decimal import Decimal
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
@@ -7,6 +8,7 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.paged_collection import PagedCollection
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 
@@ -42,6 +44,12 @@ class Transaction(Resource):
     def sale(params={}):
         params["type"] = Transaction.Type.Sale
         return Transaction.create(params)
+
+    @staticmethod
+    def search(query):
+        query_string = urllib.urlencode([("q", query)])
+        response = Http().get("/transactions/all/search?" + query_string)
+        return PagedCollection(response["credit_card_transactions"], Transaction, "transaction")
 
     @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
