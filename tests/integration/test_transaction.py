@@ -511,3 +511,10 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals('411111', next_page[0].credit_card_details.bin)
 
         self.assertNotEquals(first_page[0].id, next_page[0].id)
+
+    def test_search_on_last_page(self):
+        last_page_number = Transaction.search("411111").total_pages
+
+        collection = Transaction.search("411111", last_page_number)
+        self.assertTrue(collection.is_last_page)
+        self.assertEquals(None, collection.next_page())
