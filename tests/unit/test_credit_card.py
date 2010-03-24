@@ -30,14 +30,16 @@ class TestCreditCard(unittest.TestCase):
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
     def test_transparent_redirect_create_url(self):
+        port = os.getenv("GATEWAY_PORT") or "3000"
         self.assertEquals(
-            "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/create_via_transparent_redirect_request",
+            "http://localhost:" + port + "/merchants/integration_merchant_id/payment_methods/all/create_via_transparent_redirect_request",
             CreditCard.transparent_redirect_create_url()
         )
 
     def test_transparent_redirect_update_url(self):
+        port = os.getenv("GATEWAY_PORT") or "3000"
         self.assertEquals(
-            "http://localhost:3000/merchants/integration_merchant_id/payment_methods/all/update_via_transparent_redirect_request",
+            "http://localhost:" + port + "/merchants/integration_merchant_id/payment_methods/all/update_via_transparent_redirect_request",
             CreditCard.transparent_redirect_update_url()
         )
 
