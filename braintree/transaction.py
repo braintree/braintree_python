@@ -18,9 +18,17 @@ class Transaction(Resource):
         Credit = "credit"
 
     class Status(object):
-        Authorized = "authorized"
+        Authorized             = "authorized"
+        Authorizing            = "authorizing"
+        Failed                 = "failed"
+        GatewayRejected        = "gateway_rejected"
+        ProcessorDeclined      = "processor_declined"
+        Settled                = "settled"
+        SettlementFailed       = "settlement_failed"
         SubmittedForSettlement = "submitted_for_settlement"
-        Voided = "voided"
+        Unknown                = "unknown"
+        Unrecognized           = "unrecognized"
+        Voided                 = "voided"
 
     @staticmethod
     def confirm_transparent_redirect(query_string):

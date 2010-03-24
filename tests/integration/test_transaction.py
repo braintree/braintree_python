@@ -563,3 +563,21 @@ class TestTransaction(unittest.TestCase):
         collection = Transaction.search("411111", last_page_number)
         self.assertTrue(collection.is_last_page)
         self.assertEquals(None, collection.next_page())
+
+    def test_search_with_no_results(self):
+        collection = Transaction.search("no_such_transactions_exists")
+        self.assertEquals(0, collection.total_items)
+        self.assertEquals(0, collection.current_page_size)
+        self.assertEquals(1, collection.current_page_number)
+
+    def test_all_statuses(self):
+        self.assertEquals(Transaction.Status.Authorizing,            Transaction.search("authorizing")[0].status)
+        self.assertEquals(Transaction.Status.Authorized,             Transaction.search("authorized")[0].status)
+        self.assertEquals(Transaction.Status.GatewayRejected,        Transaction.search("gateway_rejected")[0].status)
+        self.assertEquals(Transaction.Status.Failed,                 Transaction.search("failed")[0].status)
+        self.assertEquals(Transaction.Status.ProcessorDeclined,      Transaction.search("processor_declined")[0].status)
+        self.assertEquals(Transaction.Status.Settled,                Transaction.search("settled")[0].status)
+        self.assertEquals(Transaction.Status.SettlementFailed,       Transaction.search("settlement_failed")[0].status)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, Transaction.search("submitted_for_settlement")[0].status)
+        self.assertEquals(Transaction.Status.Unknown,                Transaction.search("unknown")[0].status)
+        self.assertEquals(Transaction.Status.Voided,                 Transaction.search("voided")[0].status)

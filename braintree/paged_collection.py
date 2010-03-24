@@ -3,7 +3,7 @@
 class PagedCollection(object):
     def __init__(self, query, collection, klass, klass_name):
         self.current_page_number = collection["current_page_number"]
-        self.items = [klass(item) for item in collection[klass_name]]
+        self.items = [klass(item) for item in self.__extract_as_array(collection, klass_name)]
         self.klass = klass
         self.page_size = collection["page_size"]
         self.query = query
@@ -23,7 +23,7 @@ class PagedCollection(object):
 
     @property
     def is_last_page(self):
-        return self.current_page_number == self.total_pages
+        return self.total_items == 0 or self.current_page_number == self.total_pages
 
     @property
     def total_pages(self):
@@ -31,6 +31,15 @@ class PagedCollection(object):
         if self.total_items % self.page_size != 0:
             total_pages += 1
         return total_pages
+
+    def __extract_as_array(self, collection, attribute):
+        if not attribute in collection:
+            return []
+
+        value = collection[attribute]
+        if type(value) != list:
+            value = [value]
+        return value
 
     def __getitem__(self, index):
         return self.items[index]
