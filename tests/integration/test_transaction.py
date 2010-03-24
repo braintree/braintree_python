@@ -284,6 +284,21 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, result.transaction.status)
 
+    def test_create_does_not_submit_for_settlement_if_submit_for_settlement_is_false(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2012"
+            },
+            "options": {
+                "submit_for_settlement": False
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Status.Authorized, result.transaction.status)
+
     def test_create_can_specify_the_customer_id_and_payment_method_token(self):
         customer_id = "customer_" + str(random.randint(1, 1000000))
         payment_method_token = "credit_card_" + str(random.randint(1, 1000000))
