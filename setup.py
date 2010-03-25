@@ -8,5 +8,6 @@ setup(
     url="http://www.braintreepaymentsolutions.com/gateway/python",
     packages=["braintree", "braintree.exceptions", "braintree.util"],
     package_data={"braintree": ["ssl/*"]},
-    requires=["M2Crypto"]
+    install_requires=["M2Crypto==0.20.2"],
+    tests_require=["M2Crypto==0.20.2", "nose==0.11.3"]
 )
