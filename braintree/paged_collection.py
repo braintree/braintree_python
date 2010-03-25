@@ -1,5 +1,3 @@
-#import braintree.transaction
-
 class PagedCollection(object):
     def __init__(self, query, collection, klass, klass_name):
         self.current_page_number = collection["current_page_number"]
