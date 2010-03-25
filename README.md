@@ -11,7 +11,7 @@ The Braintree library provides integration access to the Braintree Gateway.
     import braintree
 
     braintree.Configuration.configure(
-        braintree.Environment.SANDBOX,
+        braintree.Environment.Sandbox,
         "the_merchant_id",
         "the_public_key",
         "the_private_key"

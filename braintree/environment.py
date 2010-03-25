@@ -1,4 +1,5 @@
 import os
+import inspect
 
 class Environment(object):
     def __init__(self, server, port, is_ssl, ssl_certificate):
@@ -23,6 +24,10 @@ class Environment(object):
     def server_and_port(self):
         return self.__server + ":" + self.__port
 
+    @staticmethod
+    def braintree_root():
+        return os.path.dirname(inspect.getfile(Environment))
+
 Environment.Development = Environment("localhost", os.getenv("GATEWAY_PORT") or "3000", False, None)
-Environment.Sandbox = Environment("sandbox.braintreegateway.com", "443", True, "braintree/ssl/valicert_ca.crt")
-Environment.Production = Environment("www.braintreegateway.com", "443", True, "braintree/ssl/securetrust_ca.crt")
+Environment.Sandbox = Environment("sandbox.braintreegateway.com", "443", True, Environment.braintree_root() + "/ssl/valicert_ca.crt")
+Environment.Production = Environment("www.braintreegateway.com", "443", True, Environment.braintree_root() + "/ssl/securetrust_ca.crt")
