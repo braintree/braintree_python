@@ -29,6 +29,7 @@ class Subscription(Resource):
     def create_signature():
         return [
             "id",
+            "merchant_account_id",
             "payment_method_token",
             "plan_id",
             "price",
@@ -66,6 +67,7 @@ class Subscription(Resource):
     def update_signature():
         return [
             "id",
+            "merchant_account_id",
             "plan_id",
             "price"
         ]
