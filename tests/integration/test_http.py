@@ -4,20 +4,20 @@ class TestHttp(unittest.TestCase):
 
     def test_successful_connection_sandbox(self):
         try:
-            http = Http(Environment.SANDBOX)
+            http = Http(Environment.Sandbox)
             http.get("/")
         except AuthenticationError:
             pass
 
     def test_successful_connection_to_production(self):
         try:
-            http = Http(Environment.PRODUCTION)
+            http = Http(Environment.Production)
             http.get("/")
         except AuthenticationError:
             pass
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert(self):
-        environment = Environment(Environment.SANDBOX.server, "443", True, Environment.PRODUCTION.ssl_certificate)
+        environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
         try:
             http = Http(environment)
             http.get("/")
@@ -27,7 +27,7 @@ class TestHttp(unittest.TestCase):
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         try:
-            environment = Environment("braintreegateway.com", "443", True, Environment.PRODUCTION.ssl_certificate)
+            environment = Environment("braintreegateway.com", "443", True, Environment.Production.ssl_certificate)
             http = Http(environment)
             http.get("/")
             self.assertTrue(False)
@@ -37,7 +37,7 @@ class TestHttp(unittest.TestCase):
     def test_unsafe_ssl_connection(self):
         try:
             Configuration.use_unsafe_ssl = True;
-            environment = Environment(Environment.SANDBOX.server, "443", True, Environment.PRODUCTION.ssl_certificate)
+            environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
             http = Http(environment)
             http.get("/")
         except AuthenticationError:

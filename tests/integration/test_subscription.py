@@ -18,7 +18,7 @@ class TestSubscription(unittest.TestCase):
             "price": Decimal("43.21"),
             "trial_period": True,
             "trial_duration": 2,
-            "trial_duration_unit": Subscription.TrialDurationUnit.DAY
+            "trial_duration_unit": Subscription.TrialDurationUnit.Day
         }
 
         self.trialless_plan = {
@@ -46,7 +46,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
         subscription = result.subscription
         self.assertNotEquals(None, re.search("\A\w{6}\Z", subscription.id))
-        self.assertEquals(Subscription.Status.ACTIVE, subscription.status)
+        self.assertEquals(Subscription.Status.Active, subscription.status)
         self.assertEquals("integration_trialless_plan", subscription.plan_id)
         self.assertEquals(self.default_merchant_account_id, subscription.merchant_account_id)
 
@@ -104,12 +104,12 @@ class TestSubscription(unittest.TestCase):
             "payment_method_token": self.credit_card.token,
             "plan_id": self.trial_plan["id"],
             "trial_duration": 5,
-            "trial_duration_unit": Subscription.TrialDurationUnit.MONTH
+            "trial_duration_unit": Subscription.TrialDurationUnit.Month
         }).subscription
 
         self.assertEquals(True, subscription.trial_period)
         self.assertEquals(5, subscription.trial_duration)
-        self.assertEquals(Subscription.TrialDurationUnit.MONTH, subscription.trial_duration_unit)
+        self.assertEquals(Subscription.TrialDurationUnit.Month, subscription.trial_duration_unit)
 
     def test_create_and_override_trial_period(self):
         subscription = Subscription.create({

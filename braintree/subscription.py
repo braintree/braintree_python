@@ -8,13 +8,13 @@ from braintree.resource import Resource
 
 class Subscription(Resource):
     class TrialDurationUnit(object):
-        DAY = "day"
-        MONTH = "month"
+        Day = "day"
+        Month = "month"
 
     class Status(object):
-        ACTIVE = "Active"
-        CANCELED = "Canceled"
-        PAST_DUE = "Past Due"
+        Active = "Active"
+        Canceled = "Canceled"
+        PastDue = "Past Due"
 
     @staticmethod
     def create(params={}):

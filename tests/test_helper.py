@@ -14,7 +14,7 @@ from M2Crypto import SSL
 from nose.tools import raises
 
 Configuration.configure(
-    Environment.DEVELOPMENT,
+    Environment.Development,
     "integration_merchant_id",
     "integration_public_key",
     "integration_private_key"
