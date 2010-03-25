@@ -66,7 +66,7 @@ class Transaction(Resource):
     def search(query, page=1):
         query_string = urllib.urlencode([("q", query), ("page", page)])
         response = Http().get("/transactions/all/search?" + query_string)
-        return PagedCollection(query, response["credit_card_transactions"], Transaction, "transaction")
+        return PagedCollection(query, response["credit_card_transactions"], Transaction)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):

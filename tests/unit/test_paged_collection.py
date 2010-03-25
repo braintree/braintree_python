@@ -11,7 +11,7 @@ class TestCreditCard(unittest.TestCase):
                 }],
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
         self.assertEquals(2, collection.total_items)
         self.assertEquals(3, collection.current_page_number)
         self.assertEquals(15, collection.page_size)
@@ -29,7 +29,7 @@ class TestCreditCard(unittest.TestCase):
                 }],
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
         self.assertEquals(Decimal("91.23"), collection[0].amount)
         self.assertEquals(Decimal("12.34"), collection[1].amount)
 
@@ -43,7 +43,7 @@ class TestCreditCard(unittest.TestCase):
                 },
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
         self.assertEquals(Decimal("91.23"), collection[0].amount)
 
     def test_no_items_in_paged_colleciton(self):
@@ -52,7 +52,7 @@ class TestCreditCard(unittest.TestCase):
             "current_page_number": 1,
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
         self.assertEquals(0, collection.total_items)
         self.assertEquals(0, collection.current_page_size)
         self.assertEquals(1, collection.current_page_number)
@@ -65,7 +65,7 @@ class TestCreditCard(unittest.TestCase):
             "current_page_number": 3,
             "transaction": []
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
 
         self.assertEquals(3, collection.total_pages)
 
@@ -76,7 +76,7 @@ class TestCreditCard(unittest.TestCase):
             "current_page_number": 3,
             "transaction": []
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
 
         self.assertEquals(4, collection.total_pages)
 
@@ -87,7 +87,7 @@ class TestCreditCard(unittest.TestCase):
             "current_page_number": 2,
             "transaction": []
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
 
         self.assertEquals(10, collection.current_page_size)
 
@@ -98,7 +98,7 @@ class TestCreditCard(unittest.TestCase):
             "current_page_number": 4,
             "transaction": []
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
 
         self.assertTrue(collection.is_last_page)
 
@@ -109,6 +109,6 @@ class TestCreditCard(unittest.TestCase):
             "current_page_number": 2,
             "transaction": []
         }
-        collection = PagedCollection("some_query", collection_data, Transaction, "transaction")
+        collection = PagedCollection("some_query", collection_data, Transaction)
 
         self.assertFalse(collection.is_last_page)

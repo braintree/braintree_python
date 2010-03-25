@@ -1,7 +1,7 @@
 class PagedCollection(object):
-    def __init__(self, query, collection, klass, klass_name):
+    def __init__(self, query, collection, klass):
         self.current_page_number = collection["current_page_number"]
-        self.items = [klass(item) for item in self.__extract_as_array(collection, klass_name)]
+        self.items = [klass(item) for item in self.__extract_as_array(collection, klass.__name__.lower())]
         self.klass = klass
         self.page_size = collection["page_size"]
         self.query = query
