@@ -9,4 +9,3 @@ class XmlUtil(object):
     @staticmethod
     def dict_from_xml(xml):
         return Parser(xml).parse()
-

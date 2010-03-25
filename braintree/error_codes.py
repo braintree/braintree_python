@@ -58,14 +58,15 @@ class ErrorCodes(object):
 
     class Subscription(object):
         CannotEditCanceledSubscription = "81901"
-        IdIsInUse =  "81902"
+        IdIsInUse = "81902"
+        MerchantAccountIdIsInvalid = "91901"
         PriceCannotBeBlank = "81903"
         PriceFormatIsInvalid = "81904"
         StatusIsCanceled = "81905"
         TokenFormatIsInvalid = "81906"
-        TrialDurationFormatIsInvalid =  "81907"
+        TrialDurationFormatIsInvalid = "81907"
         TrialDurationIsRequired = "81908"
-        TrialDurationUnitIsInvalid =  "81909"
+        TrialDurationUnitIsInvalid = "81909"
 
     class Transaction(object):
         AmountCannotBeNegative = "81501"

@@ -7,4 +7,3 @@ Project.configure do |project|
     project.triggered_by :gateway_master
   end
 end
-

@@ -46,4 +46,3 @@ class TransparentRedirect:
             else:
                 data[full_key] = val
         return data
-

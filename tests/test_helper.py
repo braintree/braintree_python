@@ -37,4 +37,3 @@ class TestHelper(object):
             "Accept": "application/xml",
             "Content-type": "application/x-www-form-urlencoded",
         }
-

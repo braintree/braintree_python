@@ -46,4 +46,3 @@ class Generator(object):
             return open_tag + close_tag
         else:
             raise RuntimeError("Unexpected XML node type: " + str(type(value)))
-

@@ -51,4 +51,3 @@ class ValidationErrorCollection(object):
 
     def __len__(self):
         return self.size
-
