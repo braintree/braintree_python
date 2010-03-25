@@ -1,0 +1,2 @@
+class DownForMaintenanceError(Exception):
+    pass
