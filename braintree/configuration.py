@@ -1,6 +1,3 @@
-import os
-from braintree.environment import Environment
-
 class Configuration(object):
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key):

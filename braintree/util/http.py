@@ -1,6 +1,5 @@
 import httplib
 import base64
-import string
 from braintree.configuration import Configuration
 from braintree.util.xml_util import XmlUtil
 from braintree.exceptions.authentication_error import AuthenticationError
