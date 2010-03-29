@@ -42,6 +42,7 @@ Resources
    address
    credit_card
    customer
+   transaction
 
 Validations
 -----------
