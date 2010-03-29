@@ -133,6 +133,7 @@ class CreditCard(Resource):
         """
         Builds tr_data for CreditCard creation.
         """
+
         Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 

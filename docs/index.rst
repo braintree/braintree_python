@@ -15,6 +15,7 @@ Resources:
    configuration
    credit_card
    customer
+   transaction
 
 Exceptions:
 
