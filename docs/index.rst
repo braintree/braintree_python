@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    address
+   configuration
 
 Indices and tables
 ==================
