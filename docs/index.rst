@@ -42,6 +42,7 @@ Resources
    address
    credit_card
    customer
+   paged_collection
    transaction
 
 Validations
