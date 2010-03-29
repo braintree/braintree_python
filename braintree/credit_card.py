@@ -47,6 +47,7 @@ class CreditCard(Resource):
 
             result = braintree.CreditCard.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
+
         id = TransparentRedirect.parse_and_validate_query_string(query_string)
         return CreditCard.__post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
@@ -67,12 +68,13 @@ class CreditCard(Resource):
     @staticmethod
     def update(credit_card_token, params={}):
         """
-        Update an existing CreditCard. A credit_card_id is required::
+        Update an existing CreditCard by credit_card_id.  The params are similar to create::
 
             result = braintree.CreditCard.update("my_credit_card_id", {
                 "cardholder_name": "John Doe"
             })
         """
+
         Resource.verify_keys(params, CreditCard.update_signature())
         response = Http().put("/payment_methods/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
@@ -87,14 +89,15 @@ class CreditCard(Resource):
 
             result = braintree.CreditCard.delete("my_credit_card_id")
         """
+
         Http().delete("/payment_methods/" + credit_card_token)
         return SuccessfulResult()
 
     @staticmethod
     def find(credit_card_token):
         """
-        Find an address, given a credit_card_id. This does not return
-        a result object. This will raise a NotFoundError if the provided
+        Find a credit card, given a credit_card_id. This does not return
+        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided
         credit_card_id is not found. ::
 
             credit_card = braintree.CreditCard.find("my_credit_card_id")
@@ -121,7 +124,7 @@ class CreditCard(Resource):
     @staticmethod
     def transparent_redirect_create_url():
         """
-        Returns the url to be used for creating CreditCards through transparent redirect.
+        Returns the url to use for creating CreditCards through transparent redirect.
         """
         return Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
 

@@ -68,7 +68,7 @@ class Address(Resource):
     def find(customer_id, address_id):
         """
         Find an address, given a customer_id and address_id. This does not return
-        a result object. This will raise a NotFoundError if the provided
+        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided
         customer_id/address_id are not found. ::
 
             address = braintree.Address.find("my_customer_id", "my_address_id")

@@ -14,6 +14,8 @@ Contents:
    address
    configuration
    credit_card
+   customer
+   not_found_error
 
 Indices and tables
 ==================
