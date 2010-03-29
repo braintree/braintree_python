@@ -6,7 +6,8 @@ from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 
 class Address(Resource):
-    """A class representing Braintree Address objects.
+    """
+    A class representing Braintree Address objects.
 
     An example of creating an address with all available fields::
 
@@ -26,7 +27,6 @@ class Address(Resource):
 
         print(result.customer.first_name)
         print(result.customer.last_name)
-
     """
 
     @staticmethod
@@ -40,7 +40,6 @@ class Address(Resource):
                 "first_name": "John",
                 ...
             })
-
         """
 
         Resource.verify_keys(params, Address.create_signature())
@@ -58,13 +57,22 @@ class Address(Resource):
     @staticmethod
     def delete(customer_id, address_id):
         """
-        Delete an address
+        Delete an address, given a customer_id and address_id::
+
+            result = braintree.Address.delete("my_customer_id", "my_address_id")
         """
         Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
 
     @staticmethod
     def find(customer_id, address_id):
+        """
+        Find an address, given a customer_id and address_id. This does not return
+        a result object. This will raise a NotFoundError if the provided
+        customer_id/address_id are not found. ::
+
+            address = braintree.Address.find("my_customer_id", "my_address_id")
+        """
         try:
             response = Http().get("/customers/" + customer_id + "/addresses/" + address_id)
             return Address(response["address"])
@@ -73,6 +81,13 @@ class Address(Resource):
 
     @staticmethod
     def update(customer_id, address_id, params={}):
+        """
+        Update an existing Address. A customer_id is required::
+
+            result = braintree.Address.update("my_customer_id", "my_address_id", {
+                "first_name": "John"
+            })
+        """
         Resource.verify_keys(params, Address.update_signature())
         response = Http().put(
             "/customers/" + customer_id + "/addresses/" + address_id,

@@ -26,7 +26,8 @@ sys.path.append(os.path.dirname(__file__) + '/../')
 extensions = ['sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+#templates_path = ['_templates']
+templates_path = []
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -39,7 +40,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Braintree'
-copyright = u'2010, Braintree'
+copyright = u'2010, Braintree Payment Solutions'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

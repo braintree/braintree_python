@@ -11,15 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   address
+
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-.. automodule:: braintree
-   :members:
-
-.. autoclass:: Address
-   :members:
