@@ -2,6 +2,15 @@ import os
 import inspect
 
 class Environment(object):
+    """
+    A class representing which environment the client library is using.
+    Pass in one of the following values as the first argument to
+    :class:`braintree.Configuration.configure() <braintree.configuration.Configuration>` ::
+
+        braintree.Environment.Sandbox
+        braintree.Environment.Production
+    """
+
     def __init__(self, server, port, is_ssl, ssl_certificate):
         self.__server = server
         self.__port = port

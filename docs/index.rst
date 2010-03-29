@@ -12,9 +12,16 @@ Resources:
    :maxdepth: 2
 
    address
-   configuration
    credit_card
    customer
+
+Configuration:
+
+.. toctree::
+   :maxdepth: 2
+
+   configuration
+   environment
 
 Exceptions:
 
