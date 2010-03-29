@@ -6,8 +6,43 @@ from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 
 class Address(Resource):
+    """A class representing Braintree Address objects.
+
+    An example of creating an address with all available fields::
+
+        customer = braintree.Customer.create().customer
+        result = braintree.Address.create({
+            "customer_id": customer.id,
+            "first_name": "John",
+            "last_name": "Doe",
+            "company": "Braintree",
+            "street_address": "111 First Street",
+            "extended_address": "Apartment 1",
+            "locality": "Chicago",
+            "region": "IL",
+            "postal_code": "60606",
+            "country_name": "United States of America"
+        })
+
+        print(result.customer.first_name)
+        print(result.customer.last_name)
+
+    """
+
     @staticmethod
     def create(params={}):
+        """
+        Create an Address. A customer_id is required::
+
+            customer = braintree.Customer.create().customer
+            result = braintree.Address.create({
+                "customer_id": customer.id,
+                "first_name": "John",
+                ...
+            })
+
+        """
+
         Resource.verify_keys(params, Address.create_signature())
         if not "customer_id" in params:
             raise KeyError("customer_id must be provided")
@@ -22,6 +57,9 @@ class Address(Resource):
 
     @staticmethod
     def delete(customer_id, address_id):
+        """
+        Delete an address
+        """
         Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
 
