@@ -13,6 +13,7 @@ Contents:
 
    address
    configuration
+   credit_card
 
 Indices and tables
 ==================

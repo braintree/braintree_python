@@ -82,7 +82,7 @@ class Address(Resource):
     @staticmethod
     def update(customer_id, address_id, params={}):
         """
-        Update an existing Address. A customer_id is required::
+        Update an existing Address. A customer_id and address_id are required::
 
             result = braintree.Address.update("my_customer_id", "my_address_id", {
                 "first_name": "John"
