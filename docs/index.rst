@@ -6,7 +6,7 @@
 Welcome to Braintree's documentation!
 =====================================
 
-Contents:
+Resources:
 
 .. toctree::
    :maxdepth: 2
@@ -15,6 +15,12 @@ Contents:
    configuration
    credit_card
    customer
+
+Exceptions:
+
+.. toctree::
+   :maxdepth: 2
+
    not_found_error
 
 Indices and tables
