@@ -43,6 +43,15 @@ Resources
    credit_card
    customer
 
+Validations
+-----------
+
+.. toctree::
+   :maxdepth: 2
+
+   error_codes
+   error_result
+
 Configuration
 -------------
 
