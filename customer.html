@@ -129,7 +129,7 @@ redirect request.  The query string should _not_ include the leading &#8220;?&#8
 <dt id="braintree.customer.Customer.find">
 <em class="property">static </em><tt class="descname">find</tt><big>(</big><em>customer_id</em><big>)</big><a class="headerlink" href="#braintree.customer.Customer.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find an customer, given a customer_id.  This does not return a result
-object.  This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided customer_id
+object.  This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="exceptions/not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided customer_id
 is not found.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">customer</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Customer</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_customer_id&quot;</span><span class="p">)</span>
 </pre></div>

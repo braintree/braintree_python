@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
-    <link rel="next" title="Transaction" href="transaction.html" />
+    <link rel="next" title="Subscription" href="subscription.html" />
     <link rel="prev" title="Customer" href="customer.html" /> 
   </head>
   <body>
@@ -34,7 +34,7 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="transaction.html" title="Transaction"
+          <a href="subscription.html" title="Subscription"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="customer.html" title="Customer"
@@ -50,6 +50,33 @@
             
   <div class="section" id="module-braintree.paged_collection">
 <h1>Paged Collection<a class="headerlink" href="#module-braintree.paged_collection" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="braintree.paged_collection.PagedCollection">
+<em class="property">class </em><tt class="descclassname">braintree.paged_collection.</tt><tt class="descname">PagedCollection</tt><big>(</big><em>query</em>, <em>collection</em>, <em>klass</em><big>)</big><a class="headerlink" href="#braintree.paged_collection.PagedCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing a page of search results.</p>
+<dl class="attribute">
+<dt id="braintree.paged_collection.PagedCollection.current_page_size">
+<tt class="descname">current_page_size</tt><a class="headerlink" href="#braintree.paged_collection.PagedCollection.current_page_size" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the number of items on this page.</dd></dl>
+
+<dl class="attribute">
+<dt id="braintree.paged_collection.PagedCollection.is_last_page">
+<tt class="descname">is_last_page</tt><a class="headerlink" href="#braintree.paged_collection.PagedCollection.is_last_page" title="Permalink to this definition">¶</a></dt>
+<dd>Returns whether this is the last page of results.</dd></dl>
+
+<dl class="method">
+<dt id="braintree.paged_collection.PagedCollection.next_page">
+<tt class="descname">next_page</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.paged_collection.PagedCollection.next_page" title="Permalink to this definition">¶</a></dt>
+<dd>Returns another <a title="braintree.paged_collection.PagedCollection" class="reference internal" href="#braintree.paged_collection.PagedCollection"><tt class="xref docutils literal"><span class="pre">PagedCollection</span></tt></a> representing the
+next page of results or None if this is the last page.</dd></dl>
+
+<dl class="attribute">
+<dt id="braintree.paged_collection.PagedCollection.total_pages">
+<tt class="descname">total_pages</tt><a class="headerlink" href="#braintree.paged_collection.PagedCollection.total_pages" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the total number of pages of search results.</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -62,8 +89,8 @@
             <p class="topless"><a href="customer.html"
                                   title="previous chapter">Customer</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="transaction.html"
-                                  title="next chapter">Transaction</a></p>
+            <p class="topless"><a href="subscription.html"
+                                  title="next chapter">Subscription</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/paged_collection.txt"
@@ -96,7 +123,7 @@
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="transaction.html" title="Transaction"
+          <a href="subscription.html" title="Subscription"
              >next</a> |</li>
         <li class="right" >
           <a href="customer.html" title="Customer"

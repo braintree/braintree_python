@@ -116,7 +116,7 @@ redirect request. The query string should _not_ include the leading &#8220;?&#82
 <dt id="braintree.credit_card.CreditCard.find">
 <em class="property">static </em><tt class="descname">find</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find a credit card, given a credit_card_id. This does not return
-a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
+a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="exceptions/not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
 credit_card_id is not found.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">credit_card</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_credit_card_id&quot;</span><span class="p">)</span>
 </pre></div>

@@ -21,7 +21,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
     <link rel="next" title="Error Codes" href="error_codes.html" />
-    <link rel="prev" title="Paged Collection" href="paged_collection.html" /> 
+    <link rel="prev" title="Subscription" href="subscription.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +37,7 @@
           <a href="error_codes.html" title="Error Codes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paged_collection.html" title="Paged Collection"
+          <a href="subscription.html" title="Subscription"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
       </ul>
@@ -198,7 +198,7 @@ customer_id or payment_method_token is required.</p>
 <dt id="braintree.transaction.Transaction.find">
 <em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">find</tt><big>(</big><em>transaction_id</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find a transaction, given a transaction_id. This does not return
-a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
+a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="exceptions/not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
 credit_card_id is not found.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">transaction</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_transaction_id&quot;</span><span class="p">)</span>
 </pre></div>
@@ -245,7 +245,7 @@ customer_id or payment_method_token is required.</p>
 <em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">search</tt><big>(</big><em>query</em>, <em>page=1</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search for transactions based on keywords. For example, you can search for
 transactions based on the credit card bin. The search will return a
-<tt class="xref docutils literal"><span class="pre">PagedCollection</span></tt>:</p>
+<a title="braintree.paged_collection.PagedCollection" class="reference external" href="paged_collection.html#braintree.paged_collection.PagedCollection"><tt class="xref docutils literal"><span class="pre">PagedCollection</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">collection</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;411111&quot;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">transaction</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
@@ -318,8 +318,8 @@ transactions based on the credit card bin. The search will return a
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="paged_collection.html"
-                                  title="previous chapter">Paged Collection</a></p>
+            <p class="topless"><a href="subscription.html"
+                                  title="previous chapter">Subscription</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="error_codes.html"
                                   title="next chapter">Error Codes</a></p>
@@ -358,7 +358,7 @@ transactions based on the credit card bin. The search will return a
           <a href="error_codes.html" title="Error Codes"
              >next</a> |</li>
         <li class="right" >
-          <a href="paged_collection.html" title="Paged Collection"
+          <a href="subscription.html" title="Subscription"
              >previous</a> |</li>
         <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
       </ul>

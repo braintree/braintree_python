@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Environment &mdash; Braintree v1.0.0 documentation</title>
+    <title>Successful Result &mdash; Braintree v1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,8 +20,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
-    <link rel="next" title="Authentication Error" href="exceptions/authentication_error.html" />
-    <link rel="prev" title="Configuration" href="configuration.html" /> 
+    <link rel="next" title="Validation Error Collection" href="validation_error_collection.html" />
+    <link rel="prev" title="Error Result" href="error_result.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,10 +34,10 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="exceptions/authentication_error.html" title="Authentication Error"
+          <a href="validation_error_collection.html" title="Validation Error Collection"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="configuration.html" title="Configuration"
+          <a href="error_result.html" title="Error Result"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
       </ul>
@@ -48,18 +48,23 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-braintree.environment">
-<h1>Environment<a class="headerlink" href="#module-braintree.environment" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-braintree.successful_result">
+<h1>Successful Result<a class="headerlink" href="#module-braintree.successful_result" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="braintree.environment.Environment">
-<em class="property">class </em><tt class="descclassname">braintree.environment.</tt><tt class="descname">Environment</tt><big>(</big><em>server</em>, <em>port</em>, <em>is_ssl</em>, <em>ssl_certificate</em><big>)</big><a class="headerlink" href="#braintree.environment.Environment" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class representing which environment the client library is using.
-Pass in one of the following values as the first argument to
-<a title="braintree.configuration.Configuration" class="reference external" href="configuration.html#braintree.configuration.Configuration"><tt class="xref docutils literal"><span class="pre">braintree.Configuration.configure()</span></tt></a></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">braintree</span><span class="o">.</span><span class="n">Environment</span><span class="o">.</span><span class="n">Sandbox</span>
-<span class="n">braintree</span><span class="o">.</span><span class="n">Environment</span><span class="o">.</span><span class="n">Production</span>
-</pre></div>
+<dt id="braintree.successful_result.SuccessfulResult">
+<em class="property">class </em><tt class="descclassname">braintree.successful_result.</tt><tt class="descname">SuccessfulResult</tt><big>(</big><em>attributes={}</em><big>)</big><a class="headerlink" href="#braintree.successful_result.SuccessfulResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of this class is returned from most operations when the request is successful.  Call the name of the resource (eg, customer, credit_card, etc) to get the object:</p>
+<div class="highlight-python"><pre>result = Transaction.sale({..})
+if result.is_success:
+    transaction = result.transaction
+else:
+    print [error.code for error in result.errors.all]</pre>
 </div>
+<dl class="attribute">
+<dt id="braintree.successful_result.SuccessfulResult.is_success">
+<tt class="descname">is_success</tt><a class="headerlink" href="#braintree.successful_result.SuccessfulResult.is_success" title="Permalink to this definition">¶</a></dt>
+<dd>Returns whether the result from the gateway is a successful response.</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -71,14 +76,14 @@ Pass in one of the following values as the first argument to
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="configuration.html"
-                                  title="previous chapter">Configuration</a></p>
+            <p class="topless"><a href="error_result.html"
+                                  title="previous chapter">Error Result</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="exceptions/authentication_error.html"
-                                  title="next chapter">Authentication Error</a></p>
+            <p class="topless"><a href="validation_error_collection.html"
+                                  title="next chapter">Validation Error Collection</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/environment.txt"
+              <li><a href="_sources/successful_result.txt"
                      rel="nofollow">Show Source</a></li>
             </ul>
           <div id="searchbox" style="display: none">
@@ -108,10 +113,10 @@ Pass in one of the following values as the first argument to
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="exceptions/authentication_error.html" title="Authentication Error"
+          <a href="validation_error_collection.html" title="Validation Error Collection"
              >next</a> |</li>
         <li class="right" >
-          <a href="configuration.html" title="Configuration"
+          <a href="error_result.html" title="Error Result"
              >previous</a> |</li>
         <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
       </ul>

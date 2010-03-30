@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Subscription &mdash; Braintree v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '1.0.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Transaction" href="transaction.html" />
+    <link rel="prev" title="Paged Collection" href="paged_collection.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="transaction.html" title="Transaction"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="paged_collection.html" title="Paged Collection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-braintree.subscription">
+<h1>Subscription<a class="headerlink" href="#module-braintree.subscription" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="braintree.subscription.Subscription">
+<em class="property">class </em><tt class="descclassname">braintree.subscription.</tt><tt class="descname">Subscription</tt><big>(</big><em>attributes</em><big>)</big><a class="headerlink" href="#braintree.subscription.Subscription" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing a Subscription.</p>
+<p>An example of creating a subscription with all available fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Subscription</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;my_subscription_id&quot;</span><span class="p">,</span>
+    <span class="s">&quot;merchant_account_id&quot;</span><span class="p">:</span> <span class="s">&quot;merchant_account_one&quot;</span><span class="p">,</span>
+    <span class="s">&quot;payment_method_token&quot;</span><span class="p">:</span> <span class="s">&quot;my_payment_token&quot;</span><span class="p">,</span>
+    <span class="s">&quot;plan_id&quot;</span><span class="p">:</span> <span class="s">&quot;some_plan_id&quot;</span><span class="p">,</span>
+    <span class="s">&quot;price&quot;</span><span class="p">:</span> <span class="s">&quot;29.95&quot;</span><span class="p">,</span>
+    <span class="s">&quot;trial_duration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">&quot;trial_duration_unit&quot;</span><span class="p">:</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Subscription</span><span class="o">.</span><span class="n">TrialDurationUnit</span><span class="o">.</span><span class="n">Month</span><span class="p">,</span>
+    <span class="s">&quot;trial_period&quot;</span><span class="p">:</span> <span class="bp">True</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="braintree.subscription.Subscription.Status">
+<em class="property">class </em><tt class="descname">Status</tt><a class="headerlink" href="#braintree.subscription.Subscription.Status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constants representing subscription statusues.  Available statuses are:</p>
+<ul class="simple">
+<li>braintree.Subscription.Status.Active</li>
+<li>braintree.Subscription.Status.Canceled</li>
+<li>braintree.Subscription.Status.PastDue</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="braintree.subscription.Subscription.TrialDurationUnit">
+<em class="property">class </em><tt class="descclassname">Subscription.</tt><tt class="descname">TrialDurationUnit</tt><a class="headerlink" href="#braintree.subscription.Subscription.TrialDurationUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constants representing trial duration units.  Available types are:</p>
+<ul class="simple">
+<li>braintree.Subscription.TrialDurationUnit.Day</li>
+<li>braintree.Subscription.TrialDurationUnit.Month</li>
+</ul>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.subscription.Subscription.cancel">
+<em class="property">static </em><tt class="descclassname">Subscription.</tt><tt class="descname">cancel</tt><big>(</big><em>subscription_id</em><big>)</big><a class="headerlink" href="#braintree.subscription.Subscription.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel a subscription by subscription_id::</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Subscription</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="s">&quot;my_subscription_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.subscription.Subscription.create">
+<em class="property">static </em><tt class="descclassname">Subscription.</tt><tt class="descname">create</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.subscription.Subscription.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Subscription::</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Subscription</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="s">&quot;payment_method_token&quot;</span><span class="p">:</span> <span class="s">&quot;my_payment_token&quot;</span><span class="p">,</span>
+    <span class="s">&quot;plan_id&quot;</span><span class="p">:</span> <span class="s">&quot;some_plan_id&quot;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.subscription.Subscription.find">
+<em class="property">static </em><tt class="descclassname">Subscription.</tt><tt class="descname">find</tt><big>(</big><em>subscription_id</em><big>)</big><a class="headerlink" href="#braintree.subscription.Subscription.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a subscription given a subscription_id.  This does not return a result
+object.  This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="exceptions/not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a>
+if the provided subscription_id is not found.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">subscription</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Subscription</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_subscription_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.subscription.Subscription.update">
+<em class="property">static </em><tt class="descclassname">Subscription.</tt><tt class="descname">update</tt><big>(</big><em>subscription_id</em>, <em>params={}</em><big>)</big><a class="headerlink" href="#braintree.subscription.Subscription.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update an existing subscription by subscription_id.  The params are similar to create:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Subscription</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&quot;my_subscription_id&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s">&quot;price&quot;</span><span class="p">:</span> <span class="s">&quot;9.99&quot;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="paged_collection.html"
+                                  title="previous chapter">Paged Collection</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="transaction.html"
+                                  title="next chapter">Transaction</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/subscription.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transaction.html" title="Transaction"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="paged_collection.html" title="Paged Collection"
+             >previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Braintree Payment Solutions.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>

@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
-    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="next" title="Successful Result" href="successful_result.html" />
     <link rel="prev" title="Error Codes" href="error_codes.html" /> 
   </head>
   <body>
@@ -34,7 +34,7 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="configuration.html" title="Configuration"
+          <a href="successful_result.html" title="Successful Result"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="error_codes.html" title="Error Codes"
@@ -54,11 +54,21 @@
 <dt id="braintree.error_result.ErrorResult">
 <em class="property">class </em><tt class="descclassname">braintree.error_result.</tt><tt class="descname">ErrorResult</tt><big>(</big><em>attributes</em><big>)</big><a class="headerlink" href="#braintree.error_result.ErrorResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>An instance of this class is returned from most operations when there is a validation error.  Call <tt class="xref docutils literal"><span class="pre">errors()</span></tt> to get the collection of errors:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({})</span>
-<span class="k">assert</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">is_success</span> <span class="o">==</span> <span class="bp">False</span><span class="p">)</span>
-<span class="k">assert</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">for_object</span><span class="p">(</span><span class="s">&quot;transaction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&quot;amount&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">ErrorCodes</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">AmountIsRequired</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">error_result</span> <span class="o">=</span> <span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({})</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">error_result</span><span class="o">.</span><span class="n">is_success</span> <span class="o">==</span> <span class="bp">False</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">error_result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">for_object</span><span class="p">(</span><span class="s">&quot;transaction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&quot;amount&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">ErrorCodes</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">AmountIsRequired</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Errors can be nested at different levels.  For example, creating a transaction with a credit card can have errors at the transaction level as well as the credit card level.  <tt class="xref docutils literal"><span class="pre">for_object()</span></tt> returns the <a title="braintree.validation_error_collection.ValidationErrorCollection" class="reference external" href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection"><tt class="xref docutils literal"><span class="pre">ValidationErrorCollection</span></tt></a> for the errors at that level.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">error_result</span> <span class="o">=</span> <span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span><span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;invalid&quot;</span><span class="p">}})</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">error_result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">for_object</span><span class="p">(</span><span class="s">&quot;transaction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">for_object</span><span class="p">(</span><span class="s">&quot;credit_card&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&quot;number&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="n">ErrorCodes</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">NumberHasInvalidLength</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="braintree.error_result.ErrorResult.is_success">
+<tt class="descname">is_success</tt><a class="headerlink" href="#braintree.error_result.ErrorResult.is_success" title="Permalink to this definition">¶</a></dt>
+<dd>Returns whether the result from the gateway is a successful response.</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -73,8 +83,8 @@
             <p class="topless"><a href="error_codes.html"
                                   title="previous chapter">Error Codes</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="configuration.html"
-                                  title="next chapter">Configuration</a></p>
+            <p class="topless"><a href="successful_result.html"
+                                  title="next chapter">Successful Result</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/error_result.txt"
@@ -107,7 +117,7 @@
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="configuration.html" title="Configuration"
+          <a href="successful_result.html" title="Successful Result"
              >next</a> |</li>
         <li class="right" >
           <a href="error_codes.html" title="Error Codes"
