@@ -53,6 +53,7 @@ Validations
 
    error_codes
    error_result
+   validation_error_collection
 
 Configuration
 -------------

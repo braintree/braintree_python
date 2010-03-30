@@ -1,6 +1,8 @@
 from braintree.validation_error import ValidationError
 
 class ValidationErrorCollection(object):
+    """A class representing a collection of validation errors."""
+
     def __init__(self, data={"errors": []}):
         self.data = data
 
