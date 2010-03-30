@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Transaction &mdash; Braintree v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '1.0.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Error Codes" href="error_codes.html" />
+    <link rel="prev" title="Paged Collection" href="paged_collection.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="error_codes.html" title="Error Codes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="paged_collection.html" title="Paged Collection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-braintree.transaction">
+<h1>Transaction<a class="headerlink" href="#module-braintree.transaction" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="braintree.transaction.Transaction">
+<em class="property">class </em><tt class="descclassname">braintree.transaction.</tt><tt class="descname">Transaction</tt><big>(</big><em>attributes</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing Braintree Transaction objects.</p>
+<p>An example of creating an sale transaction with all available fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;order_id&quot;</span><span class="p">:</span> <span class="s">&quot;123&quot;</span><span class="p">,</span>
+    <span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;5105105105105100&quot;</span><span class="p">,</span>
+        <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;05/2011&quot;</span><span class="p">,</span>
+        <span class="s">&quot;cvv&quot;</span><span class="p">:</span> <span class="s">&quot;123&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;customer&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;Dan&quot;</span><span class="p">,</span>
+        <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Smith&quot;</span><span class="p">,</span>
+        <span class="s">&quot;company&quot;</span><span class="p">:</span> <span class="s">&quot;Braintree Payment Solutions&quot;</span><span class="p">,</span>
+        <span class="s">&quot;email&quot;</span><span class="p">:</span> <span class="s">&quot;dan@example.com&quot;</span><span class="p">,</span>
+        <span class="s">&quot;phone&quot;</span><span class="p">:</span> <span class="s">&quot;419-555-1234&quot;</span><span class="p">,</span>
+        <span class="s">&quot;fax&quot;</span><span class="p">:</span> <span class="s">&quot;419-555-1235&quot;</span><span class="p">,</span>
+        <span class="s">&quot;website&quot;</span><span class="p">:</span> <span class="s">&quot;http://braintreepaymentsolutions.com&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;billing&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;Carl&quot;</span><span class="p">,</span>
+        <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Jones&quot;</span><span class="p">,</span>
+        <span class="s">&quot;company&quot;</span><span class="p">:</span> <span class="s">&quot;Braintree&quot;</span><span class="p">,</span>
+        <span class="s">&quot;street_address&quot;</span><span class="p">:</span> <span class="s">&quot;123 E Main St&quot;</span><span class="p">,</span>
+        <span class="s">&quot;extended_address&quot;</span><span class="p">:</span> <span class="s">&quot;Suite 403&quot;</span><span class="p">,</span>
+        <span class="s">&quot;locality&quot;</span><span class="p">:</span> <span class="s">&quot;Chicago&quot;</span><span class="p">,</span>
+        <span class="s">&quot;region&quot;</span><span class="p">:</span> <span class="s">&quot;IL&quot;</span><span class="p">,</span>
+        <span class="s">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s">&quot;60622&quot;</span><span class="p">,</span>
+        <span class="s">&quot;country_name&quot;</span><span class="p">:</span> <span class="s">&quot;United States of America&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;shipping&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;Andrew&quot;</span><span class="p">,</span>
+        <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Mason&quot;</span><span class="p">,</span>
+        <span class="s">&quot;company&quot;</span><span class="p">:</span> <span class="s">&quot;Braintree&quot;</span><span class="p">,</span>
+        <span class="s">&quot;street_address&quot;</span><span class="p">:</span> <span class="s">&quot;456 W Main St&quot;</span><span class="p">,</span>
+        <span class="s">&quot;extended_address&quot;</span><span class="p">:</span> <span class="s">&quot;Apt 2F&quot;</span><span class="p">,</span>
+        <span class="s">&quot;locality&quot;</span><span class="p">:</span> <span class="s">&quot;Bartlett&quot;</span><span class="p">,</span>
+        <span class="s">&quot;region&quot;</span><span class="p">:</span> <span class="s">&quot;IL&quot;</span><span class="p">,</span>
+        <span class="s">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s">&quot;60103&quot;</span><span class="p">,</span>
+        <span class="s">&quot;country_name&quot;</span><span class="p">:</span> <span class="s">&quot;United States of America&quot;</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">amount</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">order_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="braintree.transaction.Transaction.Status">
+<em class="property">class </em><tt class="descname">Status</tt><a class="headerlink" href="#braintree.transaction.Transaction.Status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constants representing transaction statuses. Available statuses are:</p>
+<ul class="simple">
+<li>braintree.Transaction.Status.Authorized</li>
+<li>braintree.Transaction.Status.Authorizing</li>
+<li>braintree.Transaction.Status.Failed</li>
+<li>braintree.Transaction.Status.GatewayRejected</li>
+<li>braintree.Transaction.Status.ProcessorDeclined</li>
+<li>braintree.Transaction.Status.Settled</li>
+<li>braintree.Transaction.Status.SettlementFailed</li>
+<li>braintree.Transaction.Status.SubmittedForSettlement</li>
+<li>braintree.Transaction.Status.Unknown</li>
+<li>braintree.Transaction.Status.Unrecognized</li>
+<li>braintree.Transaction.Status.Void</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="braintree.transaction.Transaction.Type">
+<em class="property">class </em><tt class="descclassname">Transaction.</tt><tt class="descname">Type</tt><a class="headerlink" href="#braintree.transaction.Transaction.Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constants representing transaction types. Available types are:</p>
+<ul class="simple">
+<li>braintree.Transaction.Type.Sale</li>
+<li>braintree.Transaction.Type.Credit</li>
+</ul>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.confirm_transparent_redirect">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">confirm_transparent_redirect</tt><big>(</big><em>query_string</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.confirm_transparent_redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms a transparent redirect request. It expects the query string from the
+redirect request. The query string should _not_ include the leading &#8220;?&#8221; character.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">confirm_transparent_redirect_request</span><span class="p">(</span><span class="s">&quot;foo=bar&amp;id=12345&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.create">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">create</tt><big>(</big><em>params</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a transaction. Amount and type are required. Also, a credit card,
+customer_id or payment_method_token is required.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Sale</span><span class="p">,</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;payment_method_token&quot;</span><span class="p">:</span> <span class="s">&quot;my_token&quot;</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Sale</span><span class="p">,</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
+        <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;12/2012&quot;</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;type&quot;</span><span class="p">:</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">Type</span><span class="o">.</span><span class="n">Sale</span><span class="p">,</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;customer_id&quot;</span><span class="p">:</span> <span class="s">&quot;my_customer_id&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.credit">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">credit</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.credit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a transaction of type Credit. Amount is required. Also, a credit card,
+customer_id or payment_method_token is required.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">credit</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;payment_method_token&quot;</span><span class="p">:</span> <span class="s">&quot;my_token&quot;</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">credit</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
+        <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;12/2012&quot;</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">credit</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;customer_id&quot;</span><span class="p">:</span> <span class="s">&quot;my_customer_id&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.find">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">find</tt><big>(</big><em>transaction_id</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a transaction, given a transaction_id. This does not return
+a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
+credit_card_id is not found.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">transaction</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_transaction_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.refund">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">refund</tt><big>(</big><em>transaction_id</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.refund" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refunds an existing transaction. It expects a transaction_id.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">refund</span><span class="p">(</span><span class="s">&quot;my_transaction_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.sale">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">sale</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.sale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a transaction of type Sale. Amount is required. Also, a credit card,
+customer_id or payment_method_token is required.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;payment_method_token&quot;</span><span class="p">:</span> <span class="s">&quot;my_token&quot;</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
+        <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;12/2012&quot;</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
+    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
+    <span class="s">&quot;customer_id&quot;</span><span class="p">:</span> <span class="s">&quot;my_customer_id&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.search">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">search</tt><big>(</big><em>query</em>, <em>page=1</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for transactions based on keywords. For example, you can search for
+transactions based on the credit card bin. The search will return a
+<tt class="xref docutils literal"><span class="pre">PagedCollection</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">collection</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;411111&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">transaction</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="n">next_page</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">next_page</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">transaction</span> <span class="ow">in</span> <span class="n">next_page</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.submit_for_settlement">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">submit_for_settlement</tt><big>(</big><em>transaction_id</em>, <em>amount=None</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.submit_for_settlement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits an authorized transaction for settlement.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">submit_for_settlement</span><span class="p">(</span><span class="s">&quot;my_transaction_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.tr_data_for_credit">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">tr_data_for_credit</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.tr_data_for_credit" title="Permalink to this definition">¶</a></dt>
+<dd>Builds tr_data for a Transaction of type Credit</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.tr_data_for_sale">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">tr_data_for_sale</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.tr_data_for_sale" title="Permalink to this definition">¶</a></dt>
+<dd>Builds tr_data for a Transaction of type Credit</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.transparent_redirect_create_url">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">transparent_redirect_create_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.transparent_redirect_create_url" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the url to be used for creating Transactions through transparent redirect.</dd></dl>
+
+<dl class="attribute">
+<dt id="braintree.transaction.Transaction.vault_billing_address">
+<tt class="descclassname">Transaction.</tt><tt class="descname">vault_billing_address</tt><a class="headerlink" href="#braintree.transaction.Transaction.vault_billing_address" title="Permalink to this definition">¶</a></dt>
+<dd>The vault billing address associated with this transaction</dd></dl>
+
+<dl class="attribute">
+<dt id="braintree.transaction.Transaction.vault_credit_card">
+<tt class="descclassname">Transaction.</tt><tt class="descname">vault_credit_card</tt><a class="headerlink" href="#braintree.transaction.Transaction.vault_credit_card" title="Permalink to this definition">¶</a></dt>
+<dd>The vault credit card associated with this transaction</dd></dl>
+
+<dl class="attribute">
+<dt id="braintree.transaction.Transaction.vault_customer">
+<tt class="descclassname">Transaction.</tt><tt class="descname">vault_customer</tt><a class="headerlink" href="#braintree.transaction.Transaction.vault_customer" title="Permalink to this definition">¶</a></dt>
+<dd>The vault customer associated with this transaction</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transaction.Transaction.void">
+<em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">void</tt><big>(</big><em>transaction_id</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.void" title="Permalink to this definition">¶</a></dt>
+<dd><p>Voids an existing transaction. It expects a transaction_id.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="s">&quot;my_transaction_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="paged_collection.html"
+                                  title="previous chapter">Paged Collection</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="error_codes.html"
+                                  title="next chapter">Error Codes</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/transaction.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="error_codes.html" title="Error Codes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="paged_collection.html" title="Paged Collection"
+             >previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Braintree Payment Solutions.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>

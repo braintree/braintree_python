@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Credit Card &mdash; Braintree v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '1.0.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Customer" href="customer.html" />
+    <link rel="prev" title="Address" href="address.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="customer.html" title="Customer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="address.html" title="Address"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-braintree.credit_card">
+<h1>Credit Card<a class="headerlink" href="#module-braintree.credit_card" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="braintree.credit_card.CreditCard">
+<em class="property">class </em><tt class="descclassname">braintree.credit_card.</tt><tt class="descname">CreditCard</tt><big>(</big><em>attributes</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing Braintree CreditCard objects.</p>
+<p>An example of creating an credit card with all available fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="s">&quot;cardholder_name&quot;</span><span class="p">:</span> <span class="s">&quot;John Doe&quot;</span><span class="p">,</span>
+    <span class="s">&quot;cvv&quot;</span><span class="p">:</span> <span class="s">&quot;123&quot;</span><span class="p">,</span>
+    <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;12/2012&quot;</span><span class="p">,</span>
+    <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
+    <span class="s">&quot;token&quot;</span><span class="p">:</span> <span class="s">&quot;my_token&quot;</span><span class="p">,</span>
+    <span class="s">&quot;billing_address&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">,</span>
+        <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Doe&quot;</span><span class="p">,</span>
+        <span class="s">&quot;company&quot;</span><span class="p">:</span> <span class="s">&quot;Braintree&quot;</span><span class="p">,</span>
+        <span class="s">&quot;street_address&quot;</span><span class="p">:</span> <span class="s">&quot;111 First Street&quot;</span><span class="p">,</span>
+        <span class="s">&quot;extended_address&quot;</span><span class="p">:</span> <span class="s">&quot;Unit 1&quot;</span><span class="p">,</span>
+        <span class="s">&quot;locality&quot;</span><span class="p">:</span> <span class="s">&quot;Chicago&quot;</span><span class="p">,</span>
+        <span class="s">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s">&quot;60606&quot;</span><span class="p">,</span>
+        <span class="s">&quot;region&quot;</span><span class="p">:</span> <span class="s">&quot;IL&quot;</span><span class="p">,</span>
+        <span class="s">&quot;country_name&quot;</span><span class="p">:</span> <span class="s">&quot;United States of America&quot;</span>
+    <span class="p">},</span>
+    <span class="s">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;verify_card&quot;</span><span class="p">:</span> <span class="bp">True</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">credit_card</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">credit_card</span><span class="o">.</span><span class="n">masked_number</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.confirm_transparent_redirect">
+<em class="property">static </em><tt class="descname">confirm_transparent_redirect</tt><big>(</big><em>query_string</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.confirm_transparent_redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms a transparent redirect request. It expects the query string from the
+redirect request. The query string should _not_ include the leading &#8220;?&#8221; character.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">confirm_transparent_redirect_request</span><span class="p">(</span><span class="s">&quot;foo=bar&amp;id=12345&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.create">
+<em class="property">static </em><tt class="descname">create</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an CreditCard.  A number and expiration_date are required.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
+    <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;12/2012&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.delete">
+<em class="property">static </em><tt class="descname">delete</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a credit card, given a credit_card_id:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;my_credit_card_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.find">
+<em class="property">static </em><tt class="descname">find</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a credit card, given a credit_card_id. This does not return
+a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
+credit_card_id is not found.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">credit_card</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_credit_card_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="braintree.credit_card.CreditCard.masked_number">
+<tt class="descname">masked_number</tt><a class="headerlink" href="#braintree.credit_card.CreditCard.masked_number" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the masked number of the CreditCard.</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.tr_data_for_create">
+<em class="property">static </em><tt class="descname">tr_data_for_create</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.tr_data_for_create" title="Permalink to this definition">¶</a></dt>
+<dd>Builds tr_data for CreditCard creation.</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.tr_data_for_update">
+<em class="property">static </em><tt class="descname">tr_data_for_update</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.tr_data_for_update" title="Permalink to this definition">¶</a></dt>
+<dd>Builds tr_data for CreditCard updating.</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.transparent_redirect_create_url">
+<em class="property">static </em><tt class="descname">transparent_redirect_create_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.transparent_redirect_create_url" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the url to use for creating CreditCards through transparent redirect.</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.transparent_redirect_update_url">
+<em class="property">static </em><tt class="descname">transparent_redirect_update_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.transparent_redirect_update_url" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the url to be used for updating CreditCards through transparent redirect.</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.update">
+<em class="property">static </em><tt class="descname">update</tt><big>(</big><em>credit_card_token</em>, <em>params={}</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update an existing CreditCard by credit_card_id.  The params are similar to create:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&quot;my_credit_card_id&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s">&quot;cardholder_name&quot;</span><span class="p">:</span> <span class="s">&quot;John Doe&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="address.html"
+                                  title="previous chapter">Address</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="customer.html"
+                                  title="next chapter">Customer</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/credit_card.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="customer.html" title="Customer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="address.html" title="Address"
+             >previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Braintree Payment Solutions.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>

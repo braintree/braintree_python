@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuration &mdash; Braintree v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '1.0.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Environment" href="environment.html" />
+    <link rel="prev" title="Error Result" href="error_result.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="environment.html" title="Environment"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="error_result.html" title="Error Result"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-braintree.configuration">
+<h1>Configuration<a class="headerlink" href="#module-braintree.configuration" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="braintree.configuration.Configuration">
+<em class="property">class </em><tt class="descclassname">braintree.configuration.</tt><tt class="descname">Configuration</tt><a class="headerlink" href="#braintree.configuration.Configuration" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<p>A class representing the configuration of your Braintree account.
+You must call configure before any other Braintree operations.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">braintree</span><span class="o">.</span><span class="n">Configuration</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span>
+    <span class="n">braintree</span><span class="o">.</span><span class="n">Environment</span><span class="o">.</span><span class="n">SANDBOX</span><span class="p">,</span>
+    <span class="s">&quot;the_merchant_id&quot;</span><span class="p">,</span>
+    <span class="s">&quot;the_public_key&quot;</span><span class="p">,</span>
+    <span class="s">&quot;the_private_key&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, every request to the Braintree servers verifies the SSL connection
+using the <a class="reference external" href="http://chandlerproject.org/bin/view/Projects/MeTooCrypto">M2Crypto</a>
+library.  This ensures valid encryption of data and prevents man-in-the-middle attacks.</p>
+<p>If you are in an environment where you absolutely cannot load <a class="reference external" href="http://chandlerproject.org/bin/view/Projects/MeTooCrypto">M2Crypto</a>, you
+can turn off SSL Verification by setting:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Configuration</span><span class="o">.</span><span class="n">use_unsafe_ssl</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>This is highly discouraged, however, since it leaves you susceptible to
+man-in-the-middle attacks.</p>
+<p>If you are using Google App Engine, you must use unsafe ssl <a class="footnote-reference" href="#id3" id="id2">[1]</a>:</p>
+<div class="highlight-python"><pre>The proxy the URL Fetch service uses cannot authenticate the host it
+is contacting. Because there is no certificate trust chain, the proxy
+accepts all certificates, including self-signed certificates. The
+proxy server cannot detect "man in the middle" attacks between App
+Engine and the remote host when using HTTPS.</pre>
+</div>
+</blockquote>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="http://code.google.com/appengine/docs/python/urlfetch/overview.html">URL Fetch Python API Overview</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="error_result.html"
+                                  title="previous chapter">Error Result</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="environment.html"
+                                  title="next chapter">Environment</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/configuration.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="environment.html" title="Environment"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="error_result.html" title="Error Result"
+             >previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Braintree Payment Solutions.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>

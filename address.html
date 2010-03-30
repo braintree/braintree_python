@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Address &mdash; Braintree v1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '1.0.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
+    <link rel="next" title="Credit Card" href="credit_card.html" />
+    <link rel="prev" title="Braintree Python Client Library" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="credit_card.html" title="Credit Card"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Braintree Python Client Library"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-braintree.address">
+<h1>Address<a class="headerlink" href="#module-braintree.address" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="braintree.address.Address">
+<em class="property">class </em><tt class="descclassname">braintree.address.</tt><tt class="descname">Address</tt><big>(</big><em>attributes={}</em><big>)</big><a class="headerlink" href="#braintree.address.Address" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing Braintree Address objects.</p>
+<p>An example of creating an address with all available fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">customer</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Customer</span><span class="o">.</span><span class="n">create</span><span class="p">()</span><span class="o">.</span><span class="n">customer</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Address</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="s">&quot;customer_id&quot;</span><span class="p">:</span> <span class="n">customer</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">,</span>
+    <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Doe&quot;</span><span class="p">,</span>
+    <span class="s">&quot;company&quot;</span><span class="p">:</span> <span class="s">&quot;Braintree&quot;</span><span class="p">,</span>
+    <span class="s">&quot;street_address&quot;</span><span class="p">:</span> <span class="s">&quot;111 First Street&quot;</span><span class="p">,</span>
+    <span class="s">&quot;extended_address&quot;</span><span class="p">:</span> <span class="s">&quot;Apartment 1&quot;</span><span class="p">,</span>
+    <span class="s">&quot;locality&quot;</span><span class="p">:</span> <span class="s">&quot;Chicago&quot;</span><span class="p">,</span>
+    <span class="s">&quot;region&quot;</span><span class="p">:</span> <span class="s">&quot;IL&quot;</span><span class="p">,</span>
+    <span class="s">&quot;postal_code&quot;</span><span class="p">:</span> <span class="s">&quot;60606&quot;</span><span class="p">,</span>
+    <span class="s">&quot;country_name&quot;</span><span class="p">:</span> <span class="s">&quot;United States of America&quot;</span>
+<span class="p">})</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">first_name</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">last_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="staticmethod">
+<dt id="braintree.address.Address.create">
+<em class="property">static </em><tt class="descname">create</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.address.Address.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an Address. A customer_id is required:</p>
+<div class="highlight-python"><pre>customer = braintree.Customer.create().customer
+result = braintree.Address.create({
+    "customer_id": customer.id,
+    "first_name": "John",
+    ...
+})</pre>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.address.Address.delete">
+<em class="property">static </em><tt class="descname">delete</tt><big>(</big><em>customer_id</em>, <em>address_id</em><big>)</big><a class="headerlink" href="#braintree.address.Address.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete an address, given a customer_id and address_id:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Address</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;my_customer_id&quot;</span><span class="p">,</span> <span class="s">&quot;my_address_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.address.Address.find">
+<em class="property">static </em><tt class="descname">find</tt><big>(</big><em>customer_id</em>, <em>address_id</em><big>)</big><a class="headerlink" href="#braintree.address.Address.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an address, given a customer_id and address_id. This does not return
+a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
+customer_id/address_id are not found.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">address</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Address</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;my_customer_id&quot;</span><span class="p">,</span> <span class="s">&quot;my_address_id&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.address.Address.update">
+<em class="property">static </em><tt class="descname">update</tt><big>(</big><em>customer_id</em>, <em>address_id</em>, <em>params={}</em><big>)</big><a class="headerlink" href="#braintree.address.Address.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update an existing Address. A customer_id and address_id are required:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Address</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&quot;my_customer_id&quot;</span><span class="p">,</span> <span class="s">&quot;my_address_id&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;John&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Braintree Python Client Library</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="credit_card.html"
+                                  title="next chapter">Credit Card</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/address.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="credit_card.html" title="Credit Card"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Braintree Python Client Library"
+             >previous</a> |</li>
+        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Braintree Payment Solutions.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+  </body>
+</html>
