@@ -72,7 +72,13 @@ Exceptions
 .. toctree::
    :maxdepth: 2
 
-   not_found_error
+   exceptions/authentication_error
+   exceptions/authorization_error
+   exceptions/down_for_maintenance_error
+   exceptions/forged_query_string_error
+   exceptions/not_found_error
+   exceptions/server_error
+   exceptions/unexpected_error
 
 Indices
 -------
