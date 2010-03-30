@@ -43,6 +43,7 @@ Resources
    credit_card
    customer
    paged_collection
+   subscription
    transaction
 
 Validations
