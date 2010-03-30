@@ -5,7 +5,7 @@ import urlparse
 from braintree.configuration import Configuration
 from braintree.util.crypto import Crypto
 from braintree.util.http import Http
-from braintree.exceptions.forged_query_string import ForgedQueryStringError
+from braintree.exceptions.forged_query_string_error import ForgedQueryStringError
 
 class TransparentRedirect:
     @staticmethod
