@@ -12,3 +12,4 @@ from transaction import Transaction
 from successful_result import SuccessfulResult
 from transparent_redirect import TransparentRedirect
 from validation_error_collection import ValidationErrorCollection
+from version import Version
