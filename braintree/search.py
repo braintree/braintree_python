@@ -25,7 +25,9 @@ class Search:
             return self
 
         def to_param(self):
-            return self.dict
+            dict = self.dict
+            self.dict = {}
+            return dict
 
     @staticmethod
     def text_nodes(*names):
@@ -33,5 +35,6 @@ class Search:
             Search.__dict__[name] = Search.TextNode(name)
 
 Search.text_nodes(
-    "plan_id"
+    "plan_id",
+    "days_past_due"
 )
