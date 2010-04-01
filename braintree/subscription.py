@@ -1,6 +1,7 @@
 from decimal import Decimal
 from braintree.util.http import Http
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.paged_collection import PagedCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.transaction import Transaction
@@ -124,6 +125,18 @@ class Subscription(Resource):
             return SuccessfulResult({"subscription": Subscription(response["subscription"])})
         elif "api_error_response" in response:
             return ErrorResult(response["api_error_response"])
+
+    @staticmethod
+    def search(search_terms, page=1):
+        criteria = {}
+        for term in search_terms:
+            if criteria.get(term.name):
+                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
+            else:
+                criteria[term.name] = term.to_param()
+
+        response = Http().post("/subscriptions/advanced_search?page=" + str(page), {"search": criteria})
+        return PagedCollection(search_terms, response["subscriptions"], Subscription)
 
     @staticmethod
     def update_signature():

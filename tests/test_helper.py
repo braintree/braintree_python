@@ -32,6 +32,28 @@ class TestHelper(object):
         return query_string
 
     @staticmethod
+    def includes_on_any_page(collection, expected):
+        for item in collection:
+            if item.id == expected.id:
+                return True
+
+        if collection.is_last_page:
+            return False
+
+        return TestHelper.includes_on_any_page(collection.next_page(), expected)
+
+    @staticmethod
+    def includes_status_on_any_page(collection, status):
+        for item in collection:
+            if item.status == status:
+                return True
+
+        if collection.is_last_page:
+            return False
+
+        return TestHelper.includes_on_any_page(collection.next_page(), status)
+
+    @staticmethod
     def __headers():
         return {
             "Accept": "application/xml",
