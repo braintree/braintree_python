@@ -1,5 +1,10 @@
 class Search:
-    class TextNode:
+    def __init__(self):
+        self.plan_id = Search.TextNode("plan_id")
+        self.days_past_due = Search.TextNode("days_past_due")
+        self.status = Search.MultipleValueNode("status")
+
+    class TextNode(object):
         def __init__(self, name):
             self.name = name
             self.dict = {}
@@ -25,16 +30,16 @@ class Search:
             return self
 
         def to_param(self):
-            dict = self.dict
-            self.dict = {}
-            return dict
+            return self.dict
 
-    @staticmethod
-    def text_nodes(*names):
-        for name in names:
-            Search.__dict__[name] = Search.TextNode(name)
+    class MultipleValueNode(object):
+        def __init__(self, name):
+            self.name = name
+            self.items = []
 
-Search.text_nodes(
-    "plan_id",
-    "days_past_due"
-)
+        def in_list(self, list):
+            self.items = list
+            return self
+
+        def to_param(self):
+            return self.items
