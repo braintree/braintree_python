@@ -128,6 +128,24 @@ class Subscription(Resource):
 
     @staticmethod
     def search(search_terms, page=1):
+        """
+        Allows searching on subscriptions. There are two types of fields that are searchable: text and
+        multiple value fields. Searchable text fields are:
+        - plan_id
+        - days_past_due
+
+        Searchable multiple value fields are:
+        - status
+
+        For text fields, you can search using the following operators: ==, !=, starts_with, ends_with
+        and contains. For mutiple value fields, you can search using the in_list operator. An example::
+
+            braintree.Subscription.search([
+                braintree.Search().plan_id.starts_with("abc"),
+                braintree.Search().days_past_due == "30",
+                braintree.Search().status.in_list([braintree.Subscription.Status.PastDue])
+            ])
+        """
         criteria = {}
         for term in search_terms:
             if criteria.get(term.name):
