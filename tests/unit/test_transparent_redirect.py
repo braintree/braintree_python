@@ -12,7 +12,7 @@ class TestTransparentRedirect(unittest.TestCase):
     @raises(ForgedQueryStringError)
     def test_parse_and_validate_query_string_raises_for_invalid_hash(self):
         TransparentRedirect.parse_and_validate_query_string(
-            "http_status=300&id=6kdj469tw7yck32j&hash=99c9ff20cd7910a1c1e793ff9e3b2d15586dc6b9"
+            "http_status=200&id=7kdj469tw7yck32j&hash=99c9ff20cd7910a1c1e793ff9e3b2d15586dc6b9"
         )
 
     @raises(AuthenticationError)
