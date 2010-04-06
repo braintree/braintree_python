@@ -1,3 +1,4 @@
+import braintree
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -164,6 +165,8 @@ class CreditCard(Resource):
         Resource.__init__(self, attributes)
         if "billing_address" in attributes:
             self.billing_address = Address(self.billing_address)
+        if "subscriptions" in attributes:
+            self.subscriptions = [braintree.subscription.Subscription(subscription) for subscription in self.subscriptions]
 
     @property
     def expiration_date(self):
