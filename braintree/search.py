@@ -10,10 +10,16 @@ class Search:
             self.dict = {}
 
         def __eq__(self, value):
+            return self.is_equal(value)
+
+        def is_equal(self, value):
             self.dict["is"] = value
             return self
 
         def __ne__(self, value):
+            return self.is_not_equal(value)
+
+        def is_not_equal(self, value):
             self.dict["is_not"] = value
             return self
 

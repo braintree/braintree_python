@@ -5,11 +5,13 @@ class TestSearch(unittest.TestCase):
         expected = {"is": "value"}
         self.assertEquals("days_past_due", Search().days_past_due.name)
         self.assertEquals(expected, (Search().days_past_due == "value").to_param())
+        self.assertEquals(expected, (Search().days_past_due.is_equal("value")).to_param())
 
     def test_days_past_due_is_not(self):
         expected = {"is_not": "value"}
         self.assertEquals("days_past_due", Search().days_past_due.name)
         self.assertEquals(expected, (Search().days_past_due != "value").to_param())
+        self.assertEquals(expected, (Search().days_past_due.is_not_equal("value")).to_param())
 
     def test_days_past_due_starts_with(self):
         expected = {"starts_with": "value"}
