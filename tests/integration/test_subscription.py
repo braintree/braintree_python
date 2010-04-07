@@ -238,7 +238,7 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         collection = Subscription.search([
-            Search().plan_id == "integration_trial_plan"
+            Search.plan_id == "integration_trial_plan"
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
@@ -256,7 +256,7 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         collection = Subscription.search([
-            Search().plan_id.starts_with("integration_trial_p")
+            Search.plan_id.starts_with("integration_trial_p")
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
@@ -274,7 +274,7 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         collection = Subscription.search([
-            Search().plan_id.ends_with("trial_plan")
+            Search.plan_id.ends_with("trial_plan")
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
@@ -292,7 +292,7 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         collection = Subscription.search([
-            Search().plan_id != "integration_trialless_plan"
+            Search.plan_id != "integration_trialless_plan"
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
@@ -310,7 +310,7 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         collection = Subscription.search([
-            Search().plan_id.contains("rial_pl")
+            Search.plan_id.contains("rial_pl")
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
@@ -329,7 +329,7 @@ class TestSubscription(unittest.TestCase):
         Subscription.cancel(canceled_subscription.id)
 
         collection = Subscription.search([
-            Search().status.in_list([Subscription.Status.Active])
+            Search.status.in_list([Subscription.Status.Active])
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))
@@ -348,8 +348,8 @@ class TestSubscription(unittest.TestCase):
         Subscription.cancel(canceled_subscription.id)
 
         collection = Subscription.search([
-            Search().plan_id == "integration_trialless_plan",
-            Search().status.in_list([Subscription.Status.Active]),
+            Search.plan_id == "integration_trialless_plan",
+            Search.status.in_list([Subscription.Status.Active]),
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))

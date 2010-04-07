@@ -1,9 +1,4 @@
 class Search:
-    def __init__(self):
-        self.plan_id = Search.TextNode("plan_id")
-        self.days_past_due = Search.TextNode("days_past_due")
-        self.status = Search.MultipleValueNode("status")
-
     class TextNode(object):
         def __init__(self, name):
             self.name = name
@@ -13,30 +8,38 @@ class Search:
             return self.is_equal(value)
 
         def is_equal(self, value):
-            self.dict["is"] = value
-            return self
+            clone = self.clone()
+            clone.dict["is"] = value
+            return clone
 
         def __ne__(self, value):
             return self.is_not_equal(value)
 
         def is_not_equal(self, value):
-            self.dict["is_not"] = value
-            return self
+            clone = self.clone()
+            clone.dict["is_not"] = value
+            return clone
 
         def starts_with(self, value):
-            self.dict["starts_with"] = value
-            return self
+            clone = self.clone()
+            clone.dict["starts_with"] = value
+            return clone
 
         def ends_with(self, value):
-            self.dict["ends_with"] = value
-            return self
+            clone = self.clone()
+            clone.dict["ends_with"] = value
+            return clone
 
         def contains(self, value):
-            self.dict["contains"] = value
-            return self
+            clone = self.clone()
+            clone.dict["contains"] = value
+            return clone
 
         def to_param(self):
             return self.dict
+
+        def clone(self):
+            return Search.TextNode(self.name)
 
     class MultipleValueNode(object):
         def __init__(self, name):
@@ -49,3 +52,8 @@ class Search:
 
         def to_param(self):
             return self.items
+
+    plan_id = TextNode("plan_id")
+    days_past_due = TextNode("days_past_due")
+    status = MultipleValueNode("status")
+
