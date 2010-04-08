@@ -335,6 +335,25 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))
         self.assertFalse(TestHelper.includes_on_any_page(collection, canceled_subscription))
 
+    def test_search_on_multiple_statuses(self):
+        active_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trialless_plan["id"]
+        }).subscription
+
+        canceled_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trialless_plan["id"]
+        }).subscription
+        Subscription.cancel(canceled_subscription.id)
+
+        collection = Subscription.search([
+            SubscriptionSearch.status.in_list([Subscription.Status.Active, Subscription.Status.Canceled])
+        ])
+
+        self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))
+        self.assertTrue(TestHelper.includes_on_any_page(collection, canceled_subscription))
+
     def test_search_on_multiple_values(self):
         active_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -349,7 +368,7 @@ class TestSubscription(unittest.TestCase):
 
         collection = Subscription.search([
             SubscriptionSearch.plan_id == "integration_trialless_plan",
-            SubscriptionSearch.status.in_list([Subscription.Status.Active]),
+            SubscriptionSearch.status.in_list([Subscription.Status.Active])
         ])
 
         self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))

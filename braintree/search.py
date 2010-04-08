@@ -47,9 +47,13 @@ class Search:
             self.items = []
 
         def in_list(self, list):
-            self.items = list
-            return self
+            clone = self.clone()
+            clone.items = list
+            return clone
 
         def to_param(self):
             return self.items
+
+        def clone(self):
+            return Search.MultipleValueNode(self.name)
 
