@@ -37,3 +37,8 @@ class TestSearch(unittest.TestCase):
         expected = ["canceled"]
         self.assertEquals("status", SubscriptionSearch.status.name)
         self.assertEquals(expected, SubscriptionSearch.status.in_list(["canceled"]).to_param())
+
+    def test_in_list_with_multiple_statuses(self):
+        expected = ["past_due", "canceled"]
+        self.assertEquals("status", SubscriptionSearch.status.name)
+        self.assertEquals(expected, SubscriptionSearch.status.in_list(["past_due", "canceled"]).to_param())
