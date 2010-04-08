@@ -53,7 +53,3 @@ class Search:
         def to_param(self):
             return self.items
 
-    plan_id = TextNode("plan_id")
-    days_past_due = TextNode("days_past_due")
-    status = MultipleValueNode("status")
-
