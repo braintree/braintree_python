@@ -1,6 +1,5 @@
 import httplib
 import base64
-import string
 from braintree.configuration import Configuration
 from braintree.util.xml_util import XmlUtil
 from braintree.exceptions.authentication_error import AuthenticationError
@@ -9,6 +8,7 @@ from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceEr
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
+from braintree import version
 
 class Http(object):
     @staticmethod
@@ -82,7 +82,7 @@ class Http(object):
             "Accept": "application/xml",
             "Authorization": self.__authorization_header(),
             "Content-type": "application/xml",
-            "User-Agent": "Braintree Python 1.0.0",
+            "User-Agent": "Braintree Python " + version.Version,
             "X-ApiVersion": "1"
         }
 

@@ -248,6 +248,26 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("2009", credit_card.expiration_year)
         self.assertEquals("05/2009", credit_card.expiration_date)
 
+    def test_find_returns_associated_subsriptions(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009"
+        }).credit_card
+        id = "id_" + str(random.randint(1, 1000000))
+        subscription = Subscription.create({
+            "id": id,
+            "plan_id": "integration_trialless_plan",
+            "payment_method_token": credit_card.token,
+            "price": Decimal("1.00")
+        }).subscription
+
+        found_credit_card = CreditCard.find(credit_card.token)
+        self.assertEquals(id, found_credit_card.subscriptions[0].id)
+        self.assertEquals(Decimal("1.00"), found_credit_card.subscriptions[0].price)
+        self.assertEquals(credit_card.token, found_credit_card.subscriptions[0].payment_method_token)
+
     def test_find_with_invalid_token(self):
         try:
             CreditCard.find("bad_token")

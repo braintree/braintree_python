@@ -52,8 +52,3 @@ class TestEnvironment(unittest.TestCase):
     def test_ssl_certificate_for_development(self):
         self.assertEquals(None, Environment.Development.ssl_certificate)
 
-    def test_ssl_certificate_for_sandbox(self):
-        self.assertTrue(Environment.Sandbox.ssl_certificate.endswith("braintree/ssl/valicert_ca.crt"))
-
-    def test_ssl_certificate_for_production(self):
-        self.assertTrue(Environment.Production.ssl_certificate.endswith("braintree/ssl/securetrust_ca.crt"))

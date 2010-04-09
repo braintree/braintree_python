@@ -6,8 +6,42 @@ from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 
 class Address(Resource):
+    """
+    A class representing Braintree Address objects.
+
+    An example of creating an address with all available fields::
+
+        customer = braintree.Customer.create().customer
+        result = braintree.Address.create({
+            "customer_id": customer.id,
+            "first_name": "John",
+            "last_name": "Doe",
+            "company": "Braintree",
+            "street_address": "111 First Street",
+            "extended_address": "Apartment 1",
+            "locality": "Chicago",
+            "region": "IL",
+            "postal_code": "60606",
+            "country_name": "United States of America"
+        })
+
+        print(result.customer.first_name)
+        print(result.customer.last_name)
+    """
+
     @staticmethod
     def create(params={}):
+        """
+        Create an Address. A customer_id is required::
+
+            customer = braintree.Customer.create().customer
+            result = braintree.Address.create({
+                "customer_id": customer.id,
+                "first_name": "John",
+                ...
+            })
+        """
+
         Resource.verify_keys(params, Address.create_signature())
         if not "customer_id" in params:
             raise KeyError("customer_id must be provided")
@@ -22,11 +56,23 @@ class Address(Resource):
 
     @staticmethod
     def delete(customer_id, address_id):
+        """
+        Delete an address, given a customer_id and address_id::
+
+            result = braintree.Address.delete("my_customer_id", "my_address_id")
+        """
         Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
 
     @staticmethod
     def find(customer_id, address_id):
+        """
+        Find an address, given a customer_id and address_id. This does not return
+        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided
+        customer_id/address_id are not found. ::
+
+            address = braintree.Address.find("my_customer_id", "my_address_id")
+        """
         try:
             response = Http().get("/customers/" + customer_id + "/addresses/" + address_id)
             return Address(response["address"])
@@ -35,6 +81,13 @@ class Address(Resource):
 
     @staticmethod
     def update(customer_id, address_id, params={}):
+        """
+        Update an existing Address. A customer_id and address_id are required::
+
+            result = braintree.Address.update("my_customer_id", "my_address_id", {
+                "first_name": "John"
+            })
+        """
         Resource.verify_keys(params, Address.update_signature())
         response = Http().put(
             "/customers/" + customer_id + "/addresses/" + address_id,

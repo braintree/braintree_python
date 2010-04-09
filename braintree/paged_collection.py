@@ -1,4 +1,6 @@
 class PagedCollection(object):
+    """A class representing a page of search results."""
+
     def __init__(self, query, collection, klass):
         self.current_page_number = collection["current_page_number"]
         self.items = [klass(item) for item in self.__extract_as_array(collection, klass.__name__.lower())]
@@ -8,12 +10,19 @@ class PagedCollection(object):
         self.total_items = collection["total_items"]
 
     def next_page(self):
+        """
+        Returns another :class:`PagedCollection <braintree.paged_collection.PagedCollection>` representing the
+        next page of results or None if this is the last page.
+        """
+
         if self.is_last_page:
             return None
         return self.klass.search(self.query, self.current_page_number + 1)
 
     @property
     def current_page_size(self):
+        """Returns the number of items on this page."""
+
         if self.is_last_page:
             return self.total_items % self.page_size
         else:
@@ -21,10 +30,14 @@ class PagedCollection(object):
 
     @property
     def is_last_page(self):
+        """Returns whether this is the last page of results."""
+
         return self.total_items == 0 or self.current_page_number == self.total_pages
 
     @property
     def total_pages(self):
+        """Returns the total number of pages of search results."""
+
         total_pages = self.total_items / self.page_size
         if self.total_items % self.page_size != 0:
             total_pages += 1
