@@ -141,9 +141,9 @@ class Subscription(Resource):
         and contains. For mutiple value fields, you can search using the in_list operator. An example::
 
             braintree.Subscription.search([
-                braintree.Search.plan_id.starts_with("abc"),
-                braintree.Search.days_past_due == "30",
-                braintree.Search.status.in_list([braintree.Subscription.Status.PastDue])
+                braintree.SubscriptionSearch.plan_id.starts_with("abc"),
+                braintree.SubscriptionSearch.days_past_due == "30",
+                braintree.SubscriptionSearch.status.in_list([braintree.Subscription.Status.PastDue])
             ])
         """
         criteria = {}
