@@ -38,5 +38,5 @@ class Environment(object):
         return os.path.dirname(inspect.getfile(Environment))
 
 Environment.Development = Environment("localhost", os.getenv("GATEWAY_PORT") or "3000", False, None)
-Environment.Sandbox = Environment("sandbox.braintreegateway.com", "443", True, Environment.braintree_root() + "/ssl/valicert_ca.crt")
-Environment.Production = Environment("www.braintreegateway.com", "443", True, Environment.braintree_root() + "/ssl/securetrust_ca.crt")
+Environment.Sandbox = Environment("sandbox.braintreegateway.com", "443", True, Environment.braintree_root() + "/ssl/sandbox_braintreegateway_com.ca.crt")
+Environment.Production = Environment("www.braintreegateway.com", "443", True, Environment.braintree_root() + "/ssl/www_braintreegateway_com.ca.crt")
