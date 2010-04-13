@@ -55,6 +55,7 @@ Validations
    error_codes
    error_result
    successful_result
+   validation_error
    validation_error_collection
 
 Configuration

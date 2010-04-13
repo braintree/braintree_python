@@ -33,7 +33,7 @@ class TestErrors(unittest.TestCase):
         self.assertEqual(3, Errors(hash).size)
         self.assertEqual(3, len(Errors(hash)))
 
-    def test_all_returns_all_errors(self):
+    def test_deep_errors_returns_all_errors(self):
         hash = {
             "level1": {
                 "errors": [{"code": "code1", "attribute": "attr", "message": "message"}],
@@ -46,6 +46,6 @@ class TestErrors(unittest.TestCase):
             }
         }
 
-        errors = Errors(hash).all
+        errors = Errors(hash).deep_errors
         self.assertEquals(["code1", "code2", "code3"], [error.code for error in errors])
 
