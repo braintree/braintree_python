@@ -21,6 +21,33 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("05/2009", credit_card.expiration_date)
         self.assertEquals("John Doe", credit_card.cardholder_name)
 
+    def test_create_and_make_default(self):
+        customer = Customer.create().customer
+        card1 = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        self.assertTrue(card1.default)
+
+        card2 = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options":
+                {"make_default": True}
+        }).credit_card
+
+        card1 = CreditCard.find(card1.token)
+        self.assertFalse(card1.default)
+        self.assertTrue(card2.default)
+
+
     def test_create_with_expiration_month_and_year(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -138,6 +165,35 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("2010", credit_card.expiration_year)
         self.assertEquals("06/2010", credit_card.expiration_date)
         self.assertEquals("Jane Jones", credit_card.cardholder_name)
+
+    def test_update_and_make_default(self):
+        customer = Customer.create().customer
+        card1 = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+        card2 = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        self.assertTrue(card1.default)
+        self.assertFalse(card2.default)
+
+        result = CreditCard.update(card2.token, {
+            "options": {
+                "make_default": True
+            }
+        })
+        self.assertFalse(CreditCard.find(card1.token).default)
+        self.assertTrue(CreditCard.find(card2.token).default)
+
 
     def test_update_verifies_card_if_option_is_provided(self):
         customer = Customer.create().customer
@@ -299,6 +355,39 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("2012", credit_card.expiration_year)
         self.assertEquals(customer.id, credit_card.customer_id)
 
+
+    def test_create_from_transparent_redirect_and_make_default(self):
+        customer = Customer.create().customer
+        card1 = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+        self.assertTrue(card1.default)
+
+        tr_data = {
+            "credit_card": {
+                "customer_id": customer.id,
+                "options": {
+                    "make_default": True
+                }
+            }
+        }
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_create(tr_data, "http://example.com/path?foo=bar"),
+            "credit_card[cardholder_name]": "Card Holder",
+            "credit_card[number]": "4111111111111111",
+            "credit_card[expiration_date]": "05/2012",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_create_url())
+        card2 = CreditCard.confirm_transparent_redirect(query_string).credit_card
+
+        self.assertFalse(CreditCard.find(card1.token).default)
+        self.assertTrue(card2.default)
+
     def test_create_from_transparent_redirect_with_error_result(self):
         customer = Customer.create().customer
         tr_data = {
@@ -360,6 +449,45 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("1111", credit_card.last_4)
         self.assertEquals("05", credit_card.expiration_month)
         self.assertEquals("2014", credit_card.expiration_year)
+
+    def test_update_from_transparent_redirect_and_make_default(self):
+        customer = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).customer
+        card1 = customer.credit_cards[0]
+
+        card2 = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+        }).credit_card
+
+        self.assertTrue(card1.default)
+        self.assertFalse(card2.default)
+
+        tr_data = {
+            "payment_method_token": card2.token,
+            "credit_card": {
+                "options": {
+                    "make_default": True
+                }
+            }
+        }
+
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_update(tr_data, "http://example.com/path"),
+            "credit_card[cardholder_name]": "New Cardholder Name",
+            "credit_card[expiration_date]": "05/2014"
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
+
+        self.assertFalse(CreditCard.find(card1.token).default)
+        self.assertTrue(CreditCard.find(card2.token).default)
 
     def test_update_from_transparent_redirect_with_error_result(self):
         old_token = str(random.randint(1, 1000000))
