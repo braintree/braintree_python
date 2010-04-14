@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: Braintree
-# Version: 1.0.0
+# Version: 1.2.0
 braintree.error_result mod error_result.html
 braintree.credit_card mod credit_card.html
 braintree.environment mod environment.html
@@ -13,6 +13,7 @@ braintree.validation_error_collection mod validation_error_collection.html
 braintree.exceptions.unexpected_error mod exceptions/unexpected_error.html
 braintree.paged_collection mod paged_collection.html
 braintree.configuration mod configuration.html
+braintree.validation_error mod validation_error.html
 braintree.customer mod customer.html
 braintree.exceptions.authentication_error mod exceptions/authentication_error.html
 braintree.exceptions.authorization_error mod exceptions/authorization_error.html
@@ -29,7 +30,7 @@ braintree.address.Address class address.html
 braintree.credit_card.CreditCard.confirm_transparent_redirect staticmethod credit_card.html
 braintree.customer.Customer.tr_data_for_update staticmethod customer.html
 braintree.transaction.Transaction.submit_for_settlement staticmethod transaction.html
-braintree.transaction.Transaction.vault_customer attribute transaction.html
+braintree.subscription.Subscription.search staticmethod subscription.html
 braintree.transaction.Transaction.create staticmethod transaction.html
 braintree.subscription.Subscription.update staticmethod subscription.html
 braintree.subscription.Subscription.Status class subscription.html
@@ -40,7 +41,7 @@ braintree.subscription.Subscription.find staticmethod subscription.html
 braintree.customer.Customer.find staticmethod customer.html
 braintree.subscription.Subscription.cancel staticmethod subscription.html
 braintree.address.Address.create staticmethod address.html
-braintree.validation_error_collection.ValidationErrorCollection.size attribute validation_error_collection.html
+braintree.validation_error.ValidationError class validation_error.html
 braintree.paged_collection.PagedCollection.current_page_size attribute paged_collection.html
 braintree.successful_result.SuccessfulResult class successful_result.html
 braintree.error_result.ErrorResult class error_result.html
@@ -63,18 +64,20 @@ braintree.error_result.ErrorResult.is_success attribute error_result.html
 braintree.customer.Customer.create staticmethod customer.html
 braintree.environment.Environment class environment.html
 braintree.exceptions.not_found_error.NotFoundError exception exceptions/not_found_error.html
+braintree.validation_error_collection.ValidationErrorCollection.size attribute validation_error_collection.html
 braintree.transaction.Transaction.Type class transaction.html
 braintree.address.Address.delete staticmethod address.html
 braintree.transaction.Transaction.find staticmethod transaction.html
 braintree.exceptions.authorization_error.AuthorizationError exception exceptions/authorization_error.html
 braintree.transaction.Transaction.credit staticmethod transaction.html
+braintree.validation_error_collection.ValidationErrorCollection.deep_errors attribute validation_error_collection.html
 braintree.successful_result.SuccessfulResult.is_success attribute successful_result.html
 braintree.validation_error_collection.ValidationErrorCollection class validation_error_collection.html
 braintree.credit_card.CreditCard.transparent_redirect_update_url staticmethod credit_card.html
 braintree.credit_card.CreditCard.delete staticmethod credit_card.html
+braintree.transaction.Transaction.vault_customer attribute transaction.html
 braintree.customer.Customer.delete staticmethod customer.html
 braintree.paged_collection.PagedCollection class paged_collection.html
-braintree.validation_error_collection.ValidationErrorCollection.all method validation_error_collection.html
 braintree.transaction.Transaction.Status class transaction.html
 braintree.exceptions.server_error.ServerError exception exceptions/server_error.html
 braintree.customer.Customer.update staticmethod customer.html

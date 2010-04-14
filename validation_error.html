@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Successful Result &mdash; Braintree v1.2.0 documentation</title>
+    <title>Validation Error &mdash; Braintree v1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,8 +20,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Braintree v1.2.0 documentation" href="index.html" />
-    <link rel="next" title="Validation Error" href="validation_error.html" />
-    <link rel="prev" title="Error Result" href="error_result.html" /> 
+    <link rel="next" title="Validation Error Collection" href="validation_error_collection.html" />
+    <link rel="prev" title="Successful Result" href="successful_result.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,10 +34,10 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="validation_error.html" title="Validation Error"
+          <a href="validation_error_collection.html" title="Validation Error Collection"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="error_result.html" title="Error Result"
+          <a href="successful_result.html" title="Successful Result"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
@@ -48,23 +48,17 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-braintree.successful_result">
-<h1>Successful Result<a class="headerlink" href="#module-braintree.successful_result" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-braintree.validation_error">
+<h1>Validation Error<a class="headerlink" href="#module-braintree.validation_error" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="braintree.successful_result.SuccessfulResult">
-<em class="property">class </em><tt class="descclassname">braintree.successful_result.</tt><tt class="descname">SuccessfulResult</tt><big>(</big><em>attributes={}</em><big>)</big><a class="headerlink" href="#braintree.successful_result.SuccessfulResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>An instance of this class is returned from most operations when the request is successful.  Call the name of the resource (eg, customer, credit_card, etc) to get the object:</p>
-<div class="highlight-python"><pre>result = Transaction.sale({..})
-if result.is_success:
-    transaction = result.transaction
-else:
-    print [error.code for error in result.errors.all]</pre>
-</div>
-<dl class="attribute">
-<dt id="braintree.successful_result.SuccessfulResult.is_success">
-<tt class="descname">is_success</tt><a class="headerlink" href="#braintree.successful_result.SuccessfulResult.is_success" title="Permalink to this definition">¶</a></dt>
-<dd>Returns whether the result from the gateway is a successful response.</dd></dl>
-
+<dt id="braintree.validation_error.ValidationError">
+<em class="property">class </em><tt class="descclassname">braintree.validation_error.</tt><tt class="descname">ValidationError</tt><big>(</big><em>attributes={}</em><big>)</big><a class="headerlink" href="#braintree.validation_error.ValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>A validation error returned from the server, with information about the error:</p>
+<ul class="simple">
+<li><strong>attribute</strong>: The field which had an error.</li>
+<li><strong>code</strong>: A numeric error code. See <a title="braintree.error_codes.ErrorCodes" class="reference external" href="error_codes.html#braintree.error_codes.ErrorCodes"><tt class="xref docutils literal"><span class="pre">ErrorCodes</span></tt></a></li>
+<li><strong>message</strong>: A description of the error.  Note: error messages may change, but the code will not.</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -76,14 +70,14 @@ else:
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="error_result.html"
-                                  title="previous chapter">Error Result</a></p>
+            <p class="topless"><a href="successful_result.html"
+                                  title="previous chapter">Successful Result</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="validation_error.html"
-                                  title="next chapter">Validation Error</a></p>
+            <p class="topless"><a href="validation_error_collection.html"
+                                  title="next chapter">Validation Error Collection</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/successful_result.txt"
+              <li><a href="_sources/validation_error.txt"
                      rel="nofollow">Show Source</a></li>
             </ul>
           <div id="searchbox" style="display: none">
@@ -113,10 +107,10 @@ else:
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="validation_error.html" title="Validation Error"
+          <a href="validation_error_collection.html" title="Validation Error Collection"
              >next</a> |</li>
         <li class="right" >
-          <a href="error_result.html" title="Error Result"
+          <a href="successful_result.html" title="Successful Result"
              >previous</a> |</li>
         <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>

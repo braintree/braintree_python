@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Validation Error Collection &mdash; Braintree v1.0.0 documentation</title>
+    <title>Validation Error Collection &mdash; Braintree v1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" />
+    <link rel="top" title="Braintree v1.2.0 documentation" href="index.html" />
     <link rel="next" title="Configuration" href="configuration.html" />
-    <link rel="prev" title="Successful Result" href="successful_result.html" /> 
+    <link rel="prev" title="Validation Error" href="validation_error.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,9 +37,9 @@
           <a href="configuration.html" title="Configuration"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="successful_result.html" title="Successful Result"
+          <a href="validation_error.html" title="Validation Error"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,10 +54,10 @@
 <dt id="braintree.validation_error_collection.ValidationErrorCollection">
 <em class="property">class </em><tt class="descclassname">braintree.validation_error_collection.</tt><tt class="descname">ValidationErrorCollection</tt><big>(</big><em>data={'errors':</em><span class="optional">[</span><span class="optional">]</span>, <em>}</em><big>)</big><a class="headerlink" href="#braintree.validation_error_collection.ValidationErrorCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representing a collection of validation errors.</p>
-<dl class="method">
-<dt id="braintree.validation_error_collection.ValidationErrorCollection.all">
-<tt class="descname">all</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.validation_error_collection.ValidationErrorCollection.all" title="Permalink to this definition">¶</a></dt>
-<dd>Return all <tt class="xref docutils literal"><span class="pre">ValidationErrors</span></tt>, including nested errors.</dd></dl>
+<dl class="attribute">
+<dt id="braintree.validation_error_collection.ValidationErrorCollection.deep_errors">
+<tt class="descname">deep_errors</tt><a class="headerlink" href="#braintree.validation_error_collection.ValidationErrorCollection.deep_errors" title="Permalink to this definition">¶</a></dt>
+<dd>Return all <a title="braintree.validation_error.ValidationError" class="reference external" href="validation_error.html#braintree.validation_error.ValidationError"><tt class="xref docutils literal"><span class="pre">ValidationErrors</span></tt></a>, including nested errors.</dd></dl>
 
 <dl class="attribute">
 <dt id="braintree.validation_error_collection.ValidationErrorCollection.deep_size">
@@ -67,12 +67,12 @@
 <dl class="attribute">
 <dt id="braintree.validation_error_collection.ValidationErrorCollection.errors">
 <tt class="descname">errors</tt><a class="headerlink" href="#braintree.validation_error_collection.ValidationErrorCollection.errors" title="Permalink to this definition">¶</a></dt>
-<dd>Returns a list of <tt class="xref docutils literal"><span class="pre">ValidationError</span></tt> objects.</dd></dl>
+<dd>Returns a list of <a title="braintree.validation_error.ValidationError" class="reference external" href="validation_error.html#braintree.validation_error.ValidationError"><tt class="xref docutils literal"><span class="pre">ValidationError</span></tt></a> objects.</dd></dl>
 
 <dl class="method">
 <dt id="braintree.validation_error_collection.ValidationErrorCollection.for_object">
 <tt class="descname">for_object</tt><big>(</big><em>nested_key</em><big>)</big><a class="headerlink" href="#braintree.validation_error_collection.ValidationErrorCollection.for_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <a title="braintree.validation_error_collection.ValidationErrorCollection" class="reference internal" href="#braintree.validation_error_collection.ValidationErrorCollection"><tt class="xref docutils literal"><span class="pre">ValidationErrorCollection</span> </tt></a> representing the errors at the nested level::</p>
+<dd><p>Returns a <a title="braintree.validation_error_collection.ValidationErrorCollection" class="reference internal" href="#braintree.validation_error_collection.ValidationErrorCollection"><tt class="xref docutils literal"><span class="pre">ValidationErrorCollection</span></tt></a> representing the errors at the nested level::</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">error_result</span> <span class="o">=</span> <span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span><span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;invalid&quot;</span><span class="p">}})</span>
 <span class="k">print</span> <span class="n">error_result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">for_object</span><span class="p">(</span><span class="s">&quot;transaction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">for_object</span><span class="p">(</span><span class="s">&quot;credit_card&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&quot;number&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">code</span>
 </pre></div>
@@ -105,8 +105,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="successful_result.html"
-                                  title="previous chapter">Successful Result</a></p>
+            <p class="topless"><a href="validation_error.html"
+                                  title="previous chapter">Validation Error</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="configuration.html"
                                   title="next chapter">Configuration</a></p>
@@ -145,9 +145,9 @@
           <a href="configuration.html" title="Configuration"
              >next</a> |</li>
         <li class="right" >
-          <a href="successful_result.html" title="Successful Result"
+          <a href="validation_error.html" title="Validation Error"
              >previous</a> |</li>
-        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

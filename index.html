@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Braintree Python Client Library &mdash; Braintree v1.0.0 documentation</title>
+    <title>Braintree Python Client Library &mdash; Braintree v1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v1.0.0 documentation" href="#" />
+    <link rel="top" title="Braintree v1.2.0 documentation" href="#" />
     <link rel="next" title="Address" href="address.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="address.html" title="Address"
              accesskey="N">next</a> |</li>
-        <li><a href="#">Braintree v1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="#">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,27 +49,7 @@
 <p>The Braintree library provides integration access to the Braintree Gateway.</p>
 <div class="section" id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">braintree</span>
-
-<span class="n">braintree</span><span class="o">.</span><span class="n">Configuration</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span>
-    <span class="n">braintree</span><span class="o">.</span><span class="n">Environment</span><span class="o">.</span><span class="n">Sandbox</span><span class="p">,</span>
-    <span class="s">&quot;the_merchant_id&quot;</span><span class="p">,</span>
-    <span class="s">&quot;the_public_key&quot;</span><span class="p">,</span>
-    <span class="s">&quot;the_private_key&quot;</span>
-<span class="p">)</span>
-
-<span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">sale</span><span class="p">({</span>
-    <span class="s">&quot;amount&quot;</span><span class="p">:</span> <span class="s">&quot;100.00&quot;</span><span class="p">,</span>
-    <span class="s">&quot;credit_card&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
-        <span class="s">&quot;expiration_date&quot;</span><span class="p">:</span> <span class="s">&quot;05/2012&quot;</span>
-    <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="k">print</span> <span class="n">result</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">id</span>
-<span class="k">print</span> <span class="n">result</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">status</span>
-</pre></div>
-</div>
+<p>See: <a class="reference external" href="http://www.braintreepaymentsolutions.com/gateway/python">http://www.braintreepaymentsolutions.com/gateway/python</a></p>
 </div>
 <div class="section" id="resources">
 <h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
@@ -88,6 +68,7 @@
 <li class="toctree-l1"><a class="reference external" href="error_codes.html">Error Codes</a></li>
 <li class="toctree-l1"><a class="reference external" href="error_result.html">Error Result</a></li>
 <li class="toctree-l1"><a class="reference external" href="successful_result.html">Successful Result</a></li>
+<li class="toctree-l1"><a class="reference external" href="validation_error.html">Validation Error</a></li>
 <li class="toctree-l1"><a class="reference external" href="validation_error_collection.html">Validation Error Collection</a></li>
 </ul>
 </div>
@@ -184,7 +165,7 @@
         <li class="right" >
           <a href="address.html" title="Address"
              >next</a> |</li>
-        <li><a href="#">Braintree v1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="#">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; Braintree v1.0.0 documentation</title>
+    <title>Index &mdash; Braintree v1.2.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v1.0.0 documentation" href="index.html" /> 
+    <link rel="top" title="Braintree v1.2.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -31,7 +31,7 @@
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
-        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,7 +53,6 @@
 <dl>
 
 <dt><a href="address.html#braintree.address.Address">Address (class in braintree.address)</a></dt>
-<dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.all">all() (braintree.validation_error_collection.ValidationErrorCollection method)</a></dt>
 <dt><a href="exceptions/authentication_error.html#braintree.exceptions.authentication_error.AuthenticationError">AuthenticationError</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="exceptions/authorization_error.html#braintree.exceptions.authorization_error.AuthorizationError">AuthorizationError</a></dt>
 </dl></td></tr></table>
@@ -71,8 +70,8 @@
 <dt><a href="error_result.html#module-braintree.error_result">braintree.error_result (module)</a></dt>
 <dt><a href="exceptions/authentication_error.html#module-braintree.exceptions.authentication_error">braintree.exceptions.authentication_error (module)</a></dt>
 <dt><a href="exceptions/authorization_error.html#module-braintree.exceptions.authorization_error">braintree.exceptions.authorization_error (module)</a></dt>
-<dt><a href="exceptions/down_for_maintenance_error.html#module-braintree.exceptions.down_for_maintenance_error">braintree.exceptions.down_for_maintenance_error (module)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="exceptions/forged_query_string_error.html#module-braintree.exceptions.forged_query_string_error">braintree.exceptions.forged_query_string_error (module)</a></dt>
+<dt><a href="exceptions/down_for_maintenance_error.html#module-braintree.exceptions.down_for_maintenance_error">braintree.exceptions.down_for_maintenance_error (module)</a></dt>
+<dt><a href="exceptions/forged_query_string_error.html#module-braintree.exceptions.forged_query_string_error">braintree.exceptions.forged_query_string_error (module)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="exceptions/not_found_error.html#module-braintree.exceptions.not_found_error">braintree.exceptions.not_found_error (module)</a></dt>
 <dt><a href="exceptions/server_error.html#module-braintree.exceptions.server_error">braintree.exceptions.server_error (module)</a></dt>
 <dt><a href="exceptions/unexpected_error.html#module-braintree.exceptions.unexpected_error">braintree.exceptions.unexpected_error (module)</a></dt>
@@ -80,6 +79,7 @@
 <dt><a href="subscription.html#module-braintree.subscription">braintree.subscription (module)</a></dt>
 <dt><a href="successful_result.html#module-braintree.successful_result">braintree.successful_result (module)</a></dt>
 <dt><a href="transaction.html#module-braintree.transaction">braintree.transaction (module)</a></dt>
+<dt><a href="validation_error.html#module-braintree.validation_error">braintree.validation_error (module)</a></dt>
 <dt><a href="validation_error_collection.html#module-braintree.validation_error_collection">braintree.validation_error_collection (module)</a></dt>
 </dl></td></tr></table>
 
@@ -111,6 +111,7 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
+<dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.deep_errors">deep_errors (braintree.validation_error_collection.ValidationErrorCollection attribute)</a></dt>
 <dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.deep_size">deep_size (braintree.validation_error_collection.ValidationErrorCollection attribute)</a></dt>
 <dt><a href="address.html#braintree.address.Address.delete">delete() (braintree.address.Address static method)</a></dt>
   <dd><dl>
@@ -197,7 +198,10 @@
 <dl>
 
 <dt><a href="transaction.html#braintree.transaction.Transaction.sale">sale() (braintree.transaction.Transaction static method)</a></dt>
-<dt><a href="transaction.html#braintree.transaction.Transaction.search">search() (braintree.transaction.Transaction static method)</a></dt>
+<dt><a href="subscription.html#braintree.subscription.Subscription.search">search() (braintree.subscription.Subscription static method)</a></dt>
+  <dd><dl>
+    <dt><a href="transaction.html#braintree.transaction.Transaction.search">(braintree.transaction.Transaction static method)</a></dt>
+  </dl></dd>
 <dt><a href="exceptions/server_error.html#braintree.exceptions.server_error.ServerError">ServerError</a></dt>
 <dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.size">size (braintree.validation_error_collection.ValidationErrorCollection attribute)</a></dt>
 <dt><a href="transaction.html#braintree.transaction.Transaction.submit_for_settlement">submit_for_settlement() (braintree.transaction.Transaction static method)</a></dt></dl></td><td width="33%" valign="top"><dl>
@@ -253,6 +257,7 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
+<dt><a href="validation_error.html#braintree.validation_error.ValidationError">ValidationError (class in braintree.validation_error)</a></dt>
 <dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection">ValidationErrorCollection (class in braintree.validation_error_collection)</a></dt>
 <dt><a href="transaction.html#braintree.transaction.Transaction.vault_billing_address">vault_billing_address (braintree.transaction.Transaction attribute)</a></dt>
 <dt><a href="transaction.html#braintree.transaction.Transaction.vault_credit_card">vault_credit_card (braintree.transaction.Transaction attribute)</a></dt></dl></td><td width="33%" valign="top"><dl>
@@ -296,7 +301,7 @@
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">Braintree v1.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
