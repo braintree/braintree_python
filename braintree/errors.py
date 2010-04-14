@@ -7,8 +7,8 @@ class Errors(object):
         self.size = self.errors.deep_size
 
     @property
-    def all(self):
-        return self.errors.all()
+    def deep_errors(self):
+        return self.errors.deep_errors
 
     def for_object(self, key):
         return self.errors.for_object(key)

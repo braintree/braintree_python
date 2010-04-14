@@ -6,20 +6,21 @@ class ValidationErrorCollection(object):
     def __init__(self, data={"errors": []}):
         self.data = data
 
-    def all(self):
+    @property
+    def deep_errors(self):
         """
-        Return all :class:`ValidationErrors <braintree.validatition_error.ValidationError>`, including nested errors.
+        Return all :class:`ValidationErrors <braintree.validation_error.ValidationError>`, including nested errors.
         """
 
         result = []
         result.extend(self.errors)
         for nested_error in self.__nested_errors.values():
-            result.extend(nested_error.all())
+            result.extend(nested_error.deep_errors)
         return result
 
     def for_object(self, nested_key):
         """
-        Returns a :class:`ValidationErrorCollection <braintree.validation_error_collection.ValidationErrorCollection` representing the errors at the nested level:::
+        Returns a :class:`ValidationErrorCollection <braintree.validation_error_collection.ValidationErrorCollection>` representing the errors at the nested level:::
 
             error_result = Transaction.sale({"credit_card": {"number": "invalid"}})
             print error_result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code
@@ -47,7 +48,7 @@ class ValidationErrorCollection(object):
 
     @property
     def errors(self):
-        """Returns a list of :class:`ValidationError <braintree.validatition_error.ValidationError>` objects."""
+        """Returns a list of :class:`ValidationError <braintree.validation_error.ValidationError>` objects."""
 
         return [ValidationError(error) for error in self.data["errors"]]
 

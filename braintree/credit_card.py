@@ -119,7 +119,7 @@ class CreditCard(Resource):
         return [
             "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
             {"billing_address": ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]},
-            {"options": ["verify_card"]}
+            {"options": ["make_default", "verify_card"]}
         ]
 
     @staticmethod
