@@ -322,7 +322,7 @@ class Transaction(Resource):
             "amount", "customer_id", "order_id", "payment_method_token", "type",
             {
                 "credit_card": [
-                    "token", "cvv", "expiration_date", "number"
+                    "token", "cardholder_name", "cvv", "expiration_date", "number"
                 ]
             },
             {

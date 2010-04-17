@@ -42,6 +42,7 @@ class TestTransaction(unittest.TestCase):
             "amount": "100.00",
             "order_id": "123",
             "credit_card": {
+                "cardholder_name": "The Cardholder",
                 "number": "5105105105105100",
                 "expiration_date": "05/2011",
                 "cvv": "123"
@@ -93,6 +94,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("5100", transaction.credit_card_details.last_4)
         self.assertEquals("510510******5100", transaction.credit_card_details.masked_number)
         self.assertEquals("MasterCard", transaction.credit_card_details.card_type)
+        self.assertEquals("The Cardholder", transaction.credit_card_details.cardholder_name)
         self.assertEquals(None, transaction.avs_error_response_code)
         self.assertEquals("M", transaction.avs_postal_code_response_code)
         self.assertEquals("M", transaction.avs_street_address_response_code)
