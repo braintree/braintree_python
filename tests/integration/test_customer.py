@@ -30,6 +30,11 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertNotEqual(None, result.customer.id)
 
+    def test_create_with_special_chars(self):
+        result = Customer.create({"first_name": "XML Chars <>&'\""})
+        self.assertTrue(result.is_success)
+        self.assertEqual("XML Chars <>&'\"", result.customer.first_name)
+
     def test_create_returns_an_error_response_if_invalid(self):
         result = Customer.create({
             "email": "@invalid.com",

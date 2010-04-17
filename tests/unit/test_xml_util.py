@@ -126,5 +126,9 @@ class TestXmlUtil(unittest.TestCase):
         dict = {"container": {"my_element": "val"}}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
+    def test_xml_from_dict_escapes_special_chars(self):
+        dict = {"container": {"element": "<&>'\""}}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
     def __xml_and_back(self, dict):
         return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))
