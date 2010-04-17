@@ -37,6 +37,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
 
+    def test_sale_with_expiration_month_and_year_separately(self):
+        result = Transaction.sale({
+            "amount": Decimal("1000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2012"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals("05", transaction.credit_card_details.expiration_month)
+        self.assertEquals("2012", transaction.credit_card_details.expiration_year)
+
     def test_sale_works_with_all_attributes(self):
         result = Transaction.sale({
             "amount": "100.00",
