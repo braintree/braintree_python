@@ -21,3 +21,4 @@ class TestTransaction(unittest.TestCase):
             self.assertTrue(False)
         except KeyError, e:
             self.assertEquals("'Invalid keys: bad_key'", str(e))
+

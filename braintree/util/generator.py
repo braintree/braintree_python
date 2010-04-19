@@ -27,8 +27,8 @@ class Generator(object):
         return xml
 
     def __generate_node(self, key, value):
-        open_tag = "<" + key + ">"
-        close_tag = "</" + key + ">"
+        open_tag = "<" + self.__escape(key) + ">"
+        close_tag = "</" + self.__escape(key) + ">"
 
         if type(value) == str or type(value) == unicode:
             return open_tag + self.__escape(value) + close_tag
