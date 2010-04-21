@@ -1,61 +1,43 @@
 class PagedCollection(object):
-    """A class representing a page of search results."""
+    """
+    A class representing results from a search.  Iterate over the results by calling items::
+
+        results = braintree.Transaction.search("411111")
+        for transaction in results.items:
+            print transaction.id
+    """
 
     def __init__(self, query, results, klass):
-        self.current_page_number = results["current_page_number"]
-        self.collection = self.__extract_as_array(results, klass.__name__.lower())
-        self.klass = klass
-        self.page_size = results["page_size"]
-        self.query = query
-        self.total_items = results["total_items"]
+        self.__current_page_number = results["current_page_number"]
+        self.__collection = self.__extract_as_array(results, klass.__name__.lower())
+        self.__klass = klass
+        self.__page_size = results["page_size"]
+        self.__query = query
+        self.__total_items = results["total_items"]
+
+    @property
+    def approximate_size(self):
+        """
+        Returns the approximate size of the results.  The size is approximate due to race conditions when pulling
+        back results.  Due to its inexact nature, approximate_size should be avoided.
+        """
+        return self.__total_items
 
     @property
     def first(self):
-        if len(self.collection) == 0:
+        """ Returns the first item in the results. """
+        if len(self.__collection) == 0:
             return None
-        return self.klass(self.collection[0])
+        return self.__klass(self.__collection[0])
 
     @property
     def items(self):
-        for item in self.collection:
-            yield self.klass(item)
-        if not self.is_last_page:
-            for item in self.next_page().items:
+        """ Returns a generator allowing iteration over all of the results. """
+        for item in self.__collection:
+            yield self.__klass(item)
+        if not self.__is_last_page:
+            for item in self.__next_page().items:
                 yield item
-
-    def next_page(self):
-        """
-        Returns another :class:`PagedCollection <braintree.paged_collection.PagedCollection>` representing the
-        next page of results or None if this is the last page.
-        """
-
-        if self.is_last_page:
-            return None
-        return self.klass.search(self.query, self.current_page_number + 1)
-
-    @property
-    def current_page_size(self):
-        """Returns the number of items on this page."""
-
-        if self.is_last_page:
-            return self.total_items % self.page_size
-        else:
-            return self.page_size
-
-    @property
-    def is_last_page(self):
-        """Returns whether this is the last page of results."""
-
-        return self.total_items == 0 or self.current_page_number == self.total_pages
-
-    @property
-    def total_pages(self):
-        """Returns the total number of pages of search results."""
-
-        total_pages = self.total_items / self.page_size
-        if self.total_items % self.page_size != 0:
-            total_pages += 1
-        return total_pages
 
     def __extract_as_array(self, results, attribute):
         if not attribute in results:
@@ -66,5 +48,18 @@ class PagedCollection(object):
             value = [value]
         return value
 
-    def __getitem__(self, index):
-        return self.items[index]
+    @property
+    def __is_last_page(self):
+        return self.__total_items == 0 or self.__current_page_number == self.__total_pages
+
+    def __next_page(self):
+        if self.__is_last_page:
+            return None
+        return self.__klass.search(self.__query, self.__current_page_number + 1)
+
+    @property
+    def __total_pages(self):
+        total_pages = self.__total_items / self.__page_size
+        if self.__total_items % self.__page_size != 0:
+            total_pages += 1
+        return total_pages
