@@ -1,4 +1,4 @@
-class PagedCollection(object):
+class ResourceCollection(object):
     """
     A class representing results from a search.  Iterate over the results by calling items::
 

@@ -1,6 +1,6 @@
 from tests.test_helper import *
 
-class TestPagedCollection(unittest.TestCase):
+class TestResourceCollection(unittest.TestCase):
     def test_approximate_size(self):
         collection_data = {
             "total_items": 2,
@@ -8,10 +8,10 @@ class TestPagedCollection(unittest.TestCase):
             "transaction": [{"amount": "91.23"}, {"amount": "123"}],
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction)
+        collection = ResourceCollection("some_query", collection_data, Transaction)
         self.assertEquals(2, collection.approximate_size)
 
-    def test_multiple_items_in_paged_collection(self):
+    def test_multiple_items_in_collection(self):
         collection_data = {
             "total_items": 2,
             "current_page_number": 3,
@@ -24,10 +24,10 @@ class TestPagedCollection(unittest.TestCase):
                 }],
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction)
+        collection = ResourceCollection("some_query", collection_data, Transaction)
         self.assertEquals([Decimal("91.23"), Decimal("12.34")], [Decimal(t.amount) for t in collection.items])
 
-    def test_only_one_item_in_paged_colleciton(self):
+    def test_only_one_item_in_colleciton(self):
         collection_data = {
             "total_items": 1,
             "current_page_number": 1,
@@ -37,16 +37,16 @@ class TestPagedCollection(unittest.TestCase):
                 },
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction)
+        collection = ResourceCollection("some_query", collection_data, Transaction)
         self.assertEquals(Decimal("91.23"), collection.first.amount)
 
-    def test_no_items_in_paged_colleciton(self):
+    def test_no_items_in_colleciton(self):
         collection_data = {
             "total_items": 0,
             "current_page_number": 1,
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction)
+        collection = ResourceCollection("some_query", collection_data, Transaction)
         self.assertEquals(0, collection.approximate_size)
 
     def test_first_returns_None_if_no_items(self):
@@ -56,7 +56,7 @@ class TestPagedCollection(unittest.TestCase):
             "transaction": [],
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction)
+        collection = ResourceCollection("some_query", collection_data, Transaction)
         self.assertEquals(None, collection.first)
 
     def test_first_returns_first_item(self):
@@ -69,5 +69,5 @@ class TestPagedCollection(unittest.TestCase):
             ],
             "page_size": 15
         }
-        collection = PagedCollection("some_query", collection_data, Transaction)
+        collection = ResourceCollection("some_query", collection_data, Transaction)
         self.assertEquals(Decimal("1.23"), collection.first.amount)

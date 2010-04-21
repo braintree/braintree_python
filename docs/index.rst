@@ -22,7 +22,7 @@ Resources
    address
    credit_card
    customer
-   paged_collection
+   resource_collection
    subscription
    transaction
 

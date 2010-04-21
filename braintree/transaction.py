@@ -8,7 +8,7 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
-from braintree.paged_collection import PagedCollection
+from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 
@@ -207,7 +207,7 @@ class Transaction(Resource):
         """
         Search for transactions based on keywords. For example, you can search for
         transactions based on the credit card bin. The search will return a
-        :class:`PagedCollection <braintree.paged_collection.PagedCollection>`::
+        :class:`ResourceCollection <braintree.resource_collection.ResourceCollection>`::
 
             collection = braintree.Transaction.search("411111")
 
@@ -222,7 +222,7 @@ class Transaction(Resource):
 
         query_string = urllib.urlencode([("q", query), ("page", page)])
         response = Http().get("/transactions/all/search?" + query_string)
-        return PagedCollection(query, response["credit_card_transactions"], Transaction)
+        return ResourceCollection(query, response["credit_card_transactions"], Transaction)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):
