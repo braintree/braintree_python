@@ -627,61 +627,50 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(1, collection.current_page_number)
         self.assertTrue(collection.page_size > 0)
         self.assertTrue(collection.total_items > 0)
-        self.assertEquals("411111", collection[0].credit_card_details.bin)
-
-    def test_search_can_traverse_pages(self):
-        first_page = Transaction.search("411111")
-        self.assertEquals(1, first_page.current_page_number)
-
-        next_page = first_page.next_page()
-        self.assertEquals(2, next_page.current_page_number)
-        self.assertEquals("411111", next_page[0].credit_card_details.bin)
-
-        self.assertNotEquals(first_page[0].id, next_page[0].id)
-
-    def test_search_on_last_page(self):
-        last_page_number = Transaction.search("411111").total_pages
-
-        collection = Transaction.search("411111", last_page_number)
-        self.assertTrue(collection.is_last_page)
-        self.assertEquals(None, collection.next_page())
+        self.assertEquals("411111", collection.first.credit_card_details.bin)
 
     def test_search_with_no_results(self):
         collection = Transaction.search("no_such_transactions_exists")
         self.assertEquals(0, collection.total_items)
-        self.assertEquals(0, collection.current_page_size)
-        self.assertEquals(1, collection.current_page_number)
+        self.assertEquals([], [transaction for transaction in collection.items])
+
+    def test_search_can_iterate_over_the_entire_collection(self):
+        collection = Transaction.search("411111")
+        self.assertTrue(collection.total_items > 100)
+
+        transaction_ids = [transaction.id for transaction in collection.items]
+        self.assertEquals(collection.total_items, len(set(transaction_ids)))
 
     def test_all_statuses(self):
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("authorizing"), Transaction.Status.Authorizing)
+            TestHelper.includes_status(Transaction.search("authorizing"), Transaction.Status.Authorizing)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("authorized"), Transaction.Status.Authorized)
+            TestHelper.includes_status(Transaction.search("authorized"), Transaction.Status.Authorized)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("gateway_rejected"), Transaction.Status.GatewayRejected)
+            TestHelper.includes_status(Transaction.search("gateway_rejected"), Transaction.Status.GatewayRejected)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("failed"), Transaction.Status.Failed)
+            TestHelper.includes_status(Transaction.search("failed"), Transaction.Status.Failed)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("processor_declined"), Transaction.Status.ProcessorDeclined)
+            TestHelper.includes_status(Transaction.search("processor_declined"), Transaction.Status.ProcessorDeclined)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("settled"), Transaction.Status.Settled)
+            TestHelper.includes_status(Transaction.search("settled"), Transaction.Status.Settled)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("settlement_failed"), Transaction.Status.SettlementFailed)
+            TestHelper.includes_status(Transaction.search("settlement_failed"), Transaction.Status.SettlementFailed)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("submitted_for_settlement"), Transaction.Status.SubmittedForSettlement)
+            TestHelper.includes_status(Transaction.search("submitted_for_settlement"), Transaction.Status.SubmittedForSettlement)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("unknown"), Transaction.Status.Unknown)
+            TestHelper.includes_status(Transaction.search("unknown"), Transaction.Status.Unknown)
         )
         self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("voided"), Transaction.Status.Voided)
+            TestHelper.includes_status(Transaction.search("voided"), Transaction.Status.Voided)
         )
 
     def test_successful_refund(self):

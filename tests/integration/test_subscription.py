@@ -241,8 +241,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.plan_id == "integration_trial_plan"
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, trialless_subscription))
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
     def test_search_on_plan_id_starts_with(self):
         trial_subscription = Subscription.create({
@@ -259,8 +259,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.plan_id.starts_with("integration_trial_p")
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, trialless_subscription))
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
     def test_search_on_plan_id_ends_with(self):
         trial_subscription = Subscription.create({
@@ -277,8 +277,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.plan_id.ends_with("trial_plan")
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, trialless_subscription))
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
     def test_search_on_plan_id_is_not(self):
         trial_subscription = Subscription.create({
@@ -295,8 +295,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.plan_id != "integration_trialless_plan"
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, trialless_subscription))
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
     def test_search_on_plan_id_contains(self):
         trial_subscription = Subscription.create({
@@ -313,8 +313,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.plan_id.contains("rial_pl")
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, trialless_subscription))
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
     def test_search_on_status(self):
         active_subscription = Subscription.create({
@@ -332,8 +332,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.status.in_list([Subscription.Status.Active])
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, canceled_subscription))
+        self.assertTrue(TestHelper.includes(collection, active_subscription))
+        self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 
     def test_search_on_multiple_statuses(self):
         active_subscription = Subscription.create({
@@ -351,8 +351,8 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.status.in_list([Subscription.Status.Active, Subscription.Status.Canceled])
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))
-        self.assertTrue(TestHelper.includes_on_any_page(collection, canceled_subscription))
+        self.assertTrue(TestHelper.includes(collection, active_subscription))
+        self.assertTrue(TestHelper.includes(collection, canceled_subscription))
 
     def test_search_on_multiple_values(self):
         active_subscription = Subscription.create({
@@ -371,6 +371,6 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.status.in_list([Subscription.Status.Active])
         ])
 
-        self.assertTrue(TestHelper.includes_on_any_page(collection, active_subscription))
-        self.assertFalse(TestHelper.includes_on_any_page(collection, canceled_subscription))
+        self.assertTrue(TestHelper.includes(collection, active_subscription))
+        self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 

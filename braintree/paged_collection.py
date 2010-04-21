@@ -1,13 +1,27 @@
 class PagedCollection(object):
     """A class representing a page of search results."""
 
-    def __init__(self, query, collection, klass):
-        self.current_page_number = collection["current_page_number"]
-        self.items = [klass(item) for item in self.__extract_as_array(collection, klass.__name__.lower())]
+    def __init__(self, query, results, klass):
+        self.current_page_number = results["current_page_number"]
+        self.collection = self.__extract_as_array(results, klass.__name__.lower())
         self.klass = klass
-        self.page_size = collection["page_size"]
+        self.page_size = results["page_size"]
         self.query = query
-        self.total_items = collection["total_items"]
+        self.total_items = results["total_items"]
+
+    @property
+    def first(self):
+        if len(self.collection) == 0:
+            return None
+        return self.klass(self.collection[0])
+
+    @property
+    def items(self):
+        for item in self.collection:
+            yield self.klass(item)
+        if not self.is_last_page:
+            for item in self.next_page().items:
+                yield item
 
     def next_page(self):
         """
@@ -43,11 +57,11 @@ class PagedCollection(object):
             total_pages += 1
         return total_pages
 
-    def __extract_as_array(self, collection, attribute):
-        if not attribute in collection:
+    def __extract_as_array(self, results, attribute):
+        if not attribute in results:
             return []
 
-        value = collection[attribute]
+        value = results[attribute]
         if type(value) != list:
             value = [value]
         return value

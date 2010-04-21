@@ -1,6 +1,6 @@
 from tests.test_helper import *
 
-class TestCreditCard(unittest.TestCase):
+class TestPagedCollection(unittest.TestCase):
     def test_create_paged_collection(self):
         collection_data = {
             "total_items": 2,
@@ -30,8 +30,7 @@ class TestCreditCard(unittest.TestCase):
             "page_size": 15
         }
         collection = PagedCollection("some_query", collection_data, Transaction)
-        self.assertEquals(Decimal("91.23"), collection[0].amount)
-        self.assertEquals(Decimal("12.34"), collection[1].amount)
+        self.assertEquals([Decimal("91.23"), Decimal("12.34")], [Decimal(t.amount) for t in collection.items])
 
     def test_only_one_item_in_paged_colleciton(self):
         collection_data = {
@@ -44,7 +43,7 @@ class TestCreditCard(unittest.TestCase):
             "page_size": 15
         }
         collection = PagedCollection("some_query", collection_data, Transaction)
-        self.assertEquals(Decimal("91.23"), collection[0].amount)
+        self.assertEquals(Decimal("91.23"), collection.first.amount)
 
     def test_no_items_in_paged_colleciton(self):
         collection_data = {
@@ -112,3 +111,26 @@ class TestCreditCard(unittest.TestCase):
         collection = PagedCollection("some_query", collection_data, Transaction)
 
         self.assertFalse(collection.is_last_page)
+
+    def test_first_returns_None_if_no_items(self):
+        collection_data = {
+            "total_items": 0,
+            "current_page_number": 1,
+            "transaction": [],
+            "page_size": 15
+        }
+        collection = PagedCollection("some_query", collection_data, Transaction)
+        self.assertEquals(None, collection.first)
+
+    def test_first_returns_first_item(self):
+        collection_data = {
+            "total_items": 2,
+            "current_page_number": 1,
+            "transaction": [
+                { "amount": "1.23"},
+                { "amount": "2.34"}
+            ],
+            "page_size": 15
+        }
+        collection = PagedCollection("some_query", collection_data, Transaction)
+        self.assertEquals(Decimal("1.23"), collection.first.amount)
