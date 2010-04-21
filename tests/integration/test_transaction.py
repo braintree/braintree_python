@@ -157,6 +157,19 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals("some extra stuff", transaction.custom_fields["store_me"])
 
+    def test_sale_with_processor_declined(self):
+        result = Transaction.sale({
+            "amount": "2000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Status.ProcessorDeclined, transaction.status)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": "1000.00",
