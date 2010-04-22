@@ -83,7 +83,7 @@ class Http(object):
             "Authorization": self.__authorization_header(),
             "Content-type": "application/xml",
             "User-Agent": "Braintree Python " + version.Version,
-            "X-ApiVersion": "2"
+            "X-ApiVersion": Configuration.api_version()
         }
 
     def __verify_ssl(self):

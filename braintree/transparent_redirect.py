@@ -28,7 +28,7 @@ class TransparentRedirect:
         data["time"] = date_string
         data["redirect_url"] = redirect_url
         data["public_key"] = Configuration.public_key
-        data["api_version"] = "1"
+        data["api_version"] = Configuration.api_version()
 
         tr_content = urllib.urlencode(data)
         tr_hash = Crypto.hmac_hash(Configuration.private_key, tr_content)
