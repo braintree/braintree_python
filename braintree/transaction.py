@@ -61,6 +61,8 @@ class Transaction(Resource):
 
         print(result.transaction.amount)
         print(result.transaction.order_id)
+
+    For more information on Transactions, see http://www.braintreepaymentsolutions.com/gateway/transaction-api
     """
 
     class Type(object):
