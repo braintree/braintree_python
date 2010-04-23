@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; Braintree v1.2.0 documentation</title>
+    <title>Index &mdash; Braintree v2.0.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '1.2.0',
+        VERSION:     '2.0.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v1.2.0 documentation" href="index.html" /> 
+    <link rel="top" title="Braintree v2.0.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -31,7 +31,7 @@
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
-        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -43,7 +43,7 @@
 
    <h1 id="index">Index</h1>
 
-   <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> 
+   <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> 
 
    <hr />
 
@@ -53,6 +53,7 @@
 <dl>
 
 <dt><a href="address.html#braintree.address.Address">Address (class in braintree.address)</a></dt>
+<dt><a href="resource_collection.html#braintree.resource_collection.ResourceCollection.approximate_size">approximate_size (braintree.resource_collection.ResourceCollection attribute)</a></dt>
 <dt><a href="exceptions/authentication_error.html#braintree.exceptions.authentication_error.AuthenticationError">AuthenticationError</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="exceptions/authorization_error.html#braintree.exceptions.authorization_error.AuthorizationError">AuthorizationError</a></dt>
 </dl></td></tr></table>
@@ -75,7 +76,7 @@
 <dt><a href="exceptions/not_found_error.html#module-braintree.exceptions.not_found_error">braintree.exceptions.not_found_error (module)</a></dt>
 <dt><a href="exceptions/server_error.html#module-braintree.exceptions.server_error">braintree.exceptions.server_error (module)</a></dt>
 <dt><a href="exceptions/unexpected_error.html#module-braintree.exceptions.unexpected_error">braintree.exceptions.unexpected_error (module)</a></dt>
-<dt><a href="paged_collection.html#module-braintree.paged_collection">braintree.paged_collection (module)</a></dt>
+<dt><a href="resource_collection.html#module-braintree.resource_collection">braintree.resource_collection (module)</a></dt>
 <dt><a href="subscription.html#module-braintree.subscription">braintree.subscription (module)</a></dt>
 <dt><a href="successful_result.html#module-braintree.successful_result">braintree.successful_result (module)</a></dt>
 <dt><a href="transaction.html#module-braintree.transaction">braintree.transaction (module)</a></dt>
@@ -103,7 +104,6 @@
   </dl></dd></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="transaction.html#braintree.transaction.Transaction.credit">credit() (braintree.transaction.Transaction static method)</a></dt>
 <dt><a href="credit_card.html#braintree.credit_card.CreditCard">CreditCard (class in braintree.credit_card)</a></dt>
-<dt><a href="paged_collection.html#braintree.paged_collection.PagedCollection.current_page_size">current_page_size (braintree.paged_collection.PagedCollection attribute)</a></dt>
 <dt><a href="customer.html#braintree.customer.Customer">Customer (class in braintree.customer)</a></dt>
 </dl></td></tr></table>
 
@@ -142,6 +142,7 @@
     <dt><a href="subscription.html#braintree.subscription.Subscription.find">(braintree.subscription.Subscription static method)</a></dt>
     <dt><a href="transaction.html#braintree.transaction.Transaction.find">(braintree.transaction.Transaction static method)</a></dt>
   </dl></dd></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="resource_collection.html#braintree.resource_collection.ResourceCollection.first">first (braintree.resource_collection.ResourceCollection attribute)</a></dt>
 <dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.for_object">for_object() (braintree.validation_error_collection.ValidationErrorCollection method)</a></dt>
 <dt><a href="exceptions/forged_query_string_error.html#braintree.exceptions.forged_query_string_error.ForgedQueryStringError">ForgedQueryStringError</a></dt>
 </dl></td></tr></table>
@@ -150,11 +151,11 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
-<dt><a href="paged_collection.html#braintree.paged_collection.PagedCollection.is_last_page">is_last_page (braintree.paged_collection.PagedCollection attribute)</a></dt>
 <dt><a href="error_result.html#braintree.error_result.ErrorResult.is_success">is_success (braintree.error_result.ErrorResult attribute)</a></dt>
   <dd><dl>
     <dt><a href="successful_result.html#braintree.successful_result.SuccessfulResult.is_success">(braintree.successful_result.SuccessfulResult attribute)</a></dt>
   </dl></dd></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="resource_collection.html#braintree.resource_collection.ResourceCollection.items">items (braintree.resource_collection.ResourceCollection attribute)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="M">M</h2>
@@ -168,7 +169,6 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
-<dt><a href="paged_collection.html#braintree.paged_collection.PagedCollection.next_page">next_page() (braintree.paged_collection.PagedCollection method)</a></dt>
 <dt><a href="exceptions/not_found_error.html#braintree.exceptions.not_found_error.NotFoundError">NotFoundError</a></dt></dl></td><td width="33%" valign="top"><dl>
 </dl></td></tr></table>
 
@@ -179,18 +179,12 @@
 <dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.on">on() (braintree.validation_error_collection.ValidationErrorCollection method)</a></dt></dl></td><td width="33%" valign="top"><dl>
 </dl></td></tr></table>
 
-<h2 id="P">P</h2>
-<table width="100%" class="indextable"><tr><td width="33%" valign="top">
-<dl>
-
-<dt><a href="paged_collection.html#braintree.paged_collection.PagedCollection">PagedCollection (class in braintree.paged_collection)</a></dt></dl></td><td width="33%" valign="top"><dl>
-</dl></td></tr></table>
-
 <h2 id="R">R</h2>
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
-<dt><a href="transaction.html#braintree.transaction.Transaction.refund">refund() (braintree.transaction.Transaction static method)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="transaction.html#braintree.transaction.Transaction.refund">refund() (braintree.transaction.Transaction static method)</a></dt>
+<dt><a href="resource_collection.html#braintree.resource_collection.ResourceCollection">ResourceCollection (class in braintree.resource_collection)</a></dt></dl></td><td width="33%" valign="top"><dl>
 </dl></td></tr></table>
 
 <h2 id="S">S</h2>
@@ -215,7 +209,6 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
-<dt><a href="paged_collection.html#braintree.paged_collection.PagedCollection.total_pages">total_pages (braintree.paged_collection.PagedCollection attribute)</a></dt>
 <dt><a href="credit_card.html#braintree.credit_card.CreditCard.tr_data_for_create">tr_data_for_create() (braintree.credit_card.CreditCard static method)</a></dt>
   <dd><dl>
     <dt><a href="customer.html#braintree.customer.Customer.tr_data_for_create">(braintree.customer.Customer static method)</a></dt>
@@ -226,8 +219,8 @@
   <dd><dl>
     <dt><a href="customer.html#braintree.customer.Customer.tr_data_for_update">(braintree.customer.Customer static method)</a></dt>
   </dl></dd>
-<dt><a href="transaction.html#braintree.transaction.Transaction">Transaction (class in braintree.transaction)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="transaction.html#braintree.transaction.Transaction.Status">Transaction.Status (class in braintree.transaction)</a></dt>
+<dt><a href="transaction.html#braintree.transaction.Transaction">Transaction (class in braintree.transaction)</a></dt>
+<dt><a href="transaction.html#braintree.transaction.Transaction.Status">Transaction.Status (class in braintree.transaction)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="transaction.html#braintree.transaction.Transaction.Type">Transaction.Type (class in braintree.transaction)</a></dt>
 <dt><a href="credit_card.html#braintree.credit_card.CreditCard.transparent_redirect_create_url">transparent_redirect_create_url() (braintree.credit_card.CreditCard static method)</a></dt>
   <dd><dl>
@@ -301,7 +294,7 @@
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

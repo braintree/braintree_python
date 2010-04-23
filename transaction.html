@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Transaction &mdash; Braintree v1.2.0 documentation</title>
+    <title>Transaction &mdash; Braintree v2.0.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '1.2.0',
+        VERSION:     '2.0.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v1.2.0 documentation" href="index.html" />
+    <link rel="top" title="Braintree v2.0.0 documentation" href="index.html" />
     <link rel="next" title="Error Codes" href="error_codes.html" />
     <link rel="prev" title="Subscription" href="subscription.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="subscription.html" title="Subscription"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -100,6 +100,7 @@
 <span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">transaction</span><span class="o">.</span><span class="n">order_id</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>For more information on Transactions, see <a class="reference external" href="http://www.braintreepaymentsolutions.com/gateway/transaction-api">http://www.braintreepaymentsolutions.com/gateway/transaction-api</a></p>
 <dl class="class">
 <dt id="braintree.transaction.Transaction.Status">
 <em class="property">class </em><tt class="descname">Status</tt><a class="headerlink" href="#braintree.transaction.Transaction.Status" title="Permalink to this definition">¶</a></dt>
@@ -245,7 +246,7 @@ customer_id or payment_method_token is required.</p>
 <em class="property">static </em><tt class="descclassname">Transaction.</tt><tt class="descname">search</tt><big>(</big><em>query</em>, <em>page=1</em><big>)</big><a class="headerlink" href="#braintree.transaction.Transaction.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search for transactions based on keywords. For example, you can search for
 transactions based on the credit card bin. The search will return a
-<a title="braintree.paged_collection.PagedCollection" class="reference external" href="paged_collection.html#braintree.paged_collection.PagedCollection"><tt class="xref docutils literal"><span class="pre">PagedCollection</span></tt></a>:</p>
+<a title="braintree.resource_collection.ResourceCollection" class="reference external" href="resource_collection.html#braintree.resource_collection.ResourceCollection"><tt class="xref docutils literal"><span class="pre">ResourceCollection</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">collection</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;411111&quot;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">transaction</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
@@ -360,7 +361,7 @@ transactions based on the credit card bin. The search will return a
         <li class="right" >
           <a href="subscription.html" title="Subscription"
              >previous</a> |</li>
-        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

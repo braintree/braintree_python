@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Paged Collection &mdash; Braintree v1.2.0 documentation</title>
+    <title>Resource Collection &mdash; Braintree v2.0.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '1.2.0',
+        VERSION:     '2.0.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v1.2.0 documentation" href="index.html" />
+    <link rel="top" title="Braintree v2.0.0 documentation" href="index.html" />
     <link rel="next" title="Subscription" href="subscription.html" />
     <link rel="prev" title="Customer" href="customer.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="customer.html" title="Customer"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,32 +48,32 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-braintree.paged_collection">
-<h1>Paged Collection<a class="headerlink" href="#module-braintree.paged_collection" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-braintree.resource_collection">
+<h1>Resource Collection<a class="headerlink" href="#module-braintree.resource_collection" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="braintree.paged_collection.PagedCollection">
-<em class="property">class </em><tt class="descclassname">braintree.paged_collection.</tt><tt class="descname">PagedCollection</tt><big>(</big><em>query</em>, <em>collection</em>, <em>klass</em><big>)</big><a class="headerlink" href="#braintree.paged_collection.PagedCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class representing a page of search results.</p>
+<dt id="braintree.resource_collection.ResourceCollection">
+<em class="property">class </em><tt class="descclassname">braintree.resource_collection.</tt><tt class="descname">ResourceCollection</tt><big>(</big><em>query</em>, <em>results</em>, <em>klass</em><big>)</big><a class="headerlink" href="#braintree.resource_collection.ResourceCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing results from a search.  Iterate over the results by calling items:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">results</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">Transaction</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&quot;411111&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">transaction</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">transaction</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
+</div>
 <dl class="attribute">
-<dt id="braintree.paged_collection.PagedCollection.current_page_size">
-<tt class="descname">current_page_size</tt><a class="headerlink" href="#braintree.paged_collection.PagedCollection.current_page_size" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the number of items on this page.</dd></dl>
+<dt id="braintree.resource_collection.ResourceCollection.approximate_size">
+<tt class="descname">approximate_size</tt><a class="headerlink" href="#braintree.resource_collection.ResourceCollection.approximate_size" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the approximate size of the results.  The size is approximate due to race conditions when pulling
+back results.  Due to its inexact nature, approximate_size should be avoided.</dd></dl>
 
 <dl class="attribute">
-<dt id="braintree.paged_collection.PagedCollection.is_last_page">
-<tt class="descname">is_last_page</tt><a class="headerlink" href="#braintree.paged_collection.PagedCollection.is_last_page" title="Permalink to this definition">¶</a></dt>
-<dd>Returns whether this is the last page of results.</dd></dl>
-
-<dl class="method">
-<dt id="braintree.paged_collection.PagedCollection.next_page">
-<tt class="descname">next_page</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.paged_collection.PagedCollection.next_page" title="Permalink to this definition">¶</a></dt>
-<dd>Returns another <a title="braintree.paged_collection.PagedCollection" class="reference internal" href="#braintree.paged_collection.PagedCollection"><tt class="xref docutils literal"><span class="pre">PagedCollection</span></tt></a> representing the
-next page of results or None if this is the last page.</dd></dl>
+<dt id="braintree.resource_collection.ResourceCollection.first">
+<tt class="descname">first</tt><a class="headerlink" href="#braintree.resource_collection.ResourceCollection.first" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the first item in the results.</dd></dl>
 
 <dl class="attribute">
-<dt id="braintree.paged_collection.PagedCollection.total_pages">
-<tt class="descname">total_pages</tt><a class="headerlink" href="#braintree.paged_collection.PagedCollection.total_pages" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the total number of pages of search results.</dd></dl>
+<dt id="braintree.resource_collection.ResourceCollection.items">
+<tt class="descname">items</tt><a class="headerlink" href="#braintree.resource_collection.ResourceCollection.items" title="Permalink to this definition">¶</a></dt>
+<dd>Returns a generator allowing iteration over all of the results.</dd></dl>
 
 </dd></dl>
 
@@ -93,7 +93,7 @@ next page of results or None if this is the last page.</dd></dl>
                                   title="next chapter">Subscription</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/paged_collection.txt"
+              <li><a href="_sources/resource_collection.txt"
                      rel="nofollow">Show Source</a></li>
             </ul>
           <div id="searchbox" style="display: none">
@@ -128,7 +128,7 @@ next page of results or None if this is the last page.</dd></dl>
         <li class="right" >
           <a href="customer.html" title="Customer"
              >previous</a> |</li>
-        <li><a href="index.html">Braintree v1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
