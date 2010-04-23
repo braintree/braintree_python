@@ -37,11 +37,28 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
 
+    def test_sale_with_expiration_month_and_year_separately(self):
+        result = Transaction.sale({
+            "amount": Decimal("1000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2012"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals("05", transaction.credit_card_details.expiration_month)
+        self.assertEquals("2012", transaction.credit_card_details.expiration_year)
+
     def test_sale_works_with_all_attributes(self):
         result = Transaction.sale({
             "amount": "100.00",
             "order_id": "123",
             "credit_card": {
+                "cardholder_name": "The Cardholder",
                 "number": "5105105105105100",
                 "expiration_date": "05/2011",
                 "cvv": "123"
@@ -93,6 +110,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("5100", transaction.credit_card_details.last_4)
         self.assertEquals("510510******5100", transaction.credit_card_details.masked_number)
         self.assertEquals("MasterCard", transaction.credit_card_details.card_type)
+        self.assertEquals("The Cardholder", transaction.credit_card_details.cardholder_name)
         self.assertEquals(None, transaction.avs_error_response_code)
         self.assertEquals("M", transaction.avs_postal_code_response_code)
         self.assertEquals("M", transaction.avs_street_address_response_code)
@@ -138,6 +156,19 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEquals("some extra stuff", transaction.custom_fields["store_me"])
+
+    def test_sale_with_processor_declined(self):
+        result = Transaction.sale({
+            "amount": "2000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Status.ProcessorDeclined, transaction.status)
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
@@ -593,65 +624,32 @@ class TestTransaction(unittest.TestCase):
     def test_search_returns_some_results(self):
         collection = Transaction.search("411111")
 
-        self.assertEquals(1, collection.current_page_number)
-        self.assertTrue(collection.page_size > 0)
-        self.assertTrue(collection.total_items > 0)
-        self.assertEquals("411111", collection[0].credit_card_details.bin)
-
-    def test_search_can_traverse_pages(self):
-        first_page = Transaction.search("411111")
-        self.assertEquals(1, first_page.current_page_number)
-
-        next_page = first_page.next_page()
-        self.assertEquals(2, next_page.current_page_number)
-        self.assertEquals("411111", next_page[0].credit_card_details.bin)
-
-        self.assertNotEquals(first_page[0].id, next_page[0].id)
-
-    def test_search_on_last_page(self):
-        last_page_number = Transaction.search("411111").total_pages
-
-        collection = Transaction.search("411111", last_page_number)
-        self.assertTrue(collection.is_last_page)
-        self.assertEquals(None, collection.next_page())
+        self.assertTrue(collection.approximate_size > 0)
+        self.assertEquals("411111", collection.first.credit_card_details.bin)
 
     def test_search_with_no_results(self):
         collection = Transaction.search("no_such_transactions_exists")
-        self.assertEquals(0, collection.total_items)
-        self.assertEquals(0, collection.current_page_size)
-        self.assertEquals(1, collection.current_page_number)
+        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals([], [transaction for transaction in collection.items])
+
+    def test_search_can_iterate_over_the_entire_collection(self):
+        collection = Transaction.search("411111")
+        self.assertTrue(collection.approximate_size > 100)
+
+        transaction_ids = [transaction.id for transaction in collection.items]
+        self.assertEquals(collection.approximate_size, len(set(transaction_ids)))
 
     def test_all_statuses(self):
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("authorizing"), Transaction.Status.Authorizing)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("authorized"), Transaction.Status.Authorized)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("gateway_rejected"), Transaction.Status.GatewayRejected)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("failed"), Transaction.Status.Failed)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("processor_declined"), Transaction.Status.ProcessorDeclined)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("settled"), Transaction.Status.Settled)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("settlement_failed"), Transaction.Status.SettlementFailed)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("submitted_for_settlement"), Transaction.Status.SubmittedForSettlement)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("unknown"), Transaction.Status.Unknown)
-        )
-        self.assertTrue(
-            TestHelper.includes_status_on_any_page(Transaction.search("voided"), Transaction.Status.Voided)
-        )
+        self.assertTrue(TestHelper.includes_status(Transaction.search("authorizing"), Transaction.Status.Authorizing))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("authorized"), Transaction.Status.Authorized))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("gateway_rejected"), Transaction.Status.GatewayRejected))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("failed"), Transaction.Status.Failed))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("processor_declined"), Transaction.Status.ProcessorDeclined))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("settled"), Transaction.Status.Settled))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("settlement_failed"), Transaction.Status.SettlementFailed))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("submitted_for_settlement"), Transaction.Status.SubmittedForSettlement))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("unknown"), Transaction.Status.Unknown))
+        self.assertTrue(TestHelper.includes_status(Transaction.search("voided"), Transaction.Status.Voided))
 
     def test_successful_refund(self):
         transaction = self.__create_transaction_to_refund()

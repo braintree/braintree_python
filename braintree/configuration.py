@@ -41,6 +41,10 @@ class Configuration(object):
         Configuration.use_unsafe_ssl = False
 
     @staticmethod
+    def api_version():
+        return "2"
+
+    @staticmethod
     def base_merchant_path():
         return "/merchants/" + Configuration.merchant_id
 

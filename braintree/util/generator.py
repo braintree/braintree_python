@@ -8,6 +8,9 @@ class Generator(object):
     def generate(self):
         return self.__generate_dict(self.dict)
 
+    def __escape(self, value):
+        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace("\"", "&quot;");
+
     def __generate_boolean(self, value):
         return str(value).lower()
 
@@ -24,11 +27,11 @@ class Generator(object):
         return xml
 
     def __generate_node(self, key, value):
-        open_tag = "<" + key + ">"
-        close_tag = "</" + key + ">"
+        open_tag = "<" + self.__escape(key) + ">"
+        close_tag = "</" + self.__escape(key) + ">"
 
         if type(value) == str or type(value) == unicode:
-            return open_tag + value + close_tag
+            return open_tag + self.__escape(value) + close_tag
         elif type(value) == Decimal:
             return open_tag + str(value) + close_tag
         elif type(value) == int:

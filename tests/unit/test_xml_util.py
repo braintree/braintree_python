@@ -98,6 +98,10 @@ class TestXmlUtil(unittest.TestCase):
         expected = {"container": {"elements": [{"val": "val1"}, {"val": "val2"}, {"val": "val3"}]}}
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
 
+    def test_xml_from_dict_escapes_keys_and_values(self):
+        dict = {"k<ey": "va&lue"}
+        self.assertEqual("<k&lt;ey>va&amp;lue</k&lt;ey>", XmlUtil.xml_from_dict(dict))
+
     def test_xml_from_dict_simple(self):
         dict = {"a": "b"}
         self.assertEqual(dict, self.__xml_and_back(dict))
@@ -124,6 +128,10 @@ class TestXmlUtil(unittest.TestCase):
 
     def test_xml_from_dict_retains_underscores(self):
         dict = {"container": {"my_element": "val"}}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
+    def test_xml_from_dict_escapes_special_chars(self):
+        dict = {"container": {"element": "<&>'\""}}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
     def __xml_and_back(self, dict):

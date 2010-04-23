@@ -51,6 +51,8 @@ class Customer(Resource):
 
         print(result.customer.id)
         print(result.customer.first_name)
+
+    For more information on Customers, see http://www.braintreepaymentsolutions.com/gateway/customer-api
     """
 
     @staticmethod

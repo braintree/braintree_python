@@ -1,3 +1,9 @@
+## 2.0.0
+
+* Updated is_success on transaction results to return false on declined transactions
+* Search results now return a generator and will automatically paginate data
+* Allow passing cardholder_name when creating transactions
+
 ## 1.2.0
 
 * Renamed ValidationErrorCollection#all to deep_errors and made it a property

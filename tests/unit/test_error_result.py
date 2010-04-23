@@ -25,3 +25,11 @@ class TestErrorResult(unittest.TestCase):
 
         result = ErrorResult({"errors": errors, "params": "params", "other": "stuff"})
         self.assertFalse(result.is_success)
+
+    def test_transaction_is_none_if_not_set(self):
+        result = ErrorResult({"errors": {}, "params": {}})
+        self.assertTrue(result.transaction == None)
+
+    def test_verification_is_none_if_not_set(self):
+        result = ErrorResult({"errors": {}, "params": {}})
+        self.assertTrue(result.credit_card_verification == None)

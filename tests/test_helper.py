@@ -32,26 +32,18 @@ class TestHelper(object):
         return query_string
 
     @staticmethod
-    def includes_on_any_page(collection, expected):
-        for item in collection:
+    def includes(collection, expected):
+        for item in collection.items:
             if item.id == expected.id:
                 return True
-
-        if collection.is_last_page:
-            return False
-
-        return TestHelper.includes_on_any_page(collection.next_page(), expected)
+        return False
 
     @staticmethod
-    def includes_status_on_any_page(collection, status):
-        for item in collection:
+    def includes_status(collection, status):
+        for item in collection.items:
             if item.status == status:
                 return True
-
-        if collection.is_last_page:
-            return False
-
-        return TestHelper.includes_on_any_page(collection.next_page(), status)
+        return False
 
     @staticmethod
     def __headers():

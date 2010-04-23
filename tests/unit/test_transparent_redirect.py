@@ -50,3 +50,7 @@ class TestTransparentRedirect(unittest.TestCase):
         TransparentRedirect.parse_and_validate_query_string(
             "http_status=600&id=6kdj469tw7yck32j&hash=740633356f93384167d887de0c1d9745e3de8fb6"
         )
+
+    def test_api_version(self):
+        data = TransparentRedirect.tr_data({"key": "val"}, "http://example.com/path?foo=bar")
+        self.assertTrue("api_version=2" in data)

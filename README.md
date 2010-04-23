@@ -18,7 +18,7 @@ The Braintree library provides integration access to the Braintree Gateway.
     )
 
     result = braintree.Transaction.sale({
-        "amount": "100.00",
+        "amount": "1000.00",
         "credit_card": {
             "number": "4111111111111111",
             "expiration_date": "05/2012"
@@ -26,12 +26,11 @@ The Braintree library provides integration access to the Braintree Gateway.
     })
 
     if result.is_success:
-        if result.transaction.status == braintree.Transaction.Status.Authorized:
-            print "success!: " + result.transaction.id
-        else:
-            print "Error processing transaction:"
-            print "  code: " + result.transaction.processor_response_code
-            print "  text: " + result.transaction.processor_response_text
+        print "success!: " + result.transaction.id
+    elif result.transaction:
+        print "Error processing transaction:"
+        print "  code: " + result.transaction.processor_response_code
+        print "  text: " + result.transaction.processor_response_text
     else:
         for error in result.errors.deep_errors:
             print "attribute: " + error.attribute

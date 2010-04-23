@@ -1,7 +1,7 @@
 from decimal import Decimal
 from braintree.util.http import Http
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.paged_collection import PagedCollection
+from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.transaction import Transaction
@@ -23,6 +23,8 @@ class Subscription(Resource):
             "trial_duration_unit": braintree.Subscription.TrialDurationUnit.Month,
             "trial_period": True
         })
+
+    For more information on Subscriptions, see http://www.braintreepaymentsolutions.com/gateway/subscription-api
     """
 
     class TrialDurationUnit(object):
@@ -154,7 +156,7 @@ class Subscription(Resource):
                 criteria[term.name] = term.to_param()
 
         response = Http().post("/subscriptions/advanced_search?page=" + str(page), {"search": criteria})
-        return PagedCollection(search_terms, response["subscriptions"], Subscription)
+        return ResourceCollection(search_terms, response["subscriptions"], Subscription)
 
     @staticmethod
     def update_signature():
