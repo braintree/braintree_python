@@ -98,6 +98,18 @@ class Subscription(Resource):
             raise NotFoundError("subscription with id " + subscription_id + " not found")
 
     @staticmethod
+    def retryCharge(subscription_id, amount=None):
+        response = Http().post("/transactions", {"transaction": {
+            "amount": amount,
+            "subscription_id": subscription_id,
+            "type": Transaction.Type.Sale
+            }})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(response["api_error_response"])
+
+    @staticmethod
     def update(subscription_id, params={}):
         """
         Update an existing subscription by subscription_id.  The params are similar to create::

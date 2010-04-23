@@ -374,3 +374,33 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, active_subscription))
         self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 
+    def test_retry_charge_without_amount(self):
+        subscription = Subscription.search([
+            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
+        ]).first
+
+        result = Subscription.retryCharge(subscription.id);
+
+        self.assertTrue(result.is_success);
+        transaction = result.transaction;
+
+        self.assertEquals(subscription.price, transaction.amount);
+        self.assertNotEqual(None, transaction.processor_authorization_code);
+        self.assertEquals(Transaction.Type.Sale, transaction.type);
+        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+
+    def test_retry_charge_with_amount(self):
+        subscription = Subscription.search([
+            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
+        ]).first
+
+        result = Subscription.retryCharge(subscription.id, Decimal("1000.00"));
+
+        self.assertTrue(result.is_success);
+        transaction = result.transaction;
+
+        self.assertEquals(Decimal("1000.00"), transaction.amount);
+        self.assertNotEqual(None, transaction.processor_authorization_code);
+        self.assertEquals(Transaction.Type.Sale, transaction.type);
+        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+
