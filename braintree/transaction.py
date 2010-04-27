@@ -387,6 +387,8 @@ class Transaction(Resource):
         The vault credit card associated with this transaction
         """
 
+        if self.credit_card_details.token is None:
+            return None
         return CreditCard.find(self.credit_card_details.token)
 
     @property

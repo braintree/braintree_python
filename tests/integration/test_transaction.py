@@ -140,6 +140,49 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("60103", transaction.shipping_details.postal_code)
         self.assertEquals("United States of America", transaction.shipping_details.country_name)
 
+    def test_sale_with_vault_customer_and_credit_card_data(self):
+        customer = Customer.create({
+            "first_name": "Pingu",
+            "last_name": "Penguin",
+        }).customer
+
+        result = Transaction.sale({
+            "amount": Decimal("1000.00"),
+            "customer_id": customer.id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(transaction.credit_card_details.masked_number, "411111******1111")
+        self.assertEquals(None, transaction.vault_credit_card)
+
+    def test_sale_with_vault_customer_and_credit_card_data_and_store_in_vault(self):
+        customer = Customer.create({
+            "first_name": "Pingu",
+            "last_name": "Penguin",
+        }).customer
+
+        result = Transaction.sale({
+            "amount": Decimal("1000.00"),
+            "customer_id": customer.id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "store_in_vault": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("411111******1111", transaction.credit_card_details.masked_number)
+        self.assertEquals("411111******1111", transaction.vault_credit_card.masked_number)
+
     def test_sale_with_custom_fields(self):
         result = Transaction.sale({
             "amount": "1000.00",
