@@ -178,14 +178,14 @@ class Transaction(Resource):
             raise NotFoundError("transaction with id " + transaction_id + " not found")
 
     @staticmethod
-    def refund(transaction_id):
+    def refund(transaction_id, amount=None):
         """
         Refunds an existing transaction. It expects a transaction_id. ::
 
             result = braintree.Transaction.refund("my_transaction_id")
         """
 
-        response = Http().post("/transactions/" + transaction_id + "/refund", {})
+        response = Http().post("/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(response["transaction"])})
         elif "api_error_response" in response:

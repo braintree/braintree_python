@@ -779,6 +779,15 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Type.Credit, result.transaction.type)
         self.assertEquals(Decimal("1000.00"), result.transaction.amount)
 
+    def test_successful_partial_refund(self):
+        transaction = self.__create_transaction_to_refund()
+
+        result = Transaction.refund(transaction.id, Decimal("500.00"))
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
+        self.assertEquals(Decimal("500.00"), result.transaction.amount)
+
     def test_refund_already_refunded_transation_fails(self):
         transaction = self.__create_transaction_to_refund()
 
