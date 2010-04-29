@@ -256,7 +256,182 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
-            TransactionSearch.created_using.in_list([Transaction.CreatedUsing.Token])
+            TransactionSearch.created_using == Transaction.CreatedUsing.Token
         ])
 
         self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_customer_location == CreditCard.CustomerLocation.US
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_customer_location.in_list([CreditCard.CustomerLocation.US, CreditCard.CustomerLocation.International])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_customer_location == CreditCard.CustomerLocation.International
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_merchant_account_id(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.merchant_account_id == transaction.merchant_account_id
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.merchant_account_id.in_list([transaction.merchant_account_id, "bogus_merchant_account_id"])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.merchant_account_id == "bogus_merchant_account_id"
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_credit_card_card_type(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_card_type == transaction.credit_card_details.card_type
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_card_type.in_list([transaction.credit_card_details.card_type, CreditCard.CardType.AmEx])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_card_type == CreditCard.CardType.AmEx
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_status(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.status == Transaction.Status.Authorized
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.status.in_list([Transaction.Status.Authorized, Transaction.Status.Settled])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.status == Transaction.Status.Settled
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_source(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.source == Transaction.Source.Api
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.source.in_list([Transaction.Source.Api, Transaction.Source.ControlPanel])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.source == Transaction.Source.ControlPanel
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    #  it "searches on source" do
+    #  it "searches on type" do
+    #    it "searches on amount" do
+    #    it "can also take BigDecimal for amount" do
+    #  it "searches on created_at" do
+    #it "returns multiple results" do
+    #  it "is" do
+    #  it "is_not" do
+    #  it "ends_with" do
+    #  it "starts_with" do
+    #  it "contains" do
+    #it "returns transactions matching the given search terms" do
+    #it "can iterate over the entire collection" do
+

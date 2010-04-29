@@ -43,6 +43,49 @@ class CreditCard(Resource):
 
     For more information on CreditCard verifications, see http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api
     """
+    class CardType(object):
+        """
+        Contants representing the type of the credit card.  Available types are:
+
+        * Braintree.CreditCard.AmEx
+        * Braintree.CreditCard.CarteBlanche
+        * Braintree.CreditCard.ChinaUnionPay
+        * Braintree.CreditCard.DinersClubInternational
+        * Braintree.CreditCard.Discover
+        * Braintree.CreditCard.JCB
+        * Braintree.CreditCard.Laser
+        * Braintree.CreditCard.Maestro
+        * Braintree.CreditCard.MasterCard
+        * Braintree.CreditCard.Solo
+        * Braintree.CreditCard.Switch
+        * Braintree.CreditCard.Visa
+        * Braintree.CreditCard.Unknown
+        """
+
+        AmEx = "American Express"
+        CarteBlanche = "Carte Blanche"
+        ChinaUnionPay = "China UnionPay"
+        DinersClubInternational = "Diners Club"
+        Discover = "Discover"
+        JCB = "JCB"
+        Laser = "Laser"
+        Maestro = "Maestro"
+        MasterCard = "MasterCard"
+        Solo = "Solo"
+        Switch = "Switch"
+        Visa = "Visa"
+        Unknown = "Unknown"
+
+    class CustomerLocation(object):
+        """
+        Contants representing the issuer location of the credit card.  Available locations are:
+
+        * braintree.CreditCard.CustomerLocation.International
+        * braintree.CreditCard.CustomerLocation.US
+        """
+
+        International = "international"
+        US = "us"
 
     @staticmethod
     def confirm_transparent_redirect(query_string):

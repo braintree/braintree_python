@@ -76,16 +76,10 @@ class Transaction(Resource):
         FullInformation = "full_information"
         Token = "token"
 
-    class Type(object):
-        """
-        Constants representing transaction types. Available types are:
-
-        * braintree.Transaction.Type.Sale
-        * braintree.Transaction.Type.Credit
-        """
-
-        Sale = "sale"
-        Credit = "credit"
+    class Source(object):
+        Api = "api"
+        ControlPanel = "control_panel"
+        Recurring = "recurring"
 
     class Status(object):
         """
@@ -115,6 +109,17 @@ class Transaction(Resource):
         Unknown                = "unknown"
         Unrecognized           = "unrecognized"
         Voided                 = "voided"
+
+    class Type(object):
+        """
+        Constants representing transaction types. Available types are:
+
+        * braintree.Transaction.Type.Sale
+        * braintree.Transaction.Type.Credit
+        """
+
+        Sale = "sale"
+        Credit = "credit"
 
     @staticmethod
     def confirm_transparent_redirect(query_string):

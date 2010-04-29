@@ -39,3 +39,8 @@ class TransactionSearch:
     credit_card_number = Search.TextNodeBuilder("credit_card_number")
 
     created_using = Search.MultipleValueNodeBuilder("created_using")
+    credit_card_card_type = Search.MultipleValueNodeBuilder("credit_card_card_type")
+    credit_card_customer_location = Search.MultipleValueNodeBuilder("credit_card_customer_location")
+    merchant_account_id = Search.MultipleValueNodeBuilder("merchant_account_id")
+    source = Search.MultipleValueNodeBuilder("source")
+    status = Search.MultipleValueNodeBuilder("status")
