@@ -42,3 +42,17 @@ class TestSearch(unittest.TestCase):
         expected = ["past_due", "canceled"]
         self.assertEquals("status", SubscriptionSearch.status.name)
         self.assertEquals(expected, SubscriptionSearch.status.in_list(["past_due", "canceled"]).to_param())
+
+    def test_key_value_node_builder_equals(self):
+        builder = Search.KeyValueNodeBuilder("refund")
+        node = (builder == True)
+
+        self.assertEquals(True, node.to_param())
+        self.assertEquals("refund", node.name)
+
+    def test_key_value_node_builder_not_equals(self):
+        builder = Search.KeyValueNodeBuilder("refund")
+        node = (builder != True)
+
+        self.assertEquals(False, node.to_param())
+        self.assertEquals("refund", node.name)

@@ -44,3 +44,6 @@ class TransactionSearch:
     merchant_account_id = Search.MultipleValueNodeBuilder("merchant_account_id")
     source = Search.MultipleValueNodeBuilder("source")
     status = Search.MultipleValueNodeBuilder("status")
+    type = Search.MultipleValueNodeBuilder("type")
+
+    refund = Search.KeyValueNodeBuilder("refund")

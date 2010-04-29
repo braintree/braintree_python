@@ -1,4 +1,20 @@
 class Search:
+    class KeyValueNodeBuilder(object):
+        def __init__(self, name):
+            self.name = name
+
+        def __eq__(self, value):
+            return self.is_equal(value)
+
+        def is_equal(self, value):
+            return Search.TextNode(self.name, value)
+
+        def __ne__(self, value):
+            return self.is_not_equal(value)
+
+        def is_not_equal(self, value):
+            return Search.TextNode(self.name, not value)
+
     class TextNodeBuilder(object):
         def __init__(self, name):
             self.name = name

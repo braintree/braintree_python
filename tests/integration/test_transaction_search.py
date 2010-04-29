@@ -421,7 +421,89 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.approximate_size)
 
-    #  it "searches on source" do
+    def test_advanced_search_multiple_value_node_type(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.type == Transaction.Type.Sale
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.type.in_list([Transaction.Type.Sale, Transaction.Type.Credit])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.type == Transaction.Type.Credit
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_type_with_refund(self):
+        name = "Anabel Atkins%s" % randint(1,1000)
+        sale = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": name
+            },
+            'options': {
+                'submit_for_settlement': True
+            }
+        }).transaction
+        Http().put("/transactions/%s/settle" % sale.id)
+
+        refund = Transaction.refund(sale.id).transaction
+
+        credit = Transaction.credit({
+            "amount": Decimal("1000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+                "cardholder_name": name
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.type == Transaction.Type.Credit
+        ])
+
+        self.assertEquals(2, collection.approximate_size)
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.type == Transaction.Type.Credit,
+            TransactionSearch.refund == True
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(refund.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.type == Transaction.Type.Credit,
+            TransactionSearch.refund == False
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(credit.id, collection.first.id)
+
     #  it "searches on type" do
     #    it "searches on amount" do
     #    it "can also take BigDecimal for amount" do
