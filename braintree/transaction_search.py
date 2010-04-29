@@ -49,3 +49,5 @@ class TransactionSearch:
     refund = Search.KeyValueNodeBuilder("refund")
 
     amount = Search.RangeNodeBuilder("amount")
+
+    created_at = Search.RangeNodeBuilder("created_at")

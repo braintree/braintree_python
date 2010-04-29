@@ -557,62 +557,123 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(1, collection.approximate_size)
         self.assertEquals(t_1500.id, collection.first.id)
 
-    def test_advanced_search_range_node_amount_accepts_decimals(self):
-        name = "Henrietta Livingston%s" % randint(1,100000)
-        t_1000 = Transaction.sale({
-            "amount": "1000.00",
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2012",
-                "cardholder_name": name
-            }
-        }).transaction
+    def test_advanced_search_range_node_created_at_less_than_or_equal_to(self):
+        transaction  = Transaction.sale({
+             "amount": "1000.00",
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+         }).transaction
 
-        t_1500 = Transaction.sale({
-            "amount": "1500.00",
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2012",
-                "cardholder_name": name
-            }
-        }).transaction
-
-        t_1800 = Transaction.sale({
-            "amount": "1800.00",
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2012",
-                "cardholder_name": name
-            }
-        }).transaction
+        past = transaction.created_at - timedelta(minutes=10)
+        now = transaction.created_at
+        future = transaction.created_at + timedelta(minutes=10)
 
         collection = Transaction.search([
-            TransactionSearch.credit_card_cardholder_name == name,
-            TransactionSearch.amount >= Decimal("1700")
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at <= past
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at <= now
         ])
 
         self.assertEquals(1, collection.approximate_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.credit_card_cardholder_name == name,
-            TransactionSearch.amount <= Decimal("1250")
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at <= future
         ])
 
         self.assertEquals(1, collection.approximate_size)
-        self.assertEquals(t_1000.id, collection.first.id)
+        self.assertEquals(transaction.id, collection.first.id)
+
+    def test_advanced_search_range_node_created_at_greater_than_or_equal_to(self):
+        transaction  = Transaction.sale({
+             "amount": "1000.00",
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+         }).transaction
+
+        past = transaction.created_at - timedelta(minutes=10)
+        now = transaction.created_at
+        future = transaction.created_at + timedelta(minutes=10)
 
         collection = Transaction.search([
-            TransactionSearch.credit_card_cardholder_name == name,
-            TransactionSearch.amount.between(Decimal("1100"), Decimal("1600"))
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at >= past
         ])
 
         self.assertEquals(1, collection.approximate_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEquals(transaction.id, collection.first.id)
 
-    #    it "searches on amount" do
-    #    it "can also take BigDecimal for amount" do
-    #  it "searches on created_at" do
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at >= now
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at >= future
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_range_node_created_at_between(self):
+        transaction  = Transaction.sale({
+             "amount": "1000.00",
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+         }).transaction
+
+        past = transaction.created_at - timedelta(minutes=10)
+        now = transaction.created_at
+        future = transaction.created_at + timedelta(minutes=10)
+        future2 = transaction.created_at + timedelta(minutes=20)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at.between(past, now)
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at.between(now, future)
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
     #it "returns multiple results" do
     #  it "is" do
     #  it "is_not" do
