@@ -38,9 +38,9 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(0, collection.approximate_size)
 
     def test_advanced_search_searches_all_text_fields_at_once(self):
-        first_name = "Tim%s" % randint(1, 1000)
-        token = "creditcard%s" % randint(1, 1000)
-        customer_id = "customer%s" % randint(1, 1000)
+        first_name = "Tim%s" % randint(1, 100000)
+        token = "creditcard%s" % randint(1, 100000)
+        customer_id = "customer%s" % randint(1, 100000)
 
         transaction = Transaction.sale({
             "amount": "1000.00",
@@ -128,9 +128,9 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(transaction.id, collection.first.id)
 
     def test_advanced_search_search_each_text_field(self):
-        first_name = "Tim%s" % randint(1, 1000)
-        token = "creditcard%s" % randint(1, 1000)
-        customer_id = "customer%s" % randint(1, 1000)
+        first_name = "Tim%s" % randint(1, 100000)
+        token = "creditcard%s" % randint(1, 100000)
+        customer_id = "customer%s" % randint(1, 100000)
 
         transaction = Transaction.sale({
             "amount": "1000.00",
@@ -454,7 +454,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(0, collection.approximate_size)
 
     def test_advanced_search_multiple_value_node_type_with_refund(self):
-        name = "Anabel Atkins%s" % randint(1,1000)
+        name = "Anabel Atkins%s" % randint(1,100000)
         sale = Transaction.sale({
             "amount": "1000.00",
             "credit_card": {
@@ -505,7 +505,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(credit.id, collection.first.id)
 
     def test_advanced_search_range_node_amount(self):
-        name = "Henrietta Livingston%s" % randint(1,1000)
+        name = "Henrietta Livingston%s" % randint(1,100000)
         t_1000 = Transaction.sale({
             "amount": "1000.00",
             "credit_card": {
