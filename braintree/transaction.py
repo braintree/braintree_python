@@ -114,12 +114,12 @@ class Transaction(Resource):
         """
         Constants representing transaction types. Available types are:
 
-        * braintree.Transaction.Type.Sale
         * braintree.Transaction.Type.Credit
+        * braintree.Transaction.Type.Sale
         """
 
-        Sale = "sale"
         Credit = "credit"
+        Sale = "sale"
 
     @staticmethod
     def confirm_transparent_redirect(query_string):

@@ -1,3 +1,4 @@
+from braintree.credit_card import CreditCard
 from braintree.search import Search
 from braintree.transaction import Transaction
 
@@ -39,16 +40,58 @@ class TransactionSearch:
     credit_card_expiration_date = Search.TextNodeBuilder("credit_card_expiration_date")
     credit_card_number = Search.TextNodeBuilder("credit_card_number")
 
+    merchant_account_id = Search.MultipleValueNodeBuilder("merchant_account_id")
+
     created_using = Search.MultipleValueNodeBuilder("created_using", [
         Transaction.CreatedUsing.FullInformation,
         Transaction.CreatedUsing.Token
     ])
-    credit_card_card_type = Search.MultipleValueNodeBuilder("credit_card_card_type")
-    credit_card_customer_location = Search.MultipleValueNodeBuilder("credit_card_customer_location")
-    merchant_account_id = Search.MultipleValueNodeBuilder("merchant_account_id")
-    source = Search.MultipleValueNodeBuilder("source")
-    status = Search.MultipleValueNodeBuilder("status")
-    type = Search.MultipleValueNodeBuilder("type")
+
+    credit_card_card_type = Search.MultipleValueNodeBuilder("credit_card_card_type", [
+        CreditCard.CardType.AmEx,
+        CreditCard.CardType.CarteBlanche,
+        CreditCard.CardType.ChinaUnionPay,
+        CreditCard.CardType.DinersClubInternational,
+        CreditCard.CardType.Discover,
+        CreditCard.CardType.JCB,
+        CreditCard.CardType.Laser,
+        CreditCard.CardType.Maestro,
+        CreditCard.CardType.MasterCard,
+        CreditCard.CardType.Solo,
+        CreditCard.CardType.Switch,
+        CreditCard.CardType.Visa,
+        CreditCard.CardType.Unknown
+    ])
+
+    credit_card_customer_location = Search.MultipleValueNodeBuilder("credit_card_customer_location", [
+        CreditCard.CustomerLocation.International,
+        CreditCard.CustomerLocation.US
+    ])
+
+    source = Search.MultipleValueNodeBuilder("source", [
+        Transaction.Source.Api,
+        Transaction.Source.ControlPanel,
+        Transaction.Source.Recurring
+    ])
+
+    status = Search.MultipleValueNodeBuilder("status", [
+        Transaction.Status.Authorized,
+        Transaction.Status.Authorizing,
+        Transaction.Status.Failed,
+        Transaction.Status.GatewayRejected,
+        Transaction.Status.ProcessorDeclined,
+        Transaction.Status.Settled,
+        Transaction.Status.SettlementFailed,
+        Transaction.Status.SubmittedForSettlement,
+        Transaction.Status.Unknown,
+        Transaction.Status.Unrecognized,
+        Transaction.Status.Voided
+    ])
+
+    type = Search.MultipleValueNodeBuilder("type", [
+        Transaction.Type.Credit,
+        Transaction.Type.Sale
+    ])
 
     refund = Search.KeyValueNodeBuilder("refund")
 
