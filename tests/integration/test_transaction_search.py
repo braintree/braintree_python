@@ -361,6 +361,15 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.approximate_size)
 
+    def test_advanced_search_multiple_value_node_allowed_values_created_using(self):
+        try:
+            collection = Transaction.search([
+                TransactionSearch.created_using == "noSuchCreatedUsing"
+            ])
+            self.assertTrue(False)
+        except AttributeError, error:
+            self.assertEquals("Invalid argument(s) for created_using: noSuchCreatedUsing", str(error))
+
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
         transaction = Transaction.sale({
             "amount": "1000.00",
@@ -784,5 +793,5 @@ class TestTransactionSearch(unittest.TestCase):
         transaction_ids = [transaction.id for transaction in collection.items]
         self.assertEquals(collection.approximate_size, len(self.__unique(transaction_ids)))
 
-    def __unique(self, array):
-        return set(array)
+    def __unique(self, list):
+        return set(list)

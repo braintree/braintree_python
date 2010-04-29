@@ -49,10 +49,15 @@ class Search:
             return self.dict
 
     class MultipleValueNodeBuilder(object):
-        def __init__(self, name):
+        def __init__(self, name, whitelist = []):
             self.name = name
+            self.whitelist = whitelist
 
         def in_list(self, list):
+            invalid_args = set(list) - set(self.whitelist)
+            if len(self.whitelist) > 0 and len(invalid_args) > 0:
+                error_string = "Invalid argument(s) for %s: %s" % (self.name, ", ".join(invalid_args))
+                raise AttributeError(error_string)
             return Search.Node(self.name, list)
 
         def __eq__(self, value):
