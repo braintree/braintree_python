@@ -126,3 +126,105 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(1, collection.approximate_size)
         self.assertEquals(transaction.id, collection.first.id)
+
+    def test_advanced_search_search_each_text_field(self):
+        first_name = "Tim%s" % randint(1, 1000)
+        token = "creditcard%s" % randint(1, 1000)
+        customer_id = "customer%s" % randint(1, 1000)
+
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Tom Smith",
+                "token": token,
+            },
+            "billing": {
+                "company": "Braintree",
+                "country_name": "United States of America",
+                "extended_address": "Suite 123",
+                "first_name": first_name,
+                "last_name": "Smith",
+                "locality": "Chicago",
+                "postal_code": "12345",
+                "region": "IL",
+                "street_address": "123 Main St"
+            },
+            "customer": {
+                "company": "Braintree",
+                "email": "smith@example.com",
+                "fax": "5551231234",
+                "first_name": "Tom",
+                "id": customer_id,
+                "last_name": "Smith",
+                "phone": "5551231234",
+                "website": "http://example.com",
+            },
+            "options": {
+                "store_in_vault": True
+            },
+            "order_id": "myorder",
+            "shipping": {
+                "company": "Braintree P.S.",
+                "country_name": "Mexico",
+                "extended_address": "Apt 456",
+                "first_name": "Thomas",
+                "last_name": "Smithy",
+                "locality": "Braintree",
+                "postal_code": "54321",
+                "region": "MA",
+                "street_address": "456 Road"
+            }
+        }).transaction
+
+        search_criteria = {
+            "billing_company": "Braintree",
+            "billing_country_name": "United States of America",
+            "billing_extended_address": "Suite 123",
+            "billing_first_name": first_name,
+            "billing_last_name": "Smith",
+            "billing_locality": "Chicago",
+            "billing_postal_code": "12345",
+            "billing_region": "IL",
+            "billing_street_address": "123 Main St",
+            "credit_card_cardholder_name": "Tom Smith",
+            "credit_card_expiration_date": "05/2012",
+            "credit_card_number": "4111111111111111",
+            "customer_company": "Braintree",
+            "customer_email": "smith@example.com",
+            "customer_fax": "5551231234",
+            "customer_first_name": "Tom",
+            "customer_id": customer_id,
+            "customer_last_name": "Smith",
+            "customer_phone": "5551231234",
+            "customer_website": "http://example.com",
+            "order_id": "myorder",
+            "payment_method_token": token,
+            "processor_authorization_code": transaction.processor_authorization_code,
+            "shipping_company": "Braintree P.S.",
+            "shipping_country_name": "Mexico",
+            "shipping_extended_address": "Apt 456",
+            "shipping_first_name": "Thomas",
+            "shipping_last_name": "Smithy",
+            "shipping_locality": "Braintree",
+            "shipping_postal_code": "54321",
+            "shipping_region": "MA",
+            "shipping_street_address": "456 Road"
+        }
+
+        for criterion, value in search_criteria.iteritems():
+            text_node = getattr(TransactionSearch, criterion)
+
+            collection = Transaction.search([
+                TransactionSearch.id == transaction.id,
+                text_node == value
+            ])
+            self.assertEquals(1, collection.approximate_size)
+            self.assertEquals(transaction.id, collection.first.id)
+
+            collection = Transaction.search([
+                TransactionSearch.id == transaction.id,
+                text_node == "invalid"
+            ])
+            self.assertEquals(0, collection.approximate_size)
