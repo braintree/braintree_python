@@ -17,7 +17,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertTrue(collection.approximate_size > 100)
 
         transaction_ids = [transaction.id for transaction in collection.items]
-        self.assertEquals(collection.approximate_size, len(set(transaction_ids)))
+        self.assertEquals(collection.approximate_size, len(self.__unique(transaction_ids)))
 
     def test_basic_serach_all_statuses(self):
         self.assertTrue(TestHelper.includes_status(Transaction.search("authorizing"), Transaction.Status.Authorizing))
@@ -228,6 +228,106 @@ class TestTransactionSearch(unittest.TestCase):
                 text_node == "invalid"
             ])
             self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_text_node_contains(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Jane Shea"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name.contains("ane She")
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name.contains("invalid")
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_text_node_starts_with(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Jane Shea"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name.starts_with("Jane S")
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name.starts_with("invalid")
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_text_node_ends_with(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Jane Shea"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name.ends_with("e Shea")
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name.ends_with("invalid")
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_text_node_is_not(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Jane Shea"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name != "invalid"
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name != "Jane Shea"
+        ])
+
+        self.assertEquals(0, collection.approximate_size)
 
     def test_advanced_search_multiple_value_node_created_using(self):
         transaction = Transaction.sale({
@@ -674,12 +774,15 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.approximate_size)
 
-    #it "returns multiple results" do
-    #  it "is" do
-    #  it "is_not" do
-    #  it "ends_with" do
-    #  it "starts_with" do
-    #  it "contains" do
-    #it "returns transactions matching the given search terms" do
-    #it "can iterate over the entire collection" do
+    def test_advanced_search_returns_iteratable_results(self):
+        collection = Transaction.search([
+            TransactionSearch.credit_card_number.starts_with("411")
+        ])
 
+        self.assertTrue(collection.approximate_size > 100)
+
+        transaction_ids = [transaction.id for transaction in collection.items]
+        self.assertEquals(collection.approximate_size, len(self.__unique(transaction_ids)))
+
+    def __unique(self, array):
+        return set(array)
