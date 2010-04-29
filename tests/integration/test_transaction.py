@@ -200,6 +200,33 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals("some extra stuff", transaction.custom_fields["store_me"])
 
+    def test_sale_with_merchant_account_id(self):
+        result = Transaction.sale({
+            "amount": "1000.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(TestHelper.non_default_merchant_account_id, transaction.merchant_account_id)
+
+    def test_sale_without_merchant_account_id_falls_back_to_default(self):
+        result = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
+
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
             "amount": "2000.00",
@@ -515,6 +542,33 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.AmountIsRequired,
             result.errors.for_object("transaction").on("amount")[0].code
         )
+
+    def test_credit_with_merchant_account_id(self):
+        result = Transaction.credit({
+            "amount": "1000.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(TestHelper.non_default_merchant_account_id, transaction.merchant_account_id)
+
+    def test_credit_without_merchant_account_id_falls_back_to_default(self):
+        result = Transaction.credit({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
 
     def test_find_returns_a_found_transaction(self):
         transaction = Transaction.sale({

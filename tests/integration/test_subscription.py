@@ -34,8 +34,6 @@ class TestSubscription(unittest.TestCase):
             "plan_id": self.trialless_plan["id"]
         }).subscription
 
-        self.default_merchant_account_id = "sandbox_credit_card"
-        self.non_default_merchant_account_id = "sandbox_credit_card_non_default"
 
     def test_create_returns_successful_result_if_valid(self):
         result = Subscription.create({
@@ -48,7 +46,7 @@ class TestSubscription(unittest.TestCase):
         self.assertNotEquals(None, re.search("\A\w{6}\Z", subscription.id))
         self.assertEquals(Subscription.Status.Active, subscription.status)
         self.assertEquals("integration_trialless_plan", subscription.plan_id)
-        self.assertEquals(self.default_merchant_account_id, subscription.merchant_account_id)
+        self.assertEquals(TestHelper.default_merchant_account_id, subscription.merchant_account_id)
 
         self.assertEquals(date, type(subscription.first_billing_date))
         self.assertEquals(date, type(subscription.next_billing_date))
@@ -73,11 +71,11 @@ class TestSubscription(unittest.TestCase):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": self.trialless_plan["id"],
-            "merchant_account_id": self.non_default_merchant_account_id
+            "merchant_account_id": TestHelper.non_default_merchant_account_id
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(self.non_default_merchant_account_id, result.subscription.merchant_account_id)
+        self.assertEquals(TestHelper.non_default_merchant_account_id, result.subscription.merchant_account_id)
 
     def test_create_defaults_to_plan_without_trial(self):
         subscription = Subscription.create({
@@ -183,13 +181,13 @@ class TestSubscription(unittest.TestCase):
 
     def test_update_with_merchant_account_id(self):
         result = Subscription.update(self.updateable_subscription.id, {
-            "merchant_account_id": self.non_default_merchant_account_id,
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
         })
 
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(self.non_default_merchant_account_id, subscription.merchant_account_id)
+        self.assertEquals(TestHelper.non_default_merchant_account_id, subscription.merchant_account_id)
 
     def test_update_with_error_result(self):
         result = Subscription.update(self.updateable_subscription.id, {

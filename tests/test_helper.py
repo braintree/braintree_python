@@ -21,6 +21,10 @@ Configuration.configure(
 )
 
 class TestHelper(object):
+
+    default_merchant_account_id = "sandbox_credit_card"
+    non_default_merchant_account_id = "sandbox_credit_card_non_default"
+
     @staticmethod
     def simulate_tr_form_post(post_params, url):
         form_data = urllib.urlencode(post_params)
