@@ -12,6 +12,7 @@ from datetime import datetime
 from decimal import Decimal
 from M2Crypto import SSL
 from nose.tools import raises
+from random import randint
 
 Configuration.configure(
     Environment.Development,

@@ -222,8 +222,18 @@ class Transaction(Resource):
                 pass
         """
 
-        query_string = urllib.urlencode([("q", query), ("page", page)])
-        response = Http().get("/transactions/all/search?" + query_string)
+        if (isinstance(query, str)):
+            query_string = urllib.urlencode([("q", query), ("page", page)])
+            response = Http().get("/transactions/all/search?" + query_string)
+        else:
+            criteria = {}
+            for term in query:
+                if criteria.get(term.name):
+                    criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
+                else:
+                    criteria[term.name] = term.to_param()
+
+            response = Http().post("/transactions/advanced_search?page=" + str(page), {"search": criteria})
         return ResourceCollection(query, response["credit_card_transactions"], Transaction)
 
     @staticmethod

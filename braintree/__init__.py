@@ -10,6 +10,7 @@ from resource_collection import ResourceCollection
 from search import Search
 from subscription import Subscription
 from transaction import Transaction
+from transaction_search import TransactionSearch
 from subscription_search import SubscriptionSearch
 from successful_result import SuccessfulResult
 from transparent_redirect import TransparentRedirect
