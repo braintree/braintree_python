@@ -39,6 +39,9 @@ class Search:
         def in_list(self, list):
             return Search.MultipleValueNode(self.name, list)
 
+        def __eq__(self, value):
+            return self.in_list([value])
+
     class MultipleValueNode(object):
         def __init__(self, name, items):
             self.name = name

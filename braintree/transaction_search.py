@@ -37,3 +37,5 @@ class TransactionSearch:
 
     credit_card_expiration_date = Search.TextNodeBuilder("credit_card_expiration_date")
     credit_card_number = Search.TextNodeBuilder("credit_card_number")
+
+    created_using = Search.MultipleValueNodeBuilder("created_using")

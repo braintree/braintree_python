@@ -228,3 +228,35 @@ class TestTransactionSearch(unittest.TestCase):
                 text_node == "invalid"
             ])
             self.assertEquals(0, collection.approximate_size)
+
+    def test_advanced_search_multiple_value_node_created_using(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_using == Transaction.CreatedUsing.FullInformation
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_using.in_list([Transaction.CreatedUsing.FullInformation, Transaction.CreatedUsing.Token])
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_using.in_list([Transaction.CreatedUsing.Token])
+        ])
+
+        self.assertEquals(0, collection.approximate_size)

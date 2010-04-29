@@ -65,6 +65,17 @@ class Transaction(Resource):
     For more information on Transactions, see http://www.braintreepaymentsolutions.com/gateway/transaction-api
     """
 
+    class CreatedUsing(object):
+        """
+        Contants representing how the transaction was created.  Available types are:
+
+        * braintree.Transaction.CreatedUsing.FullInformation
+        * braintree.Transaction.CreatedUsing.Token
+        """
+
+        FullInformation = "full_information"
+        Token = "token"
+
     class Type(object):
         """
         Constants representing transaction types. Available types are:
