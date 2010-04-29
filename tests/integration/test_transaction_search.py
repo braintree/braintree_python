@@ -504,7 +504,59 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(1, collection.approximate_size)
         self.assertEquals(credit.id, collection.first.id)
 
-    #  it "searches on type" do
+    def test_advanced_search_range_node_amount(self):
+        name = "Henrietta Livingston%s" % randint(1,1000)
+        t_1000 = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": name
+            }
+        }).transaction
+
+        t_1500 = Transaction.sale({
+            "amount": "1500.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": name
+            }
+        }).transaction
+
+        t_1800 = Transaction.sale({
+            "amount": "1800.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": name
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.amount >= "1700"
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(t_1800.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.amount <= "1250"
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(t_1000.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.amount.between("1100", "1600")
+        ])
+
+        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(t_1500.id, collection.first.id)
+
     #    it "searches on amount" do
     #    it "can also take BigDecimal for amount" do
     #  it "searches on created_at" do

@@ -47,3 +47,5 @@ class TransactionSearch:
     type = Search.MultipleValueNodeBuilder("type")
 
     refund = Search.KeyValueNodeBuilder("refund")
+
+    amount = Search.RangeNodeBuilder("amount")
