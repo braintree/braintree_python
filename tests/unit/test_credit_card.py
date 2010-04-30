@@ -49,8 +49,17 @@ class TestCreditCard(unittest.TestCase):
             "http_status=503&id=6kdj469tw7yck32j&hash=1b3d29199a282e63074a7823b76bccacdf732da6"
         )
 
-    def test_create_signature_includes_customer_id(self):
-        self.assertTrue("customer_id" in CreditCard.create_signature())
+    def test_create_signature(self):
+        expected = ["cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+            {"billing_address": ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]},
+            {"options": ["make_default", "verify_card"]},
+            "customer_id"
+        ]
+        self.assertEquals(expected, CreditCard.create_signature())
 
-    def test_update_signature_does_not_include_customer_id(self):
-        self.assertFalse("customer_id" in CreditCard.update_signature())
+    def test_update_signature(self):
+        expected = ["cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+                {"billing_address": ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address", {"options": ["update_existing"]}]},
+            {"options": ["make_default", "verify_card"]}
+        ]
+        self.assertEquals(expected, CreditCard.update_signature())

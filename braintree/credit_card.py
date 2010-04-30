@@ -159,15 +159,29 @@ class CreditCard(Resource):
 
     @staticmethod
     def create_signature():
-        return CreditCard.update_signature() + ["customer_id"]
+        return CreditCard.signature("create")
 
     @staticmethod
     def update_signature():
-        return [
+        return CreditCard.signature("update")
+
+    @staticmethod
+    def signature(type):
+        billing_address_params = ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]
+        signature = [
             "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
-            {"billing_address": ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]},
+            {"billing_address": billing_address_params},
             {"options": ["make_default", "verify_card"]}
         ]
+
+        if type == "create":
+            signature.append("customer_id")
+        elif type == "update":
+            billing_address_params.append({"options": ["update_existing"]})
+        else:
+            raise AttributeError
+
+        return signature
 
     @staticmethod
     def transparent_redirect_create_url():
