@@ -1,4 +1,20 @@
 class Search:
+    class EqualityNodeBuilder(object):
+        def __init__(self, name):
+            self.name = name
+
+        def __eq__(self, value):
+            return self.is_equal(value)
+
+        def is_equal(self, value):
+            return Search.Node(self.name, {"is": value})
+
+        def __ne__(self, value):
+            return self.is_not_equal(value)
+
+        def is_not_equal(self, value):
+            return Search.Node(self.name, {"is_not": value})
+
     class KeyValueNodeBuilder(object):
         def __init__(self, name):
             self.name = name
@@ -15,35 +31,21 @@ class Search:
         def is_not_equal(self, value):
             return Search.Node(self.name, not value)
 
-    class TextNodeBuilder(object):
-        def __init__(self, name):
-            self.name = name
-
-        def __eq__(self, value):
-            return self.is_equal(value)
-
-        def is_equal(self, value):
-            return Search.Node(self.name, {"is": value})
-
-        def __ne__(self, value):
-            return self.is_not_equal(value)
-
-        def is_not_equal(self, value):
-            return Search.Node(self.name, {"is_not": value})
-
+    class PartialMatchNodeBuilder(EqualityNodeBuilder):
         def starts_with(self, value):
             return Search.Node(self.name, {"starts_with": value})
 
         def ends_with(self, value):
             return Search.Node(self.name, {"ends_with": value})
 
+    class TextNodeBuilder(PartialMatchNodeBuilder):
         def contains(self, value):
             return Search.Node(self.name, {"contains": value})
 
     class Node(object):
         def __init__(self, name, dict):
-          self.name = name
-          self.dict = dict
+            self.name = name
+            self.dict = dict
 
         def to_param(self):
             return self.dict

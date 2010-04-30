@@ -37,10 +37,10 @@ class TransactionSearch:
     shipping_region              = Search.TextNodeBuilder("shipping_region")
     shipping_street_address      = Search.TextNodeBuilder("shipping_street_address")
 
-    credit_card_expiration_date = Search.TextNodeBuilder("credit_card_expiration_date")
-    credit_card_number = Search.TextNodeBuilder("credit_card_number")
+    credit_card_expiration_date  = Search.EqualityNodeBuilder("credit_card_expiration_date")
+    credit_card_number           = Search.PartialMatchNodeBuilder("credit_card_number")
 
-    merchant_account_id = Search.MultipleValueNodeBuilder("merchant_account_id")
+    merchant_account_id          = Search.MultipleValueNodeBuilder("merchant_account_id")
 
     created_using = Search.MultipleValueNodeBuilder("created_using", [
         Transaction.CreatedUsing.FullInformation,
