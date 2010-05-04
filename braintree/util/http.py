@@ -16,11 +16,11 @@ class Http(object):
         return status not in [200, 201, 422]
 
     @staticmethod
-    def raise_exception_from_status(status):
+    def raise_exception_from_status(status, message=None):
         if status == 401:
             raise AuthenticationError()
         elif status == 403:
-            raise AuthorizationError()
+            raise AuthorizationError(message)
         elif status == 404:
             raise NotFoundError()
         elif status == 500:
