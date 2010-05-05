@@ -7,11 +7,11 @@ import urllib
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from M2Crypto import SSL
 from nose.tools import raises
+from random import randint
 
 Configuration.configure(
     Environment.Development,
@@ -21,6 +21,10 @@ Configuration.configure(
 )
 
 class TestHelper(object):
+
+    default_merchant_account_id = "sandbox_credit_card"
+    non_default_merchant_account_id = "sandbox_credit_card_non_default"
+
     @staticmethod
     def simulate_tr_form_post(post_params, url):
         form_data = urllib.urlencode(post_params)

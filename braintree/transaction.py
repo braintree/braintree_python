@@ -65,16 +65,21 @@ class Transaction(Resource):
     For more information on Transactions, see http://www.braintreepaymentsolutions.com/gateway/transaction-api
     """
 
-    class Type(object):
+    class CreatedUsing(object):
         """
-        Constants representing transaction types. Available types are:
+        Contants representing how the transaction was created.  Available types are:
 
-        * braintree.Transaction.Type.Sale
-        * braintree.Transaction.Type.Credit
+        * braintree.Transaction.CreatedUsing.FullInformation
+        * braintree.Transaction.CreatedUsing.Token
         """
 
-        Sale = "sale"
-        Credit = "credit"
+        FullInformation = "full_information"
+        Token = "token"
+
+    class Source(object):
+        Api = "api"
+        ControlPanel = "control_panel"
+        Recurring = "recurring"
 
     class Status(object):
         """
@@ -104,6 +109,17 @@ class Transaction(Resource):
         Unknown                = "unknown"
         Unrecognized           = "unrecognized"
         Voided                 = "voided"
+
+    class Type(object):
+        """
+        Constants representing transaction types. Available types are:
+
+        * braintree.Transaction.Type.Credit
+        * braintree.Transaction.Type.Sale
+        """
+
+        Credit = "credit"
+        Sale = "sale"
 
     @staticmethod
     def confirm_transparent_redirect(query_string):
@@ -162,14 +178,14 @@ class Transaction(Resource):
             raise NotFoundError("transaction with id " + transaction_id + " not found")
 
     @staticmethod
-    def refund(transaction_id):
+    def refund(transaction_id, amount=None):
         """
         Refunds an existing transaction. It expects a transaction_id. ::
 
             result = braintree.Transaction.refund("my_transaction_id")
         """
 
-        response = Http().post("/transactions/" + transaction_id + "/refund", {})
+        response = Http().post("/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(response["transaction"])})
         elif "api_error_response" in response:
@@ -222,8 +238,18 @@ class Transaction(Resource):
                 pass
         """
 
-        query_string = urllib.urlencode([("q", query), ("page", page)])
-        response = Http().get("/transactions/all/search?" + query_string)
+        if (isinstance(query, str)):
+            query_string = urllib.urlencode([("q", query), ("page", page)])
+            response = Http().get("/transactions/all/search?" + query_string)
+        else:
+            criteria = {}
+            for term in query:
+                if criteria.get(term.name):
+                    criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
+                else:
+                    criteria[term.name] = term.to_param()
+
+            response = Http().post("/transactions/advanced_search?page=" + str(page), {"search": criteria})
         return ResourceCollection(query, response["credit_card_transactions"], Transaction)
 
     @staticmethod
@@ -321,7 +347,7 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "order_id", "payment_method_token", "type",
+            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "type",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -387,6 +413,8 @@ class Transaction(Resource):
         The vault credit card associated with this transaction
         """
 
+        if self.credit_card_details.token is None:
+            return None
         return CreditCard.find(self.credit_card_details.token)
 
     @property

@@ -166,6 +166,51 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("06/2010", credit_card.expiration_date)
         self.assertEquals("Jane Jones", credit_card.cardholder_name)
 
+    def test_update_billing_address_creates_new_by_default(self):
+        customer = Customer.create().customer
+        initial_credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "billing_address": {
+                "street_address": "123 Nigeria Ave"
+            }
+        }).credit_card
+
+        updated_credit_card = CreditCard.update(initial_credit_card.token, {
+            "billing_address": {
+                "region": "IL"
+            }
+        }).credit_card
+
+        self.assertEquals("IL", updated_credit_card.billing_address.region)
+        self.assertEquals(None, updated_credit_card.billing_address.street_address)
+        self.assertNotEquals(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
+
+    def test_update_billing_address_when_update_existing_is_True(self):
+        customer = Customer.create().customer
+        initial_credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "billing_address": {
+                "street_address": "123 Nigeria Ave",
+            }
+        }).credit_card
+
+        updated_credit_card = CreditCard.update(initial_credit_card.token, {
+            "billing_address": {
+                "region": "IL",
+                "options": {
+                    "update_existing": True
+                }
+            }
+        }).credit_card
+
+        self.assertEquals("IL", updated_credit_card.billing_address.region)
+        self.assertEquals("123 Nigeria Ave", updated_credit_card.billing_address.street_address)
+        self.assertEquals(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
+
     def test_update_and_make_default(self):
         customer = Customer.create().customer
         card1 = CreditCard.create({

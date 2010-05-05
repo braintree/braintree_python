@@ -1,3 +1,4 @@
+import datetime
 import types
 from decimal import Decimal
 
@@ -13,6 +14,9 @@ class Generator(object):
 
     def __generate_boolean(self, value):
         return str(value).lower()
+
+    def __generate_datetime(self, value):
+        return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def __generate_dict(self, dictionary):
         xml = ""
@@ -47,5 +51,8 @@ class Generator(object):
             return open_tag + self.__generate_boolean(value) + close_tag
         elif type(value) == types.NoneType:
             return open_tag + close_tag
+        elif type(value) == datetime.datetime:
+            open_tag = "<" + key + " type=\"datetime\">"
+            return open_tag + self.__generate_datetime(value) + close_tag
         else:
             raise RuntimeError("Unexpected XML node type: " + str(type(value)))

@@ -43,6 +43,49 @@ class CreditCard(Resource):
 
     For more information on CreditCard verifications, see http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api
     """
+    class CardType(object):
+        """
+        Contants representing the type of the credit card.  Available types are:
+
+        * Braintree.CreditCard.AmEx
+        * Braintree.CreditCard.CarteBlanche
+        * Braintree.CreditCard.ChinaUnionPay
+        * Braintree.CreditCard.DinersClubInternational
+        * Braintree.CreditCard.Discover
+        * Braintree.CreditCard.JCB
+        * Braintree.CreditCard.Laser
+        * Braintree.CreditCard.Maestro
+        * Braintree.CreditCard.MasterCard
+        * Braintree.CreditCard.Solo
+        * Braintree.CreditCard.Switch
+        * Braintree.CreditCard.Visa
+        * Braintree.CreditCard.Unknown
+        """
+
+        AmEx = "American Express"
+        CarteBlanche = "Carte Blanche"
+        ChinaUnionPay = "China UnionPay"
+        DinersClubInternational = "Diners Club"
+        Discover = "Discover"
+        JCB = "JCB"
+        Laser = "Laser"
+        Maestro = "Maestro"
+        MasterCard = "MasterCard"
+        Solo = "Solo"
+        Switch = "Switch"
+        Visa = "Visa"
+        Unknown = "Unknown"
+
+    class CustomerLocation(object):
+        """
+        Contants representing the issuer location of the credit card.  Available locations are:
+
+        * braintree.CreditCard.CustomerLocation.International
+        * braintree.CreditCard.CustomerLocation.US
+        """
+
+        International = "international"
+        US = "us"
 
     @staticmethod
     def confirm_transparent_redirect(query_string):
@@ -116,15 +159,29 @@ class CreditCard(Resource):
 
     @staticmethod
     def create_signature():
-        return CreditCard.update_signature() + ["customer_id"]
+        return CreditCard.signature("create")
 
     @staticmethod
     def update_signature():
-        return [
+        return CreditCard.signature("update")
+
+    @staticmethod
+    def signature(type):
+        billing_address_params = ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]
+        signature = [
             "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
-            {"billing_address": ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]},
+            {"billing_address": billing_address_params},
             {"options": ["make_default", "verify_card"]}
         ]
+
+        if type == "create":
+            signature.append("customer_id")
+        elif type == "update":
+            billing_address_params.append({"options": ["update_existing"]})
+        else:
+            raise AttributeError
+
+        return signature
 
     @staticmethod
     def transparent_redirect_create_url():

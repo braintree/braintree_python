@@ -134,5 +134,9 @@ class TestXmlUtil(unittest.TestCase):
         dict = {"container": {"element": "<&>'\""}}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
+    def test_xml_from_dict_with_datetime(self):
+        dict = {"a": datetime(2010, 1, 2, 3, 4, 5)}
+        self.assertEqual(dict, self.__xml_and_back(dict))
+
     def __xml_and_back(self, dict):
         return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))
