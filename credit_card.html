@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Credit Card &mdash; Braintree v2.0.0 documentation</title>
+    <title>Credit Card &mdash; Braintree v2.1.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '2.0.0',
+        VERSION:     '2.1.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v2.0.0 documentation" href="index.html" />
+    <link rel="top" title="Braintree v2.1.0 documentation" href="index.html" />
     <link rel="next" title="Customer" href="customer.html" />
     <link rel="prev" title="Address" href="address.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="address.html" title="Address"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -83,9 +83,40 @@
 </div>
 <p>For more information on CreditCards, see <a class="reference external" href="http://www.braintreepaymentsolutions.com/gateway/credit-card-api">http://www.braintreepaymentsolutions.com/gateway/credit-card-api</a></p>
 <p>For more information on CreditCard verifications, see <a class="reference external" href="http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api">http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api</a></p>
+<dl class="class">
+<dt id="braintree.credit_card.CreditCard.CardType">
+<em class="property">class </em><tt class="descname">CardType</tt><a class="headerlink" href="#braintree.credit_card.CreditCard.CardType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contants representing the type of the credit card.  Available types are:</p>
+<ul class="simple">
+<li>Braintree.CreditCard.AmEx</li>
+<li>Braintree.CreditCard.CarteBlanche</li>
+<li>Braintree.CreditCard.ChinaUnionPay</li>
+<li>Braintree.CreditCard.DinersClubInternational</li>
+<li>Braintree.CreditCard.Discover</li>
+<li>Braintree.CreditCard.JCB</li>
+<li>Braintree.CreditCard.Laser</li>
+<li>Braintree.CreditCard.Maestro</li>
+<li>Braintree.CreditCard.MasterCard</li>
+<li>Braintree.CreditCard.Solo</li>
+<li>Braintree.CreditCard.Switch</li>
+<li>Braintree.CreditCard.Visa</li>
+<li>Braintree.CreditCard.Unknown</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="braintree.credit_card.CreditCard.CustomerLocation">
+<em class="property">class </em><tt class="descclassname">CreditCard.</tt><tt class="descname">CustomerLocation</tt><a class="headerlink" href="#braintree.credit_card.CreditCard.CustomerLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contants representing the issuer location of the credit card.  Available locations are:</p>
+<ul class="simple">
+<li>braintree.CreditCard.CustomerLocation.International</li>
+<li>braintree.CreditCard.CustomerLocation.US</li>
+</ul>
+</dd></dl>
+
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.confirm_transparent_redirect">
-<em class="property">static </em><tt class="descname">confirm_transparent_redirect</tt><big>(</big><em>query_string</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.confirm_transparent_redirect" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">confirm_transparent_redirect</tt><big>(</big><em>query_string</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.confirm_transparent_redirect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Confirms a transparent redirect request. It expects the query string from the
 redirect request. The query string should _not_ include the leading &#8220;?&#8221; character.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">confirm_transparent_redirect_request</span><span class="p">(</span><span class="s">&quot;foo=bar&amp;id=12345&quot;</span><span class="p">)</span>
@@ -95,7 +126,7 @@ redirect request. The query string should _not_ include the leading &#8220;?&#82
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.create">
-<em class="property">static </em><tt class="descname">create</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.create" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">create</tt><big>(</big><em>params={}</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an CreditCard.  A number and expiration_date are required.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
     <span class="s">&quot;number&quot;</span><span class="p">:</span> <span class="s">&quot;4111111111111111&quot;</span><span class="p">,</span>
@@ -107,7 +138,7 @@ redirect request. The query string should _not_ include the leading &#8220;?&#82
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.delete">
-<em class="property">static </em><tt class="descname">delete</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.delete" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">delete</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a credit card, given a credit_card_id:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;my_credit_card_id&quot;</span><span class="p">)</span>
 </pre></div>
@@ -116,7 +147,7 @@ redirect request. The query string should _not_ include the leading &#8220;?&#82
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.find">
-<em class="property">static </em><tt class="descname">find</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.find" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">find</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find a credit card, given a credit_card_id. This does not return
 a result object. This will raise a <a title="braintree.exceptions.not_found_error.NotFoundError" class="reference external" href="exceptions/not_found_error.html#braintree.exceptions.not_found_error.NotFoundError"><tt class="xref docutils literal"><span class="pre">NotFoundError</span></tt></a> if the provided
 credit_card_id is not found.</p>
@@ -127,32 +158,32 @@ credit_card_id is not found.</p>
 
 <dl class="attribute">
 <dt id="braintree.credit_card.CreditCard.masked_number">
-<tt class="descname">masked_number</tt><a class="headerlink" href="#braintree.credit_card.CreditCard.masked_number" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">CreditCard.</tt><tt class="descname">masked_number</tt><a class="headerlink" href="#braintree.credit_card.CreditCard.masked_number" title="Permalink to this definition">¶</a></dt>
 <dd>Returns the masked number of the CreditCard.</dd></dl>
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.tr_data_for_create">
-<em class="property">static </em><tt class="descname">tr_data_for_create</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.tr_data_for_create" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">tr_data_for_create</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.tr_data_for_create" title="Permalink to this definition">¶</a></dt>
 <dd>Builds tr_data for CreditCard creation.</dd></dl>
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.tr_data_for_update">
-<em class="property">static </em><tt class="descname">tr_data_for_update</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.tr_data_for_update" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">tr_data_for_update</tt><big>(</big><em>tr_data</em>, <em>redirect_url</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.tr_data_for_update" title="Permalink to this definition">¶</a></dt>
 <dd>Builds tr_data for CreditCard updating.</dd></dl>
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.transparent_redirect_create_url">
-<em class="property">static </em><tt class="descname">transparent_redirect_create_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.transparent_redirect_create_url" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">transparent_redirect_create_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.transparent_redirect_create_url" title="Permalink to this definition">¶</a></dt>
 <dd>Returns the url to use for creating CreditCards through transparent redirect.</dd></dl>
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.transparent_redirect_update_url">
-<em class="property">static </em><tt class="descname">transparent_redirect_update_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.transparent_redirect_update_url" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">transparent_redirect_update_url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.transparent_redirect_update_url" title="Permalink to this definition">¶</a></dt>
 <dd>Returns the url to be used for updating CreditCards through transparent redirect.</dd></dl>
 
 <dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.update">
-<em class="property">static </em><tt class="descname">update</tt><big>(</big><em>credit_card_token</em>, <em>params={}</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.update" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">update</tt><big>(</big><em>credit_card_token</em>, <em>params={}</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update an existing CreditCard by credit_card_id.  The params are similar to create:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">CreditCard</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&quot;my_credit_card_id&quot;</span><span class="p">,</span> <span class="p">{</span>
     <span class="s">&quot;cardholder_name&quot;</span><span class="p">:</span> <span class="s">&quot;John Doe&quot;</span>
@@ -214,7 +245,7 @@ credit_card_id is not found.</p>
         <li class="right" >
           <a href="address.html" title="Address"
              >previous</a> |</li>
-        <li><a href="index.html">Braintree v2.0.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
