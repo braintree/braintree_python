@@ -236,6 +236,8 @@ class Transaction(Resource):
 
             for transaction in next_page:
                 pass
+
+        For more information, see http://www.braintreepaymentsolutions.com/gateway/transaction-api#searching
         """
 
         if (isinstance(query, str)):
