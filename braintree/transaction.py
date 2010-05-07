@@ -1,5 +1,6 @@
 import urllib
 from decimal import Decimal
+import braintree
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -221,38 +222,26 @@ class Transaction(Resource):
         return Transaction.create(params)
 
     @staticmethod
-    def search(query, page=1):
-        """
-        Search for transactions based on keywords. For example, you can search for
-        transactions based on the credit card bin. The search will return a
-        :class:`ResourceCollection <braintree.resource_collection.ResourceCollection>`::
+    def search(query):
+        response = Http().post("/transactions/advanced_search_ids", {"search": Transaction.__criteria(query)})
+        return ResourceCollection(query, response, Transaction)
 
-            collection = braintree.Transaction.search("411111")
+    @staticmethod
+    def fetch(query, ids):
+        criteria = Transaction.__criteria(query)
+        criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
+        response = Http().post("/transactions/advanced_search", {"search": criteria})
+        return [Transaction(item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
 
-            for transaction in collection:
-                pass
-
-            next_page = collection.next_page()
-
-            for transaction in next_page:
-                pass
-
-        For more information, see http://www.braintreepaymentsolutions.com/gateway/transaction-api#searching
-        """
-
-        if (isinstance(query, str)):
-            query_string = urllib.urlencode([("q", query), ("page", page)])
-            response = Http().get("/transactions/all/search?" + query_string)
-        else:
-            criteria = {}
-            for term in query:
-                if criteria.get(term.name):
-                    criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
-                else:
-                    criteria[term.name] = term.to_param()
-
-            response = Http().post("/transactions/advanced_search?page=" + str(page), {"search": criteria})
-        return ResourceCollection(query, response["credit_card_transactions"], Transaction)
+    @staticmethod
+    def __criteria(query):
+        criteria = {}
+        for term in query:
+            if criteria.get(term.name):
+                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
+            else:
+                criteria[term.name] = term.to_param()
+        return criteria
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):

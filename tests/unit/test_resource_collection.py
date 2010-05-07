@@ -1,73 +1,27 @@
 from tests.test_helper import *
 
 class TestResourceCollection(unittest.TestCase):
-    def test_approximate_size(self):
-        collection_data = {
-            "total_items": 2,
-            "current_page_number": 1,
-            "transaction": [{"amount": "91.23"}, {"amount": "123"}],
-            "page_size": 15
-        }
-        collection = ResourceCollection("some_query", collection_data, Transaction)
-        self.assertEquals(2, collection.approximate_size)
+    class TestResource:
+        items = ["a", "b", "c", "d", "e"]
 
-    def test_multiple_items_in_collection(self):
-        collection_data = {
-            "total_items": 2,
-            "current_page_number": 3,
-            "transaction": [{
-                "merchant_account_id": "m_id",
-                "amount": "91.23"
-                }, {
-                "merchant_account_id": "m_id2",
-                "amount": "12.34"
-                }],
-            "page_size": 15
-        }
-        collection = ResourceCollection("some_query", collection_data, Transaction)
-        self.assertEquals([Decimal("91.23"), Decimal("12.34")], [Decimal(t.amount) for t in collection.items])
+        @staticmethod
+        def fetch(query, ids):
+            return [TestResourceCollection.TestResource.items[int(id)] for id in ids]
 
-    def test_only_one_item_in_colleciton(self):
+    def test_iterating_over_contents(self):
         collection_data = {
-            "total_items": 1,
-            "current_page_number": 1,
-            "transaction": {
-                "merchant_account_id": "m_id",
-                "amount": "91.23"
-                },
-            "page_size": 15
+            "search_results": {
+                "page_size": 2,
+                "ids": ["0", "1", "2", "3", "4"]
+            }
         }
-        collection = ResourceCollection("some_query", collection_data, Transaction)
-        self.assertEquals(Decimal("91.23"), collection.first.amount)
+        collection = ResourceCollection("some_query", collection_data, TestResourceCollection.TestResource)
+        new_items = []
+        index = 0
+        for item in collection.items:
+            self.assertEquals(TestResourceCollection.TestResource.items[index], item)
+            new_items.append(item)
+            index += 1
 
-    def test_no_items_in_colleciton(self):
-        collection_data = {
-            "total_items": 0,
-            "current_page_number": 1,
-            "page_size": 15
-        }
-        collection = ResourceCollection("some_query", collection_data, Transaction)
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(5, len(new_items))
 
-    def test_first_returns_None_if_no_items(self):
-        collection_data = {
-            "total_items": 0,
-            "current_page_number": 1,
-            "transaction": [],
-            "page_size": 15
-        }
-        collection = ResourceCollection("some_query", collection_data, Transaction)
-        self.assertEquals(None, collection.first)
-
-    def test_first_returns_first_item(self):
-        collection_data = {
-            "total_items": 2,
-            "current_page_number": 1,
-            "transaction": [
-                { "amount": "1.23"},
-                { "amount": "2.34"}
-            ],
-            "page_size": 15
-        }
-        collection = ResourceCollection("some_query", collection_data, Transaction)
-        self.assertEquals(Decimal("1.23"), collection.first.amount)
