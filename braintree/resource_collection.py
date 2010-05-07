@@ -14,10 +14,10 @@ class ResourceCollection(object):
         self.__query = query
 
     @property
-    def approximate_size(self):
+    def maximum_size(self):
         """
         Returns the approximate size of the results.  The size is approximate due to race conditions when pulling
-        back results.  Due to its inexact nature, approximate_size should be avoided.
+        back results.  Due to its inexact nature, maximum_size should be avoided.
         """
         return len(self.__ids)
 
