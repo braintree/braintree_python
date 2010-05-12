@@ -117,6 +117,28 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("I", verification.avs_postal_code_response_code)
         self.assertEquals("I", verification.avs_street_address_response_code)
 
+    def test_create_with_card_verification_and_non_default_merchant_account(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4222222222222",
+            "expiration_date": "05/2009",
+            "options": {
+                "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
+                "verify_card": True
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEquals("processor_declined", verification.status)
+        self.assertEquals("2000", verification.processor_response_code)
+        self.assertEquals("Do Not Honor", verification.processor_response_text)
+        self.assertEquals("I", verification.cvv_response_code)
+        self.assertEquals(None, verification.avs_error_response_code)
+        self.assertEquals("I", verification.avs_postal_code_response_code)
+        self.assertEquals("I", verification.avs_street_address_response_code)
+
     def test_create_with_card_verification_set_to_false(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -256,6 +278,30 @@ class TestCreditCard(unittest.TestCase):
             "cvv": "123",
             "cardholder_name": "Jane Jones",
             "options": {"verify_card": True}
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("processor_declined", result.credit_card_verification.status)
+
+    def test_update_verifies_card_with_non_default_merchant_account(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        result = CreditCard.update(credit_card.token, {
+            "number": "4222222222222",
+            "expiration_date": "06/2010",
+            "cvv": "123",
+            "cardholder_name": "Jane Jones",
+            "options": {
+                "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
+                "verify_card": True
+            }
         })
 
         self.assertFalse(result.is_success)
