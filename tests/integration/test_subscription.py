@@ -129,6 +129,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction, type(transaction))
         self.assertEquals(self.trialless_plan["price"], transaction.amount)
         self.assertEquals("sale", transaction.type)
+        self.assertEquals(subscription.id, transaction.subscription_id)
 
     def test_create_doesnt_creates_a_transaction_if_trial_period(self):
         subscription = Subscription.create({
