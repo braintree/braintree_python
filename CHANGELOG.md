@@ -1,3 +1,7 @@
+## 2.2.1
+
+* Use isinstance instead of type to cater to inheritance (thanks danielgtaylor)
+
 ## 2.2.0
 
 * Prevent race condition when pulling back collection results -- search results represent the state of the data at the time the query was run
