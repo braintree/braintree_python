@@ -8,6 +8,7 @@ from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceEr
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
+from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 from braintree import version
 
 class Http(object):
@@ -16,13 +17,15 @@ class Http(object):
         return status not in [200, 201, 422]
 
     @staticmethod
-    def raise_exception_from_status(status):
+    def raise_exception_from_status(status, message=None):
         if status == 401:
             raise AuthenticationError()
         elif status == 403:
-            raise AuthorizationError()
+            raise AuthorizationError(message)
         elif status == 404:
             raise NotFoundError()
+        elif status == 426:
+            raise UpgradeRequiredError()
         elif status == 500:
             raise ServerError()
         elif status == 503:

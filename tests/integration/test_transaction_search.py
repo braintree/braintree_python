@@ -1,41 +1,11 @@
 from tests.test_helper import *
 
 class TestTransactionSearch(unittest.TestCase):
-    def test_basic_search_returns_some_results(self):
-        collection = Transaction.search("411111")
-
-        self.assertTrue(collection.approximate_size > 0)
-        self.assertEquals("411111", collection.first.credit_card_details.bin)
-
-    def test_basic_search_with_no_results(self):
-        collection = Transaction.search("no_such_transactions_exists")
-        self.assertEquals(0, collection.approximate_size)
-        self.assertEquals([], [transaction for transaction in collection.items])
-
-    def test_basic_search_can_iterate_over_the_entire_collection(self):
-        collection = Transaction.search("411111")
-        self.assertTrue(collection.approximate_size > 100)
-
-        transaction_ids = [transaction.id for transaction in collection.items]
-        self.assertEquals(collection.approximate_size, len(self.__unique(transaction_ids)))
-
-    def test_basic_serach_all_statuses(self):
-        self.assertTrue(TestHelper.includes_status(Transaction.search("authorizing"), Transaction.Status.Authorizing))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("authorized"), Transaction.Status.Authorized))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("gateway_rejected"), Transaction.Status.GatewayRejected))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("failed"), Transaction.Status.Failed))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("processor_declined"), Transaction.Status.ProcessorDeclined))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("settled"), Transaction.Status.Settled))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("settlement_failed"), Transaction.Status.SettlementFailed))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("submitted_for_settlement"), Transaction.Status.SubmittedForSettlement))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("unknown"), Transaction.Status.Unknown))
-        self.assertTrue(TestHelper.includes_status(Transaction.search("voided"), Transaction.Status.Voided))
-
     def test_advanced_search_no_results(self):
         collection = Transaction.search([
             TransactionSearch.billing_first_name == "no_such_person"
         ])
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_searches_all_text_fields_at_once(self):
         first_name = "Tim%s" % randint(1, 100000)
@@ -124,7 +94,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.id == transaction.id
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
     def test_advanced_search_search_each_text_field(self):
@@ -220,14 +190,14 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.id == transaction.id,
                 text_node == value
             ])
-            self.assertEquals(1, collection.approximate_size)
+            self.assertEquals(1, collection.maximum_size)
             self.assertEquals(transaction.id, collection.first.id)
 
             collection = Transaction.search([
                 TransactionSearch.id == transaction.id,
                 text_node == "invalid"
             ])
-            self.assertEquals(0, collection.approximate_size)
+            self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
@@ -244,7 +214,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name.contains("ane She")
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -252,7 +222,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name.contains("invalid")
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_text_node_starts_with(self):
         transaction = Transaction.sale({
@@ -269,7 +239,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name.starts_with("Jane S")
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -277,7 +247,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name.starts_with("invalid")
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_text_node_ends_with(self):
         transaction = Transaction.sale({
@@ -294,7 +264,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name.ends_with("e Shea")
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -302,7 +272,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name.ends_with("invalid")
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_text_node_is_not(self):
         transaction = Transaction.sale({
@@ -319,7 +289,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name != "invalid"
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -327,7 +297,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_cardholder_name != "Jane Shea"
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_created_using(self):
         transaction = Transaction.sale({
@@ -343,7 +313,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_using == Transaction.CreatedUsing.FullInformation
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -351,7 +321,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_using.in_list([Transaction.CreatedUsing.FullInformation, Transaction.CreatedUsing.Token])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -359,7 +329,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_using == Transaction.CreatedUsing.Token
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_allowed_values_created_using(self):
         try:
@@ -384,7 +354,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_customer_location == CreditCard.CustomerLocation.US
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -392,7 +362,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_customer_location.in_list([CreditCard.CustomerLocation.US, CreditCard.CustomerLocation.International])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -400,7 +370,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_customer_location == CreditCard.CustomerLocation.International
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_customer_location(self):
         try:
@@ -425,7 +395,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.merchant_account_id == transaction.merchant_account_id
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -433,7 +403,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.merchant_account_id.in_list([transaction.merchant_account_id, "bogus_merchant_account_id"])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -441,7 +411,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.merchant_account_id == "bogus_merchant_account_id"
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_credit_card_card_type(self):
         transaction = Transaction.sale({
@@ -457,7 +427,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_card_type == transaction.credit_card_details.card_type
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -465,7 +435,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_card_type.in_list([transaction.credit_card_details.card_type, CreditCard.CardType.AmEx])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -473,7 +443,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.credit_card_card_type == CreditCard.CardType.AmEx
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_card_type(self):
         try:
@@ -498,7 +468,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.status == Transaction.Status.Authorized
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -506,7 +476,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.status.in_list([Transaction.Status.Authorized, Transaction.Status.Settled])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -514,7 +484,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.status == Transaction.Status.Settled
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
         try:
@@ -539,7 +509,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.source == Transaction.Source.Api
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -547,7 +517,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.source.in_list([Transaction.Source.Api, Transaction.Source.ControlPanel])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -555,7 +525,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.source == Transaction.Source.ControlPanel
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_allowed_values_source(self):
         try:
@@ -580,7 +550,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.type == Transaction.Type.Sale
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -588,7 +558,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.type.in_list([Transaction.Type.Sale, Transaction.Type.Credit])
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -596,7 +566,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.type == Transaction.Type.Credit
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_multiple_value_node_allowed_values_type(self):
         try:
@@ -638,7 +608,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.type == Transaction.Type.Credit
         ])
 
-        self.assertEquals(2, collection.approximate_size)
+        self.assertEquals(2, collection.maximum_size)
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
@@ -646,7 +616,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.refund == True
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(refund.id, collection.first.id)
 
         collection = Transaction.search([
@@ -655,7 +625,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.refund == False
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(credit.id, collection.first.id)
 
     def test_advanced_search_range_node_amount(self):
@@ -692,7 +662,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.amount >= "1700"
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(t_1800.id, collection.first.id)
 
         collection = Transaction.search([
@@ -700,7 +670,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.amount <= "1250"
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(t_1000.id, collection.first.id)
 
         collection = Transaction.search([
@@ -708,7 +678,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.amount.between("1100", "1600")
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(t_1500.id, collection.first.id)
 
     def test_advanced_search_range_node_created_at_less_than_or_equal_to(self):
@@ -729,14 +699,14 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at <= past
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
             TransactionSearch.created_at <= now
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -744,7 +714,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at <= future
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
     def test_advanced_search_range_node_created_at_greater_than_or_equal_to(self):
@@ -765,7 +735,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at >= past
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -773,7 +743,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at >= now
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -781,7 +751,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at >= future
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_range_node_created_at_between(self):
         transaction  = Transaction.sale({
@@ -802,7 +772,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at.between(past, now)
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -810,7 +780,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at.between(now, future)
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -818,7 +788,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at.between(past, future)
         ])
 
-        self.assertEquals(1, collection.approximate_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
         collection = Transaction.search([
@@ -826,17 +796,17 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.created_at.between(future, future2)
         ])
 
-        self.assertEquals(0, collection.approximate_size)
+        self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_returns_iteratable_results(self):
         collection = Transaction.search([
             TransactionSearch.credit_card_number.starts_with("411")
         ])
 
-        self.assertTrue(collection.approximate_size > 100)
+        self.assertTrue(collection.maximum_size > 100)
 
         transaction_ids = [transaction.id for transaction in collection.items]
-        self.assertEquals(collection.approximate_size, len(self.__unique(transaction_ids)))
+        self.assertEquals(collection.maximum_size, len(self.__unique(transaction_ids)))
 
     def __unique(self, list):
         return set(list)

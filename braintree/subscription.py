@@ -1,5 +1,6 @@
 from decimal import Decimal
 from braintree.util.http import Http
+import braintree
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
@@ -141,7 +142,7 @@ class Subscription(Resource):
             return ErrorResult(response["api_error_response"])
 
     @staticmethod
-    def search(search_terms, page=1):
+    def search(query):
         """
         Allows searching on subscriptions. There are two types of fields that are searchable: text and
         multiple value fields. Searchable text fields are:
@@ -160,15 +161,25 @@ class Subscription(Resource):
                 braintree.SubscriptionSearch.status.in_list([braintree.Subscription.Status.PastDue])
             ])
         """
+        response = Http().post("/subscriptions/advanced_search_ids", {"search": Subscription.__criteria(query)})
+        return ResourceCollection(query, response, Subscription)
+
+    @staticmethod
+    def fetch(query, ids):
+        criteria = Subscription.__criteria(query)
+        criteria["ids"] = braintree.subscription_search.SubscriptionSearch.ids.in_list(ids).to_param()
+        response = Http().post("/subscriptions/advanced_search", {"search": criteria})
+        return [Subscription(item) for item in ResourceCollection._extract_as_array(response["subscriptions"], "subscription")]
+
+    @staticmethod
+    def __criteria(query):
         criteria = {}
-        for term in search_terms:
+        for term in query:
             if criteria.get(term.name):
                 criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
             else:
                 criteria[term.name] = term.to_param()
-
-        response = Http().post("/subscriptions/advanced_search?page=" + str(page), {"search": criteria})
-        return ResourceCollection(search_terms, response["subscriptions"], Subscription)
+        return criteria
 
     @staticmethod
     def update_signature():

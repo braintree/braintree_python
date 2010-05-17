@@ -684,6 +684,26 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
 
+    def test_sale_from_transparent_redirect_with_403_and_message(self):
+        tr_data = {
+            "transaction": {
+                "amount": "1000.00"
+            }
+        }
+        post_params = {
+            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
+            "transaction[credit_card][number]": "booya",
+            "transaction[credit_card][expiration_date]": "05/2010",
+            "transaction[bad]": "value"
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
+        try:
+            result = Transaction.confirm_transparent_redirect(query_string)
+            self.fail()
+        except AuthorizationError, e:
+            self.assertEquals("Invalid params: transaction[bad]", e.message)
+
     def test_credit_from_transparent_redirect_with_successful_result(self):
         tr_data = {
             "transaction": {
