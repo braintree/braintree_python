@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: Braintree
-# Version: 2.1.0
+# Version: 2.2.1
 braintree.error_result mod error_result.html
 braintree.credit_card mod credit_card.html
 braintree.environment mod environment.html
@@ -38,7 +38,6 @@ braintree.address.Address.find staticmethod address.html
 braintree.credit_card.CreditCard.create staticmethod credit_card.html
 braintree.transaction.Transaction.refund staticmethod transaction.html
 braintree.subscription.Subscription.find staticmethod subscription.html
-braintree.resource_collection.ResourceCollection.approximate_size attribute resource_collection.html
 braintree.customer.Customer.find staticmethod customer.html
 braintree.subscription.Subscription.cancel staticmethod subscription.html
 braintree.transaction.Transaction.Type class transaction.html
@@ -68,6 +67,7 @@ braintree.environment.Environment class environment.html
 braintree.exceptions.not_found_error.NotFoundError exception exceptions/not_found_error.html
 braintree.validation_error_collection.ValidationErrorCollection.size attribute validation_error_collection.html
 braintree.transaction.Transaction.CreatedUsing class transaction.html
+braintree.resource_collection.ResourceCollection.maximum_size attribute resource_collection.html
 braintree.address.Address.delete staticmethod address.html
 braintree.transaction.Transaction.find staticmethod transaction.html
 braintree.exceptions.authorization_error.AuthorizationError exception exceptions/authorization_error.html
@@ -89,7 +89,6 @@ braintree.subscription.Subscription class subscription.html
 braintree.subscription.Subscription.TrialDurationUnit class subscription.html
 braintree.exceptions.authentication_error.AuthenticationError exception exceptions/authentication_error.html
 braintree.credit_card.CreditCard.tr_data_for_update staticmethod credit_card.html
-braintree.transaction.Transaction.search staticmethod transaction.html
 braintree.credit_card.CreditCard.CustomerLocation class credit_card.html
 braintree.exceptions.forged_query_string_error.ForgedQueryStringError exception exceptions/forged_query_string_error.html
 braintree.address.Address.update staticmethod address.html
