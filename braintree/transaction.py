@@ -273,7 +273,7 @@ class Transaction(Resource):
     @staticmethod
     def tr_data_for_sale(tr_data, redirect_url):
         """
-        Builds tr_data for a Transaction of type Credit
+        Builds tr_data for a Transaction of type Sale
         """
 
         if "transaction" not in tr_data:
