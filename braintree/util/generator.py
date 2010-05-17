@@ -34,24 +34,24 @@ class Generator(object):
         open_tag = "<" + self.__escape(key) + ">"
         close_tag = "</" + self.__escape(key) + ">"
 
-        if type(value) == str or type(value) == unicode:
+        if isinstance(value, str) or isinstance(value, unicode):
             return open_tag + self.__escape(value) + close_tag
-        elif type(value) == Decimal:
+        elif isinstance(value, Decimal):
             return open_tag + str(value) + close_tag
-        elif type(value) == int:
-            open_tag = "<" + key + " type=\"integer\">"
-            return open_tag + str(value) + close_tag
-        elif type(value) == dict:
+        elif isinstance(value, dict):
             return open_tag + self.__generate_dict(value) + close_tag
-        elif type(value) == list:
+        elif isinstance(value, list):
             open_tag = "<" + key + " type=\"array\">"
             return open_tag + self.__generate_list(value) + close_tag
-        elif type(value) == bool:
+        elif isinstance(value, bool):
             open_tag = "<" + key + " type=\"boolean\">"
             return open_tag + self.__generate_boolean(value) + close_tag
-        elif type(value) == types.NoneType:
+        elif isinstance(value, int) and not isinstance(value, bool):
+            open_tag = "<" + key + " type=\"integer\">"
+            return open_tag + str(value) + close_tag
+        elif isinstance(value, types.NoneType):
             return open_tag + close_tag
-        elif type(value) == datetime.datetime:
+        elif isinstance(value, datetime.datetime):
             open_tag = "<" + key + " type=\"datetime\">"
             return open_tag + self.__generate_datetime(value) + close_tag
         else:

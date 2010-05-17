@@ -36,7 +36,7 @@ class Parser(object):
 
     def __convert_to_list(self, dict, key):
         val = dict[key]
-        if not type(val) == list:
+        if not isinstance(val, list):
             dict[key] = [val]
 
     def __build_list(self, child):
