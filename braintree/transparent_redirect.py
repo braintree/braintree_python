@@ -47,7 +47,7 @@ class TransparentRedirect:
         data = {}
         for key, val in params.iteritems():
             full_key = parent + "[" + key + "]" if parent else key
-            if type(val) == dict:
+            if isinstance(val, dict):
                 data.update(TransparentRedirect.__flatten_dictionary(val, full_key))
             else:
                 data[full_key] = val

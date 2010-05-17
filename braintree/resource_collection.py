@@ -44,7 +44,7 @@ class ResourceCollection(object):
             return []
 
         value = results[attribute]
-        if type(value) != list:
+        if not isinstance(value, list):
             value = [value]
         return value
 

@@ -19,7 +19,7 @@ class Resource(AttributeGetter):
         keys = []
         for key, val in params.iteritems():
             full_key = parent + "[" + key + "]" if parent else key
-            if type(val) == dict:
+            if isinstance(val, dict):
                 keys += Resource.__flattened_params_keys(val, full_key)
             else:
                 keys.append(full_key)
@@ -29,7 +29,7 @@ class Resource(AttributeGetter):
     def __flattened_signature(signature, parent=None):
         flat_sig = []
         for item in signature:
-            if type(item) == dict:
+            if isinstance(item, dict):
                 for key, val in item.iteritems():
                     full_key = parent + "[" + key + "]" if parent else key
                     flat_sig += Resource.__flattened_signature(val, full_key)
