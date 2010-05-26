@@ -682,7 +682,7 @@ class TestTransaction(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
         result = Transaction.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
+        self.assertTrue(len(result.errors.for_object("transaction").for_object("credit_card").on("number")) > 0)
 
     def test_sale_from_transparent_redirect_with_403_and_message(self):
         tr_data = {
@@ -742,7 +742,7 @@ class TestTransaction(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
         result = Transaction.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
+        self.assertTrue(len(result.errors.for_object("transaction").for_object("credit_card").on("number")) > 0)
 
     def test_submit_for_settlement_without_amount(self):
         transaction = Transaction.sale({
