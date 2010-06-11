@@ -789,6 +789,22 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_status_history(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
+
+        self.assertEquals(2, len(submitted_transaction.status_history))
+        self.assertEquals(Transaction.Status.Authorized, submitted_transaction.status_history[0].status)
+        self.assertEquals(Decimal("1000.00"), submitted_transaction.status_history[0].amount)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status_history[1].status)
+        self.assertEquals(Decimal("1000.00"), submitted_transaction.status_history[1].amount)
 
     def test_successful_refund(self):
         transaction = self.__create_transaction_to_refund()

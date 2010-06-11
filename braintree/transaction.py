@@ -3,6 +3,7 @@ from decimal import Decimal
 import braintree
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
+from braintree.status_event import StatusEvent
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.address import Address
@@ -387,8 +388,12 @@ class Transaction(Resource):
             attributes["customer_details"] = Customer(attributes.pop("customer"))
         if "shipping" in attributes:
             attributes["shipping_details"] = Address(attributes.pop("shipping"))
+
         Resource.__init__(self, attributes)
+
         self.amount = Decimal(self.amount)
+        if "status_history" in attributes:
+            self.status_history = [StatusEvent(status_event) for status_event in self.status_history]
 
     @property
     def vault_billing_address(self):
