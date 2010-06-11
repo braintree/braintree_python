@@ -204,7 +204,7 @@ class CreditCard(Resource):
         """
         Builds tr_data for CreditCard updating.
         """
-        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.create_signature()}])
+        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.update_signature()}])
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod

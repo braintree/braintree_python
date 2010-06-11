@@ -576,6 +576,50 @@ class TestCreditCard(unittest.TestCase):
         self.assertFalse(CreditCard.find(card1.token).default)
         self.assertTrue(CreditCard.find(card2.token).default)
 
+    def test_update_from_transparent_redirect_and_update_existing_billing_address(self):
+        customer = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "billing_address": {
+                    "street_address": "123 Old St",
+                    "locality": "Chicago",
+                    "region": "Illinois",
+                    "postal_code": "60621"
+                }
+            }
+        }).customer
+        card = customer.credit_cards[0]
+
+        tr_data = {
+            "payment_method_token": card.token,
+            "credit_card": {
+                "billing_address": {
+                    "street_address": "123 New St",
+                    "locality": "Columbus",
+                    "region": "Ohio",
+                    "postal_code": "43215",
+                    "options": {
+                        "update_existing": True
+                    }
+                }
+            }
+        }
+
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_update(tr_data, "http://example.com/path")
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
+
+        self.assertEquals(1, len(Customer.find(customer.id).addresses))
+        updated_card = CreditCard.find(card.token)
+        self.assertEquals("123 New St", updated_card.billing_address.street_address)
+        self.assertEquals("Columbus", updated_card.billing_address.locality)
+        self.assertEquals("Ohio", updated_card.billing_address.region)
+        self.assertEquals("43215", updated_card.billing_address.postal_code)
+
     def test_update_from_transparent_redirect_with_error_result(self):
         old_token = str(random.randint(1, 1000000))
         credit_card = Customer.create({
