@@ -223,6 +223,45 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
+    def test_update_with_nested_values(self):
+        customer = Customer.create({
+            "first_name": "Steve",
+            "last_name": "Jobs",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/10",
+                "billing_address": {
+                    "postal_code": "11111"
+                }
+            }
+        }).customer
+        credit_card = customer.credit_cards[0]
+        address = credit_card.billing_address
+
+        updated_customer = Customer.update(customer.id, {
+            "first_name": "Bill",
+            "last_name": "Gates",
+            "credit_card": {
+                "expiration_date": "12/12",
+                "options": {
+                    "update_existing_token": credit_card.token
+                },
+                "billing_address": {
+                    "postal_code": "44444",
+                    "options": {
+                        "update_existing": True
+                    }
+                }
+            }
+        }).customer
+        updated_credit_card = CreditCard.find(credit_card.token)
+        updated_address = Address.find(customer.id, address.id)
+
+        self.assertEqual("Bill", updated_customer.first_name)
+        self.assertEqual("Gates", updated_customer.last_name)
+        self.assertEqual("12/2012", updated_credit_card.expiration_date)
+        self.assertEqual("44444", updated_address.postal_code)
+
     def test_update_with_invalid_options(self):
         customer = Customer.create({
             "first_name": "Steve",
@@ -310,6 +349,54 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertEquals("John", customer.first_name)
         self.assertEquals("john@doe.com", customer.email)
+
+    def test_update_with_nested_values_via_transparent_redirect(self):
+        customer = Customer.create({
+            "first_name": "Steve",
+            "last_name": "Jobs",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/10",
+                "billing_address": {
+                    "postal_code": "11111"
+                }
+            }
+        }).customer
+        credit_card = customer.credit_cards[0]
+        address = credit_card.billing_address
+
+        tr_data = {
+            "customer_id": customer.id,
+            "customer": {
+                "first_name": "Bill",
+                "last_name": "Gates",
+                "credit_card": {
+                    "expiration_date": "12/12",
+                    "options": {
+                        "update_existing_token": credit_card.token
+                    },
+                    "billing_address": {
+                        "postal_code": "44444",
+                        "options": {
+                            "update_existing": True
+                        }
+                    }
+                }
+            }
+        }
+        post_params = {
+            "tr_data": Customer.tr_data_for_update(tr_data, "http://example.com/path"),
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_update_url())
+        updated_customer = Customer.confirm_transparent_redirect(query_string).customer
+        updated_credit_card = CreditCard.find(credit_card.token)
+        updated_address = Address.find(customer.id, address.id)
+
+        self.assertEqual("Bill", updated_customer.first_name)
+        self.assertEqual("Gates", updated_customer.last_name)
+        self.assertEqual("12/2012", updated_credit_card.expiration_date)
+        self.assertEqual("44444", updated_address.postal_code)
 
     def test_update_from_transparent_redirect_with_error_result(self):
         customer = Customer.create({

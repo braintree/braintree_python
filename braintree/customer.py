@@ -163,6 +163,7 @@ class Customer(Resource):
     def update_signature():
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website",
+            {"credit_card": CreditCard.signature("update_via_customer")},
             {"custom_fields": ["__any_key__"]}
         ]
 

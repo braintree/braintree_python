@@ -168,15 +168,20 @@ class CreditCard(Resource):
     @staticmethod
     def signature(type):
         billing_address_params = ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]
+        options = ["make_default", "verification_merchant_account_id", "verify_card"]
+
         signature = [
             "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
             {"billing_address": billing_address_params},
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card"]}
+            {"options": options}
         ]
 
         if type == "create":
             signature.append("customer_id")
         elif type == "update":
+            billing_address_params.append({"options": ["update_existing"]})
+        elif type == "update_via_customer":
+            options.append("update_existing_token")
             billing_address_params.append({"options": ["update_existing"]})
         else:
             raise AttributeError
