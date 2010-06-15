@@ -50,6 +50,10 @@ class ErrorCodes(object):
         TokenIsNotAllowed = "91721"
         TokenIsRequired = "91722"
 
+        class Options(object):
+            UpdateExistingTokenIsInvalid = "91723"
+
+
     class Customer(object):
         CompanyisTooLong = "81601"
         CustomFieldIsInvalid = "91602"
@@ -85,6 +89,7 @@ class ErrorCodes(object):
         AmountIsRequired = "81502"
         AmountIsInvalid = "81503"
         AmountIsTooLarge = "81528"
+        BillingAddressConflict = "91530"
         CannotBeVoided = "91504"
         CannotRefundCredit = "91505"
         CannotRefundUnlessSettled = "91506"
