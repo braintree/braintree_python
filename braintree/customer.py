@@ -64,8 +64,8 @@ class Customer(Resource):
             result = braintree.Customer.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
-        return Customer.__post("/customers/all/confirm_transparent_redirect_request", {"id": id})
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        return Customer._post("/customers/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def create(params={}):
@@ -79,7 +79,7 @@ class Customer(Resource):
         """
 
         Resource.verify_keys(params, Customer.create_signature())
-        return Customer.__post("/customers", {"customer": params})
+        return Customer._post("/customers", {"customer": params})
 
     @staticmethod
     def delete(customer_id):
@@ -113,6 +113,7 @@ class Customer(Resource):
         """ Builds tr_data for creating a Customer. """
 
         Resource.verify_keys(tr_data, [{"customer": Customer.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateCustomer
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -120,6 +121,7 @@ class Customer(Resource):
         """ Builds tr_data for updating a Customer. """
 
         Resource.verify_keys(tr_data, [{"customer": Customer.update_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.UpdateCustomer
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -168,7 +170,7 @@ class Customer(Resource):
         ]
 
     @staticmethod
-    def __post(url, params={}):
+    def _post(url, params={}):
         response = Http().post(url, params)
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(response["customer"])})

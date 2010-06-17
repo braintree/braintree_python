@@ -96,7 +96,7 @@ class CreditCard(Resource):
             result = braintree.CreditCard.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
         return CreditCard.__post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod

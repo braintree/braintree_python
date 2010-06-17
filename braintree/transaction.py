@@ -132,7 +132,7 @@ class Transaction(Resource):
             result = braintree.Transaction.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
         return Transaction._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
@@ -269,6 +269,7 @@ class Transaction(Resource):
             tr_data["transaction"] = {}
         tr_data["transaction"]["type"] = Transaction.Type.Credit
         Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod

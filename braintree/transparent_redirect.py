@@ -29,10 +29,15 @@ class TransparentRedirect:
     @staticmethod
     def confirm(query_string):
         """
-        Hi I'm drew at least I try
         """
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
-        return braintree.transaction.Transaction._post("/transparent_redirect_requests/" + id + "/confirm")
+
+        parsed_query_string = TransparentRedirect.parse_and_validate_query_string(query_string)
+        confirmation_klass = {
+            TransparentRedirect.Kind.CreateCustomer: braintree.customer.Customer,
+            TransparentRedirect.Kind.UpdateCustomer: braintree.transaction.Customer,
+            TransparentRedirect.Kind.CreateTransaction: braintree.transaction.Transaction
+        }[parsed_query_string["kind"][0]]
+        return confirmation_klass._post("/transparent_redirect_requests/" + parsed_query_string["id"][0] + "/confirm")
 
 
     @staticmethod
@@ -49,7 +54,7 @@ class TransparentRedirect:
         if not TransparentRedirect.is_valid_tr_query_string(query_string):
             raise ForgedQueryStringError
 
-        return query_params["id"][0]
+        return query_params
 
     @staticmethod
     def tr_data(data, redirect_url):
