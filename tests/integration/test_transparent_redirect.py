@@ -42,3 +42,26 @@ class TestTransparentRedirect(unittest.TestCase):
             CreditCard.confirm_transparent_redirect(query_string)
         finally:
             Configuration.private_key = old_private_key
+
+    def test_transaction_sale_from_transparent_redirect_with_successful_result(self):
+        tr_data = {
+            "transaction": {
+                "amount": "1000.00",
+            }
+        }
+        post_params = {
+            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
+            "transaction[credit_card][number]": "4111111111111111",
+            "transaction[credit_card][expiration_date]": "05/2010",
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params)
+        result = TransparentRedirect.confirm(query_string)
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals("411111", transaction.credit_card_details.bin)
+        self.assertEquals("1111", transaction.credit_card_details.last_4)
+        self.assertEquals("05/2010", transaction.credit_card_details.expiration_date)

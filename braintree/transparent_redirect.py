@@ -2,12 +2,39 @@ from datetime import datetime
 import cgi
 import urllib
 import urlparse
+import braintree
 from braintree.configuration import Configuration
 from braintree.util.crypto import Crypto
 from braintree.util.http import Http
 from braintree.exceptions.forged_query_string_error import ForgedQueryStringError
 
 class TransparentRedirect:
+    class Kind(object):
+        """
+        Constants representing transparent redirect request kinds. Available kinds are:
+
+        * braintree.TransparentRedirectRequest.Kind.CreateCustomer = "create_customer"
+        * braintree.TransparentRedirectRequest.Kind.UpdateCustomer = "update_customer"
+        * braintree.TransparentRedirectRequest.Kind.CreatePaymentMethod = "create_payment_method"
+        * braintree.TransparentRedirectRequest.Kind.UpdatePaymentMethod = "update_payment_method"
+        * braintree.TransparentRedirectRequest.Kind.CreateTransaction = "create_transaction"
+        """
+
+        CreateCustomer = "create_customer"
+        UpdateCustomer = "update_customer"
+        CreatePaymentMethod = "create_payment_method"
+        UpdatePaymentMethod = "update_payment_method"
+        CreateTransaction = "create_transaction"
+
+    @staticmethod
+    def confirm(query_string):
+        """
+        Hi I'm drew at least I try
+        """
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)
+        return braintree.transaction.Transaction._post("/transparent_redirect_requests/" + id + "/confirm")
+
+
     @staticmethod
     def parse_and_validate_query_string(query_string):
         query_params = cgi.parse_qs(query_string)
@@ -41,6 +68,10 @@ class TransparentRedirect:
     def is_valid_tr_query_string(query_string):
         content, hash = query_string.split("&hash=")
         return hash == Crypto.hmac_hash(Configuration.private_key, content)
+
+    @staticmethod
+    def url():
+        return Configuration.base_merchant_url() + "/transparent_redirect_requests"
 
     @staticmethod
     def __flatten_dictionary(params, parent=None):

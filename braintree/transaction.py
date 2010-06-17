@@ -133,7 +133,7 @@ class Transaction(Resource):
         """
 
         id = TransparentRedirect.parse_and_validate_query_string(query_string)
-        return Transaction.__post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
+        return Transaction._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def credit(params={}):
@@ -281,6 +281,7 @@ class Transaction(Resource):
             tr_data["transaction"] = {}
         tr_data["transaction"]["type"] = Transaction.Type.Sale
         Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -334,7 +335,7 @@ class Transaction(Resource):
         """
 
         Resource.verify_keys(params, Transaction.create_signature())
-        return Transaction.__post("/transactions", {"transaction": params})
+        return Transaction._post("/transactions", {"transaction": params})
 
     @staticmethod
     def create_signature():
@@ -372,7 +373,7 @@ class Transaction(Resource):
         ]
 
     @staticmethod
-    def __post(url, params):
+    def _post(url, params={}):
         response = Http().post(url, params)
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(response["transaction"])})

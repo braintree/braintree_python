@@ -26,7 +26,7 @@ class TestHelper(object):
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
 
     @staticmethod
-    def simulate_tr_form_post(post_params, url):
+    def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
         form_data = urllib.urlencode(post_params)
         conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
