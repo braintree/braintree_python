@@ -56,7 +56,7 @@ class ErrorCodes(object):
 
 
     class Customer(object):
-        CompanyisTooLong = "81601"
+        CompanyIsTooLong = "81601"
         CustomFieldIsInvalid = "91602"
         CustomFieldIsTooLong = "81603"
         EmailIsInvalid = "81604"
