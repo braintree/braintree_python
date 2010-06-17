@@ -138,3 +138,49 @@ class TestTransparentRedirect(unittest.TestCase):
         customer = Customer.find(customer.id)
         self.assertEquals("Stan", customer.first_name)
         self.assertEquals("Humphrey", customer.last_name)
+
+    def test_payment_method_create_from_transparent_redirect(self):
+        customer = Customer.create({"first_name": "Sarah", "last_name": "Humphrey"}).customer
+        tr_data = {
+            "credit_card": {
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+            }
+        }
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_create(tr_data, "http://example.com/path"),
+            "credit_card[expiration_month]": "01",
+            "credit_card[expiration_year]": "10"
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params)
+        result = TransparentRedirect.confirm(query_string)
+        self.assertTrue(result.is_success)
+        credit_card = result.credit_card
+        self.assertEquals("411111", credit_card.bin)
+        self.assertEquals("1111", credit_card.last_4)
+        self.assertEquals("01/2010", credit_card.expiration_date)
+
+    def test_payment_method_update_from_transparent_redirect(self):
+        customer = Customer.create({"first_name": "Sarah", "last_name": "Humphrey"}).customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "10/10"
+        }).credit_card
+
+        tr_data = {
+            "payment_method_token": credit_card.token,
+            "credit_card": {
+                "expiration_date": "12/12"
+            }
+        }
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_update(tr_data, "http://example.com/path"),
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params)
+        TransparentRedirect.confirm(query_string)
+        credit_card = CreditCard.find(credit_card.token)
+
+        self.assertEquals("12/2012", credit_card.expiration_date)

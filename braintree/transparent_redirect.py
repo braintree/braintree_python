@@ -35,6 +35,8 @@ class TransparentRedirect:
         confirmation_klass = {
             TransparentRedirect.Kind.CreateCustomer: braintree.customer.Customer,
             TransparentRedirect.Kind.UpdateCustomer: braintree.transaction.Customer,
+            TransparentRedirect.Kind.CreatePaymentMethod: braintree.customer.CreditCard,
+            TransparentRedirect.Kind.UpdatePaymentMethod: braintree.customer.CreditCard,
             TransparentRedirect.Kind.CreateTransaction: braintree.transaction.Transaction
         }[parsed_query_string["kind"][0]]
         return confirmation_klass._post("/transparent_redirect_requests/" + parsed_query_string["id"][0] + "/confirm")

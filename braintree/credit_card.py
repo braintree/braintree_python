@@ -97,7 +97,7 @@ class CreditCard(Resource):
         """
 
         id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
-        return CreditCard.__post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
+        return CreditCard._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def create(params={}):
@@ -111,7 +111,7 @@ class CreditCard(Resource):
         """
 
         Resource.verify_keys(params, CreditCard.create_signature())
-        return CreditCard.__post("/payment_methods", {"credit_card": params})
+        return CreditCard._post("/payment_methods", {"credit_card": params})
 
     @staticmethod
     def update(credit_card_token, params={}):
@@ -202,6 +202,7 @@ class CreditCard(Resource):
         """
 
         Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreatePaymentMethod
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -210,6 +211,7 @@ class CreditCard(Resource):
         Builds tr_data for CreditCard updating.
         """
         Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.update_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.UpdatePaymentMethod
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -220,7 +222,7 @@ class CreditCard(Resource):
         return Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
 
     @staticmethod
-    def __post(url, params):
+    def _post(url, params={}):
         response = Http().post(url, params)
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
