@@ -50,6 +50,10 @@ class TestHelper(object):
         return False
 
     @staticmethod
+    def unique(list):
+        return set(list)
+
+    @staticmethod
     def __headers():
         return {
             "Accept": "application/xml",

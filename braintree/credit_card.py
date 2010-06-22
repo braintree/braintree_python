@@ -6,6 +6,7 @@ from braintree.resource import Resource
 from braintree.address import Address
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.configuration import Configuration
+from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 
 class CreditCard(Resource):
@@ -142,6 +143,19 @@ class CreditCard(Resource):
         return SuccessfulResult()
 
     @staticmethod
+    def expired():
+        """ Return a collection of expired credit cards. """
+        response = Http().post("/payment_methods/all/expired_ids", {})
+        return ResourceCollection("", response, CreditCard)
+
+    @staticmethod
+    def fetch(query, ids):
+        criteria = {}
+        criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
+        response = Http().post("/payment_methods/all/expired", {"search": criteria})
+        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+
+    @staticmethod
     def find(credit_card_token):
         """
         Find a credit card, given a credit_card_id. This does not return
@@ -231,6 +245,7 @@ class CreditCard(Resource):
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
+        self.is_expired = self.expired
         if "billing_address" in attributes:
             self.billing_address = Address(self.billing_address)
         if "subscriptions" in attributes:

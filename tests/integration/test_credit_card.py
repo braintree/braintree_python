@@ -651,3 +651,12 @@ class TestCreditCard(unittest.TestCase):
             ErrorCodes.CreditCard.TokenInvalid,
             result.errors.for_object("credit_card").on("token")[0].code
         )
+
+    def test_expired(self):
+        collection = CreditCard.expired()
+        self.assertTrue(collection.maximum_size > 0)
+        for item in collection.items:
+            self.assertTrue(item.is_expired)
+
+        credit_card_tokens = [credit_card.token for credit_card in collection.items]
+        self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
