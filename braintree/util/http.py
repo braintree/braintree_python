@@ -38,7 +38,7 @@ class Http(object):
             environment = Configuration.environment
         self.environment = environment
 
-    def post(self, path, params):
+    def post(self, path, params={}):
         return self.__http_do("POST", path, params)
 
     def delete(self, path):
