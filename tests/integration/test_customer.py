@@ -1,6 +1,12 @@
 from tests.test_helper import *
 
 class TestCustomer(unittest.TestCase):
+    def test_all(self):
+        collection = Customer.all()
+        self.assertTrue(collection.maximum_size > 100)
+        customer_ids = [c.id for c in collection.items]
+        self.assertEquals(collection.maximum_size, len(TestHelper.unique(customer_ids)))
+
     def test_create(self):
         result = Customer.create({
             "first_name": "Bill",

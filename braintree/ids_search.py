@@ -1,4 +1,4 @@
 from braintree.search import Search
 
-class CreditCardSearch:
+class IdsSearch:
     ids = Search.MultipleValueNodeBuilder("ids")

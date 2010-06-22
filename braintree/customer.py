@@ -6,7 +6,9 @@ from braintree.resource import Resource
 from braintree.credit_card import CreditCard
 from braintree.address import Address
 from braintree.configuration import Configuration
+from braintree.ids_search import IdsSearch
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 
 class Customer(Resource):
@@ -55,6 +57,19 @@ class Customer(Resource):
 
     For more information on Customers, see http://www.braintreepaymentsolutions.com/gateway/customer-api
     """
+
+    @staticmethod
+    def all():
+        """ Return a collection of all customers. """
+        response = Http().post("/customers/advanced_search_ids")
+        return ResourceCollection(None, response, Customer.__fetch)
+
+    @staticmethod
+    def __fetch(query, ids):
+        criteria = {}
+        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
+        response = Http().post("/customers/advanced_search", {"search": criteria})
+        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
 
     @staticmethod
     def confirm_transparent_redirect(query_string):

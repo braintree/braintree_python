@@ -653,7 +653,7 @@ class TestCreditCard(unittest.TestCase):
         )
 
     def test_expired_can_iterate_over_all_items(self):
-        customer_id = Customer.create().customer.id
+        customer_id = Customer.all().first.id
 
         for i in range(110 - CreditCard.expired().maximum_size):
             CreditCard.create({
@@ -673,7 +673,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(set([True]), TestHelper.unique([credit_card.is_expired for credit_card in collection.items]))
 
     def test_expiring_between(self):
-        customer_id = Customer.create().customer.id
+        customer_id = Customer.all().first.id
 
         for i in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
             CreditCard.create({

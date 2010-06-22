@@ -8,7 +8,7 @@ from braintree.resource import Resource
 from braintree.address import Address
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.configuration import Configuration
-from braintree.credit_card_search import CreditCardSearch
+from braintree.ids_search import IdsSearch
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 
@@ -150,7 +150,7 @@ class CreditCard(Resource):
     def expired():
         """ Return a collection of expired credit cards. """
         response = Http().post("/payment_methods/all/expired_ids")
-        return ResourceCollection("", response, CreditCard.__fetch_expired)
+        return ResourceCollection(None, response, CreditCard.__fetch_expired)
 
     @staticmethod
     def expiring_between(start_date, end_date):
@@ -164,14 +164,14 @@ class CreditCard(Resource):
     @staticmethod
     def __fetch_expired(query, ids):
         criteria = {}
-        criteria["ids"] = CreditCardSearch.ids.in_list(ids).to_param()
+        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
         response = Http().post("/payment_methods/all/expired", {"search": criteria})
         return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
     @staticmethod
     def __fetch_existing_between(query, ids):
         criteria = {}
-        criteria["ids"] = CreditCardSearch.ids.in_list(ids).to_param()
+        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
         response = Http().post("/payment_methods/all/expiring?" + query, {"search": criteria})
         return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
