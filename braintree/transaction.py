@@ -225,10 +225,10 @@ class Transaction(Resource):
     @staticmethod
     def search(query):
         response = Http().post("/transactions/advanced_search_ids", {"search": Transaction.__criteria(query)})
-        return ResourceCollection(query, response, Transaction)
+        return ResourceCollection(query, response, Transaction.__fetch)
 
     @staticmethod
-    def fetch(query, ids):
+    def __fetch(query, ids):
         criteria = Transaction.__criteria(query)
         criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
         response = Http().post("/transactions/advanced_search", {"search": criteria})

@@ -146,13 +146,29 @@ class CreditCard(Resource):
     def expired():
         """ Return a collection of expired credit cards. """
         response = Http().post("/payment_methods/all/expired_ids", {})
-        return ResourceCollection("", response, CreditCard)
+        return ResourceCollection("", response, CreditCard.__fetch_expired)
 
     @staticmethod
-    def fetch(query, ids):
+    def expiring_between(start_date, end_date):
+        """ Return a collection of credit cards expiring between the given dates. """
+        formatted_start_date = start_date.strftime("%m%Y")
+        formatted_end_date = end_date.strftime("%m%Y")
+        query = "start=%s&end=%s" % (formatted_start_date, formatted_end_date)
+        response = Http().post("/payment_methods/all/expiring_ids?" + query, {})
+        return ResourceCollection(query, response, CreditCard.__fetch_existing_between)
+
+    @staticmethod
+    def __fetch_expired(query, ids):
         criteria = {}
         criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
         response = Http().post("/payment_methods/all/expired", {"search": criteria})
+        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+
+    @staticmethod
+    def __fetch_existing_between(query, ids):
+        criteria = {}
+        criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
+        response = Http().post("/payment_methods/all/expiring?" + query, {"search": criteria})
         return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
     @staticmethod

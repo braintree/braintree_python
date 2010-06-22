@@ -652,11 +652,42 @@ class TestCreditCard(unittest.TestCase):
             result.errors.for_object("credit_card").on("token")[0].code
         )
 
-    def test_expired(self):
+    def test_expired_can_iterate_over_all_items(self):
+        customer_id = Customer.create().customer.id
+
+        for i in range(110 - CreditCard.expired().maximum_size):
+            CreditCard.create({
+                "customer_id": customer_id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+                "cvv": "100",
+                "cardholder_name": "John Doe"
+            })
+
         collection = CreditCard.expired()
-        self.assertTrue(collection.maximum_size > 0)
-        for item in collection.items:
-            self.assertTrue(item.is_expired)
+        self.assertTrue(collection.maximum_size > 100)
 
         credit_card_tokens = [credit_card.token for credit_card in collection.items]
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
+
+        self.assertEquals(set([True]), TestHelper.unique([credit_card.is_expired for credit_card in collection.items]))
+
+    def test_expiring_between(self):
+        customer_id = Customer.create().customer.id
+
+        for i in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
+            CreditCard.create({
+                "customer_id": customer_id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "cardholder_name": "John Doe"
+            })
+
+        collection = CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31))
+        self.assertTrue(collection.maximum_size > 100)
+
+        credit_card_tokens = [credit_card.token for credit_card in collection.items]
+        self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
+
+        self.assertEquals(set(['2010']), TestHelper.unique([credit_card.expiration_year for credit_card in collection.items]))
