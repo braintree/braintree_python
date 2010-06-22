@@ -4,6 +4,7 @@ import random
 import re
 import unittest
 import urllib
+import warnings
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
@@ -19,6 +20,10 @@ Configuration.configure(
     "integration_public_key",
     "integration_private_key"
 )
+
+def showwarning(message, category, filename, lineno):
+    pass
+warnings.showwarning = showwarning
 
 class TestHelper(object):
 

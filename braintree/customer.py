@@ -1,3 +1,4 @@
+import warnings
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -64,6 +65,7 @@ class Customer(Resource):
             result = braintree.Customer.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
+        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
         id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
         return Customer._post("/customers/all/confirm_transparent_redirect_request", {"id": id})
 
@@ -128,12 +130,14 @@ class Customer(Resource):
     def transparent_redirect_create_url():
         """ Returns the url to use for creating Customers through transparent redirect. """
 
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/customers/all/create_via_transparent_redirect_request"
 
     @staticmethod
     def transparent_redirect_update_url():
         """ Returns the url to use for updating Customers through transparent redirect. """
 
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/customers/all/update_via_transparent_redirect_request"
 
     @staticmethod

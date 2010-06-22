@@ -28,9 +28,6 @@ class TransparentRedirect:
 
     @staticmethod
     def confirm(query_string):
-        """
-        """
-
         parsed_query_string = TransparentRedirect.parse_and_validate_query_string(query_string)
         confirmation_klass = {
             TransparentRedirect.Kind.CreateCustomer: braintree.customer.Customer,

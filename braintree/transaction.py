@@ -1,6 +1,7 @@
-import urllib
-from decimal import Decimal
 import braintree
+import urllib
+import warnings
+from decimal import Decimal
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
@@ -132,6 +133,7 @@ class Transaction(Resource):
             result = braintree.Transaction.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
+        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
         id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
         return Transaction._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
@@ -291,6 +293,7 @@ class Transaction(Resource):
         Returns the url to be used for creating Transactions through transparent redirect.
         """
 
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
 
     @staticmethod

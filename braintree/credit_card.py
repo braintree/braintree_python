@@ -1,4 +1,6 @@
 import braintree
+import warnings
+from braintree.util.deprecation_util import DeprecationUtil
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -98,6 +100,7 @@ class CreditCard(Resource):
             result = braintree.CreditCard.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
+        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
         id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
         return CreditCard._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
@@ -224,6 +227,7 @@ class CreditCard(Resource):
         """
         Returns the url to use for creating CreditCards through transparent redirect.
         """
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
 
     @staticmethod
@@ -250,6 +254,7 @@ class CreditCard(Resource):
         """
         Returns the url to be used for updating CreditCards through transparent redirect.
         """
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
 
     @staticmethod
