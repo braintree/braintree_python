@@ -8,7 +8,7 @@ class TestErrorResult(unittest.TestCase):
             }
         }
 
-        result = ErrorResult({"errors": errors, "params": "params"})
+        result = ErrorResult({"errors": errors, "params": "params", "summary": "brief description"})
         self.assertFalse(result.is_success)
         self.assertEquals("params", result.params)
         self.assertEquals(1, result.errors.size)
@@ -23,13 +23,13 @@ class TestErrorResult(unittest.TestCase):
             }
         }
 
-        result = ErrorResult({"errors": errors, "params": "params", "other": "stuff"})
+        result = ErrorResult({"errors": errors, "params": "params", "summary": "brief description", "other": "stuff"})
         self.assertFalse(result.is_success)
 
     def test_transaction_is_none_if_not_set(self):
-        result = ErrorResult({"errors": {}, "params": {}})
+        result = ErrorResult({"errors": {}, "params": {}, "summary": "brief description"})
         self.assertTrue(result.transaction == None)
 
     def test_verification_is_none_if_not_set(self):
-        result = ErrorResult({"errors": {}, "params": {}})
+        result = ErrorResult({"errors": {}, "params": {}, "summary": "brief description"})
         self.assertTrue(result.credit_card_verification == None)
