@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Successful Result &mdash; Braintree v2.3.0 documentation</title>
+    <title>Transparent Redirect &mdash; Braintree v2.3.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -20,8 +20,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Braintree v2.3.0 documentation" href="index.html" />
-    <link rel="next" title="Validation Error" href="validation_error.html" />
-    <link rel="prev" title="Error Result" href="error_result.html" /> 
+    <link rel="next" title="Error Codes" href="error_codes.html" />
+    <link rel="prev" title="Transaction" href="transaction.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,10 +34,10 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="validation_error.html" title="Validation Error"
+          <a href="error_codes.html" title="Error Codes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="error_result.html" title="Error Result"
+          <a href="transaction.html" title="Transaction"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
       </ul>
@@ -48,22 +48,26 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-braintree.successful_result">
-<h1>Successful Result<a class="headerlink" href="#module-braintree.successful_result" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-braintree.transparent_redirect">
+<h1>Transparent Redirect<a class="headerlink" href="#module-braintree.transparent_redirect" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="braintree.successful_result.SuccessfulResult">
-<em class="property">class </em><tt class="descclassname">braintree.successful_result.</tt><tt class="descname">SuccessfulResult</tt><big>(</big><em>attributes={}</em><big>)</big><a class="headerlink" href="#braintree.successful_result.SuccessfulResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>An instance of this class is returned from most operations when the request is successful.  Call the name of the resource (eg, customer, credit_card, etc) to get the object:</p>
-<div class="highlight-python"><pre>result = Transaction.sale({..})
-if result.is_success:
-    transaction = result.transaction
-else:
-    print [error.code for error in result.errors.all]</pre>
+<dt id="braintree.transparent_redirect.TransparentRedirect">
+<em class="property">class </em><tt class="descclassname">braintree.transparent_redirect.</tt><tt class="descname">TransparentRedirect</tt><a class="headerlink" href="#braintree.transparent_redirect.TransparentRedirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class used for Transparent Redirect operations</p>
+<dl class="staticmethod">
+<dt id="braintree.transparent_redirect.TransparentRedirect.confirm">
+<em class="property">static </em><tt class="descname">confirm</tt><big>(</big><em>query_string</em><big>)</big><a class="headerlink" href="#braintree.transparent_redirect.TransparentRedirect.confirm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirms a transparent redirect request. It expects the query string from the
+redirect request. The query string should _not_ include the leading &#8220;?&#8221; character.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">braintree</span><span class="o">.</span><span class="n">TransparentRedirect</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s">&quot;foo=bar&amp;id=12345&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<dl class="attribute">
-<dt id="braintree.successful_result.SuccessfulResult.is_success">
-<tt class="descname">is_success</tt><a class="headerlink" href="#braintree.successful_result.SuccessfulResult.is_success" title="Permalink to this definition">¶</a></dt>
-<dd>Returns whether the result from the gateway is a successful response.</dd></dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.transparent_redirect.TransparentRedirect.url">
+<em class="property">static </em><tt class="descname">url</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.transparent_redirect.TransparentRedirect.url" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the url for POSTing Transparent Redirect HTML forms</dd></dl>
 
 </dd></dl>
 
@@ -76,14 +80,14 @@ else:
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="error_result.html"
-                                  title="previous chapter">Error Result</a></p>
+            <p class="topless"><a href="transaction.html"
+                                  title="previous chapter">Transaction</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="validation_error.html"
-                                  title="next chapter">Validation Error</a></p>
+            <p class="topless"><a href="error_codes.html"
+                                  title="next chapter">Error Codes</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/successful_result.txt"
+              <li><a href="_sources/transparent_redirect.txt"
                      rel="nofollow">Show Source</a></li>
             </ul>
           <div id="searchbox" style="display: none">
@@ -113,10 +117,10 @@ else:
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="validation_error.html" title="Validation Error"
+          <a href="error_codes.html" title="Error Codes"
              >next</a> |</li>
         <li class="right" >
-          <a href="error_result.html" title="Error Result"
+          <a href="transaction.html" title="Transaction"
              >previous</a> |</li>
         <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
       </ul>

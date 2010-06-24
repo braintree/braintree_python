@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Credit Card &mdash; Braintree v2.2.1 documentation</title>
+    <title>Credit Card &mdash; Braintree v2.3.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '2.2.1',
+        VERSION:     '2.3.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v2.2.1 documentation" href="index.html" />
+    <link rel="top" title="Braintree v2.3.0 documentation" href="index.html" />
     <link rel="next" title="Customer" href="customer.html" />
     <link rel="prev" title="Address" href="address.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="address.html" title="Address"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Braintree v2.2.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -146,6 +146,16 @@ redirect request. The query string should _not_ include the leading &#8220;?&#82
 </dd></dl>
 
 <dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.expired">
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">expired</tt><big>(</big><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.expired" title="Permalink to this definition">¶</a></dt>
+<dd>Return a collection of expired credit cards.</dd></dl>
+
+<dl class="staticmethod">
+<dt id="braintree.credit_card.CreditCard.expiring_between">
+<em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">expiring_between</tt><big>(</big><em>start_date</em>, <em>end_date</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.expiring_between" title="Permalink to this definition">¶</a></dt>
+<dd>Return a collection of credit cards expiring between the given dates.</dd></dl>
+
+<dl class="staticmethod">
 <dt id="braintree.credit_card.CreditCard.find">
 <em class="property">static </em><tt class="descclassname">CreditCard.</tt><tt class="descname">find</tt><big>(</big><em>credit_card_token</em><big>)</big><a class="headerlink" href="#braintree.credit_card.CreditCard.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find a credit card, given a credit_card_id. This does not return
@@ -245,7 +255,7 @@ credit_card_id is not found.</p>
         <li class="right" >
           <a href="address.html" title="Address"
              >previous</a> |</li>
-        <li><a href="index.html">Braintree v2.2.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

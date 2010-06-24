@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; Braintree v2.2.1 documentation</title>
+    <title>Index &mdash; Braintree v2.3.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '2.2.1',
+        VERSION:     '2.3.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v2.2.1 documentation" href="index.html" /> 
+    <link rel="top" title="Braintree v2.3.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -31,7 +31,7 @@
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
-        <li><a href="index.html">Braintree v2.2.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,6 +53,7 @@
 <dl>
 
 <dt><a href="address.html#braintree.address.Address">Address (class in braintree.address)</a></dt>
+<dt><a href="customer.html#braintree.customer.Customer.all">all() (braintree.customer.Customer static method)</a></dt>
 <dt><a href="exceptions/authentication_error.html#braintree.exceptions.authentication_error.AuthenticationError">AuthenticationError</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="exceptions/authorization_error.html#braintree.exceptions.authorization_error.AuthorizationError">AuthorizationError</a></dt>
 </dl></td></tr></table>
@@ -79,6 +80,7 @@
 <dt><a href="subscription.html#module-braintree.subscription">braintree.subscription (module)</a></dt>
 <dt><a href="successful_result.html#module-braintree.successful_result">braintree.successful_result (module)</a></dt>
 <dt><a href="transaction.html#module-braintree.transaction">braintree.transaction (module)</a></dt>
+<dt><a href="transparent_redirect.html#module-braintree.transparent_redirect">braintree.transparent_redirect (module)</a></dt>
 <dt><a href="validation_error.html#module-braintree.validation_error">braintree.validation_error (module)</a></dt>
 <dt><a href="validation_error_collection.html#module-braintree.validation_error_collection">braintree.validation_error_collection (module)</a></dt>
 </dl></td></tr></table>
@@ -89,6 +91,7 @@
 
 <dt><a href="subscription.html#braintree.subscription.Subscription.cancel">cancel() (braintree.subscription.Subscription static method)</a></dt>
 <dt><a href="configuration.html#braintree.configuration.Configuration">Configuration (class in braintree.configuration)</a></dt>
+<dt><a href="transparent_redirect.html#braintree.transparent_redirect.TransparentRedirect.confirm">confirm() (braintree.transparent_redirect.TransparentRedirect static method)</a></dt>
 <dt><a href="credit_card.html#braintree.credit_card.CreditCard.confirm_transparent_redirect">confirm_transparent_redirect() (braintree.credit_card.CreditCard static method)</a></dt>
   <dd><dl>
     <dt><a href="customer.html#braintree.customer.Customer.confirm_transparent_redirect">(braintree.customer.Customer static method)</a></dt>
@@ -128,8 +131,10 @@
 
 <dt><a href="environment.html#braintree.environment.Environment">Environment (class in braintree.environment)</a></dt>
 <dt><a href="error_codes.html#braintree.error_codes.ErrorCodes">ErrorCodes (class in braintree.error_codes)</a></dt>
-<dt><a href="error_result.html#braintree.error_result.ErrorResult">ErrorResult (class in braintree.error_result)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.errors">errors (braintree.validation_error_collection.ValidationErrorCollection attribute)</a></dt>
+<dt><a href="error_result.html#braintree.error_result.ErrorResult">ErrorResult (class in braintree.error_result)</a></dt>
+<dt><a href="validation_error_collection.html#braintree.validation_error_collection.ValidationErrorCollection.errors">errors (braintree.validation_error_collection.ValidationErrorCollection attribute)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="credit_card.html#braintree.credit_card.CreditCard.expired">expired() (braintree.credit_card.CreditCard static method)</a></dt>
+<dt><a href="credit_card.html#braintree.credit_card.CreditCard.expiring_between">expiring_between() (braintree.credit_card.CreditCard static method)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="F">F</h2>
@@ -219,8 +224,8 @@
     <dt><a href="customer.html#braintree.customer.Customer.tr_data_for_update">(braintree.customer.Customer static method)</a></dt>
   </dl></dd>
 <dt><a href="transaction.html#braintree.transaction.Transaction">Transaction (class in braintree.transaction)</a></dt>
-<dt><a href="transaction.html#braintree.transaction.Transaction.CreatedUsing">Transaction.CreatedUsing (class in braintree.transaction)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="transaction.html#braintree.transaction.Transaction.Status">Transaction.Status (class in braintree.transaction)</a></dt>
+<dt><a href="transaction.html#braintree.transaction.Transaction.CreatedUsing">Transaction.CreatedUsing (class in braintree.transaction)</a></dt>
+<dt><a href="transaction.html#braintree.transaction.Transaction.Status">Transaction.Status (class in braintree.transaction)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="transaction.html#braintree.transaction.Transaction.Type">Transaction.Type (class in braintree.transaction)</a></dt>
 <dt><a href="credit_card.html#braintree.credit_card.CreditCard.transparent_redirect_create_url">transparent_redirect_create_url() (braintree.credit_card.CreditCard static method)</a></dt>
   <dd><dl>
@@ -231,6 +236,7 @@
   <dd><dl>
     <dt><a href="customer.html#braintree.customer.Customer.transparent_redirect_update_url">(braintree.customer.Customer static method)</a></dt>
   </dl></dd>
+<dt><a href="transparent_redirect.html#braintree.transparent_redirect.TransparentRedirect">TransparentRedirect (class in braintree.transparent_redirect)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="U">U</h2>
@@ -244,6 +250,7 @@
     <dt><a href="customer.html#braintree.customer.Customer.update">(braintree.customer.Customer static method)</a></dt>
     <dt><a href="subscription.html#braintree.subscription.Subscription.update">(braintree.subscription.Subscription static method)</a></dt>
   </dl></dd></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="transparent_redirect.html#braintree.transparent_redirect.TransparentRedirect.url">url() (braintree.transparent_redirect.TransparentRedirect static method)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="V">V</h2>
@@ -294,7 +301,7 @@
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">Braintree v2.2.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
