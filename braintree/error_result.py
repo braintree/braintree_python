@@ -19,7 +19,7 @@ class ErrorResult(object):
     def __init__(self, attributes):
         self.params = attributes["params"]
         self.errors = Errors(attributes["errors"])
-        self.summary = attributes["summary"]
+        self.message = attributes["message"]
 
         if "verification" in attributes:
             self.credit_card_verification = CreditCardVerification(attributes["verification"])

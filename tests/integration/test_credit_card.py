@@ -156,7 +156,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.CreditCard.ExpirationDateIsInvalid, result.errors.for_object("credit_card").on("expiration_date")[0].code)
-        self.assertEquals("Expiration date is invalid.", result.summary)
+        self.assertEquals("Expiration date is invalid.", result.message)
 
     def test_update_with_valid_options(self):
         customer = Customer.create().customer
