@@ -25,6 +25,7 @@ Resources
    resource_collection
    subscription
    transaction
+   transparent_redirect
 
 Validations
 -----------
