@@ -4,6 +4,7 @@ import random
 import re
 import unittest
 import urllib
+import warnings
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
@@ -20,13 +21,17 @@ Configuration.configure(
     "integration_private_key"
 )
 
+def showwarning(message, category, filename, lineno):
+    pass
+warnings.showwarning = showwarning
+
 class TestHelper(object):
 
     default_merchant_account_id = "sandbox_credit_card"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
 
     @staticmethod
-    def simulate_tr_form_post(post_params, url):
+    def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
         form_data = urllib.urlencode(post_params)
         conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
@@ -48,6 +53,10 @@ class TestHelper(object):
             if item.status == status:
                 return True
         return False
+
+    @staticmethod
+    def unique(list):
+        return set(list)
 
     @staticmethod
     def __headers():

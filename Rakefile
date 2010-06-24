@@ -2,8 +2,18 @@ load File.dirname(__FILE__) + "/cruise.rake"
 
 task :default => :test
 
-task :test do
-  sh "nosetests"
+task :test => ["test:unit", "test:integration"]
+
+namespace :test do
+  desc "run unit tests"
+  task :unit do
+    sh "nosetests tests/unit"
+  end
+
+  desc "run integration tests"
+  task :integration do
+    sh "nosetests tests/integration"
+  end
 end
 
 task :clean do

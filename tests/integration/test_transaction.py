@@ -682,7 +682,7 @@ class TestTransaction(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
         result = Transaction.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
+        self.assertTrue(len(result.errors.for_object("transaction").for_object("credit_card").on("number")) > 0)
 
     def test_sale_from_transparent_redirect_with_403_and_message(self):
         tr_data = {
@@ -742,7 +742,7 @@ class TestTransaction(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
         result = Transaction.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.NumberHasInvalidLength, result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code)
+        self.assertTrue(len(result.errors.for_object("transaction").for_object("credit_card").on("number")) > 0)
 
     def test_submit_for_settlement_without_amount(self):
         transaction = Transaction.sale({
@@ -789,6 +789,22 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_status_history(self):
+        transaction = Transaction.sale({
+            "amount": "1000.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
+
+        self.assertEquals(2, len(submitted_transaction.status_history))
+        self.assertEquals(Transaction.Status.Authorized, submitted_transaction.status_history[0].status)
+        self.assertEquals(Decimal("1000.00"), submitted_transaction.status_history[0].amount)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status_history[1].status)
+        self.assertEquals(Decimal("1000.00"), submitted_transaction.status_history[1].amount)
 
     def test_successful_refund(self):
         transaction = self.__create_transaction_to_refund()
@@ -796,8 +812,13 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id)
 
         self.assertTrue(result.is_success)
-        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
-        self.assertEquals(Decimal("1000.00"), result.transaction.amount)
+        refund = result.transaction
+
+        self.assertEquals(Transaction.Type.Credit, refund.type)
+        self.assertEquals(Decimal("1000.00"), refund.amount)
+        self.assertEquals(transaction.id, refund.refunded_transaction_id)
+
+        self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
 
     def test_successful_partial_refund(self):
         transaction = self.__create_transaction_to_refund()

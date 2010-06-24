@@ -1,8 +1,10 @@
-import urllib
-from decimal import Decimal
 import braintree
+import urllib
+import warnings
+from decimal import Decimal
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
+from braintree.status_event import StatusEvent
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.address import Address
@@ -131,8 +133,9 @@ class Transaction(Resource):
             result = braintree.Transaction.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
-        return Transaction.__post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
+        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        return Transaction._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def credit(params={}):
@@ -224,10 +227,10 @@ class Transaction(Resource):
     @staticmethod
     def search(query):
         response = Http().post("/transactions/advanced_search_ids", {"search": Transaction.__criteria(query)})
-        return ResourceCollection(query, response, Transaction)
+        return ResourceCollection(query, response, Transaction.__fetch)
 
     @staticmethod
-    def fetch(query, ids):
+    def __fetch(query, ids):
         criteria = Transaction.__criteria(query)
         criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
         response = Http().post("/transactions/advanced_search", {"search": criteria})
@@ -268,6 +271,7 @@ class Transaction(Resource):
             tr_data["transaction"] = {}
         tr_data["transaction"]["type"] = Transaction.Type.Credit
         Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -280,6 +284,7 @@ class Transaction(Resource):
             tr_data["transaction"] = {}
         tr_data["transaction"]["type"] = Transaction.Type.Sale
         Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -288,6 +293,7 @@ class Transaction(Resource):
         Returns the url to be used for creating Transactions through transparent redirect.
         """
 
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
 
     @staticmethod
@@ -333,7 +339,7 @@ class Transaction(Resource):
         """
 
         Resource.verify_keys(params, Transaction.create_signature())
-        return Transaction.__post("/transactions", {"transaction": params})
+        return Transaction._post("/transactions", {"transaction": params})
 
     @staticmethod
     def create_signature():
@@ -371,7 +377,7 @@ class Transaction(Resource):
         ]
 
     @staticmethod
-    def __post(url, params):
+    def _post(url, params={}):
         response = Http().post(url, params)
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(response["transaction"])})
@@ -387,8 +393,12 @@ class Transaction(Resource):
             attributes["customer_details"] = Customer(attributes.pop("customer"))
         if "shipping" in attributes:
             attributes["shipping_details"] = Address(attributes.pop("shipping"))
+
         Resource.__init__(self, attributes)
+
         self.amount = Decimal(self.amount)
+        if "status_history" in attributes:
+            self.status_history = [StatusEvent(status_event) for status_event in self.status_history]
 
     @property
     def vault_billing_address(self):

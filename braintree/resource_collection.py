@@ -7,11 +7,11 @@ class ResourceCollection(object):
             print transaction.id
     """
 
-    def __init__(self, query, results, klass):
-        self.__klass = klass
+    def __init__(self, query, results, method):
         self.__page_size = results["search_results"]["page_size"]
         self.__ids = results["search_results"]["ids"]
         self.__query = query
+        self.__method = method
 
     @property
     def maximum_size(self):
@@ -24,13 +24,13 @@ class ResourceCollection(object):
     @property
     def first(self):
         """ Returns the first item in the results. """
-        return self.__klass.fetch(self.__query, self.__ids[0:1])[0]
+        return self.__method(self.__query, self.__ids[0:1])[0]
 
     @property
     def items(self):
         """ Returns a generator allowing iteration over all of the results. """
         for batch in self.__batch_ids():
-            for item in self.__klass.fetch(self.__query, batch):
+            for item in self.__method(self.__query, batch):
                 yield item
 
     def __batch_ids(self):

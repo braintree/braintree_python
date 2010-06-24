@@ -806,7 +806,4 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 100)
 
         transaction_ids = [transaction.id for transaction in collection.items]
-        self.assertEquals(collection.maximum_size, len(self.__unique(transaction_ids)))
-
-    def __unique(self, list):
-        return set(list)
+        self.assertEquals(collection.maximum_size, len(TestHelper.unique(transaction_ids)))

@@ -1,3 +1,4 @@
+import warnings
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -5,7 +6,9 @@ from braintree.resource import Resource
 from braintree.credit_card import CreditCard
 from braintree.address import Address
 from braintree.configuration import Configuration
+from braintree.ids_search import IdsSearch
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 
 class Customer(Resource):
@@ -56,6 +59,19 @@ class Customer(Resource):
     """
 
     @staticmethod
+    def all():
+        """ Return a collection of all customers. """
+        response = Http().post("/customers/advanced_search_ids")
+        return ResourceCollection(None, response, Customer.__fetch)
+
+    @staticmethod
+    def __fetch(query, ids):
+        criteria = {}
+        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
+        response = Http().post("/customers/advanced_search", {"search": criteria})
+        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
+
+    @staticmethod
     def confirm_transparent_redirect(query_string):
         """
         Confirms a transparent redirect request.  It expects the query string from the
@@ -64,8 +80,9 @@ class Customer(Resource):
             result = braintree.Customer.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
-        return Customer.__post("/customers/all/confirm_transparent_redirect_request", {"id": id})
+        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        return Customer._post("/customers/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def create(params={}):
@@ -79,7 +96,7 @@ class Customer(Resource):
         """
 
         Resource.verify_keys(params, Customer.create_signature())
-        return Customer.__post("/customers", {"customer": params})
+        return Customer._post("/customers", {"customer": params})
 
     @staticmethod
     def delete(customer_id):
@@ -113,6 +130,7 @@ class Customer(Resource):
         """ Builds tr_data for creating a Customer. """
 
         Resource.verify_keys(tr_data, [{"customer": Customer.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateCustomer
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -120,18 +138,21 @@ class Customer(Resource):
         """ Builds tr_data for updating a Customer. """
 
         Resource.verify_keys(tr_data, [{"customer": Customer.update_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.UpdateCustomer
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
     def transparent_redirect_create_url():
         """ Returns the url to use for creating Customers through transparent redirect. """
 
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/customers/all/create_via_transparent_redirect_request"
 
     @staticmethod
     def transparent_redirect_update_url():
         """ Returns the url to use for updating Customers through transparent redirect. """
 
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/customers/all/update_via_transparent_redirect_request"
 
     @staticmethod
@@ -163,11 +184,12 @@ class Customer(Resource):
     def update_signature():
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website",
+            {"credit_card": CreditCard.signature("update_via_customer")},
             {"custom_fields": ["__any_key__"]}
         ]
 
     @staticmethod
-    def __post(url, params={}):
+    def _post(url, params={}):
         response = Http().post(url, params)
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(response["customer"])})

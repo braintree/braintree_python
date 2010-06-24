@@ -116,6 +116,24 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(None, verification.avs_error_response_code)
         self.assertEquals("I", verification.avs_postal_code_response_code)
         self.assertEquals("I", verification.avs_street_address_response_code)
+        self.assertEquals(TestHelper.default_merchant_account_id, verification.merchant_account_id)
+
+    def test_create_with_card_verification_and_non_default_merchant_account(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4222222222222",
+            "expiration_date": "05/2009",
+            "options": {
+                "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
+                "verify_card": True
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEquals("processor_declined", verification.status)
+        self.assertEquals(TestHelper.non_default_merchant_account_id, verification.merchant_account_id)
 
     def test_create_with_card_verification_set_to_false(self):
         customer = Customer.create().customer
@@ -256,6 +274,30 @@ class TestCreditCard(unittest.TestCase):
             "cvv": "123",
             "cardholder_name": "Jane Jones",
             "options": {"verify_card": True}
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals("processor_declined", result.credit_card_verification.status)
+
+    def test_update_verifies_card_with_non_default_merchant_account(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        result = CreditCard.update(credit_card.token, {
+            "number": "4222222222222",
+            "expiration_date": "06/2010",
+            "cvv": "123",
+            "cardholder_name": "Jane Jones",
+            "options": {
+                "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
+                "verify_card": True
+            }
         })
 
         self.assertFalse(result.is_success)
@@ -534,6 +576,50 @@ class TestCreditCard(unittest.TestCase):
         self.assertFalse(CreditCard.find(card1.token).default)
         self.assertTrue(CreditCard.find(card2.token).default)
 
+    def test_update_from_transparent_redirect_and_update_existing_billing_address(self):
+        customer = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "billing_address": {
+                    "street_address": "123 Old St",
+                    "locality": "Chicago",
+                    "region": "Illinois",
+                    "postal_code": "60621"
+                }
+            }
+        }).customer
+        card = customer.credit_cards[0]
+
+        tr_data = {
+            "payment_method_token": card.token,
+            "credit_card": {
+                "billing_address": {
+                    "street_address": "123 New St",
+                    "locality": "Columbus",
+                    "region": "Ohio",
+                    "postal_code": "43215",
+                    "options": {
+                        "update_existing": True
+                    }
+                }
+            }
+        }
+
+        post_params = {
+            "tr_data": CreditCard.tr_data_for_update(tr_data, "http://example.com/path")
+        }
+
+        query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
+        result = CreditCard.confirm_transparent_redirect(query_string)
+
+        self.assertEquals(1, len(Customer.find(customer.id).addresses))
+        updated_card = CreditCard.find(card.token)
+        self.assertEquals("123 New St", updated_card.billing_address.street_address)
+        self.assertEquals("Columbus", updated_card.billing_address.locality)
+        self.assertEquals("Ohio", updated_card.billing_address.region)
+        self.assertEquals("43215", updated_card.billing_address.postal_code)
+
     def test_update_from_transparent_redirect_with_error_result(self):
         old_token = str(random.randint(1, 1000000))
         credit_card = Customer.create({
@@ -565,3 +651,43 @@ class TestCreditCard(unittest.TestCase):
             ErrorCodes.CreditCard.TokenInvalid,
             result.errors.for_object("credit_card").on("token")[0].code
         )
+
+    def test_expired_can_iterate_over_all_items(self):
+        customer_id = Customer.all().first.id
+
+        for i in range(110 - CreditCard.expired().maximum_size):
+            CreditCard.create({
+                "customer_id": customer_id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+                "cvv": "100",
+                "cardholder_name": "John Doe"
+            })
+
+        collection = CreditCard.expired()
+        self.assertTrue(collection.maximum_size > 100)
+
+        credit_card_tokens = [credit_card.token for credit_card in collection.items]
+        self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
+
+        self.assertEquals(set([True]), TestHelper.unique([credit_card.is_expired for credit_card in collection.items]))
+
+    def test_expiring_between(self):
+        customer_id = Customer.all().first.id
+
+        for i in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
+            CreditCard.create({
+                "customer_id": customer_id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "cardholder_name": "John Doe"
+            })
+
+        collection = CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31))
+        self.assertTrue(collection.maximum_size > 100)
+
+        credit_card_tokens = [credit_card.token for credit_card in collection.items]
+        self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
+
+        self.assertEquals(set(['2010']), TestHelper.unique([credit_card.expiration_year for credit_card in collection.items]))

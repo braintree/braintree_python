@@ -15,7 +15,7 @@ class TestResourceCollection(unittest.TestCase):
                 "ids": ["0", "1", "2", "3", "4"]
             }
         }
-        collection = ResourceCollection("some_query", collection_data, TestResourceCollection.TestResource)
+        collection = ResourceCollection("some_query", collection_data, TestResourceCollection.TestResource.fetch)
         new_items = []
         index = 0
         for item in collection.items:

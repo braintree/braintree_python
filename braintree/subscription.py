@@ -162,10 +162,10 @@ class Subscription(Resource):
             ])
         """
         response = Http().post("/subscriptions/advanced_search_ids", {"search": Subscription.__criteria(query)})
-        return ResourceCollection(query, response, Subscription)
+        return ResourceCollection(query, response, Subscription.__fetch)
 
     @staticmethod
-    def fetch(query, ids):
+    def __fetch(query, ids):
         criteria = Subscription.__criteria(query)
         criteria["ids"] = braintree.subscription_search.SubscriptionSearch.ids.in_list(ids).to_param()
         response = Http().post("/subscriptions/advanced_search", {"search": criteria})
@@ -186,6 +186,7 @@ class Subscription(Resource):
         return [
             "id",
             "merchant_account_id",
+            "payment_method_token",
             "plan_id",
             "price"
         ]

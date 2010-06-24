@@ -129,6 +129,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction, type(transaction))
         self.assertEquals(self.trialless_plan["price"], transaction.amount)
         self.assertEquals("sale", transaction.type)
+        self.assertEquals(subscription.id, transaction.subscription_id)
 
     def test_create_doesnt_creates_a_transaction_if_trial_period(self):
         subscription = Subscription.create({
@@ -188,6 +189,24 @@ class TestSubscription(unittest.TestCase):
 
         subscription = result.subscription
         self.assertEquals(TestHelper.non_default_merchant_account_id, subscription.merchant_account_id)
+
+    def test_update_with_payment_method_token(self):
+        newCard = CreditCard.create({
+            "customer_id": self.credit_card.customer_id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": self.credit_card.cardholder_name
+        }).credit_card
+
+        result = Subscription.update(self.updateable_subscription.id, {
+            "payment_method_token": newCard.token
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(newCard.token, subscription.payment_method_token)
 
     def test_update_with_error_result(self):
         result = Subscription.update(self.updateable_subscription.id, {

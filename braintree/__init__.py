@@ -9,6 +9,7 @@ from environment import Environment
 from resource_collection import ResourceCollection
 from search import Search
 from subscription import Subscription
+from status_event import StatusEvent
 from transaction import Transaction
 from transaction_search import TransactionSearch
 from subscription_search import SubscriptionSearch

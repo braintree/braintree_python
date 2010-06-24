@@ -1,4 +1,6 @@
 import braintree
+import warnings
+from braintree.util.deprecation_util import DeprecationUtil
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -6,6 +8,8 @@ from braintree.resource import Resource
 from braintree.address import Address
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.configuration import Configuration
+from braintree.ids_search import IdsSearch
+from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 
 class CreditCard(Resource):
@@ -96,8 +100,9 @@ class CreditCard(Resource):
             result = braintree.CreditCard.confirm_transparent_redirect_request("foo=bar&id=12345")
         """
 
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)
-        return CreditCard.__post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
+        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
+        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        return CreditCard._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
     @staticmethod
     def create(params={}):
@@ -111,7 +116,7 @@ class CreditCard(Resource):
         """
 
         Resource.verify_keys(params, CreditCard.create_signature())
-        return CreditCard.__post("/payment_methods", {"credit_card": params})
+        return CreditCard._post("/payment_methods", {"credit_card": params})
 
     @staticmethod
     def update(credit_card_token, params={}):
@@ -142,6 +147,35 @@ class CreditCard(Resource):
         return SuccessfulResult()
 
     @staticmethod
+    def expired():
+        """ Return a collection of expired credit cards. """
+        response = Http().post("/payment_methods/all/expired_ids")
+        return ResourceCollection(None, response, CreditCard.__fetch_expired)
+
+    @staticmethod
+    def expiring_between(start_date, end_date):
+        """ Return a collection of credit cards expiring between the given dates. """
+        formatted_start_date = start_date.strftime("%m%Y")
+        formatted_end_date = end_date.strftime("%m%Y")
+        query = "start=%s&end=%s" % (formatted_start_date, formatted_end_date)
+        response = Http().post("/payment_methods/all/expiring_ids?" + query)
+        return ResourceCollection(query, response, CreditCard.__fetch_existing_between)
+
+    @staticmethod
+    def __fetch_expired(query, ids):
+        criteria = {}
+        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
+        response = Http().post("/payment_methods/all/expired", {"search": criteria})
+        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+
+    @staticmethod
+    def __fetch_existing_between(query, ids):
+        criteria = {}
+        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
+        response = Http().post("/payment_methods/all/expiring?" + query, {"search": criteria})
+        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+
+    @staticmethod
     def find(credit_card_token):
         """
         Find a credit card, given a credit_card_id. This does not return
@@ -168,15 +202,20 @@ class CreditCard(Resource):
     @staticmethod
     def signature(type):
         billing_address_params = ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]
+        options = ["make_default", "verification_merchant_account_id", "verify_card"]
+
         signature = [
             "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
             {"billing_address": billing_address_params},
-            {"options": ["make_default", "verify_card"]}
+            {"options": options}
         ]
 
         if type == "create":
             signature.append("customer_id")
         elif type == "update":
+            billing_address_params.append({"options": ["update_existing"]})
+        elif type == "update_via_customer":
+            options.append("update_existing_token")
             billing_address_params.append({"options": ["update_existing"]})
         else:
             raise AttributeError
@@ -188,6 +227,7 @@ class CreditCard(Resource):
         """
         Returns the url to use for creating CreditCards through transparent redirect.
         """
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
 
     @staticmethod
@@ -197,6 +237,7 @@ class CreditCard(Resource):
         """
 
         Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreatePaymentMethod
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -204,7 +245,8 @@ class CreditCard(Resource):
         """
         Builds tr_data for CreditCard updating.
         """
-        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.create_signature()}])
+        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.update_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.UpdatePaymentMethod
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 
     @staticmethod
@@ -212,10 +254,11 @@ class CreditCard(Resource):
         """
         Returns the url to be used for updating CreditCards through transparent redirect.
         """
+        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
 
     @staticmethod
-    def __post(url, params):
+    def _post(url, params={}):
         response = Http().post(url, params)
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
@@ -224,6 +267,7 @@ class CreditCard(Resource):
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
+        self.is_expired = self.expired
         if "billing_address" in attributes:
             self.billing_address = Address(self.billing_address)
         if "subscriptions" in attributes:
