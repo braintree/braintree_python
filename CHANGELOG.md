@@ -1,3 +1,13 @@
+## 2.3.0
+
+* Added unified TransparentRedirect url and confirm methods and deprecated old methods
+* Added methods to CreditCard to allow searching on expiring and expired credit cards
+* Allow credit card verification against a specified merchant account
+* Added all method on Customer to retrieve all customers
+* Added ability to update a customer, credit card, and billing address in one request
+* Allow updating the payment method token on a subscription
+* Added methods to navigate between a Transaction and its refund (in both directions)
+
 ## 2.2.1
 
 * Use isinstance instead of type to cater to inheritance (thanks danielgtaylor)
