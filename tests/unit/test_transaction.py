@@ -22,3 +22,7 @@ class TestTransaction(unittest.TestCase):
         except KeyError, e:
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
+    def test_gateway_rejection_reason_available(self):
+        transaction = Transaction({"amount": 1, "gateway_rejection_reason": "avs_and_cvv"})
+        self.assertEquals(Transaction.GatewayRejectionReason.AvsAndCvv, transaction.gateway_rejection_reason)
+

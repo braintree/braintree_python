@@ -70,7 +70,7 @@ class Transaction(Resource):
 
     class CreatedUsing(object):
         """
-        Contants representing how the transaction was created.  Available types are:
+        Constants representing how the transaction was created.  Available types are:
 
         * braintree.Transaction.CreatedUsing.FullInformation
         * braintree.Transaction.CreatedUsing.Token
@@ -78,6 +78,20 @@ class Transaction(Resource):
 
         FullInformation = "full_information"
         Token = "token"
+
+    class GatewayRejectionReason(object):
+        """
+        Constants representing gateway rejection reasons. Available types are:
+
+        * braintree.Transaction.GatewayRejectionReason.Avs
+        * braintree.Transaction.GatewayRejectionReason.AvsAndCvv
+        * braintree.Transaction.GatewayRejectionReason.Cvv
+        * braintree.Transaction.GatewayRejectionReason.Duplicate
+        """
+        Avs = "avs"
+        AvsAndCvv = "avs_and_cvv"
+        Cvv = "cvv"
+        Duplicate = "duplicate"
 
     class Source(object):
         Api = "api"
