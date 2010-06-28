@@ -240,6 +240,92 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(Transaction.Status.ProcessorDeclined, transaction.status)
 
+    def test_sale_with_gateway_rejected_with_avs(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "processing_rules_merchant_id"
+            Configuration.public_key = "processing_rules_public_key"
+            Configuration.private_key = "processing_rules_private_key"
+
+            result = Transaction.sale({
+                "amount": "1000.00",
+                "billing": {
+                    "street_address": "200 Fake Street"
+                },
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                }
+            })
+
+            self.assertFalse(result.is_success)
+            transaction = result.transaction
+            self.assertEquals(Transaction.GatewayRejectionReason.Avs, transaction.gateway_rejection_reason)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
+    def test_sale_with_gateway_rejected_with_avs_and_cvv(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "processing_rules_merchant_id"
+            Configuration.public_key = "processing_rules_public_key"
+            Configuration.private_key = "processing_rules_private_key"
+
+            result = Transaction.sale({
+                "amount": "1000.00",
+                "billing": {
+                    "postal_code": "20000"
+                },
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009",
+                    "cvv": "200"
+                }
+            })
+
+            self.assertFalse(result.is_success)
+            transaction = result.transaction
+            self.assertEquals(Transaction.GatewayRejectionReason.AvsAndCvv, transaction.gateway_rejection_reason)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
+    def test_sale_with_gateway_rejected_with_cvv(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "processing_rules_merchant_id"
+            Configuration.public_key = "processing_rules_public_key"
+            Configuration.private_key = "processing_rules_private_key"
+
+            result = Transaction.sale({
+                "amount": "1000.00",
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009",
+                    "cvv": "200"
+                }
+            })
+
+            self.assertFalse(result.is_success)
+            transaction = result.transaction
+            self.assertEquals(Transaction.GatewayRejectionReason.Cvv, transaction.gateway_rejection_reason)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": "1000.00",
