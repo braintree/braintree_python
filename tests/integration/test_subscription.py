@@ -131,6 +131,16 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals("sale", transaction.type)
         self.assertEquals(subscription.id, transaction.subscription_id)
 
+    def test_create_returns_a_transaction_if_transaction_is_declined(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trialless_plan["id"],
+            "price": "2000"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(Transaction.Status.ProcessorDeclined, result.transaction.status)
+
     def test_create_doesnt_creates_a_transaction_if_trial_period(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
