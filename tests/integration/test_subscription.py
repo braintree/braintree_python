@@ -135,7 +135,7 @@ class TestSubscription(unittest.TestCase):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": self.trialless_plan["id"],
-            "price": "2000"
+            "price": TransactionAmounts.Decline
         })
 
         self.assertFalse(result.is_success)
@@ -421,12 +421,12 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
         ]).first
 
-        result = Subscription.retryCharge(subscription.id, Decimal("1000.00"));
+        result = Subscription.retryCharge(subscription.id, Decimal(TransactionAmounts.Authorize));
 
         self.assertTrue(result.is_success);
         transaction = result.transaction;
 
-        self.assertEquals(Decimal("1000.00"), transaction.amount);
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount);
         self.assertNotEqual(None, transaction.processor_authorization_code);
         self.assertEquals(Transaction.Type.Sale, transaction.type);
         self.assertEquals(Transaction.Status.Authorized, transaction.status);

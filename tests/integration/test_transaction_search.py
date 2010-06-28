@@ -13,7 +13,7 @@ class TestTransactionSearch(unittest.TestCase):
         customer_id = "customer%s" % randint(1, 100000)
 
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -103,7 +103,7 @@ class TestTransactionSearch(unittest.TestCase):
         customer_id = "customer%s" % randint(1, 100000)
 
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -201,7 +201,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -226,7 +226,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_text_node_starts_with(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -251,7 +251,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_text_node_ends_with(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -276,7 +276,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_text_node_is_not(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -301,7 +301,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_created_using(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -342,7 +342,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -383,7 +383,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_merchant_account_id(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -415,7 +415,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_credit_card_card_type(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -456,7 +456,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_status(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -497,7 +497,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_source(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -538,7 +538,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_multiple_value_node_type(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012"
@@ -580,7 +580,7 @@ class TestTransactionSearch(unittest.TestCase):
     def test_advanced_search_multiple_value_node_type_with_refund(self):
         name = "Anabel Atkins%s" % randint(1,100000)
         sale = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -595,7 +595,7 @@ class TestTransactionSearch(unittest.TestCase):
         refund = Transaction.refund(sale.id).transaction
 
         credit = Transaction.credit({
-            "amount": Decimal("1000.00"),
+            "amount": Decimal(TransactionAmounts.Authorize),
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009",
@@ -631,7 +631,7 @@ class TestTransactionSearch(unittest.TestCase):
     def test_advanced_search_range_node_amount(self):
         name = "Henrietta Livingston%s" % randint(1,100000)
         t_1000 = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
@@ -683,7 +683,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_range_node_created_at_less_than_or_equal_to(self):
         transaction  = Transaction.sale({
-             "amount": "1000.00",
+             "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
                  "expiration_date": "05/2012"
@@ -719,7 +719,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_range_node_created_at_greater_than_or_equal_to(self):
         transaction  = Transaction.sale({
-             "amount": "1000.00",
+             "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
                  "expiration_date": "05/2012"
@@ -755,7 +755,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     def test_advanced_search_range_node_created_at_between(self):
         transaction  = Transaction.sale({
-             "amount": "1000.00",
+             "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
                  "expiration_date": "05/2012"

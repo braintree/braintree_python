@@ -3,7 +3,7 @@ from tests.test_helper import *
 class TestTransaction(unittest.TestCase):
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -14,14 +14,14 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
 
     def test_sale_allows_amount_as_a_decimal(self):
         result = Transaction.sale({
-            "amount": Decimal("1000.00"),
+            "amount": Decimal(TransactionAmounts.Authorize),
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -32,14 +32,14 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
 
     def test_sale_with_expiration_month_and_year_separately(self):
         result = Transaction.sale({
-            "amount": Decimal("1000.00"),
+            "amount": Decimal(TransactionAmounts.Authorize),
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "05",
@@ -147,7 +147,7 @@ class TestTransaction(unittest.TestCase):
         }).customer
 
         result = Transaction.sale({
-            "amount": Decimal("1000.00"),
+            "amount": Decimal(TransactionAmounts.Authorize),
             "customer_id": customer.id,
             "credit_card": {
                 "number": "4111111111111111",
@@ -167,7 +167,7 @@ class TestTransaction(unittest.TestCase):
         }).customer
 
         result = Transaction.sale({
-            "amount": Decimal("1000.00"),
+            "amount": Decimal(TransactionAmounts.Authorize),
             "customer_id": customer.id,
             "credit_card": {
                 "number": "4111111111111111",
@@ -185,7 +185,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_custom_fields(self):
         result = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -202,7 +202,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_merchant_account_id(self):
         result = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "merchant_account_id": TestHelper.non_default_merchant_account_id,
             "credit_card": {
                 "number": "4111111111111111",
@@ -216,7 +216,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_without_merchant_account_id_falls_back_to_default(self):
         result = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -229,7 +229,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
-            "amount": "2000.00",
+            "amount": TransactionAmounts.Decline,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -251,7 +251,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.private_key = "processing_rules_private_key"
 
             result = Transaction.sale({
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
                 "billing": {
                     "street_address": "200 Fake Street"
                 },
@@ -280,7 +280,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.private_key = "processing_rules_private_key"
 
             result = Transaction.sale({
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
                 "billing": {
                     "postal_code": "20000"
                 },
@@ -310,7 +310,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.private_key = "processing_rules_private_key"
 
             result = Transaction.sale({
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
                 "credit_card": {
                     "number": "4111111111111111",
                     "expiration_date": "05/2009",
@@ -328,7 +328,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -586,7 +586,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_credit_with_a_successful_result(self):
         result = Transaction.credit({
-            "amount": Decimal("1000.00"),
+            "amount": Decimal(TransactionAmounts.Authorize),
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -597,7 +597,7 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Credit, transaction.type)
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         cc_details = transaction.credit_card_details
         self.assertEquals("411111", cc_details.bin)
         self.assertEquals("1111", cc_details.last_4)
@@ -631,7 +631,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_credit_with_merchant_account_id(self):
         result = Transaction.credit({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "merchant_account_id": TestHelper.non_default_merchant_account_id,
             "credit_card": {
                 "number": "4111111111111111",
@@ -645,7 +645,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_credit_without_merchant_account_id_falls_back_to_default(self):
         result = Transaction.credit({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -658,7 +658,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_find_returns_a_found_transaction(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -676,7 +676,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_void_with_successful_result(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -690,7 +690,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_void_with_unsuccessful_result(self):
         transaction = Transaction.sale({
-            "amount": "2000.00",
+            "amount": TransactionAmounts.Decline,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -707,7 +707,7 @@ class TestTransaction(unittest.TestCase):
     def test_create_with_successful_result(self):
         result = Transaction.create({
             "type": Transaction.Type.Sale,
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -720,7 +720,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_create_with_error_result(self):
         result = Transaction.create({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -733,7 +733,7 @@ class TestTransaction(unittest.TestCase):
     def test_sale_from_transparent_redirect_with_successful_result(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
             }
         }
         post_params = {
@@ -747,7 +747,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
@@ -756,7 +756,7 @@ class TestTransaction(unittest.TestCase):
     def test_sale_from_transparent_redirect_with_error_result(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
             }
         }
         post_params = {
@@ -773,7 +773,7 @@ class TestTransaction(unittest.TestCase):
     def test_sale_from_transparent_redirect_with_403_and_message(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00"
+                "amount": TransactionAmounts.Authorize
             }
         }
         post_params = {
@@ -793,7 +793,7 @@ class TestTransaction(unittest.TestCase):
     def test_credit_from_transparent_redirect_with_successful_result(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
             }
         }
         post_params = {
@@ -807,7 +807,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals(Transaction.Type.Credit, transaction.type)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
@@ -816,7 +816,7 @@ class TestTransaction(unittest.TestCase):
     def test_credit_from_transparent_redirect_with_error_result(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
             }
         }
         post_params = {
@@ -832,7 +832,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_submit_for_settlement_without_amount(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -842,11 +842,11 @@ class TestTransaction(unittest.TestCase):
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
 
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals(Decimal("1000.00"), submitted_transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), submitted_transaction.amount)
 
     def test_submit_for_settlement_with_amount(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -860,7 +860,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -877,7 +877,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_status_history(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -888,9 +888,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEquals(2, len(submitted_transaction.status_history))
         self.assertEquals(Transaction.Status.Authorized, submitted_transaction.status_history[0].status)
-        self.assertEquals(Decimal("1000.00"), submitted_transaction.status_history[0].amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), submitted_transaction.status_history[0].amount)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status_history[1].status)
-        self.assertEquals(Decimal("1000.00"), submitted_transaction.status_history[1].amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), submitted_transaction.status_history[1].amount)
 
     def test_successful_refund(self):
         transaction = self.__create_transaction_to_refund()
@@ -901,7 +901,7 @@ class TestTransaction(unittest.TestCase):
         refund = result.transaction
 
         self.assertEquals(Transaction.Type.Credit, refund.type)
-        self.assertEquals(Decimal("1000.00"), refund.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), refund.amount)
         self.assertEquals(transaction.id, refund.refunded_transaction_id)
 
         self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
@@ -929,7 +929,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_refund_returns_an_error_if_unsettled(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -949,7 +949,7 @@ class TestTransaction(unittest.TestCase):
 
     def __create_transaction_to_refund(self):
         transaction = Transaction.sale({
-            "amount": "1000.00",
+            "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
