@@ -133,7 +133,37 @@ class TestCreditCard(unittest.TestCase):
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
         self.assertEquals("processor_declined", verification.status)
+        self.assertEquals(None, verification.gateway_rejection_reason)
         self.assertEquals(TestHelper.non_default_merchant_account_id, verification.merchant_account_id)
+
+    def test_expose_gateway_rejection_reason_on_verification(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "processing_rules_merchant_id"
+            Configuration.public_key = "processing_rules_public_key"
+            Configuration.private_key = "processing_rules_private_key"
+
+            customer = Customer.create().customer
+            result = CreditCard.create({
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+                "cvv": "200",
+                "options": {
+                    "verify_card": True
+                }
+            })
+
+            self.assertFalse(result.is_success)
+            verification = result.credit_card_verification
+            self.assertEquals(Transaction.GatewayRejectionReason.Cvv, verification.gateway_rejection_reason)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
 
     def test_create_with_card_verification_set_to_false(self):
         customer = Customer.create().customer
