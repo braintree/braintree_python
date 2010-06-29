@@ -110,7 +110,6 @@ class Transaction(Resource):
         * braintree.Transaction.Status.Settled
         * braintree.Transaction.Status.SettlementFailed
         * braintree.Transaction.Status.SubmittedForSettlement
-        * braintree.Transaction.Status.Unknown
         * braintree.Transaction.Status.Unrecognized
         * braintree.Transaction.Status.Void
         """
@@ -123,7 +122,6 @@ class Transaction(Resource):
         Settled                = "settled"
         SettlementFailed       = "settlement_failed"
         SubmittedForSettlement = "submitted_for_settlement"
-        Unknown                = "unknown"
         Unrecognized           = "unrecognized"
         Voided                 = "voided"
 
