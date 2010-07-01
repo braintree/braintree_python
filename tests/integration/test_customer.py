@@ -44,11 +44,23 @@ class TestCustomer(unittest.TestCase):
     def test_create_returns_an_error_response_if_invalid(self):
         result = Customer.create({
             "email": "@invalid.com",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "billing_address": {
+                    "country_code_alpha2": "MX",
+                    "country_code_alpha3": "USA"
+                }
+            }
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(1, result.errors.size)
+        self.assertEquals(2, result.errors.size)
         self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
+        self.assertEquals(
+            ErrorCodes.Address.InconsistentCountry,
+            result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("base")[0].code
+        )
 
     def test_create_customer_and_payment_method_at_the_same_time(self):
         result = Customer.create({
@@ -99,7 +111,11 @@ class TestCustomer(unittest.TestCase):
                     "street_address": "123 Abc Way",
                     "locality": "Chicago",
                     "region": "Illinois",
-                    "postal_code": "60622"
+                    "postal_code": "60622",
+                    "country_code_alpha2": "US",
+                    "country_code_alpha3": "USA",
+                    "country_code_numeric": "840",
+                    "country_name": "United States of America"
                 }
             }
         })
@@ -115,6 +131,10 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("Chicago", address.locality)
         self.assertEqual("Illinois", address.region)
         self.assertEqual("60622", address.postal_code)
+        self.assertEqual("US", address.country_code_alpha2)
+        self.assertEqual("USA", address.country_code_alpha3)
+        self.assertEqual("840", address.country_code_numeric)
+        self.assertEqual("United States of America", address.country_name)
 
     def test_create_with_customer_fields(self):
         result = Customer.create({
@@ -254,6 +274,10 @@ class TestCustomer(unittest.TestCase):
                 },
                 "billing_address": {
                     "postal_code": "44444",
+                    "country_code_alpha2": "US",
+                    "country_code_alpha3": "USA",
+                    "country_code_numeric": "840",
+                    "country_name": "United States of America",
                     "options": {
                         "update_existing": True
                     }
@@ -267,6 +291,10 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("Gates", updated_customer.last_name)
         self.assertEqual("12/2012", updated_credit_card.expiration_date)
         self.assertEqual("44444", updated_address.postal_code)
+        self.assertEqual("US", updated_address.country_code_alpha2)
+        self.assertEqual("USA", updated_address.country_code_alpha3)
+        self.assertEqual("840", updated_address.country_code_numeric)
+        self.assertEqual("United States of America", updated_address.country_name)
 
     def test_update_with_invalid_options(self):
         customer = Customer.create({
@@ -302,7 +330,13 @@ class TestCustomer(unittest.TestCase):
             "customer[email]": "john@doe.com",
             "customer[phone]": "312.555.2323",
             "customer[fax]": "614.555.5656",
-            "customer[website]": "www.johndoe.com"
+            "customer[website]": "www.johndoe.com",
+            "customer[credit_card][number]": "4111111111111111",
+            "customer[credit_card][expiration_date]": "05/2012",
+            "customer[credit_card][billing_address][country_code_alpha2]": "MX",
+            "customer[credit_card][billing_address][country_code_alpha3]": "MEX",
+            "customer[credit_card][billing_address][country_code_numeric]": "484",
+            "customer[credit_card][billing_address][country_name]": "Mexico",
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_create_url())
@@ -316,6 +350,11 @@ class TestCustomer(unittest.TestCase):
         self.assertEquals("312.555.2323", customer.phone)
         self.assertEquals("614.555.5656", customer.fax)
         self.assertEquals("www.johndoe.com", customer.website)
+        self.assertEquals("05/2012", customer.credit_cards[0].expiration_date)
+        self.assertEquals("MX", customer.credit_cards[0].billing_address.country_code_alpha2)
+        self.assertEquals("MEX", customer.credit_cards[0].billing_address.country_code_alpha3)
+        self.assertEquals("484", customer.credit_cards[0].billing_address.country_code_numeric)
+        self.assertEquals("Mexico", customer.credit_cards[0].billing_address.country_name)
 
     def test_create_from_transparent_redirect_with_error_result(self):
         tr_data = {
