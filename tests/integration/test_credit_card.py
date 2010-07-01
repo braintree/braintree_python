@@ -87,7 +87,11 @@ class TestCreditCard(unittest.TestCase):
                 "street_address": "123 Abc Way",
                 "locality": "Chicago",
                 "region": "Illinois",
-                "postal_code": "60622"
+                "postal_code": "60622",
+                "country_code_alpha2": "MX",
+                "country_code_alpha3": "MEX",
+                "country_code_numeric": "484",
+                "country_name": "Mexico"
             }
         })
 
@@ -97,6 +101,10 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("Chicago", address.locality)
         self.assertEquals("Illinois", address.region)
         self.assertEquals("60622", address.postal_code)
+        self.assertEquals("MX", address.country_code_alpha2)
+        self.assertEquals("MEX", address.country_code_alpha3)
+        self.assertEquals("484", address.country_code_numeric)
+        self.assertEquals("Mexico", address.country_name)
 
     def test_create_with_card_verification(self):
         customer = Customer.create().customer
@@ -188,6 +196,38 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(ErrorCodes.CreditCard.ExpirationDateIsInvalid, result.errors.for_object("credit_card").on("expiration_date")[0].code)
         self.assertEquals("Expiration date is invalid.", result.message)
 
+    def test_create_with_invalid_country_codes(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2012",
+            "billing_address": {
+                "country_code_alpha2": "ZZ",
+                "country_code_alpha3": "ZZZ",
+                "country_code_numeric": "000",
+                "country_name": "zzzzzzz"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted,
+            result.errors.for_object("credit_card").for_object("billing_address").on("country_code_alpha2")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted,
+            result.errors.for_object("credit_card").for_object("billing_address").on("country_code_alpha3")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryCodeNumericIsNotAccepted,
+            result.errors.for_object("credit_card").for_object("billing_address").on("country_code_numeric")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryNameIsNotAccepted,
+            result.errors.for_object("credit_card").for_object("billing_address").on("country_name")[0].code
+        )
+
     def test_update_with_valid_options(self):
         customer = Customer.create().customer
         credit_card = CreditCard.create({
@@ -222,17 +262,25 @@ class TestCreditCard(unittest.TestCase):
             "number": "4111111111111111",
             "expiration_date": "05/2009",
             "billing_address": {
-                "street_address": "123 Nigeria Ave"
+                "street_address": "123 Nigeria Ave",
             }
         }).credit_card
 
         updated_credit_card = CreditCard.update(initial_credit_card.token, {
             "billing_address": {
-                "region": "IL"
+                "region": "IL",
+                "country_code_alpha2": "NG",
+                "country_code_alpha3": "NGA",
+                "country_code_numeric": "566",
+                "country_name": "Nigeria"
             }
         }).credit_card
 
         self.assertEquals("IL", updated_credit_card.billing_address.region)
+        self.assertEquals("NG", updated_credit_card.billing_address.country_code_alpha2)
+        self.assertEquals("NGA", updated_credit_card.billing_address.country_code_alpha3)
+        self.assertEquals("566", updated_credit_card.billing_address.country_code_numeric)
+        self.assertEquals("Nigeria", updated_credit_card.billing_address.country_name)
         self.assertEquals(None, updated_credit_card.billing_address.street_address)
         self.assertNotEquals(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
 
@@ -461,6 +509,10 @@ class TestCreditCard(unittest.TestCase):
             "credit_card[cardholder_name]": "Card Holder",
             "credit_card[number]": "4111111111111111",
             "credit_card[expiration_date]": "05/2012",
+            "credit_card[billing_address][country_code_alpha2]": "MX",
+            "credit_card[billing_address][country_code_alpha3]": "MEX",
+            "credit_card[billing_address][country_code_numeric]": "484",
+            "credit_card[billing_address][country_name]": "Mexico",
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_create_url())
@@ -472,6 +524,10 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("05", credit_card.expiration_month)
         self.assertEquals("2012", credit_card.expiration_year)
         self.assertEquals(customer.id, credit_card.customer_id)
+        self.assertEquals("MX", credit_card.billing_address.country_code_alpha2)
+        self.assertEquals("MEX", credit_card.billing_address.country_code_alpha3)
+        self.assertEquals("484", credit_card.billing_address.country_code_numeric)
+        self.assertEquals("Mexico", credit_card.billing_address.country_name)
 
 
     def test_create_from_transparent_redirect_and_make_default(self):

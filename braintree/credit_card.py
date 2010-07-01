@@ -201,7 +201,10 @@ class CreditCard(Resource):
 
     @staticmethod
     def signature(type):
-        billing_address_params = ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]
+        billing_address_params = [
+            "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
+            "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
+        ]
         options = ["make_default", "verification_merchant_account_id", "verify_card"]
 
         signature = [
