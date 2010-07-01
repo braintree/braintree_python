@@ -81,7 +81,10 @@ class TestTransaction(unittest.TestCase):
                 "locality": "Chicago",
                 "region": "IL",
                 "postal_code": "60622",
-                "country_name": "United States of America"
+                "country_name": "United States of America",
+                "country_code_alpha2": "US",
+                "country_code_alpha3": "USA",
+                "country_code_numeric": "840"
             },
             "shipping": {
                 "first_name": "Andrew",
@@ -92,7 +95,10 @@ class TestTransaction(unittest.TestCase):
                 "locality": "Bartlett",
                 "region": "IL",
                 "postal_code": "60103",
-                "country_name": "United States of America"
+                "country_name": "Mexico",
+                "country_code_alpha2": "MX",
+                "country_code_alpha3": "MEX",
+                "country_code_numeric": "484"
             }
         })
 
@@ -130,6 +136,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("IL", transaction.billing_details.region)
         self.assertEquals("60622", transaction.billing_details.postal_code)
         self.assertEquals("United States of America", transaction.billing_details.country_name)
+        self.assertEquals("US", transaction.billing_details.country_code_alpha2)
+        self.assertEquals("USA", transaction.billing_details.country_code_alpha3)
+        self.assertEquals("840", transaction.billing_details.country_code_numeric)
         self.assertEquals("Andrew", transaction.shipping_details.first_name)
         self.assertEquals("Mason", transaction.shipping_details.last_name)
         self.assertEquals("Braintree", transaction.shipping_details.company)
@@ -138,7 +147,10 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("Bartlett", transaction.shipping_details.locality)
         self.assertEquals("IL", transaction.shipping_details.region)
         self.assertEquals("60103", transaction.shipping_details.postal_code)
-        self.assertEquals("United States of America", transaction.shipping_details.country_name)
+        self.assertEquals("Mexico", transaction.shipping_details.country_name)
+        self.assertEquals("MX", transaction.shipping_details.country_code_alpha2)
+        self.assertEquals("MEX", transaction.shipping_details.country_code_alpha3)
+        self.assertEquals("484", transaction.shipping_details.country_code_numeric)
 
     def test_sale_with_vault_customer_and_credit_card_data(self):
         customer = Customer.create({
@@ -563,7 +575,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(customer.id, transaction.vault_customer.id)
         self.assertEquals(credit_card.token, transaction.credit_card_details.token)
         self.assertEquals(credit_card.token, transaction.vault_credit_card.token)
-      
 
     def test_create_with_failing_validations(self):
         params = {
@@ -724,11 +735,33 @@ class TestTransaction(unittest.TestCase):
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
+            },
+            "billing": {
+                "country_code_alpha2": "ZZ",
+                "country_code_alpha3": "ZZZ",
+                "country_code_numeric": "000",
+                "country_name": "zzzzzz"
             }
         })
 
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Transaction.TypeIsRequired, result.errors.for_object("transaction").on("type")[0].code)
+        self.assertEquals(
+            ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted,
+            result.errors.for_object("transaction").for_object("billing").on("country_code_alpha2")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted,
+            result.errors.for_object("transaction").for_object("billing").on("country_code_alpha3")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryCodeNumericIsNotAccepted,
+            result.errors.for_object("transaction").for_object("billing").on("country_code_numeric")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Address.CountryNameIsNotAccepted,
+            result.errors.for_object("transaction").for_object("billing").on("country_name")[0].code
+        )
 
     def test_sale_from_transparent_redirect_with_successful_result(self):
         tr_data = {
@@ -800,6 +833,10 @@ class TestTransaction(unittest.TestCase):
             "tr_data": Transaction.tr_data_for_credit(tr_data, "http://example.com/path"),
             "transaction[credit_card][number]": "4111111111111111",
             "transaction[credit_card][expiration_date]": "05/2010",
+            "transaction[billing][country_code_alpha2]": "US",
+            "transaction[billing][country_code_alpha3]": "USA",
+            "transaction[billing][country_code_numeric]": "840",
+            "transaction[billing][country_name]": "United States of America"
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
@@ -812,6 +849,11 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2010", transaction.credit_card_details.expiration_date)
+
+        self.assertEquals("US", transaction.billing_details.country_code_alpha2)
+        self.assertEquals("USA", transaction.billing_details.country_code_alpha3)
+        self.assertEquals("840", transaction.billing_details.country_code_numeric)
+        self.assertEquals("United States of America", transaction.billing_details.country_name)
 
     def test_credit_from_transparent_redirect_with_error_result(self):
         tr_data = {

@@ -369,13 +369,15 @@ class Transaction(Resource):
             },
             {
                 "billing": [
-                    "first_name", "last_name", "company", "country_name", "extended_address", "locality",
+                    "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "locality",
                     "postal_code", "region", "street_address"
                 ]
             },
             {
                 "shipping": [
-                    "first_name", "last_name", "company", "country_name", "extended_address", "locality",
+                    "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "locality",
                     "postal_code", "region", "street_address"
                 ]
             },
