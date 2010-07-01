@@ -13,7 +13,10 @@ class TestAddress(unittest.TestCase):
             "locality": "Chicago",
             "region": "Illinois",
             "postal_code": "60622",
-            "country_name": "United States of America"
+            "country_name": "United States of America",
+            "country_code_alpha2": "US",
+            "country_code_alpha3": "USA",
+            "country_code_numeric": "840"
         })
 
         self.assertTrue(result.is_success)
@@ -27,17 +30,37 @@ class TestAddress(unittest.TestCase):
         self.assertEquals("Chicago", address.locality)
         self.assertEquals("Illinois", address.region)
         self.assertEquals("60622", address.postal_code)
+        self.assertEquals("US", address.country_code_alpha2)
+        self.assertEquals("USA", address.country_code_alpha3)
+        self.assertEquals("840", address.country_code_numeric)
         self.assertEquals("United States of America", address.country_name)
 
     def test_error_response_if_invalid(self):
         customer = Customer.create().customer
         result = Address.create({
             "customer_id": customer.id,
-            "country_name": "United States of Invalid"
+            "country_name": "zzzzzz",
+            "country_code_alpha2": "zz",
+            "country_code_alpha3": "zzz",
+            "country_code_numeric": "000"
         })
 
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Address.CountryNameIsNotAccepted, result.errors.for_object("address").on("country_name")[0].code)
+        self.assertEquals(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, result.errors.for_object("address").on("country_code_alpha2")[0].code)
+        self.assertEquals(ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted, result.errors.for_object("address").on("country_code_alpha3")[0].code)
+        self.assertEquals(ErrorCodes.Address.CountryCodeNumericIsNotAccepted, result.errors.for_object("address").on("country_code_numeric")[0].code)
+
+    def test_error_response_if_inconsistent_country(self):
+        customer = Customer.create().customer
+        result = Address.create({
+            "customer_id": customer.id,
+            "country_code_alpha2": "US",
+            "country_code_alpha3": "MEX"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.Address.InconsistentCountry, result.errors.for_object("address").on("base")[0].code)
 
     def test_delete_with_valid_customer_id_and_address_id(self):
         customer = Customer.create().customer
@@ -83,7 +106,10 @@ class TestAddress(unittest.TestCase):
             "locality": "Chicago",
             "region": "Illinois",
             "postal_code": "60621",
-            "country_name": "United States of America"
+            "country_code_alpha2": "MX",
+            "country_code_alpha3": "MEX",
+            "country_code_numeric": "484",
+            "country_name": "Mexico"
         })
 
         self.assertTrue(result.is_success)
@@ -94,7 +120,10 @@ class TestAddress(unittest.TestCase):
         self.assertEquals("Chicago", address.locality)
         self.assertEquals("Illinois", address.region)
         self.assertEquals("60621", address.postal_code)
-        self.assertEquals("United States of America", address.country_name)
+        self.assertEquals("MX", address.country_code_alpha2)
+        self.assertEquals("MEX", address.country_code_alpha3)
+        self.assertEquals("484", address.country_code_numeric)
+        self.assertEquals("Mexico", address.country_name)
 
     def test_update_with_invalid_values(self):
         customer = Customer.create().customer

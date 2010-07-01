@@ -13,9 +13,13 @@ class ErrorCodes(object):
     class Address(object):
         CannotBeBlank = "81801"
         CompanyIsTooLong = "81802"
+        CountryCodeAlpha2IsNotAccepted = "91814"
+        CountryCodeAlpha3IsNotAccepted = "91816"
+        CountryCodeNumericIsNotAccepted = "91817"
         CountryNameIsNotAccepted = "91803"
         ExtedAddressIsTooLong = "81804"
         FirstNameIsTooLong = "81805"
+        InconsistentCountry = "91815"
         LastNameIsTooLong = "81806"
         LocalityIsTooLong = "81807"
         PostalCodeInvalidCharacters = "81813"

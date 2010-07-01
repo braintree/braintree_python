@@ -100,7 +100,8 @@ class Address(Resource):
 
     @staticmethod
     def create_signature():
-        return ["company", "country_name", "customer_id", "extended_address", "first_name",
+        return ["company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric",
+                "country_name", "customer_id", "extended_address", "first_name",
                 "last_name", "locality", "postal_code", "region", "street_address"]
 
     @staticmethod
