@@ -273,6 +273,9 @@ class CreditCard(Resource):
         self.is_expired = self.expired
         if "billing_address" in attributes:
             self.billing_address = Address(self.billing_address)
+        else:
+            self.billing_address = None
+
         if "subscriptions" in attributes:
             self.subscriptions = [braintree.subscription.Subscription(subscription) for subscription in self.subscriptions]
 
