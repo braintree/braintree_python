@@ -1,6 +1,5 @@
 import braintree
 import warnings
-from braintree.util.deprecation_util import DeprecationUtil
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult

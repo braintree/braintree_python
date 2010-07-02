@@ -1,6 +1,7 @@
 from decimal import Decimal
 from braintree.util.http import Http
 import braintree
+import warnings
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
@@ -100,6 +101,11 @@ class Subscription(Resource):
 
     @staticmethod
     def retryCharge(subscription_id, amount=None):
+        warnings.warn("Please use Subscription.retry_charge instead", DeprecationWarning)
+        return Subscription.retry_charge(subscription_id, amount)
+
+    @staticmethod
+    def retry_charge(subscription_id, amount=None):
         response = Http().post("/transactions", {"transaction": {
             "amount": amount,
             "subscription_id": subscription_id,

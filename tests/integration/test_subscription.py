@@ -401,7 +401,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, active_subscription))
         self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 
-    def test_retry_charge_without_amount(self):
+    def test_retryCharge_without_amount__deprecated(self):
         subscription = Subscription.search([
             SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
         ]).first
@@ -416,12 +416,43 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction.Type.Sale, transaction.type);
         self.assertEquals(Transaction.Status.Authorized, transaction.status);
 
-    def test_retry_charge_with_amount(self):
+    def test_retry_charge_without_amount(self):
+        subscription = Subscription.search([
+            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
+        ]).first
+
+        result = Subscription.retry_charge(subscription.id);
+
+        self.assertTrue(result.is_success);
+        transaction = result.transaction;
+
+        self.assertEquals(subscription.price, transaction.amount);
+        self.assertNotEqual(None, transaction.processor_authorization_code);
+        self.assertEquals(Transaction.Type.Sale, transaction.type);
+        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+
+    def test_retryCharge_with_amount__deprecated(self):
         subscription = Subscription.search([
             SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
         ]).first
 
         result = Subscription.retryCharge(subscription.id, Decimal(TransactionAmounts.Authorize));
+
+        self.assertTrue(result.is_success);
+        transaction = result.transaction;
+
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount);
+        self.assertNotEqual(None, transaction.processor_authorization_code);
+        self.assertEquals(Transaction.Type.Sale, transaction.type);
+        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+
+
+    def test_retry_charge_with_amount(self):
+        subscription = Subscription.search([
+            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
+        ]).first
+
+        result = Subscription.retry_charge(subscription.id, Decimal(TransactionAmounts.Authorize));
 
         self.assertTrue(result.is_success);
         transaction = result.transaction;
