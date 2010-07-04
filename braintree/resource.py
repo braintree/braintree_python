@@ -1,4 +1,5 @@
 import re
+import string
 from braintree.attribute_getter import AttributeGetter
 
 class Resource(AttributeGetter):
@@ -40,10 +41,10 @@ class Resource(AttributeGetter):
 
     @staticmethod
     def __remove_wildcard_keys(allowed_keys, invalid_keys):
-        wildcard_keys = [re.sub("\\[__any_key__\\]\Z", "", key) for key in allowed_keys if re.search("\\[__any_key__\\]", key)]
+        wildcard_keys = [re.escape(key).replace("\\[\\_\\_any\\_key\\_\\_\\]", "\\[[\w-]+\\]") for key in allowed_keys if re.search("\\[__any_key__\\]", key)]
         new_keys = []
         for key in invalid_keys:
-            if len([match for match in wildcard_keys if re.match(match, key)]) == 0:
+            if len([match for match in wildcard_keys if re.match("\A" + match + "\Z", key)]) == 0:
                 new_keys.append(key)
         return new_keys
 

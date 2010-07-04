@@ -23,9 +23,9 @@ Full module documentation generated from the docs directory above can be found h
 
     braintree.Configuration.configure(
         braintree.Environment.Sandbox,
-        "the_merchant_id",
-        "the_public_key",
-        "the_private_key"
+        "your_merchant_id",
+        "your_public_key",
+        "your_private_key"
     )
 
     result = braintree.Transaction.sale({

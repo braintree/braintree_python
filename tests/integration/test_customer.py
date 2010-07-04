@@ -378,13 +378,13 @@ class TestCustomer(unittest.TestCase):
         }).customer
 
         tr_data = {
+            "customer_id": customer.id,
             "customer": {
                 "first_name": "John",
             }
         }
         post_params = {
             "tr_data": Customer.tr_data_for_update(tr_data, "http://example.com/path"),
-            "customer_id": customer.id,
             "customer[email]": "john@doe.com",
         }
 
@@ -449,13 +449,13 @@ class TestCustomer(unittest.TestCase):
         }).customer
 
         tr_data = {
+            "customer_id": customer.id,
             "customer": {
                 "first_name": "John",
             }
         }
         post_params = {
             "tr_data": Customer.tr_data_for_update(tr_data, "http://example.com/path"),
-            "customer_id": customer.id,
             "customer[email]": "john#doe.com",
         }
 
