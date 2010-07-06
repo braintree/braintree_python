@@ -46,7 +46,7 @@ class TestXmlUtil(unittest.TestCase):
         }
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
 
-    def test_dict_from_xml_typecasts_dates_and_times(self):
+    def test_dict_from_xml_typecasts_datetimes(self):
         xml = """
         <root>
           <created-at type="datetime">2009-10-28T10:19:49Z</created-at>
@@ -54,7 +54,6 @@ class TestXmlUtil(unittest.TestCase):
         """
         expected = {"root": {"created_at": datetime(2009, 10, 28, 10, 19, 49)}}
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
-
 
     def test_dict_from_xml_with_dashes(self):
         xml = """
@@ -137,6 +136,10 @@ class TestXmlUtil(unittest.TestCase):
     def test_xml_from_dict_with_datetime(self):
         dict = {"a": datetime(2010, 1, 2, 3, 4, 5)}
         self.assertEqual(dict, self.__xml_and_back(dict))
+
+    def test_xml_from_dict_with_dates_formats_as_datetime(self):
+        dict = {"a": date(2010, 1, 2)}
+        self.assertEqual('<a type="datetime">2010-01-02T00:00:00Z</a>', XmlUtil.xml_from_dict(dict))
 
     def __xml_and_back(self, dict):
         return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))

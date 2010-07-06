@@ -51,7 +51,7 @@ class Generator(object):
             return open_tag + str(value) + close_tag
         elif isinstance(value, types.NoneType):
             return open_tag + close_tag
-        elif isinstance(value, datetime.datetime):
+        elif isinstance(value, datetime.datetime) or isinstance(value, datetime.date):
             open_tag = "<" + key + " type=\"datetime\">"
             return open_tag + self.__generate_datetime(value) + close_tag
         else:
