@@ -42,7 +42,8 @@ class TestTransactionSearch(unittest.TestCase):
                 "website": "http://example.com",
             },
             "options": {
-                "store_in_vault": True
+                "store_in_vault": True,
+                "submit_for_settlement": True
             },
             "order_id": "myorder",
             "shipping": {
@@ -57,6 +58,9 @@ class TestTransactionSearch(unittest.TestCase):
                 "street_address": "456 Road"
             }
         }).transaction
+
+        Http().put("/transactions/" + transaction.id + "/settle")
+        transaction = Transaction.find(transaction.id)
 
         collection = Transaction.search([
             TransactionSearch.billing_company == "Braintree",
@@ -82,6 +86,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.order_id == "myorder",
             TransactionSearch.payment_method_token == token,
             TransactionSearch.processor_authorization_code == transaction.processor_authorization_code,
+            TransactionSearch.settlement_batch_id == transaction.settlement_batch_id,
             TransactionSearch.shipping_company == "Braintree P.S.",
             TransactionSearch.shipping_country_name == "Mexico",
             TransactionSearch.shipping_extended_address == "Apt 456",
