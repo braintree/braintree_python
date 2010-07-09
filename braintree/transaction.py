@@ -70,7 +70,7 @@ class Transaction(Resource):
 
     class CreatedUsing(object):
         """
-        Contants representing how the transaction was created.  Available types are:
+        Constants representing how the transaction was created.  Available types are:
 
         * braintree.Transaction.CreatedUsing.FullInformation
         * braintree.Transaction.CreatedUsing.Token
@@ -78,6 +78,20 @@ class Transaction(Resource):
 
         FullInformation = "full_information"
         Token = "token"
+
+    class GatewayRejectionReason(object):
+        """
+        Constants representing gateway rejection reasons. Available types are:
+
+        * braintree.Transaction.GatewayRejectionReason.Avs
+        * braintree.Transaction.GatewayRejectionReason.AvsAndCvv
+        * braintree.Transaction.GatewayRejectionReason.Cvv
+        * braintree.Transaction.GatewayRejectionReason.Duplicate
+        """
+        Avs = "avs"
+        AvsAndCvv = "avs_and_cvv"
+        Cvv = "cvv"
+        Duplicate = "duplicate"
 
     class Source(object):
         Api = "api"
@@ -96,7 +110,6 @@ class Transaction(Resource):
         * braintree.Transaction.Status.Settled
         * braintree.Transaction.Status.SettlementFailed
         * braintree.Transaction.Status.SubmittedForSettlement
-        * braintree.Transaction.Status.Unknown
         * braintree.Transaction.Status.Unrecognized
         * braintree.Transaction.Status.Void
         """
@@ -109,7 +122,6 @@ class Transaction(Resource):
         Settled                = "settled"
         SettlementFailed       = "settlement_failed"
         SubmittedForSettlement = "submitted_for_settlement"
-        Unknown                = "unknown"
         Unrecognized           = "unrecognized"
         Voided                 = "voided"
 
@@ -357,13 +369,15 @@ class Transaction(Resource):
             },
             {
                 "billing": [
-                    "first_name", "last_name", "company", "country_name", "extended_address", "locality",
+                    "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "locality",
                     "postal_code", "region", "street_address"
                 ]
             },
             {
                 "shipping": [
-                    "first_name", "last_name", "company", "country_name", "extended_address", "locality",
+                    "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "locality",
                     "postal_code", "region", "street_address"
                 ]
             },

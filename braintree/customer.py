@@ -137,7 +137,7 @@ class Customer(Resource):
     def tr_data_for_update(tr_data, redirect_url):
         """ Builds tr_data for updating a Customer. """
 
-        Resource.verify_keys(tr_data, [{"customer": Customer.update_signature()}])
+        Resource.verify_keys(tr_data, ["customer_id", {"customer": Customer.update_signature()}])
         tr_data["kind"] = TransparentRedirect.Kind.UpdateCustomer
         return TransparentRedirect.tr_data(tr_data, redirect_url)
 

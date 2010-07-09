@@ -84,7 +84,6 @@ class TransactionSearch:
         Transaction.Status.Settled,
         Transaction.Status.SettlementFailed,
         Transaction.Status.SubmittedForSettlement,
-        Transaction.Status.Unknown,
         Transaction.Status.Unrecognized,
         Transaction.Status.Voided
     ])

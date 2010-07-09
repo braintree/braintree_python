@@ -1,6 +1,5 @@
 import braintree
 import warnings
-from braintree.util.deprecation_util import DeprecationUtil
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
@@ -201,7 +200,10 @@ class CreditCard(Resource):
 
     @staticmethod
     def signature(type):
-        billing_address_params = ["company", "country_name", "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"]
+        billing_address_params = [
+            "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
+            "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
+        ]
         options = ["make_default", "verification_merchant_account_id", "verify_card"]
 
         signature = [
@@ -270,6 +272,9 @@ class CreditCard(Resource):
         self.is_expired = self.expired
         if "billing_address" in attributes:
             self.billing_address = Address(self.billing_address)
+        else:
+            self.billing_address = None
+
         if "subscriptions" in attributes:
             self.subscriptions = [braintree.subscription.Subscription(subscription) for subscription in self.subscriptions]
 

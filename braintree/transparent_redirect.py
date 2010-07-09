@@ -9,17 +9,11 @@ from braintree.util.http import Http
 from braintree.exceptions.forged_query_string_error import ForgedQueryStringError
 
 class TransparentRedirect:
+    """
+    A class used for Transparent Redirect operations
+    """
+
     class Kind(object):
-        """
-        Constants representing transparent redirect request kinds. Available kinds are:
-
-        * braintree.TransparentRedirectRequest.Kind.CreateCustomer = "create_customer"
-        * braintree.TransparentRedirectRequest.Kind.UpdateCustomer = "update_customer"
-        * braintree.TransparentRedirectRequest.Kind.CreatePaymentMethod = "create_payment_method"
-        * braintree.TransparentRedirectRequest.Kind.UpdatePaymentMethod = "update_payment_method"
-        * braintree.TransparentRedirectRequest.Kind.CreateTransaction = "create_transaction"
-        """
-
         CreateCustomer = "create_customer"
         UpdateCustomer = "update_customer"
         CreatePaymentMethod = "create_payment_method"
@@ -28,6 +22,12 @@ class TransparentRedirect:
 
     @staticmethod
     def confirm(query_string):
+        """
+        Confirms a transparent redirect request. It expects the query string from the
+        redirect request. The query string should _not_ include the leading "?" character. ::
+
+            result = braintree.TransparentRedirect.confirm("foo=bar&id=12345")
+        """
         parsed_query_string = TransparentRedirect.parse_and_validate_query_string(query_string)
         confirmation_klass = {
             TransparentRedirect.Kind.CreateCustomer: braintree.customer.Customer,
@@ -75,6 +75,9 @@ class TransparentRedirect:
 
     @staticmethod
     def url():
+        """
+        Returns the url for POSTing Transparent Redirect HTML forms
+        """
         return Configuration.base_merchant_url() + "/transparent_redirect_requests"
 
     @staticmethod

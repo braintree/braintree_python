@@ -1,3 +1,12 @@
+## 2.4.0
+
+* Added unified message to ErrorResult
+* Added ability to specify country using country_name, country_code_alpha2, country_code_alpha3, or country_code_numeric (see [ISO_3166-1](http://en.wikipedia.org/wiki/ISO_3166-1))
+* Renamed Subscription retryCharge to retry_charge
+* Added gateway_rejection_reason to Transaction and Verification
+* Allow searching with date objects (in addition to datetime)
+* When creating a Subscription, return failed transaction on the ErrorResult if the initial transaction is not successful
+
 ## 2.3.0
 
 * Added unified TransparentRedirect url and confirm methods and deprecated old methods
@@ -10,7 +19,7 @@
 
 ## 2.2.1
 
-* Use isinstance instead of type to cater to inheritance (thanks danielgtaylor)
+* Use isinstance instead of type to cater to inheritance (thanks [danielgtaylor](http://github.com/danielgtaylor))
 
 ## 2.2.0
 

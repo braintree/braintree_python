@@ -21,7 +21,7 @@ Configuration.configure(
     "integration_private_key"
 )
 
-def showwarning(message, category, filename, lineno):
+def showwarning(message, category, filename, lineno, file=None, line=None):
     pass
 warnings.showwarning = showwarning
 

@@ -46,7 +46,7 @@ class TestTransparentRedirect(unittest.TestCase):
     def test_transaction_sale_from_transparent_redirect_with_successful_result(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
             }
         }
         post_params = {
@@ -60,7 +60,7 @@ class TestTransparentRedirect(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
@@ -69,7 +69,7 @@ class TestTransparentRedirect(unittest.TestCase):
     def test_transaction_credit_from_transparent_redirect_with_successful_result(self):
         tr_data = {
             "transaction": {
-                "amount": "1000.00",
+                "amount": TransactionAmounts.Authorize,
             }
         }
         post_params = {
@@ -83,7 +83,7 @@ class TestTransparentRedirect(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(Decimal("1000.00"), transaction.amount)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals(Transaction.Type.Credit, transaction.type)
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
