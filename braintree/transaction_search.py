@@ -97,4 +97,11 @@ class TransactionSearch:
     refund = Search.KeyValueNodeBuilder("refund")
 
     amount = Search.RangeNodeBuilder("amount")
+    authorized_at = Search.RangeNodeBuilder("authorized_at")
     created_at = Search.RangeNodeBuilder("created_at")
+    failed_at = Search.RangeNodeBuilder("failed_at")
+    gateway_rejected_at = Search.RangeNodeBuilder("gateway_rejected_at")
+    processor_declined_at = Search.RangeNodeBuilder("processor_declined_at")
+    settled_at = Search.RangeNodeBuilder("settled_at")
+    submitted_for_settlement_at = Search.RangeNodeBuilder("submitted_for_settlement_at")
+    voided_at = Search.RangeNodeBuilder("voided_at")

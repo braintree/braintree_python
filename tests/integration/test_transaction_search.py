@@ -823,6 +823,267 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
+    def test_advanced_search_range_node_authorized_at(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Authorize,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+        }).transaction
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.authorized_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.authorized_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_failed_at(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Fail,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+        }).transaction
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.failed_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.failed_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_gateway_rejected_at(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "processing_rules_merchant_id"
+            Configuration.public_key = "processing_rules_public_key"
+            Configuration.private_key = "processing_rules_private_key"
+
+            transaction  = Transaction.sale({
+                 "amount": TransactionAmounts.Authorize,
+                 "credit_card": {
+                     "number": "4111111111111111",
+                     "expiration_date": "05/2012",
+                     "cvv": "200"
+                 }
+            }).transaction
+
+            past = date.today() - timedelta(days=1)
+            future = date.today() + timedelta(days=1)
+            future2 = date.today() + timedelta(days=2)
+
+            collection = Transaction.search([
+                TransactionSearch.id == transaction.id,
+                TransactionSearch.gateway_rejected_at.between(past, future)
+            ])
+
+            self.assertEquals(1, collection.maximum_size)
+            self.assertEquals(transaction.id, collection.first.id)
+
+            collection = Transaction.search([
+                TransactionSearch.id == transaction.id,
+                TransactionSearch.gateway_rejected_at.between(future, future2)
+            ])
+
+            self.assertEquals(0, collection.maximum_size)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
+    def test_advanced_search_range_node_processor_declined_at(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Decline,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+        }).transaction
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.processor_declined_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.processor_declined_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_settled_at(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Authorize,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             },
+             "options": {
+                 "submit_for_settlement": True
+             }
+        }).transaction
+
+        Http().put("/transactions/" + transaction.id + "/settle")
+        transaction = Transaction.find(transaction.id)
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.settled_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.settled_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_submitted_for_settlement_at(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Authorize,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             },
+             "options": {
+                 "submit_for_settlement": True
+             }
+        }).transaction
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.submitted_for_settlement_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.submitted_for_settlement_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_voided_at(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Authorize,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+        }).transaction
+        transaction = Transaction.void(transaction.id).transaction
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.voided_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.voided_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_can_search_on_multiple_statuses(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Authorize,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             },
+             "options": {
+                 "submit_for_settlement": True
+             }
+        }).transaction
+
+        past = date.today() - timedelta(days=1)
+        future = date.today() + timedelta(days=1)
+        future2 = date.today() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.authorized_at.between(past, future),
+            TransactionSearch.submitted_for_settlement_at.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.authorized_at.between(future, future2),
+            TransactionSearch.submitted_for_settlement_at.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.authorized_at.between(past, future),
+            TransactionSearch.voided_at.between(past, future)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
     def test_advanced_search_returns_iteratable_results(self):
         collection = Transaction.search([
             TransactionSearch.credit_card_number.starts_with("411")
