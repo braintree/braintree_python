@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: Braintree
-# Version: 2.3.0
+# Version: 2.4.0
 braintree.error_result mod error_result.html
 braintree.credit_card mod credit_card.html
 braintree.environment mod environment.html
@@ -39,6 +39,7 @@ braintree.credit_card.CreditCard.delete staticmethod credit_card.html
 braintree.validation_error_collection.ValidationErrorCollection.for_object method validation_error_collection.html
 braintree.transparent_redirect.TransparentRedirect.confirm staticmethod transparent_redirect.html
 braintree.transaction.Transaction.void staticmethod transaction.html
+braintree.transaction.Transaction.GatewayRejectionReason class transaction.html
 braintree.customer.Customer.tr_data_for_create staticmethod customer.html
 braintree.exceptions.unexpected_error.UnexpectedError exception exceptions/unexpected_error.html
 braintree.subscription.Subscription.Status class subscription.html

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Transaction &mdash; Braintree v2.3.0 documentation</title>
+    <title>Transaction &mdash; Braintree v2.4.0 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '#',
-        VERSION:     '2.3.0',
+        VERSION:     '2.4.0',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Braintree v2.3.0 documentation" href="index.html" />
+    <link rel="top" title="Braintree v2.4.0 documentation" href="index.html" />
     <link rel="next" title="Transparent Redirect" href="transparent_redirect.html" />
     <link rel="prev" title="Subscription" href="subscription.html" /> 
   </head>
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="subscription.html" title="Subscription"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -104,10 +104,22 @@
 <dl class="class">
 <dt id="braintree.transaction.Transaction.CreatedUsing">
 <em class="property">class </em><tt class="descname">CreatedUsing</tt><a class="headerlink" href="#braintree.transaction.Transaction.CreatedUsing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contants representing how the transaction was created.  Available types are:</p>
+<dd><p>Constants representing how the transaction was created.  Available types are:</p>
 <ul class="simple">
 <li>braintree.Transaction.CreatedUsing.FullInformation</li>
 <li>braintree.Transaction.CreatedUsing.Token</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="braintree.transaction.Transaction.GatewayRejectionReason">
+<em class="property">class </em><tt class="descclassname">Transaction.</tt><tt class="descname">GatewayRejectionReason</tt><a class="headerlink" href="#braintree.transaction.Transaction.GatewayRejectionReason" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constants representing gateway rejection reasons. Available types are:</p>
+<ul class="simple">
+<li>braintree.Transaction.GatewayRejectionReason.Avs</li>
+<li>braintree.Transaction.GatewayRejectionReason.AvsAndCvv</li>
+<li>braintree.Transaction.GatewayRejectionReason.Cvv</li>
+<li>braintree.Transaction.GatewayRejectionReason.Duplicate</li>
 </ul>
 </dd></dl>
 
@@ -124,7 +136,6 @@
 <li>braintree.Transaction.Status.Settled</li>
 <li>braintree.Transaction.Status.SettlementFailed</li>
 <li>braintree.Transaction.Status.SubmittedForSettlement</li>
-<li>braintree.Transaction.Status.Unknown</li>
 <li>braintree.Transaction.Status.Unrecognized</li>
 <li>braintree.Transaction.Status.Void</li>
 </ul>
@@ -352,7 +363,7 @@ customer_id or payment_method_token is required.</p>
         <li class="right" >
           <a href="subscription.html" title="Subscription"
              >previous</a> |</li>
-        <li><a href="index.html">Braintree v2.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Braintree v2.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
