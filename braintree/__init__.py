@@ -1,6 +1,7 @@
 from address import Address
 from configuration import Configuration
 from credit_card import CreditCard
+from credit_card_verification import CreditCardVerification
 from customer import Customer
 from error_codes import ErrorCodes
 from error_result import ErrorResult

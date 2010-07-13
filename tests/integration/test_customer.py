@@ -97,7 +97,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("processor_declined", result.credit_card_verification.status)
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_create_customer_with_payment_method_and_billing_address(self):
         result = Customer.create({
