@@ -118,6 +118,24 @@ class TestSubscription(unittest.TestCase):
 
         self.assertEquals(False, subscription.trial_period)
 
+    def test_create_and_override_number_of_billing_cycles(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"],
+            "number_of_billing_cycles": 10
+        }).subscription
+
+        self.assertEquals(10, subscription.number_of_billing_cycles)
+
+    def test_create_and_override_number_of_billing_cycles_to_never_expire(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"],
+            "never_expires": True
+        }).subscription
+
+        self.assertEquals(None, subscription.number_of_billing_cycles)
+
     def test_create_creates_a_transaction_if_no_trial_period(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -217,6 +235,26 @@ class TestSubscription(unittest.TestCase):
 
         subscription = result.subscription
         self.assertEquals(newCard.token, subscription.payment_method_token)
+
+    def test_update_with_number_of_billing_cycles(self):
+        result = Subscription.update(self.updateable_subscription.id, {
+            "number_of_billing_cycles": 10
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(10, subscription.number_of_billing_cycles)
+
+    def test_update_with_never_expires(self):
+        result = Subscription.update(self.updateable_subscription.id, {
+            "never_expires": True
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(None, subscription.number_of_billing_cycles)
 
     def test_update_with_error_result(self):
         result = Subscription.update(self.updateable_subscription.id, {
@@ -380,6 +418,15 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(TestHelper.includes(collection, active_subscription))
         self.assertTrue(TestHelper.includes(collection, canceled_subscription))
+
+    def test_search_on_expired_status(self):
+        collection = Subscription.search([
+            SubscriptionSearch.status.in_list([Subscription.Status.Expired])
+        ])
+
+        self.assertTrue(collection.maximum_size > 0)
+        for subscription in collection.items:
+            self.assertEqual(Subscription.Status.Expired, subscription.status)
 
     def test_search_on_multiple_values(self):
         active_subscription = Subscription.create({

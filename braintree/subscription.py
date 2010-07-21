@@ -46,11 +46,13 @@ class Subscription(Resource):
 
         * braintree.Subscription.Status.Active
         * braintree.Subscription.Status.Canceled
+        * braintree.Subscription.Status.Expired
         * braintree.Subscription.Status.PastDue
         """
 
         Active = "Active"
         Canceled = "Canceled"
+        Expired = "Expired"
         PastDue = "Past Due"
 
     @staticmethod
@@ -75,6 +77,8 @@ class Subscription(Resource):
         return [
             "id",
             "merchant_account_id",
+            "never_expires",
+            "number_of_billing_cycles",
             "payment_method_token",
             "plan_id",
             "price",
@@ -192,6 +196,8 @@ class Subscription(Resource):
         return [
             "id",
             "merchant_account_id",
+            "never_expires",
+            "number_of_billing_cycles",
             "payment_method_token",
             "plan_id",
             "price"
