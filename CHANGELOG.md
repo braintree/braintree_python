@@ -1,6 +1,6 @@
 ## 2.4.1
 
-* Added support for M2Crypto version 0.20.1, which is the default for Ubuntu Lucid
+* Added support for M2Crypto version 0.20.1, which is the default for Ubuntu Lucid (thanks [foresto](http://github.com/foresto))
 
 ## 2.4.0
 
