@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: Braintree
-# Version: 2.4.0
+# Version: 2.4.1
 braintree.error_result mod error_result.html
 braintree.credit_card mod credit_card.html
 braintree.environment mod environment.html
