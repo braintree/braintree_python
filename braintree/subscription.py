@@ -89,9 +89,11 @@ class Subscription(Resource):
             "trial_period",
             {
                 "add_ons": [{
+                    "remove": ["__any_key__"],
                     "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
                 }],
                 "discounts": [{
+                    "remove": ["__any_key__"],
                     "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
                 }]
             },

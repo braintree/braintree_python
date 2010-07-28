@@ -17,17 +17,20 @@ class Resource(AttributeGetter):
 
     @staticmethod
     def __flattened_params_keys(params, parent=None):
-        keys = []
-        for key, val in params.iteritems():
-            full_key = parent + "[" + key + "]" if parent else key
-            if isinstance(val, dict):
-                keys += Resource.__flattened_params_keys(val, full_key)
-            elif isinstance(val, list):
-                for item in val:
-                    keys += Resource.__flattened_params_keys(item, full_key)
-            else:
-                keys.append(full_key)
-        return keys
+        if isinstance(params, str):
+            return [ "%s[%s]" % (parent, params) ]
+        else:
+            keys = []
+            for key, val in params.iteritems():
+                full_key = "%s[%s]" % (parent, key) if parent else key
+                if isinstance(val, dict):
+                    keys += Resource.__flattened_params_keys(val, full_key)
+                elif isinstance(val, list):
+                    for item in val:
+                        keys += Resource.__flattened_params_keys(item, full_key)
+                else:
+                    keys.append(full_key)
+            return keys
 
     @staticmethod
     def __flattened_signature(signature, parent=None):

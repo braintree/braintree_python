@@ -296,6 +296,23 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(19, discounts[1].number_of_billing_cycles)
         self.assertFalse(discounts[1].never_expires)
 
+    def create_allows_deleting_of_inherited_add_ons_and_discounts(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+            "add_ons": {
+                "remove": ["increase_10", "increase_20"]
+            },
+            "discounts": {
+                "remove": ["discount_7"]
+            }
+        }).subscription
+
+        self.assertEquals(0, len(subscription.add_ons))
+
+        self.assertEquals(1, len(subscription.discounts))
+        self.assertEquals("discount_11", subscription.discounts[0].id)
+
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
