@@ -79,9 +79,16 @@ class ErrorCodes(object):
         WebsiteIsTooLong = "81615"
 
     class Subscription(object):
+        CannotAddDuplicateAddonOrDiscount = "91911"
         CannotEditCanceledSubscription = "81901"
+        CannotEditExpiredSubscription = "81910"
         IdIsInUse = "81902"
+        InconsistentNumberOfBillingCycles = "91908"
         MerchantAccountIdIsInvalid = "91901"
+        NumberOfBillingCyclesCannotBeBlank = "91912"
+        NumberOfBillingCyclesIsTooSmall = "91909"
+        NumberOfBillingCyclesMustBeGreaterThanZero = "91907"
+        NumberOfBillingCyclesMustBeNumeric = "91906"
         PaymentMethodTokenCardTypeIsNotAccepted = "91902"
         PaymentMethodTokenIsInvalid = "91903"
         PaymentMethodTokenNotAssociatedWithCustomer = "91905"
@@ -97,6 +104,20 @@ class ErrorCodes(object):
         class Modification(object):
             AmountIsInvalid = "92002"
             QuantityIsInvalid = "92001"
+            IdToRemoveIsNotPresent = "92016"
+            InconsistentNumberOfBillingCycles = "92018"
+            ExistingIdIsIncorrectKind = "92016"
+            InheritedFromIdIsRequired = "92014"
+            NumberOfBillingCyclesCannotBeBlank = "92017"
+            IdToRemoveIsIncorrectKind = "92019"
+            AmountCannotBeBlank = "92003"
+            ExistingIdIsRequired = "92012"
+            CannotUpdateAndRemove = "92015"
+            QuantityMustBeGreaterThanZero = "92010"
+            InheritedFromIdIsInvalid = "92013"
+            ExistingIdIsInvalid = "92011"
+            QuantityCannotBeBlank = "92004"
+            NumberOfBillingCyclesIsInvalid = "92005"
 
     class Transaction(object):
         AmountCannotBeNegative = "81501"
