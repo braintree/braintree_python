@@ -356,6 +356,35 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
 
+    def test_create_properly_parses_validation_errors_for_arrays(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+            "add_ons": {
+                "update": [
+                    {
+                        "existing_id": "increase_10",
+                        "amount": "invalid"
+                    },
+                    {
+                        "existing_id": "increase_20",
+                        "quantity": -2
+                    }
+                ]
+            }
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(
+            ErrorCodes.Subscription.Modification.AmountIsInvalid,
+            result.errors.for_object("subscription").for_object("add_ons").for_object("update").for_index(0).on("amount")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Subscription.Modification.QuantityIsInvalid,
+            result.errors.for_object("subscription").for_object("add_ons").for_object("update").for_index(1).on("quantity")[0].code
+        )
+
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,

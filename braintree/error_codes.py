@@ -94,6 +94,10 @@ class ErrorCodes(object):
         TrialDurationIsRequired = "81908"
         TrialDurationUnitIsInvalid = "81909"
 
+        class Modification(object):
+            AmountIsInvalid = "92002"
+            QuantityIsInvalid = "92001"
+
     class Transaction(object):
         AmountCannotBeNegative = "81501"
         AmountIsRequired = "81502"
