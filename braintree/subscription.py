@@ -2,6 +2,8 @@ from decimal import Decimal
 from braintree.util.http import Http
 import braintree
 import warnings
+from braintree.add_on import AddOn
+from braintree.discount import Discount
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
@@ -84,7 +86,10 @@ class Subscription(Resource):
             "price",
             "trial_duration",
             "trial_duration_unit",
-            "trial_period"
+            "trial_period",
+            {
+                "options": [ "do_not_inherit_add_ons_or_discounts" ]
+            }
         ]
 
     @staticmethod
@@ -206,5 +211,9 @@ class Subscription(Resource):
     def __init__(self, attributes):
         Resource.__init__(self, attributes)
         self.price = Decimal(self.price)
+        if "add_ons" in attributes:
+            self.add_ons = [AddOn(add_on) for add_on in self.add_ons]
+        if "discounts" in attributes:
+            self.discounts = [Discount(discount) for discount in self.discounts]
         if "transactions" in attributes:
             self.transactions = [Transaction(transaction) for transaction in self.transactions]
