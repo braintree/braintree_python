@@ -88,6 +88,14 @@ class Subscription(Resource):
             "trial_duration_unit",
             "trial_period",
             {
+                "add_ons": [{
+                    "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
+                }],
+                "discounts": [{
+                    "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
+                }]
+            },
+            {
                 "options": [ "do_not_inherit_add_ons_or_discounts" ]
             }
         ]

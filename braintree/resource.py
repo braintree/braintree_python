@@ -22,6 +22,9 @@ class Resource(AttributeGetter):
             full_key = parent + "[" + key + "]" if parent else key
             if isinstance(val, dict):
                 keys += Resource.__flattened_params_keys(val, full_key)
+            elif isinstance(val, list):
+                for item in val:
+                    keys += Resource.__flattened_params_keys(item, full_key)
             else:
                 keys.append(full_key)
         return keys
