@@ -198,7 +198,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(0, len(subscription.add_ons))
         self.assertEquals(0, len(subscription.discounts))
 
-    def create_inherits_add_ons_and_discounts_from_the_plan_when_not_specified(self):
+    def test_create_inherits_add_ons_and_discounts_from_the_plan_when_not_specified(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": self.add_on_discount_plan["id"]
@@ -234,7 +234,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(None, discounts[1].number_of_billing_cycles)
         self.assertTrue(discounts[1].never_expires)
 
-    def create_allows_overriding_of_inherited_add_ons_and_discounts(self):
+    def test_create_allows_overriding_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": self.add_on_discount_plan["id"],
@@ -296,7 +296,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(19, discounts[1].number_of_billing_cycles)
         self.assertFalse(discounts[1].never_expires)
 
-    def create_allows_deleting_of_inherited_add_ons_and_discounts(self):
+    def test_create_allows_deleting_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": self.add_on_discount_plan["id"],
@@ -312,6 +312,49 @@ class TestSubscription(unittest.TestCase):
 
         self.assertEquals(1, len(subscription.discounts))
         self.assertEquals("discount_11", subscription.discounts[0].id)
+
+    def test_create_allows_adding_add_ons_and_discounts(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+            "add_ons": {
+                "add": [
+                    {
+                        "amount": Decimal("50.00"),
+                        "inherited_from_id": "increase_30",
+                        "quantity": 2,
+                        "number_of_billing_cycles": 5
+                    }
+                ],
+                "remove": ["increase_10", "increase_20"]
+            },
+            "discounts": {
+                "add": [
+                    {
+                        "amount": Decimal("17.00"),
+                        "inherited_from_id": "discount_15",
+                        "never_expires": True
+                    }
+                ],
+                "remove": ["discount_7", "discount_11"]
+            }
+        }).subscription
+
+        self.assertEquals(1, len(subscription.add_ons))
+
+        self.assertEquals("increase_30", subscription.add_ons[0].id)
+        self.assertEquals(Decimal("50.00"), subscription.add_ons[0].amount)
+        self.assertEquals(2, subscription.add_ons[0].quantity)
+        self.assertEquals(5, subscription.add_ons[0].number_of_billing_cycles)
+        self.assertFalse(subscription.add_ons[0].never_expires)
+
+        self.assertEquals(1, len(subscription.discounts))
+
+        self.assertEquals("discount_15", subscription.discounts[0].id)
+        self.assertEquals(Decimal("17.00"), subscription.discounts[0].amount)
+        self.assertEquals(1, subscription.discounts[0].quantity)
+        self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertTrue(subscription.discounts[0].never_expires)
 
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
@@ -405,6 +448,167 @@ class TestSubscription(unittest.TestCase):
         Subscription.update("notfound", {
             "id": "newid",
         })
+
+    def test_update_allows_overriding_of_inherited_add_ons_and_discounts(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+        }).subscription
+
+        subscription = Subscription.update(subscription.id, {
+            "add_ons": {
+                "update": [
+                    {
+                        "amount": Decimal("50.00"),
+                        "existing_id": "increase_10",
+                        "quantity": 2,
+                        "number_of_billing_cycles": 5
+                    },
+                    {
+                        "amount": Decimal("100.00"),
+                        "existing_id": "increase_20",
+                        "quantity": 4,
+                        "never_expires": True
+                    }
+                ]
+            },
+            "discounts": {
+                "update": [
+                    {
+                        "amount": Decimal("15.00"),
+                        "existing_id": "discount_7",
+                        "quantity": 3,
+                        "number_of_billing_cycles": 19
+                    }
+                ]
+            }
+        }).subscription
+
+        self.assertEquals(2, len(subscription.add_ons))
+        add_ons = sorted(subscription.add_ons, key=lambda add_on: add_on.id)
+
+        self.assertEquals("increase_10", add_ons[0].id)
+        self.assertEquals(Decimal("50.00"), add_ons[0].amount)
+        self.assertEquals(2, add_ons[0].quantity)
+        self.assertEquals(5, add_ons[0].number_of_billing_cycles)
+        self.assertFalse(add_ons[0].never_expires)
+
+        self.assertEquals("increase_20", add_ons[1].id)
+        self.assertEquals(Decimal("100.00"), add_ons[1].amount)
+        self.assertEquals(4, add_ons[1].quantity)
+        self.assertEquals(None, add_ons[1].number_of_billing_cycles)
+        self.assertTrue(add_ons[1].never_expires)
+
+        self.assertEquals(2, len(subscription.discounts))
+        discounts = sorted(subscription.discounts, key=lambda discount: discount.id)
+
+        self.assertEquals("discount_11", discounts[0].id)
+        self.assertEquals(Decimal("11.00"), discounts[0].amount)
+        self.assertEquals(1, discounts[0].quantity)
+        self.assertEquals(None, discounts[0].number_of_billing_cycles)
+        self.assertTrue(discounts[0].never_expires)
+
+        self.assertEquals("discount_7", discounts[1].id)
+        self.assertEquals(Decimal("15.00"), discounts[1].amount)
+        self.assertEquals(3, discounts[1].quantity)
+        self.assertEquals(19, discounts[1].number_of_billing_cycles)
+        self.assertFalse(discounts[1].never_expires)
+
+    def test_update_allows_adding_and_removing_add_ons_and_discounts(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+        }).subscription
+
+        subscription = Subscription.update(subscription.id, {
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+            "add_ons": {
+                "add": [
+                    {
+                        "amount": Decimal("50.00"),
+                        "inherited_from_id": "increase_30",
+                        "quantity": 2,
+                        "number_of_billing_cycles": 5
+                    }
+                ],
+                "remove": ["increase_10", "increase_20"]
+            },
+            "discounts": {
+                "add": [
+                    {
+                        "amount": Decimal("17.00"),
+                        "inherited_from_id": "discount_15",
+                        "never_expires": True
+                    }
+                ],
+                "remove": ["discount_7", "discount_11"]
+            }
+        }).subscription
+
+        self.assertEquals(1, len(subscription.add_ons))
+
+        self.assertEquals("increase_30", subscription.add_ons[0].id)
+        self.assertEquals(Decimal("50.00"), subscription.add_ons[0].amount)
+        self.assertEquals(2, subscription.add_ons[0].quantity)
+        self.assertEquals(5, subscription.add_ons[0].number_of_billing_cycles)
+        self.assertFalse(subscription.add_ons[0].never_expires)
+
+        self.assertEquals(1, len(subscription.discounts))
+
+        self.assertEquals("discount_15", subscription.discounts[0].id)
+        self.assertEquals(Decimal("17.00"), subscription.discounts[0].amount)
+        self.assertEquals(1, subscription.discounts[0].quantity)
+        self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertTrue(subscription.discounts[0].never_expires)
+
+    def test_update_can_replace_entire_set_of_add_ons_and_discounts(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+        }).subscription
+
+        subscription = Subscription.update(subscription.id, {
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.add_on_discount_plan["id"],
+            "add_ons": {
+                "add": [
+                    { "inherited_from_id": "increase_30", },
+                    { "inherited_from_id": "increase_20", }
+                ]
+            },
+            "discounts": {
+                "add": [
+                    { "inherited_from_id": "discount_15", }
+                ]
+            },
+            "options": {
+                "replace_all_add_ons_and_discounts": True
+            }
+        }).subscription
+
+        self.assertEquals(2, len(subscription.add_ons))
+        add_ons = sorted(subscription.add_ons, key=lambda add_on: add_on.id)
+
+        self.assertEquals("increase_20", add_ons[0].id)
+        self.assertEquals(Decimal("20.00"), add_ons[0].amount)
+        self.assertEquals(1, add_ons[0].quantity)
+        self.assertEquals(None, add_ons[0].number_of_billing_cycles)
+        self.assertTrue(add_ons[0].never_expires)
+
+        self.assertEquals("increase_30", add_ons[1].id)
+        self.assertEquals(Decimal("30.00"), add_ons[1].amount)
+        self.assertEquals(1, add_ons[1].quantity)
+        self.assertEquals(None, add_ons[1].number_of_billing_cycles)
+        self.assertTrue(add_ons[1].never_expires)
+
+        self.assertEquals(1, len(subscription.discounts))
+
+        self.assertEquals("discount_15", subscription.discounts[0].id)
+        self.assertEquals(Decimal("15.00"), subscription.discounts[0].amount)
+        self.assertEquals(1, subscription.discounts[0].quantity)
+        self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertTrue(subscription.discounts[0].never_expires)
 
     def test_cancel_with_successful_response(self):
         subscription = Subscription.create({

@@ -88,19 +88,9 @@ class Subscription(Resource):
             "trial_duration_unit",
             "trial_period",
             {
-                "add_ons": [{
-                    "remove": ["__any_key__"],
-                    "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
-                }],
-                "discounts": [{
-                    "remove": ["__any_key__"],
-                    "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
-                }]
-            },
-            {
                 "options": [ "do_not_inherit_add_ons_or_discounts" ]
             }
-        ]
+        ] + Subscription._add_ons_discounts_signature()
 
     @staticmethod
     def find(subscription_id):
@@ -215,7 +205,27 @@ class Subscription(Resource):
             "number_of_billing_cycles",
             "payment_method_token",
             "plan_id",
-            "price"
+            "price",
+            {
+                "options": [ "replace_all_add_ons_and_discounts" ]
+            }
+        ] + Subscription._add_ons_discounts_signature()
+
+    @staticmethod
+    def _add_ons_discounts_signature():
+        return [
+            {
+                "add_ons": [{
+                    "add": ["amount", "inherited_from_id", "never_expires", "number_of_billing_cycles", "quantity"],
+                    "remove": ["__any_key__"],
+                    "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
+                }],
+                "discounts": [{
+                    "add": ["amount", "inherited_from_id", "never_expires", "number_of_billing_cycles", "quantity"],
+                    "remove": ["__any_key__"],
+                    "update": ["amount", "existing_id", "never_expires", "number_of_billing_cycles", "quantity"]
+                }]
+            }
         ]
 
     def __init__(self, attributes):
