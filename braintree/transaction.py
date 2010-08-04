@@ -237,7 +237,10 @@ class Transaction(Resource):
         return Transaction.create(params)
 
     @staticmethod
-    def search(query):
+    def search(*query):
+        if isinstance(query[0], list):
+            query = query[0]
+
         response = Http().post("/transactions/advanced_search_ids", {"search": Transaction.__criteria(query)})
         return ResourceCollection(query, response, Transaction.__fetch)
 

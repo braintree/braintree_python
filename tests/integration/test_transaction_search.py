@@ -204,6 +204,24 @@ class TestTransactionSearch(unittest.TestCase):
             ])
             self.assertEquals(0, collection.maximum_size)
 
+    def test_advanced_search_with_argument_list_rather_than_literal_list(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Tom Smith",
+            },
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_cardholder_name == "Tom Smith"
+        )
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

@@ -157,7 +157,7 @@ class Subscription(Resource):
             return ErrorResult(response["api_error_response"])
 
     @staticmethod
-    def search(query):
+    def search(*query):
         """
         Allows searching on subscriptions. There are two types of fields that are searchable: text and
         multiple value fields. Searchable text fields are:
@@ -176,6 +176,10 @@ class Subscription(Resource):
                 braintree.SubscriptionSearch.status.in_list([braintree.Subscription.Status.PastDue])
             ])
         """
+
+        if isinstance(query[0], list):
+            query = query[0]
+
         response = Http().post("/subscriptions/advanced_search_ids", {"search": Subscription.__criteria(query)})
         return ResourceCollection(query, response, Subscription.__fetch)
 

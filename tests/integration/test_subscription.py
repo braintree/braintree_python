@@ -699,6 +699,24 @@ class TestSubscription(unittest.TestCase):
     def test_cancel_raises_not_found_error_with_bad_subscription(self):
         Subscription.cancel("notreal")
 
+    def test_search_with_argument_list_rather_than_literal_list(self):
+        trial_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trial_plan["id"]
+        }).subscription
+
+        trialless_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": self.trialless_plan["id"]
+        }).subscription
+
+        collection = Subscription.search(
+            SubscriptionSearch.plan_id == "integration_trial_plan"
+        )
+
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
+
     def test_search_on_plan_id_is(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
