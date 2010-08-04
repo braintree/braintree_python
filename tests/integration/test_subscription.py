@@ -401,6 +401,45 @@ class TestSubscription(unittest.TestCase):
         except Exception, e:
             self.assertEquals("subscription with id bad_token not found", str(e))
 
+    def test_update_creates_a_prorated_transaction_when_merchant_is_set_to_prorate(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("1"),
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(2, len(subscription.transactions))
+
+    def test_update_creates_a_prorated_transaction_when_flag_is_passed_as_True(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("1"),
+            "options": {
+                "prorate_charges": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(2, len(subscription.transactions))
+
+    def test_update_does_not_create_a_prorated_transaction_when_flag_is_passed_as_False(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("1"),
+            "options": {
+                "prorate_charges": False
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        self.assertEquals(1, len(subscription.transactions))
+
     def test_update_with_successful_result(self):
         new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
