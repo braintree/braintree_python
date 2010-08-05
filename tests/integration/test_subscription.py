@@ -729,6 +729,46 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, active_subscription))
         self.assertTrue(TestHelper.includes(collection, canceled_subscription))
 
+    def test_search_on_merchant_account_id(self):
+        subscription_default_ma = Subscription.create({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+        }).subscription
+
+        subscription_non_default_ma = Subscription.create({
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+        }).subscription
+
+        collection = Subscription.search([
+            SubscriptionSearch.merchant_account_id == TestHelper.default_merchant_account_id
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription_default_ma))
+        self.assertFalse(TestHelper.includes(collection, subscription_non_default_ma))
+
+    def test_search_on_price(self):
+        subscription_20 = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("20")
+        }).subscription
+
+        subscription_50 = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("50")
+        }).subscription
+
+        collection = Subscription.search([
+            SubscriptionSearch.price >= Decimal("40")
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription_50))
+        self.assertFalse(TestHelper.includes(collection, subscription_20))
+
     def test_retryCharge_without_amount__deprecated(self):
         subscription = Subscription.search([
             SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
