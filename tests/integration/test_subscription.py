@@ -719,6 +719,13 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
+        collection = Subscription.search([
+            SubscriptionSearch.plan_id.in_list("integration_trial_plan", "integration_trialless_plan")
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, trial_subscription))
+        self.assertTrue(TestHelper.includes(collection, trialless_subscription))
+
     def test_search_on_status(self):
         active_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,

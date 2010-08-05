@@ -68,6 +68,9 @@ class Search:
         def __eq__(self, value):
             return self.in_list([value])
 
+    class MultipleValueOrTextNodeBuilder(MultipleValueNodeBuilder, TextNodeBuilder):
+        pass
+
     class RangeNodeBuilder(object):
         def __init__(self, name):
             self.name = name

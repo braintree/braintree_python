@@ -10,8 +10,8 @@ class TestSubscriptionSearch(unittest.TestCase):
     def test_merchant_account_id_is_a_multiple_value_node(self):
         self.assertEquals(Search.MultipleValueNodeBuilder, type(SubscriptionSearch.merchant_account_id))
 
-    def test_plan_id_is_a_text_node(self):
-        self.assertEquals(Search.TextNodeBuilder, type(SubscriptionSearch.plan_id))
+    def test_plan_id_is_a_multiple_value_or_text_node(self):
+        self.assertEquals(Search.MultipleValueOrTextNodeBuilder, type(SubscriptionSearch.plan_id))
 
     def test_price_is_a_range_node(self):
         self.assertEquals(Search.RangeNodeBuilder, type(SubscriptionSearch.price))

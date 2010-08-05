@@ -42,6 +42,42 @@ class TestSearch(unittest.TestCase):
         node = Search.MultipleValueNodeBuilder("name", ["okay", "also okay"])
         node == "not okay"
 
+    def test_multiple_value_or_text_node_is(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals({"is": "value"}, (node == "value").to_param())
+
+    def test_multiple_value_or_text_node_is_not(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals({"is_not": "value"}, (node != "value").to_param())
+
+    def test_multiple_value_or_text_node_starts_with(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals({"starts_with": "value"}, (node.starts_with("value")).to_param())
+
+    def test_multiple_value_or_text_node_ends_with(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals({"ends_with": "value"}, (node.ends_with("value")).to_param())
+
+    def test_multiple_value_or_text_node_contains(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals({"contains": "value"}, (node.contains("value")).to_param())
+
+    def test_multiple_value_or_text_node_in_list(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals(["value1", "value2"], (node.in_list(["value1", "value2"])).to_param())
+
+    def test_multiple_value_or_text_node_in_list_as_arg_list(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals(["value1", "value2"], (node.in_list("value1", "value2")).to_param())
+
+    def test_multiple_value_or_text_node_is(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name")
+        self.assertEquals(["value1"], (node == "value1").to_param())
+
+    def test_multiple_value_or_text_node_with_value_in_whitelist(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name", ["okay"])
+        self.assertEquals(["okay"], (node == "okay").to_param())
+
     def test_range_node_min_ge(self):
         node = Search.RangeNodeBuilder("name")
         self.assertEquals({"min": "value"}, (node >= "value").to_param())
