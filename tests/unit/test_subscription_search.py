@@ -1,6 +1,9 @@
 from tests.test_helper import *
 
 class TestSubscriptionSearch(unittest.TestCase):
+    def test_billing_cycles_remaining_is_a_range_node(self):
+        self.assertEquals(Search.RangeNodeBuilder, type(SubscriptionSearch.billing_cycles_remaining))
+
     def test_days_past_due_is_a_range_node(self):
         self.assertEquals(Search.RangeNodeBuilder, type(SubscriptionSearch.days_past_due))
 

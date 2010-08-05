@@ -3,6 +3,7 @@ from braintree import Subscription
 from braintree.search import Search
 
 class SubscriptionSearch:
+    billing_cycles_remaining = Search.RangeNodeBuilder("billing_cycles_remaining")
     days_past_due = Search.RangeNodeBuilder("days_past_due")
     id = Search.TextNodeBuilder("id")
     ids = Search.MultipleValueNodeBuilder("ids")

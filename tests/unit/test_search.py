@@ -72,11 +72,16 @@ class TestSearch(unittest.TestCase):
 
     def test_multiple_value_or_text_node_is(self):
         node = Search.MultipleValueOrTextNodeBuilder("name")
-        self.assertEquals(["value1"], (node == "value1").to_param())
+        self.assertEquals({"is": "value1"}, (node == "value1").to_param())
 
     def test_multiple_value_or_text_node_with_value_in_whitelist(self):
         node = Search.MultipleValueOrTextNodeBuilder("name", ["okay"])
-        self.assertEquals(["okay"], (node == "okay").to_param())
+        self.assertEquals(["okay"], node.in_list("okay").to_param())
+
+    @raises(AttributeError)
+    def test_multiple_value_or_text_node_with_value_not_in_whitelist(self):
+        node = Search.MultipleValueOrTextNodeBuilder("name", ["okay"])
+        node.in_list("not okay").to_param()
 
     def test_range_node_min_ge(self):
         node = Search.RangeNodeBuilder("name")

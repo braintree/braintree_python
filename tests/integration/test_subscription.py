@@ -692,6 +692,26 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
+    def test_search_on_billing_cycles_remaining(self):
+        subscription_5 = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+            "number_of_billing_cycles": 5
+        }).subscription
+
+        subscription_10 = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+            "number_of_billing_cycles": 10
+        }).subscription
+
+        collection = Subscription.search([
+            SubscriptionSearch.billing_cycles_remaining >= 7
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription_10))
+        self.assertFalse(TestHelper.includes(collection, subscription_5))
+
     def test_search_on_days_past_due(self):
         collection = Subscription.search([
             SubscriptionSearch.days_past_due.between(2, 10)
@@ -725,6 +745,23 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertTrue(TestHelper.includes(collection, trialless_subscription))
+
+    def test_search_on_plan_id_is_acts_like_text_node_instead_of_multiple_value(self):
+        trial_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"]
+        }).subscription
+
+        trialless_subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"]
+        }).subscription
+
+        collection = Subscription.search([
+            SubscriptionSearch.plan_id == "no such plan id"
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
 
     def test_search_on_status(self):
         active_subscription = Subscription.create({
