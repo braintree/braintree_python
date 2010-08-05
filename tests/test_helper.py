@@ -29,6 +29,30 @@ class TestHelper(object):
 
     default_merchant_account_id = "sandbox_credit_card"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
+    add_on_discount_plan = {
+         "description": "Plan for integration tests -- with add-ons and discounts",
+         "id": "integration_plan_with_add_ons_and_discounts",
+         "price": Decimal("9.99"),
+         "trial_duration": 2,
+         "trial_duration_unit": Subscription.TrialDurationUnit.Day,
+         "trial_period": True
+    }
+
+    trial_plan = {
+        "description": "Plan for integration tests -- with trial",
+        "id": "integration_trial_plan",
+        "price": Decimal("43.21"),
+        "trial_period": True,
+        "trial_duration": 2,
+        "trial_duration_unit": Subscription.TrialDurationUnit.Day
+    }
+
+    trialless_plan = {
+        "description": "Plan for integration tests -- without a trial",
+        "id": "integration_trialless_plan",
+        "price": Decimal("12.34"),
+        "trial_period": False
+    }
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):

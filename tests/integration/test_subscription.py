@@ -12,42 +12,17 @@ class TestSubscription(unittest.TestCase):
             }
         }).customer.credit_cards[0]
 
-        self.add_on_discount_plan = {
-            "description": "Plan for integration tests -- with add-ons and discounts",
-            "id": "integration_plan_with_add_ons_and_discounts",
-            "price": Decimal("9.99"),
-            "trial_duration": 2,
-            "trial_duration_unit": Subscription.TrialDurationUnit.Day,
-            "trial_period": True
-        }
-
-        self.trial_plan = {
-            "description": "Plan for integration tests -- with trial",
-            "id": "integration_trial_plan",
-            "price": Decimal("43.21"),
-            "trial_period": True,
-            "trial_duration": 2,
-            "trial_duration_unit": Subscription.TrialDurationUnit.Day
-        }
-
-        self.trialless_plan = {
-            "description": "Plan for integration tests -- without a trial",
-            "id": "integration_trialless_plan",
-            "price": Decimal("12.34"),
-            "trial_period": False
-        }
-
         self.updateable_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "price": Decimal("54.32"),
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         }).subscription
 
 
     def test_create_returns_successful_result_if_valid(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         })
 
         self.assertTrue(result.is_success)
@@ -69,7 +44,7 @@ class TestSubscription(unittest.TestCase):
         new_id = str(random.randint(1, 1000000))
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"],
+            "plan_id": TestHelper.trialless_plan["id"],
             "id": new_id
         })
 
@@ -79,7 +54,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_can_set_the_merchant_account_id(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"],
+            "plan_id": TestHelper.trialless_plan["id"],
             "merchant_account_id": TestHelper.non_default_merchant_account_id
         })
 
@@ -89,27 +64,27 @@ class TestSubscription(unittest.TestCase):
     def test_create_defaults_to_plan_without_trial(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"],
+            "plan_id": TestHelper.trialless_plan["id"],
         }).subscription
 
-        self.assertEquals(self.trialless_plan["trial_period"], subscription.trial_period)
+        self.assertEquals(TestHelper.trialless_plan["trial_period"], subscription.trial_period)
         self.assertEquals(None, subscription.trial_duration)
         self.assertEquals(None, subscription.trial_duration_unit)
 
     def test_create_defaults_to_plan_with_trial(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
         }).subscription
 
-        self.assertEquals(self.trial_plan["trial_period"], subscription.trial_period)
-        self.assertEquals(self.trial_plan["trial_duration"], subscription.trial_duration)
-        self.assertEquals(self.trial_plan["trial_duration_unit"], subscription.trial_duration_unit)
+        self.assertEquals(TestHelper.trial_plan["trial_period"], subscription.trial_period)
+        self.assertEquals(TestHelper.trial_plan["trial_duration"], subscription.trial_duration)
+        self.assertEquals(TestHelper.trial_plan["trial_duration_unit"], subscription.trial_duration_unit)
 
     def test_create_and_override_plan_with_trial(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
             "trial_duration": 5,
             "trial_duration_unit": Subscription.TrialDurationUnit.Month
         }).subscription
@@ -121,7 +96,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_and_override_trial_period(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
             "trial_period": False
         }).subscription
 
@@ -130,7 +105,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_and_override_number_of_billing_cycles(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
             "number_of_billing_cycles": 10
         }).subscription
 
@@ -139,7 +114,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_and_override_number_of_billing_cycles_to_never_expire(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
             "never_expires": True
         }).subscription
 
@@ -148,20 +123,20 @@ class TestSubscription(unittest.TestCase):
     def test_create_creates_a_transaction_if_no_trial_period(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"],
+            "plan_id": TestHelper.trialless_plan["id"],
         }).subscription
 
         self.assertEquals(1, len(subscription.transactions))
         transaction = subscription.transactions[0]
         self.assertEquals(Transaction, type(transaction))
-        self.assertEquals(self.trialless_plan["price"], transaction.amount)
+        self.assertEquals(TestHelper.trialless_plan["price"], transaction.amount)
         self.assertEquals("sale", transaction.type)
         self.assertEquals(subscription.id, transaction.subscription_id)
 
     def test_create_returns_a_transaction_if_transaction_is_declined(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"],
+            "plan_id": TestHelper.trialless_plan["id"],
             "price": TransactionAmounts.Decline
         })
 
@@ -171,7 +146,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_doesnt_creates_a_transaction_if_trial_period(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
         }).subscription
 
         self.assertEquals(0, len(subscription.transactions))
@@ -179,7 +154,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_with_error_result(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
             "id": "invalid token"
         })
 
@@ -189,7 +164,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_does_not_inherit_add_ons_or_discounts_from_the_plan_when_flag_is_set(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "options": {
                 "do_not_inherit_add_ons_or_discounts": True
             }
@@ -201,7 +176,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_inherits_add_ons_and_discounts_from_the_plan_when_not_specified(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"]
+            "plan_id": TestHelper.add_on_discount_plan["id"]
         }).subscription
 
         self.assertEquals(2, len(subscription.add_ons))
@@ -237,7 +212,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_allows_overriding_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "update": [
                     {
@@ -299,7 +274,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_allows_deleting_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "remove": ["increase_10", "increase_20"]
             },
@@ -316,7 +291,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_allows_adding_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "add": [
                     {
@@ -359,7 +334,7 @@ class TestSubscription(unittest.TestCase):
     def test_create_properly_parses_validation_errors_for_arrays(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "update": [
                     {
@@ -388,7 +363,7 @@ class TestSubscription(unittest.TestCase):
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"],
+            "plan_id": TestHelper.trial_plan["id"],
         }).subscription
 
         found_subscription = Subscription.find(subscription.id)
@@ -445,14 +420,14 @@ class TestSubscription(unittest.TestCase):
         result = Subscription.update(self.updateable_subscription.id, {
             "id": new_id,
             "price": Decimal("9999.88"),
-            "plan_id": self.trial_plan["id"]
+            "plan_id": TestHelper.trial_plan["id"]
         })
 
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
         self.assertEquals(new_id, subscription.id)
-        self.assertEquals(self.trial_plan["id"], subscription.plan_id)
+        self.assertEquals(TestHelper.trial_plan["id"], subscription.plan_id)
         self.assertEquals(Decimal("9999.88"), subscription.price)
 
     def test_update_with_merchant_account_id(self):
@@ -520,7 +495,7 @@ class TestSubscription(unittest.TestCase):
     def test_update_allows_overriding_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
         }).subscription
 
         subscription = Subscription.update(subscription.id, {
@@ -585,12 +560,12 @@ class TestSubscription(unittest.TestCase):
     def test_update_allows_adding_and_removing_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
         }).subscription
 
         subscription = Subscription.update(subscription.id, {
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "add": [
                     {
@@ -633,12 +608,12 @@ class TestSubscription(unittest.TestCase):
     def test_update_can_replace_entire_set_of_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
         }).subscription
 
         subscription = Subscription.update(subscription.id, {
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.add_on_discount_plan["id"],
+            "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "add": [
                     { "inherited_from_id": "increase_30", },
@@ -681,7 +656,7 @@ class TestSubscription(unittest.TestCase):
     def test_cancel_with_successful_response(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         }).subscription
 
         result = Subscription.cancel(subscription.id)
@@ -702,12 +677,12 @@ class TestSubscription(unittest.TestCase):
     def test_search_with_argument_list_rather_than_literal_list(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"]
+            "plan_id": TestHelper.trial_plan["id"]
         }).subscription
 
         trialless_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         }).subscription
 
         collection = Subscription.search(
@@ -717,15 +692,15 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
-    def test_search_on_plan_id_is(self):
+    def test_search_on_plan_id(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"]
+            "plan_id": TestHelper.trial_plan["id"]
         }).subscription
 
         trialless_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         }).subscription
 
         collection = Subscription.search([
@@ -735,106 +710,15 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
-    def test_search_on_plan_id_starts_with(self):
-        trial_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"]
-        }).subscription
-
-        trialless_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-
-        collection = Subscription.search([
-            SubscriptionSearch.plan_id.starts_with("integration_trial_p")
-        ])
-
-        self.assertTrue(TestHelper.includes(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
-
-    def test_search_on_plan_id_ends_with(self):
-        trial_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"]
-        }).subscription
-
-        trialless_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-
-        collection = Subscription.search([
-            SubscriptionSearch.plan_id.ends_with("trial_plan")
-        ])
-
-        self.assertTrue(TestHelper.includes(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
-
-    def test_search_on_plan_id_is_not(self):
-        trial_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"]
-        }).subscription
-
-        trialless_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-
-        collection = Subscription.search([
-            SubscriptionSearch.plan_id != "integration_trialless_plan"
-        ])
-
-        self.assertTrue(TestHelper.includes(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
-
-    def test_search_on_plan_id_contains(self):
-        trial_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trial_plan["id"]
-        }).subscription
-
-        trialless_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-
-        collection = Subscription.search([
-            SubscriptionSearch.plan_id.contains("rial_pl")
-        ])
-
-        self.assertTrue(TestHelper.includes(collection, trial_subscription))
-        self.assertFalse(TestHelper.includes(collection, trialless_subscription))
-
     def test_search_on_status(self):
         active_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         }).subscription
 
         canceled_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-        Subscription.cancel(canceled_subscription.id)
-
-        collection = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.Active])
-        ])
-
-        self.assertTrue(TestHelper.includes(collection, active_subscription))
-        self.assertFalse(TestHelper.includes(collection, canceled_subscription))
-
-    def test_search_on_multiple_statuses(self):
-        active_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-
-        canceled_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"]
         }).subscription
         Subscription.cancel(canceled_subscription.id)
 
@@ -844,35 +728,6 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(TestHelper.includes(collection, active_subscription))
         self.assertTrue(TestHelper.includes(collection, canceled_subscription))
-
-    def test_search_on_expired_status(self):
-        collection = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.Expired])
-        ])
-
-        self.assertTrue(collection.maximum_size > 0)
-        for subscription in collection.items:
-            self.assertEqual(Subscription.Status.Expired, subscription.status)
-
-    def test_search_on_multiple_values(self):
-        active_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-
-        canceled_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": self.trialless_plan["id"]
-        }).subscription
-        Subscription.cancel(canceled_subscription.id)
-
-        collection = Subscription.search([
-            SubscriptionSearch.plan_id == "integration_trialless_plan",
-            SubscriptionSearch.status.in_list([Subscription.Status.Active])
-        ])
-
-        self.assertTrue(TestHelper.includes(collection, active_subscription))
-        self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 
     def test_retryCharge_without_amount__deprecated(self):
         subscription = Subscription.search([
