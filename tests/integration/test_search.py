@@ -276,6 +276,34 @@ class TestSearch(unittest.TestCase):
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(t_1500.id, collection.first.id)
 
+    def test_range_node_is(self):
+        name = "Henrietta Livingston%s" % randint(1,100000)
+        t_1500 = Transaction.sale({
+            "amount": "1500.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": name
+            }
+        }).transaction
+
+        t_1800 = Transaction.sale({
+            "amount": "1800.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": name
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.credit_card_cardholder_name == name,
+            TransactionSearch.amount == "1800"
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(t_1800.id, collection.first.id)
+
     def test_range_node_between(self):
         name = "Henrietta Livingston%s" % randint(1,100000)
         t_1000 = Transaction.sale({

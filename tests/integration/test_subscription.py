@@ -692,6 +692,15 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
+    def test_search_on_days_past_due(self):
+        collection = Subscription.search([
+            SubscriptionSearch.days_past_due.between(2, 10)
+        ])
+
+        self.assertTrue(collection.maximum_size > 0)
+        for subscription in collection.items:
+            self.assertTrue(2 <= subscription.days_past_due <= 10)
+
     def test_search_on_plan_id(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -768,6 +777,26 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(TestHelper.includes(collection, subscription_50))
         self.assertFalse(TestHelper.includes(collection, subscription_20))
+
+    def test_search_on_id(self):
+        subscription_found = Subscription.create({
+            "id": "find_me_%s" % random.randint(1,1000000),
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+        }).subscription
+
+        subscription_not_found = Subscription.create({
+            "id": "do_not_find_me_%s" % random.randint(1,1000000),
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+        }).subscription
+
+        collection = Subscription.search([
+            SubscriptionSearch.id.starts_with("find_me")
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription_found))
+        self.assertFalse(TestHelper.includes(collection, subscription_not_found))
 
     def test_retryCharge_without_amount__deprecated(self):
         subscription = Subscription.search([

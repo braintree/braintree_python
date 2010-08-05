@@ -72,6 +72,12 @@ class Search:
         def __init__(self, name):
             self.name = name
 
+        def __eq__(self, value):
+            return self.is_equal(value)
+
+        def is_equal(self, value):
+            return Search.EqualityNodeBuilder(self.name) == value
+
         def __ge__(self, min):
             return self.greater_than_or_equal_to(min)
 

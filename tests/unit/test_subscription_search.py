@@ -1,8 +1,11 @@
 from tests.test_helper import *
 
 class TestSubscriptionSearch(unittest.TestCase):
-    def test_days_past_due_is_a_text_node(self):
-        self.assertEquals(Search.TextNodeBuilder, type(SubscriptionSearch.days_past_due))
+    def test_days_past_due_is_a_range_node(self):
+        self.assertEquals(Search.RangeNodeBuilder, type(SubscriptionSearch.days_past_due))
+
+    def test_id_is_a_text_node(self):
+        self.assertEquals(Search.TextNodeBuilder, type(SubscriptionSearch.id))
 
     def test_merchant_account_id_is_a_multiple_value_node(self):
         self.assertEquals(Search.MultipleValueNodeBuilder, type(SubscriptionSearch.merchant_account_id))
@@ -35,4 +38,3 @@ class TestSubscriptionSearch(unittest.TestCase):
 
     def test_ids_is_a_multiple_value_node(self):
         self.assertEquals(Search.MultipleValueNodeBuilder, type(SubscriptionSearch.ids))
-

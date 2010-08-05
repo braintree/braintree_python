@@ -62,4 +62,23 @@ class TestSearch(unittest.TestCase):
         node = Search.RangeNodeBuilder("name")
         self.assertEquals({"min": "min_value", "max": "max_value"}, (node.between("min_value", "max_value")).to_param())
 
+    def test_range_node_is(self):
+        node = Search.RangeNodeBuilder("name")
+        self.assertEquals({"is": "value"}, (node == "value").to_param())
+
+    def test_key_value_node_is_eq(self):
+        node = Search.KeyValueNodeBuilder("name")
+        self.assertEquals(True, (node == True).to_param())
+
+    def test_key_value_node_is_equal(self):
+        node = Search.KeyValueNodeBuilder("name")
+        self.assertEquals(True, (node.is_equal(True)).to_param())
+
+    def test_key_value_node_is_not_equal(self):
+        node = Search.KeyValueNodeBuilder("name")
+        self.assertEquals(False, (node.is_not_equal(True)).to_param())
+
+    def test_key_value_node_is_not_equal(self):
+        node = Search.KeyValueNodeBuilder("name")
+        self.assertEquals(False, (node != True).to_param())
 
