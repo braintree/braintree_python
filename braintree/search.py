@@ -55,12 +55,15 @@ class Search:
             self.name = name
             self.whitelist = whitelist
 
-        def in_list(self, list):
-            invalid_args = set(list) - set(self.whitelist)
+        def in_list(self, *values):
+            if isinstance(values[0], list):
+                values = values[0]
+
+            invalid_args = set(values) - set(self.whitelist)
             if len(self.whitelist) > 0 and len(invalid_args) > 0:
                 error_string = "Invalid argument(s) for %s: %s" % (self.name, ", ".join(invalid_args))
                 raise AttributeError(error_string)
-            return Search.Node(self.name, list)
+            return Search.Node(self.name, list(values))
 
         def __eq__(self, value):
             return self.in_list([value])
