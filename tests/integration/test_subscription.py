@@ -677,16 +677,19 @@ class TestSubscription(unittest.TestCase):
     def test_search_with_argument_list_rather_than_literal_list(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trial_plan["id"]
+            "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("1")
         }).subscription
 
         trialless_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"],
+            "price": Decimal("1")
         }).subscription
 
         collection = Subscription.search(
-            SubscriptionSearch.plan_id == "integration_trial_plan"
+            SubscriptionSearch.plan_id == "integration_trial_plan",
+            SubscriptionSearch.price == Decimal("1")
         )
 
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
@@ -724,23 +727,27 @@ class TestSubscription(unittest.TestCase):
     def test_search_on_plan_id(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trial_plan["id"]
+            "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("2")
         }).subscription
 
         trialless_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"],
+            "price": Decimal("2")
         }).subscription
 
         collection = Subscription.search([
-            SubscriptionSearch.plan_id == "integration_trial_plan"
+            SubscriptionSearch.plan_id == "integration_trial_plan",
+            SubscriptionSearch.price == Decimal("2")
         ])
 
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
         self.assertFalse(TestHelper.includes(collection, trialless_subscription))
 
         collection = Subscription.search([
-            SubscriptionSearch.plan_id.in_list("integration_trial_plan", "integration_trialless_plan")
+            SubscriptionSearch.plan_id.in_list("integration_trial_plan", "integration_trialless_plan"),
+            SubscriptionSearch.price == Decimal("2")
         ])
 
         self.assertTrue(TestHelper.includes(collection, trial_subscription))
@@ -749,16 +756,19 @@ class TestSubscription(unittest.TestCase):
     def test_search_on_plan_id_is_acts_like_text_node_instead_of_multiple_value(self):
         trial_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trial_plan["id"]
+            "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("3")
         }).subscription
 
         trialless_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"],
+            "price": Decimal("3")
         }).subscription
 
         collection = Subscription.search([
-            SubscriptionSearch.plan_id == "no such plan id"
+            SubscriptionSearch.plan_id == "no such plan id",
+            SubscriptionSearch.price == Decimal("3")
         ])
 
         self.assertEquals(0, collection.maximum_size)
@@ -766,17 +776,20 @@ class TestSubscription(unittest.TestCase):
     def test_search_on_status(self):
         active_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"],
+            "price": Decimal("3")
         }).subscription
 
         canceled_subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"]
+            "plan_id": TestHelper.trialless_plan["id"],
+            "price": Decimal("3")
         }).subscription
         Subscription.cancel(canceled_subscription.id)
 
         collection = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.Active, Subscription.Status.Canceled])
+            SubscriptionSearch.status.in_list([Subscription.Status.Active, Subscription.Status.Canceled]),
+            SubscriptionSearch.price == Decimal("3")
         ])
 
         self.assertTrue(TestHelper.includes(collection, active_subscription))
@@ -787,40 +800,43 @@ class TestSubscription(unittest.TestCase):
             "merchant_account_id": TestHelper.default_merchant_account_id,
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("4")
         }).subscription
 
         subscription_non_default_ma = Subscription.create({
             "merchant_account_id": TestHelper.non_default_merchant_account_id,
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("4")
         }).subscription
 
         collection = Subscription.search([
-            SubscriptionSearch.merchant_account_id == TestHelper.default_merchant_account_id
+            SubscriptionSearch.merchant_account_id == TestHelper.default_merchant_account_id,
+            SubscriptionSearch.price == Decimal("4")
         ])
 
         self.assertTrue(TestHelper.includes(collection, subscription_default_ma))
         self.assertFalse(TestHelper.includes(collection, subscription_non_default_ma))
 
     def test_search_on_price(self):
-        subscription_20 = Subscription.create({
+        subscription_900 = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trial_plan["id"],
-            "price": Decimal("20")
+            "price": Decimal("900")
         }).subscription
 
-        subscription_50 = Subscription.create({
+        subscription_1000 = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trial_plan["id"],
-            "price": Decimal("50")
+            "price": Decimal("1000")
         }).subscription
 
         collection = Subscription.search([
-            SubscriptionSearch.price >= Decimal("40")
+            SubscriptionSearch.price >= Decimal("950")
         ])
 
-        self.assertTrue(TestHelper.includes(collection, subscription_50))
-        self.assertFalse(TestHelper.includes(collection, subscription_20))
+        self.assertTrue(TestHelper.includes(collection, subscription_1000))
+        self.assertFalse(TestHelper.includes(collection, subscription_900))
 
     def test_search_on_id(self):
         subscription_found = Subscription.create({
