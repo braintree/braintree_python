@@ -2,6 +2,7 @@ import braintree
 import urllib
 import warnings
 from decimal import Decimal
+from braintree import AddOn, Discount
 from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
@@ -412,6 +413,10 @@ class Transaction(Resource):
         Resource.__init__(self, attributes)
 
         self.amount = Decimal(self.amount)
+        if "add_ons" in attributes:
+            self.add_ons = [AddOn(add_on) for add_on in self.add_ons]
+        if "discounts" in attributes:
+            self.discounts = [Discount(discount) for discount in self.discounts]
         if "status_history" in attributes:
             self.status_history = [StatusEvent(status_event) for status_event in self.status_history]
 
