@@ -830,8 +830,8 @@ class TestTransactionSearch(unittest.TestCase):
              }
          }).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -850,9 +850,9 @@ class TestTransactionSearch(unittest.TestCase):
              }
         }).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -878,9 +878,9 @@ class TestTransactionSearch(unittest.TestCase):
              }
         }).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -916,9 +916,9 @@ class TestTransactionSearch(unittest.TestCase):
                  }
             }).transaction
 
-            past = date.today() - timedelta(days=1)
-            future = date.today() + timedelta(days=1)
-            future2 = date.today() + timedelta(days=2)
+            past = datetime.today() - timedelta(days=1)
+            future = datetime.today() + timedelta(days=1)
+            future2 = datetime.today() + timedelta(days=2)
 
             collection = Transaction.search([
                 TransactionSearch.id == transaction.id,
@@ -948,9 +948,9 @@ class TestTransactionSearch(unittest.TestCase):
              }
         }).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -982,9 +982,9 @@ class TestTransactionSearch(unittest.TestCase):
         Http().put("/transactions/" + transaction.id + "/settle")
         transaction = Transaction.find(transaction.id)
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -1013,9 +1013,9 @@ class TestTransactionSearch(unittest.TestCase):
              }
         }).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -1042,9 +1042,9 @@ class TestTransactionSearch(unittest.TestCase):
         }).transaction
         transaction = Transaction.void(transaction.id).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -1073,9 +1073,9 @@ class TestTransactionSearch(unittest.TestCase):
              }
         }).transaction
 
-        past = date.today() - timedelta(days=1)
-        future = date.today() + timedelta(days=1)
-        future2 = date.today() + timedelta(days=2)
+        past = datetime.today() - timedelta(days=1)
+        future = datetime.today() + timedelta(days=1)
+        future2 = datetime.today() + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
