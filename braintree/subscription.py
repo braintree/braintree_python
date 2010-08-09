@@ -50,12 +50,14 @@ class Subscription(Resource):
         * braintree.Subscription.Status.Canceled
         * braintree.Subscription.Status.Expired
         * braintree.Subscription.Status.PastDue
+        * braintree.Subscription.Status.Pending
         """
 
         Active = "Active"
         Canceled = "Canceled"
         Expired = "Expired"
         PastDue = "Past Due"
+        Pending = "Pending"
 
     @staticmethod
     def create(params={}):
@@ -77,6 +79,8 @@ class Subscription(Resource):
     @staticmethod
     def create_signature():
         return [
+            "billing_day_of_month",
+            "first_billing_date",
             "id",
             "merchant_account_id",
             "never_expires",
@@ -88,7 +92,10 @@ class Subscription(Resource):
             "trial_duration_unit",
             "trial_period",
             {
-                "options": [ "do_not_inherit_add_ons_or_discounts" ]
+                "options": [
+                    "do_not_inherit_add_ons_or_discounts",
+                    "start_immediately"
+                ]
             }
         ] + Subscription._add_ons_discounts_signature()
 

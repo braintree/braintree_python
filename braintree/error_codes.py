@@ -79,11 +79,18 @@ class ErrorCodes(object):
         WebsiteIsTooLong = "81615"
 
     class Subscription(object):
+        BillingDayOfMonthCannotBeUpdated = "91918"
+        BillingDayOfMonthIsInvalid = "91914"
+        BillingDayOfMonthMustBeNumeric = "91913"
         CannotAddDuplicateAddonOrDiscount = "91911"
         CannotEditCanceledSubscription = "81901"
         CannotEditExpiredSubscription = "81910"
+        FirstBillingDateCannotBeInThePast = "91916"
+        FirstBillingDateCannotBeUpdated = "91919"
+        FirstBillingDateIsInvalid = "91915"
         IdIsInUse = "81902"
         InconsistentNumberOfBillingCycles = "91908"
+        InconsistentStartDate = "91917"
         MerchantAccountIdIsInvalid = "91901"
         NumberOfBillingCyclesCannotBeBlank = "91912"
         NumberOfBillingCyclesIsTooSmall = "91909"

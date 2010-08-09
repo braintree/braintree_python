@@ -38,6 +38,13 @@ class TestHelper(object):
          "trial_period": True
     }
 
+    billing_day_of_month_plan = {
+         "description": "Plan for integration tests -- with billing day of month",
+         "id": "integration_plan_with_billing_day_of_month",
+         "billing_day_of_month": 5,
+         "price": Decimal("8.88"),
+    }
+
     trial_plan = {
         "description": "Plan for integration tests -- with trial",
         "id": "integration_trial_plan",

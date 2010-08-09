@@ -161,6 +161,61 @@ class TestSubscription(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals("81906", result.errors.for_object("subscription").on("id")[0].code)
 
+    def test_create_inherits_billing_day_of_month_from_plan(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.billing_day_of_month_plan["id"],
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(5, result.subscription.billing_day_of_month)
+
+    def test_create_allows_overriding_billing_day_of_month(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.billing_day_of_month_plan["id"],
+            "billing_day_of_month": 19
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(19, result.subscription.billing_day_of_month)
+
+    def test_create_allows_overriding_billing_day_of_month_with_start_immediately(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.billing_day_of_month_plan["id"],
+            "options": {
+                "start_immediately": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(1, len(result.subscription.transactions))
+
+    def test_create_allows_specifying_first_billing_date(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.billing_day_of_month_plan["id"],
+            "first_billing_date": date.today() + timedelta(days=3)
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(date.today() + timedelta(days=3), result.subscription.first_billing_date)
+        self.assertEquals(Subscription.Status.Pending, result.subscription.status)
+
+    def test_create_does_not_allow_first_billing_date_in_the_past(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.billing_day_of_month_plan["id"],
+            "first_billing_date": date.today() - timedelta(days=3)
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Subscription.FirstBillingDateCannotBeInThePast,
+            result.errors.for_object("subscription").on("first_billing_date")[0].code
+        )
+
     def test_create_does_not_inherit_add_ons_or_discounts_from_the_plan_when_flag_is_set(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
