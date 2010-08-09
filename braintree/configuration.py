@@ -4,7 +4,7 @@ class Configuration(object):
     You must call configure before any other Braintree operations. ::
 
         braintree.Configuration.configure(
-            braintree.Environment.SANDBOX,
+            braintree.Environment.Sandbox,
             "the_merchant_id",
             "the_public_key",
             "the_private_key"
