@@ -914,9 +914,11 @@ class TestSubscription(unittest.TestCase):
         self.assertFalse(TestHelper.includes(collection, subscription_not_found))
 
     def test_retryCharge_without_amount__deprecated(self):
-        subscription = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
-        ]).first
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
 
         result = Subscription.retryCharge(subscription.id);
 
@@ -929,9 +931,11 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status);
 
     def test_retry_charge_without_amount(self):
-        subscription = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
-        ]).first
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
 
         result = Subscription.retry_charge(subscription.id);
 
@@ -944,9 +948,11 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status);
 
     def test_retryCharge_with_amount__deprecated(self):
-        subscription = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
-        ]).first
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
 
         result = Subscription.retryCharge(subscription.id, Decimal(TransactionAmounts.Authorize));
 
@@ -960,9 +966,11 @@ class TestSubscription(unittest.TestCase):
 
 
     def test_retry_charge_with_amount(self):
-        subscription = Subscription.search([
-            SubscriptionSearch.status.in_list([Subscription.Status.PastDue])
-        ]).first
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
 
         result = Subscription.retry_charge(subscription.id, Decimal(TransactionAmounts.Authorize));
 

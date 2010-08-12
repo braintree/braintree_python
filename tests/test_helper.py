@@ -62,6 +62,10 @@ class TestHelper(object):
     }
 
     @staticmethod
+    def make_past_due(subscription, number_of_days_past_due=1):
+        Http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription.id, number_of_days_past_due))
+
+    @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
         form_data = urllib.urlencode(post_params)
         conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
