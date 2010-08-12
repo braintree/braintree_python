@@ -89,7 +89,7 @@ class TestCustomer(unittest.TestCase):
             "first_name": "Mike",
             "last_name": "Jones",
             "credit_card": {
-                "number": "4222222222222",
+                "number": "4000111111111115",
                 "expiration_date": "05/2010",
                 "cvv": "100",
                 "options": {"verify_card": True}

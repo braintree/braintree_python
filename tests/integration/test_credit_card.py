@@ -120,7 +120,7 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "05/2009",
             "options": {"verify_card": True}
         })
@@ -140,7 +140,7 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "05/2009",
             "options": {
                 "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
@@ -219,7 +219,7 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "05/2009",
             "options": {"verify_card": False}
         })
@@ -390,7 +390,7 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         result = CreditCard.update(credit_card.token, {
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "06/2010",
             "cvv": "123",
             "cardholder_name": "Jane Jones",
@@ -411,7 +411,7 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         result = CreditCard.update(credit_card.token, {
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "06/2010",
             "cvv": "123",
             "cardholder_name": "Jane Jones",
