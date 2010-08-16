@@ -1,12 +1,12 @@
-from datetime import datetime
 import cgi
+from datetime import datetime
 import urllib
-import urlparse
 import braintree
 from braintree.configuration import Configuration
 from braintree.util.crypto import Crypto
-from braintree.util.http import Http
 from braintree.exceptions.forged_query_string_error import ForgedQueryStringError
+from braintree.util.http import Http
+from braintree.util.crypto import Crypto
 
 class TransparentRedirect:
     """
@@ -28,16 +28,7 @@ class TransparentRedirect:
 
             result = braintree.TransparentRedirect.confirm("foo=bar&id=12345")
         """
-        parsed_query_string = TransparentRedirect.parse_and_validate_query_string(query_string)
-        confirmation_klass = {
-            TransparentRedirect.Kind.CreateCustomer: braintree.customer.Customer,
-            TransparentRedirect.Kind.UpdateCustomer: braintree.transaction.Customer,
-            TransparentRedirect.Kind.CreatePaymentMethod: braintree.customer.CreditCard,
-            TransparentRedirect.Kind.UpdatePaymentMethod: braintree.customer.CreditCard,
-            TransparentRedirect.Kind.CreateTransaction: braintree.transaction.Transaction
-        }[parsed_query_string["kind"][0]]
-        return confirmation_klass._post("/transparent_redirect_requests/" + parsed_query_string["id"][0] + "/confirm")
-
+        return Configuration.gateway().transparent_redirect.confirm(query_string)
 
     @staticmethod
     def parse_and_validate_query_string(query_string):
@@ -55,6 +46,7 @@ class TransparentRedirect:
 
         return query_params
 
+
     @staticmethod
     def tr_data(data, redirect_url):
         data = TransparentRedirect.__flatten_dictionary(data)
@@ -69,16 +61,11 @@ class TransparentRedirect:
         return tr_hash + "|" + tr_content
 
     @staticmethod
-    def is_valid_tr_query_string(query_string):
-        content, hash = query_string.split("&hash=")
-        return hash == Crypto.hmac_hash(Configuration.private_key, content)
-
-    @staticmethod
     def url():
         """
         Returns the url for POSTing Transparent Redirect HTML forms
         """
-        return Configuration.base_merchant_url() + "/transparent_redirect_requests"
+        return Configuration.gateway().transparent_redirect.url()
 
     @staticmethod
     def __flatten_dictionary(params, parent=None):
@@ -90,3 +77,9 @@ class TransparentRedirect:
             else:
                 data[full_key] = val
         return data
+
+    @staticmethod
+    def is_valid_tr_query_string(query_string):
+        content, hash = query_string.split("&hash=")
+        return hash == Crypto.hmac_hash(Configuration.private_key, content)
+

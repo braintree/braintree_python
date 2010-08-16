@@ -2,8 +2,8 @@ import braintree
 import urllib
 import warnings
 from decimal import Decimal
-from braintree import AddOn, Discount
-from braintree.util.http import Http
+from braintree.add_on import AddOn
+from braintree.discount import Discount
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
 from braintree.error_result import ErrorResult
@@ -145,8 +145,7 @@ class Transaction(Resource):
         """
 
         warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
-        return Transaction._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
+        return Configuration.gateway().transaction.confirm_transparent_redirect(query_string)
 
     @staticmethod
     def credit(params={}):
@@ -185,12 +184,8 @@ class Transaction(Resource):
 
             transaction = braintree.Transaction.find("my_transaction_id")
         """
+        return Configuration.gateway().transaction.find(transaction_id)
 
-        try:
-            response = Http().get("/transactions/" + transaction_id)
-            return Transaction(response["transaction"])
-        except NotFoundError:
-            raise NotFoundError("transaction with id " + transaction_id + " not found")
 
     @staticmethod
     def refund(transaction_id, amount=None):
@@ -200,11 +195,7 @@ class Transaction(Resource):
             result = braintree.Transaction.refund("my_transaction_id")
         """
 
-        response = Http().post("/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().transaction.refund(transaction_id, amount)
 
 
     @staticmethod
@@ -237,28 +228,7 @@ class Transaction(Resource):
 
     @staticmethod
     def search(*query):
-        if isinstance(query[0], list):
-            query = query[0]
-
-        response = Http().post("/transactions/advanced_search_ids", {"search": Transaction.__criteria(query)})
-        return ResourceCollection(query, response, Transaction.__fetch)
-
-    @staticmethod
-    def __fetch(query, ids):
-        criteria = Transaction.__criteria(query)
-        criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
-        response = Http().post("/transactions/advanced_search", {"search": criteria})
-        return [Transaction(item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
-
-    @staticmethod
-    def __criteria(query):
-        criteria = {}
-        for term in query:
-            if criteria.get(term.name):
-                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
-            else:
-                criteria[term.name] = term.to_param()
-        return criteria
+        return Configuration.gateway().transaction.search(*query)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):
@@ -268,12 +238,7 @@ class Transaction(Resource):
             result = braintree.Transaction.submit_for_settlement("my_transaction_id")
         """
 
-        response = Http().put("/transactions/" + transaction_id + "/submit_for_settlement",
-                {"transaction": {"amount": amount}})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount)
 
     @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
@@ -308,7 +273,7 @@ class Transaction(Resource):
         """
 
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
+        return Configuration.gateway().transaction.transparent_redirect_create_url()
 
     @staticmethod
     def void(transaction_id):
@@ -318,11 +283,7 @@ class Transaction(Resource):
             result = braintree.Transaction.void("my_transaction_id")
         """
 
-        response = Http().put("/transactions/" + transaction_id + "/void")
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().transaction.void(transaction_id)
 
     @staticmethod
     def create(params):
@@ -351,9 +312,7 @@ class Transaction(Resource):
                 "customer_id": "my_customer_id"
             })
         """
-
-        Resource.verify_keys(params, Transaction.create_signature())
-        return Transaction._post("/transactions", {"transaction": params})
+        return Configuration.gateway().transaction.create(params)
 
     @staticmethod
     def create_signature():
@@ -391,14 +350,6 @@ class Transaction(Resource):
             },
             {"custom_fields": ["__any_key__"]}
         ]
-
-    @staticmethod
-    def _post(url, params={}):
-        response = Http().post(url, params)
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
 
     def __init__(self, attributes):
         if "billing" in attributes:

@@ -10,6 +10,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.transaction import Transaction
 from braintree.resource import Resource
+from braintree.configuration import Configuration
 
 class Subscription(Resource):
     """
@@ -69,12 +70,8 @@ class Subscription(Resource):
                 "plan_id": "some_plan_id",
             })
         """
-        Resource.verify_keys(params, Subscription.create_signature())
-        response = Http().post("/subscriptions", {"subscription": params})
-        if "subscription" in response:
-            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+
+        return Configuration.gateway().subscription.create(params)
 
     @staticmethod
     def create_signature():
@@ -109,11 +106,7 @@ class Subscription(Resource):
             subscription = braintree.Subscription.find("my_subscription_id")
         """
 
-        try:
-            response = Http().get("/subscriptions/" + subscription_id)
-            return Subscription(response["subscription"])
-        except NotFoundError:
-            raise NotFoundError("subscription with id " + subscription_id + " not found")
+        return Configuration.gateway().subscription.find(subscription_id)
 
     @staticmethod
     def retryCharge(subscription_id, amount=None):
@@ -122,15 +115,7 @@ class Subscription(Resource):
 
     @staticmethod
     def retry_charge(subscription_id, amount=None):
-        response = Http().post("/transactions", {"transaction": {
-            "amount": amount,
-            "subscription_id": subscription_id,
-            "type": Transaction.Type.Sale
-            }})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().subscription.retry_charge(subscription_id, amount)
 
     @staticmethod
     def update(subscription_id, params={}):
@@ -143,12 +128,7 @@ class Subscription(Resource):
             })
         """
 
-        Resource.verify_keys(params, Subscription.update_signature())
-        response = Http().put("/subscriptions/" + subscription_id, {"subscription": params})
-        if "subscription" in response:
-            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().subscription.update(subscription_id, params)
 
     @staticmethod
     def cancel(subscription_id):
@@ -157,11 +137,8 @@ class Subscription(Resource):
 
             result = braintree.Subscription.cancel("my_subscription_id")
         """
-        response = Http().put("/subscriptions/" + subscription_id + "/cancel")
-        if "subscription" in response:
-            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+
+        return Configuration.gateway().subscription.cancel(subscription_id)
 
     @staticmethod
     def search(*query):
@@ -184,28 +161,7 @@ class Subscription(Resource):
             ])
         """
 
-        if isinstance(query[0], list):
-            query = query[0]
-
-        response = Http().post("/subscriptions/advanced_search_ids", {"search": Subscription.__criteria(query)})
-        return ResourceCollection(query, response, Subscription.__fetch)
-
-    @staticmethod
-    def __fetch(query, ids):
-        criteria = Subscription.__criteria(query)
-        criteria["ids"] = braintree.subscription_search.SubscriptionSearch.ids.in_list(ids).to_param()
-        response = Http().post("/subscriptions/advanced_search", {"search": criteria})
-        return [Subscription(item) for item in ResourceCollection._extract_as_array(response["subscriptions"], "subscription")]
-
-    @staticmethod
-    def __criteria(query):
-        criteria = {}
-        for term in query:
-            if criteria.get(term.name):
-                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
-            else:
-                criteria[term.name] = term.to_param()
-        return criteria
+        return Configuration.gateway().subscription.search(*query)
 
     @staticmethod
     def update_signature():
@@ -248,3 +204,4 @@ class Subscription(Resource):
             self.discounts = [Discount(discount) for discount in self.discounts]
         if "transactions" in attributes:
             self.transactions = [Transaction(transaction) for transaction in self.transactions]
+

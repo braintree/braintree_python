@@ -1,3 +1,5 @@
+import braintree
+
 class Configuration(object):
     """
     A class representing the configuration of your Braintree account.
@@ -5,9 +7,9 @@ class Configuration(object):
 
         braintree.Configuration.configure(
             braintree.Environment.Sandbox,
-            "the_merchant_id",
-            "the_public_key",
-            "the_private_key"
+            "your_merchant_id",
+            "your_public_key",
+            "your_private_key"
         )
 
     By default, every request to the Braintree servers verifies the SSL connection
@@ -41,13 +43,34 @@ class Configuration(object):
         Configuration.use_unsafe_ssl = False
 
     @staticmethod
+    def gateway():
+        return braintree.braintree_gateway.BraintreeGateway(Configuration.instantiate())
+
+    @staticmethod
+    def instantiate():
+        return Configuration(
+            Configuration.environment,
+            Configuration.merchant_id,
+            Configuration.public_key,
+            Configuration.private_key
+        )
+
+    @staticmethod
     def api_version():
         return "2"
 
-    @staticmethod
-    def base_merchant_path():
-        return "/merchants/" + Configuration.merchant_id
+    def __init__(self, environment, merchant_id, public_key, private_key):
+        self.environment = environment
+        self.merchant_id = merchant_id
+        self.public_key = public_key
+        self.private_key = private_key
 
-    @staticmethod
-    def base_merchant_url():
-        return Configuration.environment.protocol + Configuration.environment.server_and_port + Configuration.base_merchant_path()
+    def base_merchant_path(self):
+        return "/merchants/" + self.merchant_id
+
+    def base_merchant_url(self):
+        return self.environment.protocol + self.environment.server_and_port + self.base_merchant_path()
+
+    def http(self):
+        return braintree.util.http.Http(self)
+

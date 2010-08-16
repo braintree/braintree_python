@@ -33,10 +33,9 @@ class Http(object):
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 
-    def __init__(self, environment=None):
-        if environment == None:
-            environment = Configuration.environment
-        self.environment = environment
+    def __init__(self, config):
+        self.config = config
+        self.environment = self.config.environment
 
     def post(self, path, params={}):
         return self.__http_do("POST", path, params)
@@ -59,7 +58,7 @@ class Http(object):
 
         conn.request(
             http_verb,
-            Configuration.base_merchant_path() + path,
+            self.config.base_merchant_path() + path,
             params and XmlUtil.xml_from_dict(params),
             self.__headers()
         )

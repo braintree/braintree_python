@@ -1,9 +1,7 @@
-import re
-from braintree.util.http import Http
-from braintree.exceptions.not_found_error import NotFoundError
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
+from braintree.configuration import Configuration
 
 class Address(Resource):
     """
@@ -42,17 +40,7 @@ class Address(Resource):
             })
         """
 
-        Resource.verify_keys(params, Address.create_signature())
-        if not "customer_id" in params:
-            raise KeyError("customer_id must be provided")
-        if not re.search("\A[0-9A-Za-z_-]+\Z", params["customer_id"]):
-            raise KeyError("customer_id contains invalid characters")
-
-        response = Http().post("/customers/" + params.pop("customer_id") + "/addresses", {"address": params})
-        if "address" in response:
-            return SuccessfulResult({"address": Address(response["address"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().address.create(params)
 
     @staticmethod
     def delete(customer_id, address_id):
@@ -61,8 +49,8 @@ class Address(Resource):
 
             result = braintree.Address.delete("my_customer_id", "my_address_id")
         """
-        Http().delete("/customers/" + customer_id + "/addresses/" + address_id)
-        return SuccessfulResult()
+
+        return Configuration.gateway().address.delete(customer_id, address_id)
 
     @staticmethod
     def find(customer_id, address_id):
@@ -73,11 +61,7 @@ class Address(Resource):
 
             address = braintree.Address.find("my_customer_id", "my_address_id")
         """
-        try:
-            response = Http().get("/customers/" + customer_id + "/addresses/" + address_id)
-            return Address(response["address"])
-        except NotFoundError:
-            raise NotFoundError("address for customer " + customer_id + " with id " + address_id + " not found")
+        return Configuration.gateway().address.find(customer_id, address_id)
 
     @staticmethod
     def update(customer_id, address_id, params={}):
@@ -88,15 +72,8 @@ class Address(Resource):
                 "first_name": "John"
             })
         """
-        Resource.verify_keys(params, Address.update_signature())
-        response = Http().put(
-            "/customers/" + customer_id + "/addresses/" + address_id,
-            {"address": params}
-        )
-        if "address" in response:
-            return SuccessfulResult({"address": Address(response["address"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+
+        return Configuration.gateway().address.update(customer_id, address_id, params)
 
     @staticmethod
     def create_signature():

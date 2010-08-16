@@ -63,7 +63,11 @@ class TestHelper(object):
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
-        Http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription.id, number_of_days_past_due))
+        Configuration.instantiate().http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription.id, number_of_days_past_due))
+
+    @staticmethod
+    def settle_transaction(transaction_id):
+        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settle")
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):

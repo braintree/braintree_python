@@ -59,7 +59,7 @@ class TestTransactionSearch(unittest.TestCase):
             }
         }).transaction
 
-        Http().put("/transactions/" + transaction.id + "/settle")
+        TestHelper.settle_transaction(transaction.id)
         transaction = Transaction.find(transaction.id)
 
         collection = Transaction.search([
@@ -613,7 +613,7 @@ class TestTransactionSearch(unittest.TestCase):
                 'submit_for_settlement': True
             }
         }).transaction
-        Http().put("/transactions/%s/settle" % sale.id)
+        TestHelper.settle_transaction(sale.id)
 
         refund = Transaction.refund(sale.id).transaction
 
@@ -979,7 +979,7 @@ class TestTransactionSearch(unittest.TestCase):
              }
         }).transaction
 
-        Http().put("/transactions/" + transaction.id + "/settle")
+        TestHelper.settle_transaction(transaction.id)
         transaction = Transaction.find(transaction.id)
 
         past = datetime.today() - timedelta(days=1)

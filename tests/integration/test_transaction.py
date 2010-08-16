@@ -1001,7 +1001,7 @@ class TestTransaction(unittest.TestCase):
             }
         }).transaction
 
-        Http().put("/transactions/" + transaction.id + "/settle")
+        TestHelper.settle_transaction(transaction.id)
         return transaction
 
     def test_snapshot_add_ons_and_discounts_from_subscription(self):

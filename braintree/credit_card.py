@@ -1,14 +1,8 @@
 import braintree
 import warnings
-from braintree.util.http import Http
-from braintree.successful_result import SuccessfulResult
-from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.address import Address
-from braintree.exceptions.not_found_error import NotFoundError
 from braintree.configuration import Configuration
-from braintree.ids_search import IdsSearch
-from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 
 class CreditCard(Resource):
@@ -100,8 +94,7 @@ class CreditCard(Resource):
         """
 
         warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
-        return CreditCard._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
+        return Configuration.gateway().credit_card.confirm_transparent_redirect(query_string)
 
     @staticmethod
     def create(params={}):
@@ -114,8 +107,7 @@ class CreditCard(Resource):
             })
         """
 
-        Resource.verify_keys(params, CreditCard.create_signature())
-        return CreditCard._post("/payment_methods", {"credit_card": params})
+        return Configuration.gateway().credit_card.create(params)
 
     @staticmethod
     def update(credit_card_token, params={}):
@@ -127,12 +119,7 @@ class CreditCard(Resource):
             })
         """
 
-        Resource.verify_keys(params, CreditCard.update_signature())
-        response = Http().put("/payment_methods/" + credit_card_token, {"credit_card": params})
-        if "credit_card" in response:
-            return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().credit_card.update(credit_card_token, params)
 
     @staticmethod
     def delete(credit_card_token):
@@ -142,37 +129,17 @@ class CreditCard(Resource):
             result = braintree.CreditCard.delete("my_credit_card_id")
         """
 
-        Http().delete("/payment_methods/" + credit_card_token)
-        return SuccessfulResult()
+        return Configuration.gateway().credit_card.delete(credit_card_token)
 
     @staticmethod
     def expired():
         """ Return a collection of expired credit cards. """
-        response = Http().post("/payment_methods/all/expired_ids")
-        return ResourceCollection(None, response, CreditCard.__fetch_expired)
+        return Configuration.gateway().credit_card.expired()
 
     @staticmethod
     def expiring_between(start_date, end_date):
         """ Return a collection of credit cards expiring between the given dates. """
-        formatted_start_date = start_date.strftime("%m%Y")
-        formatted_end_date = end_date.strftime("%m%Y")
-        query = "start=%s&end=%s" % (formatted_start_date, formatted_end_date)
-        response = Http().post("/payment_methods/all/expiring_ids?" + query)
-        return ResourceCollection(query, response, CreditCard.__fetch_existing_between)
-
-    @staticmethod
-    def __fetch_expired(query, ids):
-        criteria = {}
-        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
-        response = Http().post("/payment_methods/all/expired", {"search": criteria})
-        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
-
-    @staticmethod
-    def __fetch_existing_between(query, ids):
-        criteria = {}
-        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
-        response = Http().post("/payment_methods/all/expiring?" + query, {"search": criteria})
-        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+        return Configuration.gateway().credit_card.expiring_between(start_date, end_date)
 
     @staticmethod
     def find(credit_card_token):
@@ -181,14 +148,9 @@ class CreditCard(Resource):
         a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided
         credit_card_id is not found. ::
 
-            credit_card = braintree.CreditCard.find("my_credit_card_id")
+            credit_card = braintree.CreditCard.find("my_credit_card_token")
         """
-
-        try:
-            response = Http().get("/payment_methods/" + credit_card_token)
-            return CreditCard(response["credit_card"])
-        except NotFoundError:
-            raise NotFoundError("payment method with token " + credit_card_token + " not found")
+        return Configuration.gateway().credit_card.find(credit_card_token)
 
     @staticmethod
     def create_signature():
@@ -230,7 +192,7 @@ class CreditCard(Resource):
         Returns the url to use for creating CreditCards through transparent redirect.
         """
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"
+        return Configuration.gateway().credit_card.transparent_redirect_create_url()
 
     @staticmethod
     def tr_data_for_create(tr_data, redirect_url):
@@ -257,15 +219,7 @@ class CreditCard(Resource):
         Returns the url to be used for updating CreditCards through transparent redirect.
         """
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.base_merchant_url() + "/payment_methods/all/update_via_transparent_redirect_request"
-
-    @staticmethod
-    def _post(url, params={}):
-        response = Http().post(url, params)
-        if "credit_card" in response:
-            return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().credit_card.transparent_redirect_update_url()
 
     def __init__(self, attributes):
         Resource.__init__(self, attributes)

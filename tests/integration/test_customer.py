@@ -6,6 +6,7 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 100)
         customer_ids = [c.id for c in collection.items]
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(customer_ids)))
+        self.assertEquals(Customer, type(collection.first))
 
     def test_create(self):
         result = Customer.create({
