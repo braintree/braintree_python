@@ -18,7 +18,7 @@ class CustomerGateway(object):
         return ResourceCollection(None, response, self.__fetch)
 
     def confirm_transparent_redirect(self, query_string):
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
         return self._post("/customers/all/confirm_transparent_redirect_request", {"id": id})
 
     def create(self, params={}):
@@ -35,6 +35,16 @@ class CustomerGateway(object):
             return Customer(self.gateway, response["customer"])
         except NotFoundError:
             raise NotFoundError("customer with id " + customer_id + " not found")
+
+    def tr_data_for_create(self, tr_data, redirect_url):
+        Resource.verify_keys(tr_data, [{"customer": Customer.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateCustomer
+        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
+
+    def tr_data_for_update(self, tr_data, redirect_url):
+        Resource.verify_keys(tr_data, ["customer_id", {"customer": Customer.update_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.UpdateCustomer
+        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
 
     def transparent_redirect_create_url(self):
         return self.config.base_merchant_url() + "/customers/all/create_via_transparent_redirect_request"

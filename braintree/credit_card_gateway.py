@@ -14,7 +14,7 @@ class CreditCardGateway(object):
         self.config = gateway.config
 
     def confirm_transparent_redirect(self, query_string):
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
         return self._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
 
     def create(self, params={}):
@@ -42,6 +42,16 @@ class CreditCardGateway(object):
             return CreditCard(self.gateway, response["credit_card"])
         except NotFoundError:
             raise NotFoundError("payment method with token " + credit_card_token + " not found")
+
+    def tr_data_for_create(self, tr_data, redirect_url):
+        Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreatePaymentMethod
+        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
+
+    def tr_data_for_update(self, tr_data, redirect_url):
+        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.update_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.UpdatePaymentMethod
+        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
 
     def transparent_redirect_create_url(self):
         return self.config.base_merchant_url() + "/payment_methods/all/create_via_transparent_redirect_request"

@@ -13,7 +13,7 @@ class TransactionGateway(object):
         self.config = gateway.config
 
     def confirm_transparent_redirect(self, query_string):
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
+        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
         return self._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
     def create(self, params):
@@ -54,6 +54,22 @@ class TransactionGateway(object):
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
+
+    def tr_data_for_credit(self, tr_data, redirect_url):
+        if "transaction" not in tr_data:
+            tr_data["transaction"] = {}
+        tr_data["transaction"]["type"] = Transaction.Type.Credit
+        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
+        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
+
+    def tr_data_for_sale(self, tr_data, redirect_url):
+        if "transaction" not in tr_data:
+            tr_data["transaction"] = {}
+        tr_data["transaction"]["type"] = Transaction.Type.Sale
+        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
+        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
+        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
 
     def transparent_redirect_create_url(self):
         return self.config.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"

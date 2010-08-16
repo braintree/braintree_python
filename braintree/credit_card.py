@@ -200,18 +200,15 @@ class CreditCard(Resource):
         Builds tr_data for CreditCard creation.
         """
 
-        Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreatePaymentMethod
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().credit_card.tr_data_for_create(tr_data, redirect_url)
 
     @staticmethod
     def tr_data_for_update(tr_data, redirect_url):
         """
         Builds tr_data for CreditCard updating.
         """
-        Resource.verify_keys(tr_data, ["payment_method_token", {"credit_card": CreditCard.update_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.UpdatePaymentMethod
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+
+        return Configuration.gateway().credit_card.tr_data_for_update(tr_data, redirect_url)
 
     @staticmethod
     def transparent_redirect_update_url():

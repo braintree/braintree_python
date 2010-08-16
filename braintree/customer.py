@@ -114,17 +114,13 @@ class Customer(Resource):
     def tr_data_for_create(tr_data, redirect_url):
         """ Builds tr_data for creating a Customer. """
 
-        Resource.verify_keys(tr_data, [{"customer": Customer.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateCustomer
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().customer.tr_data_for_create(tr_data, redirect_url)
 
     @staticmethod
     def tr_data_for_update(tr_data, redirect_url):
         """ Builds tr_data for updating a Customer. """
 
-        Resource.verify_keys(tr_data, ["customer_id", {"customer": Customer.update_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.UpdateCustomer
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().customer.tr_data_for_update(tr_data, redirect_url)
 
     @staticmethod
     def transparent_redirect_create_url():

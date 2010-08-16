@@ -245,26 +245,14 @@ class Transaction(Resource):
         """
         Builds tr_data for a Transaction of type Credit
         """
-
-        if "transaction" not in tr_data:
-            tr_data["transaction"] = {}
-        tr_data["transaction"]["type"] = Transaction.Type.Credit
-        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().transaction.tr_data_for_credit(tr_data, redirect_url)
 
     @staticmethod
     def tr_data_for_sale(tr_data, redirect_url):
         """
         Builds tr_data for a Transaction of type Sale
         """
-
-        if "transaction" not in tr_data:
-            tr_data["transaction"] = {}
-        tr_data["transaction"]["type"] = Transaction.Type.Sale
-        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().transaction.tr_data_for_sale(tr_data, redirect_url)
 
     @staticmethod
     def transparent_redirect_create_url():
