@@ -54,3 +54,7 @@ class Resource(AttributeGetter):
                 new_keys.append(key)
         return new_keys
 
+    def __init__(self, gateway, attributes):
+        AttributeGetter.__init__(self, attributes)
+        self.gateway = gateway
+

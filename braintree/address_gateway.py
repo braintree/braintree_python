@@ -7,8 +7,9 @@ from braintree.resource import Resource
 from braintree.successful_result import SuccessfulResult
 
 class AddressGateway(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.config = gateway.config
 
     def create(self, params={}):
         Resource.verify_keys(params, Address.create_signature())
@@ -19,9 +20,9 @@ class AddressGateway(object):
 
         response = self.config.http().post("/customers/" + params.pop("customer_id") + "/addresses", {"address": params})
         if "address" in response:
-            return SuccessfulResult({"address": Address(response["address"])})
+            return SuccessfulResult({"address": Address(self.gateway, response["address"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def delete(self, customer_id, address_id):
         self.config.http().delete("/customers/" + customer_id + "/addresses/" + address_id)
@@ -30,7 +31,7 @@ class AddressGateway(object):
     def find(self, customer_id, address_id):
         try:
             response = self.config.http().get("/customers/" + customer_id + "/addresses/" + address_id)
-            return Address(response["address"])
+            return Address(self.gateway, response["address"])
         except NotFoundError:
             raise NotFoundError("address for customer " + customer_id + " with id " + address_id + " not found")
 
@@ -41,7 +42,7 @@ class AddressGateway(object):
             {"address": params}
         )
         if "address" in response:
-            return SuccessfulResult({"address": Address(response["address"])})
+            return SuccessfulResult({"address": Address(self.gateway, response["address"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 

@@ -19,7 +19,7 @@ class CreditCardVerification(AttributeGetter):
         Unrecognized           = "unrecognized"
         Verified               = "verified"
 
-    def __init__(self, attributes):
+    def __init__(self, gateway, attributes):
         AttributeGetter.__init__(self, attributes)
         if "processor_response_code" not in attributes:
             self.processor_response_code = None

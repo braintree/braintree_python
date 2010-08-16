@@ -8,10 +8,10 @@ from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 class BraintreeGateway(object):
     def __init__(self, config):
         self.config = config
-        self.address = AddressGateway(config)
-        self.credit_card = CreditCardGateway(config)
-        self.customer = CustomerGateway(config)
-        self.subscription = SubscriptionGateway(config)
-        self.transaction = TransactionGateway(config)
-        self.transparent_redirect = TransparentRedirectGateway(config)
+        self.address = AddressGateway(self)
+        self.credit_card = CreditCardGateway(self)
+        self.customer = CustomerGateway(self)
+        self.subscription = SubscriptionGateway(self)
+        self.transaction = TransactionGateway(self)
+        self.transparent_redirect = TransparentRedirectGateway(self)
 

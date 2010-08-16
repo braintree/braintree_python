@@ -9,8 +9,9 @@ from braintree.successful_result import SuccessfulResult
 from braintree.transparent_redirect import TransparentRedirect
 
 class CustomerGateway(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.config = gateway.config
 
     def all(self):
         response = self.config.http().post("/customers/advanced_search_ids")
@@ -31,7 +32,7 @@ class CustomerGateway(object):
     def find(self, customer_id):
         try:
             response = self.config.http().get("/customers/" + customer_id)
-            return Customer(response["customer"])
+            return Customer(self.gateway, response["customer"])
         except NotFoundError:
             raise NotFoundError("customer with id " + customer_id + " not found")
 
@@ -45,22 +46,22 @@ class CustomerGateway(object):
         Resource.verify_keys(params, Customer.update_signature())
         response = self.config.http().put("/customers/" + customer_id, {"customer": params})
         if "customer" in response:
-            return SuccessfulResult({"customer": Customer(response["customer"])})
+            return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def __fetch(self, query, ids):
         criteria = {}
         criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
         response = self.config.http().post("/customers/advanced_search", {"search": criteria})
-        return [Customer(item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
+        return [Customer(self.gateway, item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
 
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)
         if "customer" in response:
-            return SuccessfulResult({"customer": Customer(response["customer"])})
+            return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
         else:
             pass
 

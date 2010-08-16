@@ -8,8 +8,9 @@ from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 
 class TransactionGateway(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.config = gateway.config
 
     def confirm_transparent_redirect(self, query_string):
         id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
@@ -22,7 +23,7 @@ class TransactionGateway(object):
     def find(self, transaction_id):
         try:
             response = self.config.http().get("/transactions/" + transaction_id)
-            return Transaction(response["transaction"])
+            return Transaction(self.gateway, response["transaction"])
         except NotFoundError:
             raise NotFoundError("transaction with id " + transaction_id + " not found")
 
@@ -35,9 +36,9 @@ class TransactionGateway(object):
 
         response = self.config.http().post("/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
         if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def search(self, *query):
         if isinstance(query[0], list):
@@ -50,9 +51,9 @@ class TransactionGateway(object):
         response = self.config.http().put("/transactions/" + transaction_id + "/submit_for_settlement",
                 {"transaction": {"amount": amount}})
         if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def transparent_redirect_create_url(self):
         return self.config.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
@@ -60,15 +61,15 @@ class TransactionGateway(object):
     def void(self, transaction_id):
         response = self.config.http().put("/transactions/" + transaction_id + "/void")
         if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def __fetch(self, query, ids):
         criteria = self.__criteria(query)
         criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
         response = self.config.http().post("/transactions/advanced_search", {"search": criteria})
-        return [Transaction(item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
+        return [Transaction(self.gateway, item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
 
     def __criteria(self, query):
         criteria = {}
@@ -82,7 +83,7 @@ class TransactionGateway(object):
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)
         if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 

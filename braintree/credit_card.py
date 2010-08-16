@@ -221,16 +221,16 @@ class CreditCard(Resource):
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
         return Configuration.gateway().credit_card.transparent_redirect_update_url()
 
-    def __init__(self, attributes):
-        Resource.__init__(self, attributes)
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
         self.is_expired = self.expired
         if "billing_address" in attributes:
-            self.billing_address = Address(self.billing_address)
+            self.billing_address = Address(gateway, self.billing_address)
         else:
             self.billing_address = None
 
         if "subscriptions" in attributes:
-            self.subscriptions = [braintree.subscription.Subscription(subscription) for subscription in self.subscriptions]
+            self.subscriptions = [braintree.subscription.Subscription(gateway, subscription) for subscription in self.subscriptions]
 
     @property
     def expiration_date(self):

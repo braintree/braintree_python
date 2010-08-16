@@ -195,13 +195,13 @@ class Subscription(Resource):
             }
         ]
 
-    def __init__(self, attributes):
-        Resource.__init__(self, attributes)
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
         self.price = Decimal(self.price)
         if "add_ons" in attributes:
-            self.add_ons = [AddOn(add_on) for add_on in self.add_ons]
+            self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
         if "discounts" in attributes:
-            self.discounts = [Discount(discount) for discount in self.discounts]
+            self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "transactions" in attributes:
-            self.transactions = [Transaction(transaction) for transaction in self.transactions]
+            self.transactions = [Transaction(gateway, transaction) for transaction in self.transactions]
 

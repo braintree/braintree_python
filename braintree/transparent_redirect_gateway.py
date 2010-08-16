@@ -4,8 +4,9 @@ from braintree.successful_result import SuccessfulResult
 from braintree.transparent_redirect import TransparentRedirect
 
 class TransparentRedirectGateway(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.config = gateway.config
 
     def confirm(self, query_string):
         """
@@ -23,8 +24,7 @@ class TransparentRedirectGateway(object):
             TransparentRedirect.Kind.CreateTransaction: "transaction"
         }[parsed_query_string["kind"][0]]
 
-        gateway = braintree.braintree_gateway.BraintreeGateway(self.config)
-        return getattr(gateway, confirmation_gateway)._post("/transparent_redirect_requests/" + parsed_query_string["id"][0] + "/confirm")
+        return getattr(self.gateway, confirmation_gateway)._post("/transparent_redirect_requests/" + parsed_query_string["id"][0] + "/confirm")
 
     def url(self):
         """

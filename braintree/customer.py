@@ -168,9 +168,9 @@ class Customer(Resource):
             {"custom_fields": ["__any_key__"]}
         ]
 
-    def __init__(self, attributes):
-        Resource.__init__(self, attributes)
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
         if "credit_cards" in attributes:
-            self.credit_cards = [CreditCard(credit_card) for credit_card in self.credit_cards]
+            self.credit_cards = [CreditCard(gateway, credit_card) for credit_card in self.credit_cards]
         if "addresses" in attributes:
-            self.addresses = [Address(address) for address in self.addresses]
+            self.addresses = [Address(gateway, address) for address in self.addresses]

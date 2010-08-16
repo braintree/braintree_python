@@ -9,8 +9,9 @@ from braintree.successful_result import SuccessfulResult
 from braintree.transparent_redirect import TransparentRedirect
 
 class CreditCardGateway(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.config = gateway.config
 
     def confirm_transparent_redirect(self, query_string):
         id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
@@ -38,7 +39,7 @@ class CreditCardGateway(object):
     def find(self, credit_card_token):
         try:
             response = self.config.http().get("/payment_methods/" + credit_card_token)
-            return CreditCard(response["credit_card"])
+            return CreditCard(self.gateway, response["credit_card"])
         except NotFoundError:
             raise NotFoundError("payment method with token " + credit_card_token + " not found")
 
@@ -52,26 +53,26 @@ class CreditCardGateway(object):
         Resource.verify_keys(params, CreditCard.update_signature())
         response = self.config.http().put("/payment_methods/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
-            return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
+            return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def __fetch_expired(self, query, ids):
         criteria = {}
         criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
         response = self.config.http().post("/payment_methods/all/expired", {"search": criteria})
-        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+        return [CreditCard(self.gateway, item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
     def __fetch_existing_between(self, query, ids):
         criteria = {}
         criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
         response = self.config.http().post("/payment_methods/all/expiring?" + query, {"search": criteria})
-        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
+        return [CreditCard(self.gateway, item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)
         if "credit_card" in response:
-            return SuccessfulResult({"credit_card": CreditCard(response["credit_card"])})
+            return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 

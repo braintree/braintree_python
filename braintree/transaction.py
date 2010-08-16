@@ -351,25 +351,24 @@ class Transaction(Resource):
             {"custom_fields": ["__any_key__"]}
         ]
 
-    def __init__(self, attributes):
-        if "billing" in attributes:
-            attributes["billing_details"] = Address(attributes.pop("billing"))
-        if "credit_card" in attributes:
-            attributes["credit_card_details"] = CreditCard(attributes.pop("credit_card"))
-        if "customer" in attributes:
-            attributes["customer_details"] = Customer(attributes.pop("customer"))
-        if "shipping" in attributes:
-            attributes["shipping_details"] = Address(attributes.pop("shipping"))
-
-        Resource.__init__(self, attributes)
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
+        if "billing" in attributes:
+            self.billing_details = Address(gateway, attributes.pop("billing"))
+        if "credit_card" in attributes:
+            self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
+        if "customer" in attributes:
+            self.customer_details = Customer(gateway, attributes.pop("customer"))
+        if "shipping" in attributes:
+            self.shipping_details = Address(gateway, attributes.pop("shipping"))
         if "add_ons" in attributes:
-            self.add_ons = [AddOn(add_on) for add_on in self.add_ons]
+            self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
         if "discounts" in attributes:
-            self.discounts = [Discount(discount) for discount in self.discounts]
+            self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
-            self.status_history = [StatusEvent(status_event) for status_event in self.status_history]
+            self.status_history = [StatusEvent(gateway, status_event) for status_event in self.status_history]
 
     @property
     def vault_billing_address(self):
@@ -377,7 +376,7 @@ class Transaction(Resource):
         The vault billing address associated with this transaction
         """
 
-        return Address.find(self.customer_details.id, self.billing_details.id)
+        return self.gateway.address.find(self.customer_details.id, self.billing_details.id)
 
     @property
     def vault_credit_card(self):
@@ -387,7 +386,7 @@ class Transaction(Resource):
 
         if self.credit_card_details.token is None:
             return None
-        return CreditCard.find(self.credit_card_details.token)
+        return self.gateway.credit_card.find(self.credit_card_details.token)
 
     @property
     def vault_customer(self):
@@ -395,4 +394,4 @@ class Transaction(Resource):
         The vault customer associated with this transaction
         """
 
-        return Customer.find(self.customer_details.id)
+        return self.gateway.customer.find(self.customer_details.id)

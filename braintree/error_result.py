@@ -16,18 +16,18 @@ class ErrorResult(object):
         assert(error_result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code == ErrorCodes.CreditCard.NumberHasInvalidLength)
     """
 
-    def __init__(self, attributes):
+    def __init__(self, gateway, attributes):
         self.params = attributes["params"]
         self.errors = Errors(attributes["errors"])
         self.message = attributes["message"]
 
         if "verification" in attributes:
-            self.credit_card_verification = CreditCardVerification(attributes["verification"])
+            self.credit_card_verification = CreditCardVerification(gateway, attributes["verification"])
         else:
             self.credit_card_verification = None
 
         if "transaction" in attributes:
-            self.transaction = braintree.transaction.Transaction(attributes["transaction"])
+            self.transaction = braintree.transaction.Transaction(gateway, attributes["transaction"])
         else:
             self.transaction = None
 

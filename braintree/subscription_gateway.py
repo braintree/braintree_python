@@ -9,28 +9,29 @@ from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
 
 class SubscriptionGateway(object):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.config = gateway.config
 
     def cancel(self, subscription_id):
         response = self.config.http().put("/subscriptions/" + subscription_id + "/cancel")
         if "subscription" in response:
-            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
+            return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def create(self, params={}):
         Resource.verify_keys(params, Subscription.create_signature())
         response = self.config.http().post("/subscriptions", {"subscription": params})
         if "subscription" in response:
-            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
+            return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def find(self, subscription_id):
         try:
             response = self.config.http().get("/subscriptions/" + subscription_id)
-            return Subscription(response["subscription"])
+            return Subscription(self.gateway, response["subscription"])
         except NotFoundError:
             raise NotFoundError("subscription with id " + subscription_id + " not found")
 
@@ -41,9 +42,9 @@ class SubscriptionGateway(object):
             "type": Transaction.Type.Sale
             }})
         if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def search(self, *query):
         if isinstance(query[0], list):
@@ -56,9 +57,9 @@ class SubscriptionGateway(object):
         Resource.verify_keys(params, Subscription.update_signature())
         response = self.config.http().put("/subscriptions/" + subscription_id, {"subscription": params})
         if "subscription" in response:
-            return SuccessfulResult({"subscription": Subscription(response["subscription"])})
+            return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def __criteria(self, query):
         criteria = {}
@@ -73,5 +74,5 @@ class SubscriptionGateway(object):
         criteria = self.__criteria(query)
         criteria["ids"] = braintree.subscription_search.SubscriptionSearch.ids.in_list(ids).to_param()
         response = self.config.http().post("/subscriptions/advanced_search", {"search": criteria})
-        return [Subscription(item) for item in ResourceCollection._extract_as_array(response["subscriptions"], "subscription")]
+        return [Subscription(self.gateway, item) for item in ResourceCollection._extract_as_array(response["subscriptions"], "subscription")]
 
