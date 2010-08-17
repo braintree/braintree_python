@@ -17,7 +17,8 @@ class ErrorCodes(object):
         CountryCodeAlpha3IsNotAccepted = "91816"
         CountryCodeNumericIsNotAccepted = "91817"
         CountryNameIsNotAccepted = "91803"
-        ExtedAddressIsTooLong = "81804"
+        ExtedAddressIsTooLong = "81804" # Deprecated
+        ExtendedAddressIsTooLong = "81804"
         FirstNameIsTooLong = "81805"
         InconsistentCountry = "91815"
         LastNameIsTooLong = "81806"
@@ -69,7 +70,8 @@ class ErrorCodes(object):
         FaxIsTooLong = "81607"
         FirstNameIsTooLong = "81608"
         IdIsInUse = "91609"
-        IdIsInvaild = "91610"
+        IdIsInvaild = "91610" # Deprecated
+        IdIsInvalid = "91610"
         IdIsNotAllowed = "91611"
         IdIsRequired = "91613"
         IdIsTooLong = "91612"
@@ -147,8 +149,10 @@ class ErrorCodes(object):
         CustomerIdIsInvalid = "91510"
         CustomerDoesNotHaveCreditCard = "91511"
         HasAlreadyBeenRefunded = "91512"
-        MerchantAccountNameIsInvalid = "91513"
-        MerchantAccountIsSusped = "91514"
+        MerchantAccountNameIsInvalid = "91513" # Deprecated
+        MerchantAccountIdIsInvalid = "91513"
+        MerchantAccountIsSusped = "91514" # Deprecated
+        MerchantAccountIsSuspended = "91514"
         OrderIdIsTooLong = "91501"
         PaymentMethodConflict = "91515"
         PaymentMethodDoesNotBelongToCustomer = "91516"
