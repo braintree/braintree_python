@@ -85,6 +85,7 @@ class ErrorCodes(object):
         CannotAddDuplicateAddonOrDiscount = "91911"
         CannotEditCanceledSubscription = "81901"
         CannotEditExpiredSubscription = "81910"
+        CannotEditPriceChangingFieldsOnPastDueSubscription = "91920"
         FirstBillingDateCannotBeInThePast = "91916"
         FirstBillingDateCannotBeUpdated = "91919"
         FirstBillingDateIsInvalid = "91915"
@@ -111,6 +112,7 @@ class ErrorCodes(object):
         class Modification(object):
             AmountCannotBeBlank = "92003"
             AmountIsInvalid = "92002"
+            CannotEditModificationsOnPastDueSubscription = "92022"
             CannotUpdateAndRemove = "92015"
             ExistingIdIsIncorrectKind = "92020"
             ExistingIdIsInvalid = "92011"
@@ -159,6 +161,7 @@ class ErrorCodes(object):
         SettlementAmountIsTooLarge = "91522"
         SubscriptionDoesNotBelongToCustomer = "91529"
         SubscriptionIdIsInvalid = "91528"
+        SubscriptionStatusMustBePastDue = "91531"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
 
