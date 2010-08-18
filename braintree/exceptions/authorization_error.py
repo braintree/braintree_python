@@ -1,5 +1,9 @@
 from braintree.exceptions.braintree_error import BraintreeError
 
 class AuthorizationError(BraintreeError):
-    """ Raised when the user does not have permission to complete the requested operation. """
+    """
+    Raised when the user does not have permission to complete the requested operation.
+
+    See http://www.braintreepaymentsolutions.com/docs/python/general/exceptions#authorization_error
+    """
     pass
