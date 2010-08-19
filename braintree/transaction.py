@@ -2,7 +2,8 @@ import braintree
 import urllib
 import warnings
 from decimal import Decimal
-from braintree.util.http import Http
+from braintree.add_on import AddOn
+from braintree.discount import Discount
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
 from braintree.error_result import ErrorResult
@@ -110,7 +111,6 @@ class Transaction(Resource):
         * braintree.Transaction.Status.Settled
         * braintree.Transaction.Status.SettlementFailed
         * braintree.Transaction.Status.SubmittedForSettlement
-        * braintree.Transaction.Status.Unrecognized
         * braintree.Transaction.Status.Void
         """
 
@@ -122,7 +122,6 @@ class Transaction(Resource):
         Settled                = "settled"
         SettlementFailed       = "settlement_failed"
         SubmittedForSettlement = "submitted_for_settlement"
-        Unrecognized           = "unrecognized"
         Voided                 = "voided"
 
     class Type(object):
@@ -146,8 +145,7 @@ class Transaction(Resource):
         """
 
         warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
-        return Transaction._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
+        return Configuration.gateway().transaction.confirm_transparent_redirect(query_string)
 
     @staticmethod
     def credit(params={}):
@@ -186,12 +184,8 @@ class Transaction(Resource):
 
             transaction = braintree.Transaction.find("my_transaction_id")
         """
+        return Configuration.gateway().transaction.find(transaction_id)
 
-        try:
-            response = Http().get("/transactions/" + transaction_id)
-            return Transaction(response["transaction"])
-        except NotFoundError:
-            raise NotFoundError("transaction with id " + transaction_id + " not found")
 
     @staticmethod
     def refund(transaction_id, amount=None):
@@ -201,11 +195,7 @@ class Transaction(Resource):
             result = braintree.Transaction.refund("my_transaction_id")
         """
 
-        response = Http().post("/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().transaction.refund(transaction_id, amount)
 
 
     @staticmethod
@@ -237,26 +227,8 @@ class Transaction(Resource):
         return Transaction.create(params)
 
     @staticmethod
-    def search(query):
-        response = Http().post("/transactions/advanced_search_ids", {"search": Transaction.__criteria(query)})
-        return ResourceCollection(query, response, Transaction.__fetch)
-
-    @staticmethod
-    def __fetch(query, ids):
-        criteria = Transaction.__criteria(query)
-        criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
-        response = Http().post("/transactions/advanced_search", {"search": criteria})
-        return [Transaction(item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
-
-    @staticmethod
-    def __criteria(query):
-        criteria = {}
-        for term in query:
-            if criteria.get(term.name):
-                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
-            else:
-                criteria[term.name] = term.to_param()
-        return criteria
+    def search(*query):
+        return Configuration.gateway().transaction.search(*query)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):
@@ -266,38 +238,21 @@ class Transaction(Resource):
             result = braintree.Transaction.submit_for_settlement("my_transaction_id")
         """
 
-        response = Http().put("/transactions/" + transaction_id + "/submit_for_settlement",
-                {"transaction": {"amount": amount}})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount)
 
     @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
         """
         Builds tr_data for a Transaction of type Credit
         """
-
-        if "transaction" not in tr_data:
-            tr_data["transaction"] = {}
-        tr_data["transaction"]["type"] = Transaction.Type.Credit
-        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().transaction.tr_data_for_credit(tr_data, redirect_url)
 
     @staticmethod
     def tr_data_for_sale(tr_data, redirect_url):
         """
         Builds tr_data for a Transaction of type Sale
         """
-
-        if "transaction" not in tr_data:
-            tr_data["transaction"] = {}
-        tr_data["transaction"]["type"] = Transaction.Type.Sale
-        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().transaction.tr_data_for_sale(tr_data, redirect_url)
 
     @staticmethod
     def transparent_redirect_create_url():
@@ -306,7 +261,7 @@ class Transaction(Resource):
         """
 
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
+        return Configuration.gateway().transaction.transparent_redirect_create_url()
 
     @staticmethod
     def void(transaction_id):
@@ -316,11 +271,7 @@ class Transaction(Resource):
             result = braintree.Transaction.void("my_transaction_id")
         """
 
-        response = Http().put("/transactions/" + transaction_id + "/void")
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().transaction.void(transaction_id)
 
     @staticmethod
     def create(params):
@@ -349,9 +300,7 @@ class Transaction(Resource):
                 "customer_id": "my_customer_id"
             })
         """
-
-        Resource.verify_keys(params, Transaction.create_signature())
-        return Transaction._post("/transactions", {"transaction": params})
+        return Configuration.gateway().transaction.create(params)
 
     @staticmethod
     def create_signature():
@@ -390,29 +339,24 @@ class Transaction(Resource):
             {"custom_fields": ["__any_key__"]}
         ]
 
-    @staticmethod
-    def _post(url, params={}):
-        response = Http().post(url, params)
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
-
-    def __init__(self, attributes):
-        if "billing" in attributes:
-            attributes["billing_details"] = Address(attributes.pop("billing"))
-        if "credit_card" in attributes:
-            attributes["credit_card_details"] = CreditCard(attributes.pop("credit_card"))
-        if "customer" in attributes:
-            attributes["customer_details"] = Customer(attributes.pop("customer"))
-        if "shipping" in attributes:
-            attributes["shipping_details"] = Address(attributes.pop("shipping"))
-
-        Resource.__init__(self, attributes)
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
+        if "billing" in attributes:
+            self.billing_details = Address(gateway, attributes.pop("billing"))
+        if "credit_card" in attributes:
+            self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
+        if "customer" in attributes:
+            self.customer_details = Customer(gateway, attributes.pop("customer"))
+        if "shipping" in attributes:
+            self.shipping_details = Address(gateway, attributes.pop("shipping"))
+        if "add_ons" in attributes:
+            self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
+        if "discounts" in attributes:
+            self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
-            self.status_history = [StatusEvent(status_event) for status_event in self.status_history]
+            self.status_history = [StatusEvent(gateway, status_event) for status_event in self.status_history]
 
     @property
     def vault_billing_address(self):
@@ -420,7 +364,7 @@ class Transaction(Resource):
         The vault billing address associated with this transaction
         """
 
-        return Address.find(self.customer_details.id, self.billing_details.id)
+        return self.gateway.address.find(self.customer_details.id, self.billing_details.id)
 
     @property
     def vault_credit_card(self):
@@ -430,7 +374,7 @@ class Transaction(Resource):
 
         if self.credit_card_details.token is None:
             return None
-        return CreditCard.find(self.credit_card_details.token)
+        return self.gateway.credit_card.find(self.credit_card_details.token)
 
     @property
     def vault_customer(self):
@@ -438,4 +382,4 @@ class Transaction(Resource):
         The vault customer associated with this transaction
         """
 
-        return Customer.find(self.customer_details.id)
+        return self.gateway.customer.find(self.customer_details.id)

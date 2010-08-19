@@ -6,6 +6,7 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 100)
         customer_ids = [c.id for c in collection.items]
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(customer_ids)))
+        self.assertEquals(Customer, type(collection.first))
 
     def test_create(self):
         result = Customer.create({
@@ -89,7 +90,7 @@ class TestCustomer(unittest.TestCase):
             "first_name": "Mike",
             "last_name": "Jones",
             "credit_card": {
-                "number": "4222222222222",
+                "number": "4000111111111115",
                 "expiration_date": "05/2010",
                 "cvv": "100",
                 "options": {"verify_card": True}
@@ -97,7 +98,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("processor_declined", result.credit_card_verification.status)
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_create_customer_with_payment_method_and_billing_address(self):
         result = Customer.create({

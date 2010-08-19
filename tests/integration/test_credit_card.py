@@ -120,14 +120,14 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "05/2009",
             "options": {"verify_card": True}
         })
 
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
-        self.assertEquals("processor_declined", verification.status)
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
         self.assertEquals("2000", verification.processor_response_code)
         self.assertEquals("Do Not Honor", verification.processor_response_text)
         self.assertEquals("I", verification.cvv_response_code)
@@ -140,7 +140,7 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "05/2009",
             "options": {
                 "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
@@ -150,7 +150,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
-        self.assertEquals("processor_declined", verification.status)
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
         self.assertEquals(None, verification.gateway_rejection_reason)
         self.assertEquals(TestHelper.non_default_merchant_account_id, verification.merchant_account_id)
 
@@ -219,7 +219,7 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "05/2009",
             "options": {"verify_card": False}
         })
@@ -390,7 +390,7 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         result = CreditCard.update(credit_card.token, {
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "06/2010",
             "cvv": "123",
             "cardholder_name": "Jane Jones",
@@ -398,7 +398,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("processor_declined", result.credit_card_verification.status)
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_update_verifies_card_with_non_default_merchant_account(self):
         customer = Customer.create().customer
@@ -411,7 +411,7 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         result = CreditCard.update(credit_card.token, {
-            "number": "4222222222222",
+            "number": "4000111111111115",
             "expiration_date": "06/2010",
             "cvv": "123",
             "cardholder_name": "Jane Jones",
@@ -422,7 +422,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals("processor_declined", result.credit_card_verification.status)
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_update_billing_address(self):
         customer = Customer.create().customer

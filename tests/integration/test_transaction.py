@@ -1001,5 +1001,73 @@ class TestTransaction(unittest.TestCase):
             }
         }).transaction
 
-        Http().put("/transactions/" + transaction.id + "/settle")
+        TestHelper.settle_transaction(transaction.id)
         return transaction
+
+    def test_snapshot_add_ons_and_discounts_from_subscription(self):
+        credit_card = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            }
+        }).customer.credit_cards[0]
+
+        result = Subscription.create({
+            "payment_method_token": credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+            "add_ons": {
+                "add": [
+                    {
+                        "amount": Decimal("11.00"),
+                        "inherited_from_id": "increase_10",
+                        "quantity": 2,
+                        "number_of_billing_cycles": 5
+                    },
+                    {
+                        "amount": Decimal("21.00"),
+                        "inherited_from_id": "increase_20",
+                        "quantity": 3,
+                        "number_of_billing_cycles": 6
+                    }
+                ]
+            },
+            "discounts": {
+                "add": [
+                    {
+                        "amount": Decimal("7.50"),
+                        "inherited_from_id": "discount_7",
+                        "quantity": 2,
+                        "never_expires": True
+                    }
+                ]
+            }
+        })
+
+        transaction = result.subscription.transactions[0]
+
+        self.assertEquals(2, len(transaction.add_ons))
+        add_ons = sorted(transaction.add_ons, key=lambda add_on: add_on.id)
+
+        self.assertEquals("increase_10", add_ons[0].id)
+        self.assertEquals(Decimal("11.00"), add_ons[0].amount)
+        self.assertEquals(2, add_ons[0].quantity)
+        self.assertEquals(5, add_ons[0].number_of_billing_cycles)
+        self.assertFalse(add_ons[0].never_expires)
+
+        self.assertEquals("increase_20", add_ons[1].id)
+        self.assertEquals(Decimal("21.00"), add_ons[1].amount)
+        self.assertEquals(3, add_ons[1].quantity)
+        self.assertEquals(6, add_ons[1].number_of_billing_cycles)
+        self.assertFalse(add_ons[1].never_expires)
+
+        self.assertEquals(1, len(transaction.discounts))
+        discounts = transaction.discounts
+
+        self.assertEquals("discount_7", discounts[0].id)
+        self.assertEquals(Decimal("7.50"), discounts[0].amount)
+        self.assertEquals(2, discounts[0].quantity)
+        self.assertEquals(None, discounts[0].number_of_billing_cycles)
+        self.assertTrue(discounts[0].never_expires)

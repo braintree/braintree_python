@@ -1,6 +1,7 @@
 from braintree.credit_card import CreditCard
 from braintree.search import Search
 from braintree.transaction import Transaction
+from braintree.util import Constants
 
 class TransactionSearch:
     billing_first_name           = Search.TextNodeBuilder("billing_first_name")
@@ -27,6 +28,7 @@ class TransactionSearch:
     order_id                     = Search.TextNodeBuilder("order_id")
     payment_method_token         = Search.TextNodeBuilder("payment_method_token")
     processor_authorization_code = Search.TextNodeBuilder("processor_authorization_code")
+    settlement_batch_id          = Search.TextNodeBuilder("settlement_batch_id")
     shipping_company             = Search.TextNodeBuilder("shipping_company")
     shipping_country_name        = Search.TextNodeBuilder("shipping_country_name")
     shipping_extended_address    = Search.TextNodeBuilder("shipping_extended_address")
@@ -43,57 +45,44 @@ class TransactionSearch:
     ids                          = Search.MultipleValueNodeBuilder("ids")
     merchant_account_id          = Search.MultipleValueNodeBuilder("merchant_account_id")
 
-    created_using = Search.MultipleValueNodeBuilder("created_using", [
-        Transaction.CreatedUsing.FullInformation,
-        Transaction.CreatedUsing.Token
-    ])
+    created_using = Search.MultipleValueNodeBuilder(
+        "created_using",
+        Constants.get_all_constant_values_from_class(Transaction.CreatedUsing)
+    )
 
-    credit_card_card_type = Search.MultipleValueNodeBuilder("credit_card_card_type", [
-        CreditCard.CardType.AmEx,
-        CreditCard.CardType.CarteBlanche,
-        CreditCard.CardType.ChinaUnionPay,
-        CreditCard.CardType.DinersClubInternational,
-        CreditCard.CardType.Discover,
-        CreditCard.CardType.JCB,
-        CreditCard.CardType.Laser,
-        CreditCard.CardType.Maestro,
-        CreditCard.CardType.MasterCard,
-        CreditCard.CardType.Solo,
-        CreditCard.CardType.Switch,
-        CreditCard.CardType.Visa,
-        CreditCard.CardType.Unknown
-    ])
+    credit_card_card_type = Search.MultipleValueNodeBuilder(
+        "credit_card_card_type",
+        Constants.get_all_constant_values_from_class(CreditCard.CardType)
+    )
 
-    credit_card_customer_location = Search.MultipleValueNodeBuilder("credit_card_customer_location", [
-        CreditCard.CustomerLocation.International,
-        CreditCard.CustomerLocation.US
-    ])
+    credit_card_customer_location = Search.MultipleValueNodeBuilder(
+        "credit_card_customer_location",
+        Constants.get_all_constant_values_from_class(CreditCard.CustomerLocation)
+    )
 
-    source = Search.MultipleValueNodeBuilder("source", [
-        Transaction.Source.Api,
-        Transaction.Source.ControlPanel,
-        Transaction.Source.Recurring
-    ])
+    source = Search.MultipleValueNodeBuilder(
+        "source",
+        Constants.get_all_constant_values_from_class(Transaction.Source)
+    )
 
-    status = Search.MultipleValueNodeBuilder("status", [
-        Transaction.Status.Authorized,
-        Transaction.Status.Authorizing,
-        Transaction.Status.Failed,
-        Transaction.Status.GatewayRejected,
-        Transaction.Status.ProcessorDeclined,
-        Transaction.Status.Settled,
-        Transaction.Status.SettlementFailed,
-        Transaction.Status.SubmittedForSettlement,
-        Transaction.Status.Unrecognized,
-        Transaction.Status.Voided
-    ])
+    status = Search.MultipleValueNodeBuilder(
+        "status",
+        Constants.get_all_constant_values_from_class(Transaction.Status)
+    )
 
-    type = Search.MultipleValueNodeBuilder("type", [
-        Transaction.Type.Credit,
-        Transaction.Type.Sale
-    ])
+    type = Search.MultipleValueNodeBuilder(
+        "type",
+        Constants.get_all_constant_values_from_class(Transaction.Type)
+    )
 
     refund = Search.KeyValueNodeBuilder("refund")
 
     amount = Search.RangeNodeBuilder("amount")
+    authorized_at = Search.RangeNodeBuilder("authorized_at")
     created_at = Search.RangeNodeBuilder("created_at")
+    failed_at = Search.RangeNodeBuilder("failed_at")
+    gateway_rejected_at = Search.RangeNodeBuilder("gateway_rejected_at")
+    processor_declined_at = Search.RangeNodeBuilder("processor_declined_at")
+    settled_at = Search.RangeNodeBuilder("settled_at")
+    submitted_for_settlement_at = Search.RangeNodeBuilder("submitted_for_settlement_at")
+    voided_at = Search.RangeNodeBuilder("voided_at")

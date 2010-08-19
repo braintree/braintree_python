@@ -22,6 +22,9 @@ class ValidationErrorCollection(object):
             result.extend(nested_error.deep_errors)
         return result
 
+    def for_index(self, index):
+        return self.for_object("index_%s" % index)
+
     def for_object(self, nested_key):
         """
         Returns a :class:`ValidationErrorCollection <braintree.validation_error_collection.ValidationErrorCollection>` representing the errors at the nested level:::

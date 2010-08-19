@@ -61,15 +61,7 @@ class Customer(Resource):
     @staticmethod
     def all():
         """ Return a collection of all customers. """
-        response = Http().post("/customers/advanced_search_ids")
-        return ResourceCollection(None, response, Customer.__fetch)
-
-    @staticmethod
-    def __fetch(query, ids):
-        criteria = {}
-        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
-        response = Http().post("/customers/advanced_search", {"search": criteria})
-        return [CreditCard(item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
+        return Configuration.gateway().customer.all()
 
     @staticmethod
     def confirm_transparent_redirect(query_string):
@@ -81,8 +73,7 @@ class Customer(Resource):
         """
 
         warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        id = TransparentRedirect.parse_and_validate_query_string(query_string)["id"][0]
-        return Customer._post("/customers/all/confirm_transparent_redirect_request", {"id": id})
+        return Configuration.gateway().customer.confirm_transparent_redirect(query_string)
 
     @staticmethod
     def create(params={}):
@@ -95,8 +86,7 @@ class Customer(Resource):
             })
         """
 
-        Resource.verify_keys(params, Customer.create_signature())
-        return Customer._post("/customers", {"customer": params})
+        return Configuration.gateway().customer.create(params)
 
     @staticmethod
     def delete(customer_id):
@@ -106,8 +96,7 @@ class Customer(Resource):
             result = braintree.Customer.delete("my_customer_id")
         """
 
-        Http().delete("/customers/" + customer_id)
-        return SuccessfulResult()
+        return Configuration.gateway().customer.delete(customer_id)
 
     @staticmethod
     def find(customer_id):
@@ -119,41 +108,33 @@ class Customer(Resource):
             customer = braintree.Customer.find("my_customer_id")
         """
 
-        try:
-            response = Http().get("/customers/" + customer_id)
-            return Customer(response["customer"])
-        except NotFoundError:
-            raise NotFoundError("customer with id " + customer_id + " not found")
+        return Configuration.gateway().customer.find(customer_id)
 
     @staticmethod
     def tr_data_for_create(tr_data, redirect_url):
         """ Builds tr_data for creating a Customer. """
 
-        Resource.verify_keys(tr_data, [{"customer": Customer.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateCustomer
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().customer.tr_data_for_create(tr_data, redirect_url)
 
     @staticmethod
     def tr_data_for_update(tr_data, redirect_url):
         """ Builds tr_data for updating a Customer. """
 
-        Resource.verify_keys(tr_data, ["customer_id", {"customer": Customer.update_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.UpdateCustomer
-        return TransparentRedirect.tr_data(tr_data, redirect_url)
+        return Configuration.gateway().customer.tr_data_for_update(tr_data, redirect_url)
 
     @staticmethod
     def transparent_redirect_create_url():
         """ Returns the url to use for creating Customers through transparent redirect. """
 
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.base_merchant_url() + "/customers/all/create_via_transparent_redirect_request"
+        return Configuration.gateway().customer.transparent_redirect_create_url()
 
     @staticmethod
     def transparent_redirect_update_url():
         """ Returns the url to use for updating Customers through transparent redirect. """
 
         warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.base_merchant_url() + "/customers/all/update_via_transparent_redirect_request"
+        return Configuration.gateway().customer.transparent_redirect_update_url()
 
     @staticmethod
     def update(customer_id, params={}):
@@ -165,12 +146,7 @@ class Customer(Resource):
             })
         """
 
-        Resource.verify_keys(params, Customer.update_signature())
-        response = Http().put("/customers/" + customer_id, {"customer": params})
-        if "customer" in response:
-            return SuccessfulResult({"customer": Customer(response["customer"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
+        return Configuration.gateway().customer.update(customer_id, params)
 
     @staticmethod
     def create_signature():
@@ -188,19 +164,9 @@ class Customer(Resource):
             {"custom_fields": ["__any_key__"]}
         ]
 
-    @staticmethod
-    def _post(url, params={}):
-        response = Http().post(url, params)
-        if "customer" in response:
-            return SuccessfulResult({"customer": Customer(response["customer"])})
-        elif "api_error_response" in response:
-            return ErrorResult(response["api_error_response"])
-        else:
-            pass
-
-    def __init__(self, attributes):
-        Resource.__init__(self, attributes)
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
         if "credit_cards" in attributes:
-            self.credit_cards = [CreditCard(credit_card) for credit_card in self.credit_cards]
+            self.credit_cards = [CreditCard(gateway, credit_card) for credit_card in self.credit_cards]
         if "addresses" in attributes:
-            self.addresses = [Address(address) for address in self.addresses]
+            self.addresses = [Address(gateway, address) for address in self.addresses]

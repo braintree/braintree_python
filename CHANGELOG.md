@@ -1,3 +1,23 @@
+## 2.5.0
+
+* Added AddOns/Discounts
+* Enhanced Subscription search
+* Enhanced Transaction search
+* Added constants for CreditCardVerification statuses
+* Added Expired and Pending statuses to Subscription
+* Allowed prorate_charges to be specified on Subscription update
+* Allowed argument lists and literal lists when searching for Subscriptions and Transactions
+* Added AddOn/Discount details to Transactions that were created from a Subscription
+* All Braintree exceptions now inherit from BraintreeError superclass
+* Removed 13 digit Visa Sandbox Credit Card number and replaced it with a 16 digit Visa
+* Made gateway operations threadsafe when using multiple configurations
+* Added new fields to Subscription:
+  * billing_day_of_month
+  * days_past_due
+  * first_billing_date
+  * never_expires
+  * number_of_billing_cycles
+
 ## 2.4.1
 
 * Added support for M2Crypto version 0.20.1, which is the default for Ubuntu Lucid (thanks [foresto](http://github.com/foresto))

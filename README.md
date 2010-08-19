@@ -13,9 +13,7 @@ _Note:_ Although discouraged, the dependency on M2Crypto can be bypassed during 
 
 ## Documentation
 
-Full module documentation generated from the docs directory above can be found here:
-
- * [Official documentation](http://www.braintreepaymentsolutions.com/gateway/python/docs/index.html)
+ * [Official documentation](http://www.braintreepaymentsolutions.com/docs/python)
 
 ## Quick Start Example
 
