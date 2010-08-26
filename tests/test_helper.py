@@ -87,6 +87,13 @@ class TestHelper(object):
         return False
 
     @staticmethod
+    def in_list(collection, expected):
+        for item in collection:
+            if item == expected:
+                return True
+        return False
+
+    @staticmethod
     def includes_status(collection, status):
         for item in collection.items:
             if item.status == status:

@@ -957,6 +957,23 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Type.Credit, result.transaction.type)
         self.assertEquals(Decimal("500.00"), result.transaction.amount)
 
+    def test_multiple_successful_partial_refunds(self):
+        transaction = self.__create_transaction_to_refund()
+
+        refund1 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
+        self.assertEquals(Transaction.Type.Credit, refund1.type)
+        self.assertEquals(Decimal("500.00"), refund1.amount)
+
+        refund2 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
+        self.assertEquals(Transaction.Type.Credit, refund2.type)
+        self.assertEquals(Decimal("500.00"), refund2.amount)
+
+        transaction = Transaction.find(transaction.id)
+
+        self.assertEquals(2, len(transaction.refund_ids))
+        self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund1.id))
+        self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
+
     def test_refund_already_refunded_transation_fails(self):
         transaction = self.__create_transaction_to_refund()
 
