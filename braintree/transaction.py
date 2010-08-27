@@ -340,6 +340,12 @@ class Transaction(Resource):
         ]
 
     def __init__(self, gateway, attributes):
+        if "refund_id" in attributes.keys():
+            self._refund_id = attributes["refund_id"]
+            del(attributes["refund_id"])
+        else:
+            self._refund_id = None
+
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
@@ -357,6 +363,11 @@ class Transaction(Resource):
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
             self.status_history = [StatusEvent(gateway, status_event) for status_event in self.status_history]
+
+    @property
+    def refund_id(self):
+        warnings.warn("Please use Transaction.refund_ids instead", DeprecationWarning)
+        return self._refund_id
 
     @property
     def vault_billing_address(self):
