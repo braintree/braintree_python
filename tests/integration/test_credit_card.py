@@ -179,8 +179,8 @@ class TestCreditCard(unittest.TestCase):
 
 
             self.assertFalse(result.is_success)
-            self.assertEquals(None, result.credit_card_verification.processor_response_code)
-            self.assertEquals(None, result.credit_card_verification.processor_response_text)
+            self.assertEquals('1000', result.credit_card_verification.processor_response_code)
+            self.assertEquals('Approved', result.credit_card_verification.processor_response_text)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
