@@ -821,6 +821,42 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
+    def test_advanced_search_range_node_created_at_is(self):
+        transaction  = Transaction.sale({
+             "amount": TransactionAmounts.Authorize,
+             "credit_card": {
+                 "number": "4111111111111111",
+                 "expiration_date": "05/2012"
+             }
+         }).transaction
+
+        past = transaction.created_at - timedelta(minutes=10)
+        now = transaction.created_at
+        future = transaction.created_at + timedelta(minutes=10)
+        future2 = transaction.created_at + timedelta(minutes=20)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at == past
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at == now
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.created_at == future
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
     def test_advanced_search_range_node_created_with_dates(self):
         transaction  = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
