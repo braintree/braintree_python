@@ -15,6 +15,21 @@ class TestHttp(unittest.TestCase):
         except AuthenticationError:
             pass
 
+    def test_successful_connection_sandbox_using_pycurl(self):
+        try:
+            Configuration.ssl_package = 'pycurl'
+            config = Configuration(
+                Environment.Sandbox,
+                "merchant_id", "public_key", "private_key"
+            )
+            http = config.http()
+            http.get("/")
+            self.assertTrue(False)
+        except AuthenticationError:
+            pass
+        finally:
+            Configuration.ssl_package = 'm2crypto'
+
     def test_successful_connection_to_production(self):
         try:
             config = Configuration(
@@ -26,6 +41,21 @@ class TestHttp(unittest.TestCase):
             self.assertTrue(False)
         except AuthenticationError:
             pass
+
+    def test_successful_connection_production_using_pycurl(self):
+        try:
+            Configuration.ssl_package = 'pycurl'
+            config = Configuration(
+                Environment.Production,
+                "merchant_id", "public_key", "private_key"
+            )
+            http = config.http()
+            http.get("/")
+            self.assertTrue(False)
+        except AuthenticationError:
+            pass
+        finally:
+            Configuration.ssl_package = 'm2crypto'
 
     def test_invalid_ssl_package(self):
         try:

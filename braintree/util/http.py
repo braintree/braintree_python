@@ -122,8 +122,10 @@ man-in-the-middle attacks."""
     def __verify_ssl_pycurl(self):
         import pycurl
         curl = pycurl.Curl()
+        # see http://curl.haxx.se/libcurl/c/curl_easy_setopt.html for explanation of these options
         curl.setopt(pycurl.CAINFO, self.environment.ssl_certificate)
         curl.setopt(pycurl.SSL_VERIFYPEER, 1)
         curl.setopt(pycurl.SSL_VERIFYHOST, 2)
+        curl.setopt(pycurl.NOBODY, 1)
         curl.setopt(pycurl.URL, self.environment.protocol + self.environment.server_and_port)
         curl.perform()
