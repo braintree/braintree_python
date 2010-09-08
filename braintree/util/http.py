@@ -89,12 +89,21 @@ class Http(object):
         }
 
     def __verify_ssl(self):
-        if not Configuration.use_unsafe_ssl:
-            try:
-                from M2Crypto import SSL
-            except ImportError, e:
-                print "Cannot load M2Crypto.  Please refer to Braintree documentation."
-                print """
+        if Configuration.use_unsafe_ssl: return
+
+        if Configuration.ssl_package == 'm2crypto':
+            return self.__verify_ssl_m2crypto()
+        elif Configuration.ssl_package == 'pycurl':
+            return self.__verify_ssl_pycurl()
+        else:
+            raise AttributeError, Configuration.ssl_package + " is not a valid value for Configuration.ssl_package"
+
+    def __verify_ssl_m2crypto(self):
+        try:
+            from M2Crypto import SSL
+        except ImportError, e:
+            print "Cannot load M2Crypto.  Please refer to Braintree documentation."
+            print """
 If you are in an environment where you absolutely cannot load M2Crypto
 (such as Google App Engine), you can turn off SSL Verification by setting:
 
@@ -102,10 +111,19 @@ If you are in an environment where you absolutely cannot load M2Crypto
 
 This is highly discouraged, however, since it leaves you susceptible to
 man-in-the-middle attacks."""
-                raise e
+            raise e
 
-            ctx = SSL.Context()
-            ctx.set_verify(SSL.verify_peer | SSL.verify_fail_if_no_peer_cert, depth=9)
-            ctx.load_verify_locations(self.environment.ssl_certificate)
-            s = SSL.Connection(ctx)
-            s.connect((self.environment.server, self.environment.port))
+        ctx = SSL.Context()
+        ctx.set_verify(SSL.verify_peer | SSL.verify_fail_if_no_peer_cert, depth=9)
+        ctx.load_verify_locations(self.environment.ssl_certificate)
+        s = SSL.Connection(ctx)
+        s.connect((self.environment.server, self.environment.port))
+
+    def __verify_ssl_pycurl(self):
+        import pycurl
+        curl = pycurl.Curl()
+        curl.setopt(pycurl.CAINFO, self.environment.ssl_certificate)
+        curl.setopt(pycurl.SSL_VERIFYPEER, 1)
+        curl.setopt(pycurl.SSL_VERIFYHOST, 2)
+        curl.setopt(pycurl.URL, self.environment.protocol + self.environment.server_and_port)
+        curl.perform()

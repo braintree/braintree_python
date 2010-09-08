@@ -41,6 +41,7 @@ class Configuration(object):
         Configuration.public_key = public_key
         Configuration.private_key = private_key
         Configuration.use_unsafe_ssl = False
+        Configuration.ssl_package = 'm2crypto'
 
     @staticmethod
     def gateway():
