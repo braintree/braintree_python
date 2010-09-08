@@ -9,6 +9,6 @@ setup(
     url="http://www.braintreepaymentsolutions.com/gateway/python",
     packages=["braintree", "braintree.exceptions", "braintree.util"],
     package_data={"braintree": ["ssl/*"]},
-    install_requires=["M2Crypto>=0.20.1,<=0.20.2"],
-    tests_require=["M2Crypto>=0.20.1,<=0.20.2", "nose==0.11.3"]
+    install_requires=["pycurl==7.19.0"],
+    tests_require=["pycurl==7.19.0", "nose==0.11.3"]
 )

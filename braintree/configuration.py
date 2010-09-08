@@ -13,10 +13,10 @@ class Configuration(object):
         )
 
     By default, every request to the Braintree servers verifies the SSL connection
-    using the `M2Crypto <http://chandlerproject.org/bin/view/Projects/MeTooCrypto>`_
+    using the `PycURL <http://pycurl.sourceforge.net/>`_
     library.  This ensures valid encryption of data and prevents man-in-the-middle attacks.
 
-    If you are in an environment where you absolutely cannot load `M2Crypto <http://chandlerproject.org/bin/view/Projects/MeTooCrypto>`_, you
+    If you are in an environment where you absolutely cannot load `PycURL <http://pycurl.sourceforge.net/>`_, you
     can turn off SSL Verification by setting::
 
         Configuration.use_unsafe_ssl = True
@@ -41,7 +41,6 @@ class Configuration(object):
         Configuration.public_key = public_key
         Configuration.private_key = private_key
         Configuration.use_unsafe_ssl = False
-        Configuration.ssl_package = 'm2crypto'
 
     @staticmethod
     def gateway():
