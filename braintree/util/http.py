@@ -95,6 +95,8 @@ class Http(object):
             return self.__verify_ssl_m2crypto()
         elif Configuration.ssl_package == 'pycurl':
             return self.__verify_ssl_pycurl()
+        elif Configuration.ssl_package == 'purepython':
+            return self.__verify_ssl_purepython()
         else:
             raise AttributeError, Configuration.ssl_package + " is not a valid value for Configuration.ssl_package"
 
@@ -129,3 +131,16 @@ man-in-the-middle attacks."""
         curl.setopt(pycurl.NOBODY, 1)
         curl.setopt(pycurl.URL, self.environment.protocol + self.environment.server_and_port)
         curl.perform()
+
+    def __verify_ssl_purepython(self):
+        import socket, ssl
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        ssl_sock = ssl.wrap_socket(s,
+                ca_certs=self.environment.ssl_certificate,
+                cert_reqs=ssl.CERT_REQUIRED
+            )
+        ssl_sock.connect((self.environment.server, self.environment.port))
+        ssl_sock.close()
+

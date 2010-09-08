@@ -1,5 +1,6 @@
 from tests.test_helper import *
 import pycurl
+import ssl
 
 class TestHttp(unittest.TestCase):
 
@@ -81,6 +82,19 @@ class TestHttp(unittest.TestCase):
             self.assertTrue(False)
         except SSL.SSLError, e:
             self.assertTrue(re.search("certificate verify failed", e.message))
+
+    def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert_using_purepython(self):
+        environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
+        try:
+            Configuration.ssl_package = 'purepython'
+            config = Configuration(environment, "merchant_id", "public_key", "private_key")
+            http = config.http()
+            http.get("/")
+            self.assertTrue(False)
+        except ssl.SSLError, e:
+            self.assertTrue(re.search("certificate verify failed", e.strerror))
+        finally:
+            Configuration.ssl_package = 'm2crypto'
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert_using_pycurl(self):
         environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
