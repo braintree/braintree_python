@@ -771,6 +771,12 @@ class TestSubscription(unittest.TestCase):
         self.assertFalse(TestHelper.includes(collection, subscription_5))
 
     def test_search_on_days_past_due(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription, 3)
+
         collection = Subscription.search([
             SubscriptionSearch.days_past_due.between(2, 10)
         ])
