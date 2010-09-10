@@ -28,6 +28,9 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
         subscription = result.subscription
         self.assertNotEquals(None, re.search("\A\w{6}\Z", subscription.id))
+        self.assertEquals(Decimal("12.34"), subscription.price)
+        self.assertEquals(Decimal("12.34"), subscription.next_bill_amount)
+        self.assertEquals(Decimal("12.34"), subscription.next_billing_period_amount)
         self.assertEquals(Subscription.Status.Active, subscription.status)
         self.assertEquals("integration_trialless_plan", subscription.plan_id)
         self.assertEquals(TestHelper.default_merchant_account_id, subscription.merchant_account_id)

@@ -196,9 +196,13 @@ class Subscription(Resource):
         ]
 
     def __init__(self, gateway, attributes):
+        if "next_bill_amount" in attributes.keys():
+            self._next_bill_amount = Decimal(attributes["next_bill_amount"])
+            del(attributes["next_bill_amount"])
         Resource.__init__(self, gateway, attributes)
         self.price = Decimal(self.price)
         self.balance = Decimal(self.balance)
+        self.next_billing_period_amount = Decimal(self.next_billing_period_amount)
         if "add_ons" in attributes:
             self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
         if "discounts" in attributes:
@@ -206,3 +210,7 @@ class Subscription(Resource):
         if "transactions" in attributes:
             self.transactions = [Transaction(gateway, transaction) for transaction in self.transactions]
 
+    @property
+    def next_bill_amount(self):
+        warnings.warn("Please use Subscription.next_billing_period_amount instead", DeprecationWarning)
+        return self._next_bill_amount
