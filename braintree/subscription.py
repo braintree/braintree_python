@@ -174,7 +174,7 @@ class Subscription(Resource):
             "plan_id",
             "price",
             {
-                "options": [ "prorate_charges", "replace_all_add_ons_and_discounts" ]
+                "options": [ "prorate_charges", "replace_all_add_ons_and_discounts", "revert_subscription_on_proration_failure" ]
             }
         ] + Subscription._add_ons_discounts_signature()
 

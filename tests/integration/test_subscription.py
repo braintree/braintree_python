@@ -472,6 +472,44 @@ class TestSubscription(unittest.TestCase):
         subscription = result.subscription
         self.assertEquals(1, len(subscription.transactions))
 
+    def test_update_does_not_update_subscription_when_revert_subscription_on_proration_failure_is_true(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("2100"),
+            "options": {
+                "prorate_charges": True,
+                "revert_subscription_on_proration_failure": True
+            }
+        })
+
+        self.assertFalse(result.is_success)
+
+        found_subscription = Subscription.find(result.subscription.id)
+        self.assertEquals(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
+        self.assertEqual("processor_declined", result.subscription.transactions[0].status)
+
+        self.assertEqual(Decimal("0.00"), found_subscription.balance)
+        self.assertEquals(self.updateable_subscription.price, found_subscription.price)
+
+    def test_update_updates_subscription_when_revert_subscription_on_proration_failure_is_false(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("2100"),
+            "options": {
+                "prorate_charges": True,
+                "revert_subscription_on_proration_failure": False
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        found_subscription = Subscription.find(result.subscription.id)
+        self.assertEquals(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
+        self.assertEqual("processor_declined", result.subscription.transactions[0].status)
+
+        self.assertEqual(result.subscription.transactions[0].amount, Decimal(found_subscription.balance))
+        self.assertEquals(self.updateable_subscription.price + Decimal("2100"), found_subscription.price)
+
     def test_update_with_successful_result(self):
         new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
