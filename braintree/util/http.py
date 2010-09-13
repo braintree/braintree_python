@@ -111,5 +111,6 @@ man-in-the-middle attacks."""
         curl.setopt(pycurl.SSL_VERIFYPEER, 1)
         curl.setopt(pycurl.SSL_VERIFYHOST, 2)
         curl.setopt(pycurl.NOBODY, 1)
+        curl.setopt(pycurl.NOSIGNAL, 1)
         curl.setopt(pycurl.URL, self.environment.protocol + self.environment.server_and_port)
         curl.perform()
