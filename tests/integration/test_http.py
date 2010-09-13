@@ -1,4 +1,5 @@
 from tests.test_helper import *
+import pycurl
 
 class TestHttp(unittest.TestCase):
 
@@ -33,8 +34,10 @@ class TestHttp(unittest.TestCase):
             http = config.http()
             http.get("/")
             self.assertTrue(False)
-        except SSL.SSLError, e:
-            self.assertTrue(re.search("certificate verify failed", e.message))
+        except pycurl.error, e:
+            error_code, error_msg = e
+            self.assertEquals(pycurl.E_SSL_CACERT, error_code)
+            self.assertTrue(re.search("SSL certificate problem", error_msg))
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         try:
@@ -43,8 +46,11 @@ class TestHttp(unittest.TestCase):
             http = config.http()
             http.get("/")
             self.assertTrue(False)
-        except SSL.Checker.WrongHost, e:
-            self.assertTrue(re.search("Peer certificate commonName does not match host", str(e)))
+        except pycurl.error, e:
+            print e
+            error_code, error_msg = e
+            self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
+            self.assertTrue(re.search("SSL: certificate subject name", error_msg))
 
     def test_unsafe_ssl_connection(self):
         try:
