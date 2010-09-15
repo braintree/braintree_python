@@ -37,7 +37,7 @@ class TestHttp(unittest.TestCase):
         except pycurl.error, e:
             error_code, error_msg = e
             self.assertEquals(pycurl.E_SSL_CACERT, error_code)
-            self.assertTrue(re.search("SSL certificate problem", error_msg))
+            self.assertTrue(re.search('verif(y|ication) failed', error_msg))
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         try:
