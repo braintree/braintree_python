@@ -4,11 +4,11 @@ The Braintree library provides integration access to the Braintree Gateway.
 
 ## Dependencies
 
-* [M2Crypto](http://chandlerproject.org/bin/view/Projects/MeTooCrypto)
+* [PycURL](http://pycurl.sourceforge.net/)
 
-_Note:_ Although discouraged, the dependency on M2Crypto can be bypassed during development or for deployment on servers where it is impossible to use via:
+_Note:_ Although discouraged, the dependency on PycURL can be bypassed during development or for deployment on servers where it is impossible to use via:
 
-    # Allow unsafe SSL, removes dependency on M2Crypto in dev environments
+    # Allow unsafe SSL, removes dependency on PycURL in dev environments
     braintree.Configuration.use_unsafe_ssl = True
 
 ## Documentation
