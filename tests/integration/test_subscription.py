@@ -28,14 +28,19 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
         subscription = result.subscription
         self.assertNotEquals(None, re.search("\A\w{6}\Z", subscription.id))
+        self.assertEquals(Decimal("12.34"), subscription.price)
+        self.assertEquals(Decimal("12.34"), subscription.next_bill_amount)
+        self.assertEquals(Decimal("12.34"), subscription.next_billing_period_amount)
         self.assertEquals(Subscription.Status.Active, subscription.status)
         self.assertEquals("integration_trialless_plan", subscription.plan_id)
         self.assertEquals(TestHelper.default_merchant_account_id, subscription.merchant_account_id)
+        self.assertEquals(Decimal("0.00"), subscription.balance)
 
         self.assertEquals(date, type(subscription.first_billing_date))
         self.assertEquals(date, type(subscription.next_billing_date))
         self.assertEquals(date, type(subscription.billing_period_start_date))
         self.assertEquals(date, type(subscription.billing_period_end_date))
+        self.assertEquals(date, type(subscription.paid_through_date))
 
         self.assertEquals(0, subscription.failure_count)
         self.assertEquals(self.credit_card.token, subscription.payment_method_token)
@@ -470,6 +475,44 @@ class TestSubscription(unittest.TestCase):
         subscription = result.subscription
         self.assertEquals(1, len(subscription.transactions))
 
+    def test_update_does_not_update_subscription_when_revert_subscription_on_proration_failure_is_true(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("2100"),
+            "options": {
+                "prorate_charges": True,
+                "revert_subscription_on_proration_failure": True
+            }
+        })
+
+        self.assertFalse(result.is_success)
+
+        found_subscription = Subscription.find(result.subscription.id)
+        self.assertEquals(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
+        self.assertEqual("processor_declined", result.subscription.transactions[0].status)
+
+        self.assertEqual(Decimal("0.00"), found_subscription.balance)
+        self.assertEquals(self.updateable_subscription.price, found_subscription.price)
+
+    def test_update_updates_subscription_when_revert_subscription_on_proration_failure_is_false(self):
+        new_id = str(random.randint(1, 1000000))
+        result = Subscription.update(self.updateable_subscription.id, {
+            "price": self.updateable_subscription.price + Decimal("2100"),
+            "options": {
+                "prorate_charges": True,
+                "revert_subscription_on_proration_failure": False
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        found_subscription = Subscription.find(result.subscription.id)
+        self.assertEquals(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
+        self.assertEqual("processor_declined", result.subscription.transactions[0].status)
+
+        self.assertEqual(result.subscription.transactions[0].amount, Decimal(found_subscription.balance))
+        self.assertEquals(self.updateable_subscription.price + Decimal("2100"), found_subscription.price)
+
     def test_update_with_successful_result(self):
         new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
@@ -771,6 +814,12 @@ class TestSubscription(unittest.TestCase):
         self.assertFalse(TestHelper.includes(collection, subscription_5))
 
     def test_search_on_days_past_due(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription, 3)
+
         collection = Subscription.search([
             SubscriptionSearch.days_past_due.between(2, 10)
         ])

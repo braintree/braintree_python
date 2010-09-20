@@ -31,6 +31,11 @@ class ErrorResult(object):
         else:
             self.transaction = None
 
+        if "subscription" in attributes:
+            self.subscription = braintree.subscription.Subscription(gateway, attributes["subscription"])
+        else:
+            self.subscription = None
+
 
     @property
     def is_success(self):

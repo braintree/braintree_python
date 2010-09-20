@@ -1,3 +1,15 @@
+## 2.6.0
+
+* Added ability to perform multiple partial refunds on Transactions
+* Deprecated Transaction refund_id in favor of refund_ids
+* Added revert_subscription_on_proration_failure flag to Subscription update that specifies how a Subscription should react to a failed proration charge
+* Deprecated Subscription next_bill_amount in favor of next_billing_period_amount
+* Added pycurl dependency in place of M2Crypto for better cross-platform compatibility
+* Added new fields to Subscription:
+  * balance
+  * paid_through_date
+  * next_billing_period_amount
+
 ## 2.5.0
 
 * Added AddOns/Discounts

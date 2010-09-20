@@ -10,7 +10,6 @@ from braintree.exceptions import *
 from braintree.util import *
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from M2Crypto import SSL
 from nose.tools import raises
 from random import randint
 
@@ -83,6 +82,13 @@ class TestHelper(object):
     def includes(collection, expected):
         for item in collection.items:
             if item.id == expected.id:
+                return True
+        return False
+
+    @staticmethod
+    def in_list(collection, expected):
+        for item in collection:
+            if item == expected:
                 return True
         return False
 
