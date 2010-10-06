@@ -22,6 +22,9 @@ class TestSubscriptionSearch(unittest.TestCase):
     def test_status_is_a_multiple_value_node(self):
         self.assertEquals(Search.MultipleValueNodeBuilder, type(SubscriptionSearch.status))
 
+    def test_in_trial_period_is_multiple_value_node(self):
+        self.assertEquals(Search.MultipleValueNodeBuilder, type(SubscriptionSearch.in_trial_period))
+
     def test_status_whitelist(self):
         SubscriptionSearch.status.in_list(
             Subscription.Status.Active,
