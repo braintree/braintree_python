@@ -169,7 +169,8 @@ class CreditCard(Resource):
         options = ["make_default", "verification_merchant_account_id", "verify_card"]
 
         signature = [
-            "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+            "billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
+            "number", "token",
             {"billing_address": billing_address_params},
             {"options": options}
         ]

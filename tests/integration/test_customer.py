@@ -297,6 +297,26 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("840", updated_address.country_code_numeric)
         self.assertEqual("United States of America", updated_address.country_name)
 
+    def test_update_with_nested_billing_address_id(self):
+        customer = Customer.create().customer
+        address = Address.create({
+            "customer_id": customer.id,
+            "postal_code": "11111"
+        }).address
+
+        updated_customer = Customer.update(customer.id, {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "12/12",
+                "billing_address_id": address.id
+            }
+        }).customer
+
+        credit_card = updated_customer.credit_cards[0]
+
+        self.assertEqual(address.id, credit_card.billing_address.id)
+        self.assertEqual("11111", credit_card.billing_address.postal_code)
+
     def test_update_with_invalid_options(self):
         customer = Customer.create({
             "first_name": "Steve",

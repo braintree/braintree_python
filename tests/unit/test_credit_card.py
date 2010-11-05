@@ -50,7 +50,7 @@ class TestCreditCard(unittest.TestCase):
         )
 
     def test_create_signature(self):
-        expected = ["cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+        expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
@@ -63,7 +63,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(expected, CreditCard.create_signature())
 
     def test_update_signature(self):
-        expected = ["cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+        expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",

@@ -106,6 +106,25 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("484", address.country_code_numeric)
         self.assertEquals("Mexico", address.country_name)
 
+    def test_create_with_billing_address_id(self):
+        customer = Customer.create().customer
+        address = Address.create({
+            "customer_id": customer.id,
+            "street_address": "123 Abc Way"
+        }).address
+
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "billing_address_id": address.id
+        })
+
+        self.assertTrue(result.is_success)
+        billing_address = result.credit_card.billing_address
+        self.assertEquals(address.id, billing_address.id)
+        self.assertEquals("123 Abc Way", billing_address.street_address)
+
     def test_create_without_billing_address_still_has_billing_address_method(self):
         customer = Customer.create().customer
         result = CreditCard.create({
