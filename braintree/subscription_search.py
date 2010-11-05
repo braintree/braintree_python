@@ -7,6 +7,7 @@ class SubscriptionSearch:
     days_past_due = Search.RangeNodeBuilder("days_past_due")
     id = Search.TextNodeBuilder("id")
     ids = Search.MultipleValueNodeBuilder("ids")
+    in_trial_period = Search.MultipleValueNodeBuilder("in_trial_period")
     merchant_account_id = Search.MultipleValueNodeBuilder("merchant_account_id")
     plan_id = Search.MultipleValueOrTextNodeBuilder("plan_id")
     price = Search.RangeNodeBuilder("price")
