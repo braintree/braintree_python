@@ -170,6 +170,9 @@ class ErrorCodes(object):
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
 
+        class Descriptor(object):
+            NameFormatIsInvalid = "91532"
+            PhoneFormatIsInvalid = "91533"
+
         class Options(object):
             VaultIsDisabled = "91525"
-

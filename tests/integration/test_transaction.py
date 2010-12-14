@@ -1088,3 +1088,44 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(2, discounts[0].quantity)
         self.assertEquals(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
+
+    def test_descriptors_accepts_name_and_phone(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("123*123456789012345678", transaction.descriptor.name)
+        self.assertEquals("3334445555", transaction.descriptor.phone)
+
+    def test_descriptors_has_validation_errors_if_format_is_invalid(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "descriptor": {
+                "name": "badcompanyname12*badproduct12",
+                "phone": "%bad4445555"
+            }
+        })
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(
+            ErrorCodes.Transaction.Descriptor.NameFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Transaction.Descriptor.PhoneFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
+        )

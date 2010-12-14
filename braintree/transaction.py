@@ -15,6 +15,7 @@ from braintree.customer import Customer
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.descriptor import Descriptor
 
 class Transaction(Resource):
     """
@@ -336,7 +337,8 @@ class Transaction(Resource):
                     "store_shipping_address_in_vault"
                 ]
             },
-            {"custom_fields": ["__any_key__"]}
+            {"custom_fields": ["__any_key__"]},
+            {"descriptor": ["name", "phone"]}
         ]
 
     def __init__(self, gateway, attributes):
@@ -363,6 +365,8 @@ class Transaction(Resource):
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
             self.status_history = [StatusEvent(gateway, status_event) for status_event in self.status_history]
+        if "descriptor" in attributes:
+            self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
 
     @property
     def refund_id(self):

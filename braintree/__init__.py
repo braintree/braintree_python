@@ -9,6 +9,7 @@ from credit_card_verification import CreditCardVerification
 from customer import Customer
 from customer_gateway import CustomerGateway
 from discount import Discount
+from descriptor import Descriptor
 from error_codes import ErrorCodes
 from error_result import ErrorResult
 from errors import Errors
