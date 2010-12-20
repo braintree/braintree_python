@@ -103,6 +103,7 @@ class ErrorCodes(object):
         PaymentMethodTokenCardTypeIsNotAccepted = "91902"
         PaymentMethodTokenIsInvalid = "91903"
         PaymentMethodTokenNotAssociatedWithCustomer = "91905"
+        PlanBillingFrequencyCannotBeUpdated = "91922"
         PlanIdIsInvalid = "91904"
         PriceCannotBeBlank = "81903"
         PriceFormatIsInvalid = "81904"
@@ -134,8 +135,8 @@ class ErrorCodes(object):
 
     class Transaction(object):
         AmountCannotBeNegative = "81501"
-        AmountIsRequired = "81502"
         AmountIsInvalid = "81503"
+        AmountIsRequired = "81502"
         AmountIsTooLarge = "81528"
         AmountMustBeGreaterThanZero = "81531"
         BillingAddressConflict = "91530"
@@ -144,16 +145,16 @@ class ErrorCodes(object):
         CannotRefundUnlessSettled = "91506"
         CannotSubmitForSettlement = "91507"
         CreditCardIsRequired = "91508"
-        CustomerDefaultPaymentMethodCardTypeIsNotAccepted = "81509"
         CustomFieldIsInvalid = "91526"
         CustomFieldIsTooLong = "81527"
-        CustomerIdIsInvalid = "91510"
+        CustomerDefaultPaymentMethodCardTypeIsNotAccepted = "81509"
         CustomerDoesNotHaveCreditCard = "91511"
+        CustomerIdIsInvalid = "91510"
         HasAlreadyBeenRefunded = "91512"
-        MerchantAccountNameIsInvalid = "91513" # Deprecated
         MerchantAccountIdIsInvalid = "91513"
         MerchantAccountIsSusped = "91514" # Deprecated
         MerchantAccountIsSuspended = "91514"
+        MerchantAccountNameIsInvalid = "91513" # Deprecated
         OrderIdIsTooLong = "91501"
         PaymentMethodConflict = "91515"
         PaymentMethodDoesNotBelongToCustomer = "91516"
@@ -162,11 +163,15 @@ class ErrorCodes(object):
         PaymentMethodTokenIsInvalid = "91518"
         ProcessorAuthorizationCodeCannotBeSet = "91519"
         ProcessorAuthorizationCodeIsInvalid = "81520"
+        PurchaseOrderNumberIsTooLong = "91537"
         RefundAmountIsTooLarge = "91521"
         SettlementAmountIsTooLarge = "91522"
         SubscriptionDoesNotBelongToCustomer = "91529"
         SubscriptionIdIsInvalid = "91528"
         SubscriptionStatusMustBePastDue = "91531"
+        TaxAmountCannotBeNegative = "81534"
+        TaxAmountFormatIsInvalid = "81535"
+        TaxAmountIsTooLarge = "81536"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
 

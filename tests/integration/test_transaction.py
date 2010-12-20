@@ -239,6 +239,45 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
 
+    def test_sale_with_level_2(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "purchase_order_number": "12345",
+            "tax_amount": Decimal("10.00"),
+            "tax_exempt": True,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("12345", transaction.purchase_order_number)
+        self.assertEquals(Decimal("10.00"), transaction.tax_amount)
+        self.assertEquals(True, transaction.tax_exempt)
+
+    def test_create_with_failing_level_2_validations(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "tax_amount": "asdf",
+            "purchase_order_number": "aaaaaaaaaaaaaaaaaa",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.TaxAmountFormatIsInvalid,
+            result.errors.for_object("transaction").on("tax_amount")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Transaction.PurchaseOrderNumberIsTooLong,
+            result.errors.for_object("transaction").on("purchase_order_number")[0].code
+        )
+
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Decline,

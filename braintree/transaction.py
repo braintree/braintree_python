@@ -306,7 +306,7 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "type",
+            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "purchase_order_number", "tax_amount", "tax_exempt", "type",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -351,6 +351,8 @@ class Transaction(Resource):
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
+        if self.tax_amount:
+            self.tax_amount = Decimal(self.tax_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
