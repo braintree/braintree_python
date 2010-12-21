@@ -51,6 +51,7 @@ class TestCustomerSearch(unittest.TestCase):
             "address_locality": "Chicago",
             "address_region": "Illinois",
             "payment_method_token": token,
+            "credit_card_number": "4111111111111111",
             "credit_card_expiration_date": "05/2010"
         }
 

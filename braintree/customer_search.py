@@ -11,6 +11,7 @@ class CustomerSearch:
       company                     = Search.TextNodeBuilder("company")
       created_at                  = Search.RangeNodeBuilder("created_at")
       credit_card_expiration_date = Search.TextNodeBuilder("credit_card_expiration_date")
+      credit_card_number          = Search.TextNodeBuilder("credit_card_number")
       email                       = Search.TextNodeBuilder("email")
       fax                         = Search.TextNodeBuilder("fax")
       first_name                  = Search.TextNodeBuilder("first_name")
