@@ -59,7 +59,7 @@ class Http(object):
         conn.request(
             http_verb,
             self.config.base_merchant_path() + path,
-            params and XmlUtil.xml_from_dict(params),
+            XmlUtil.xml_from_dict(params) if params else '',
             self.__headers()
         )
         response = conn.getresponse()
