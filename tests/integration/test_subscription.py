@@ -420,6 +420,48 @@ class TestSubscription(unittest.TestCase):
             result.errors.for_object("subscription").for_object("add_ons").for_object("update").for_index(1).on("quantity")[0].code
         )
 
+    def test_descriptors_accepts_name_and_phone(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        subscription = result.subscription
+        self.assertEquals("123*123456789012345678", subscription.descriptor.name)
+        self.assertEquals("3334445555", subscription.descriptor.phone)
+
+        transaction = subscription.transactions[0]
+        self.assertEquals("123*123456789012345678", transaction.descriptor.name)
+        self.assertEquals("3334445555", transaction.descriptor.phone)
+
+    def test_descriptors_has_validation_errors_if_format_is_invalid(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "descriptor": {
+                "name": "badcompanyname12*badproduct12",
+                "phone": "%bad4445555"
+            }
+        })
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(
+            ErrorCodes.Descriptor.NameFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Descriptor.PhoneFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
+        )
+
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -750,6 +792,28 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(1, subscription.discounts[0].quantity)
         self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
+
+    def test_update_descriptor_name_and_phone(self):
+        result = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        subscription = result.subscription
+        updated_subscription = Subscription.update(subscription.id, {
+            "descriptor": {
+                "name": "999*99",
+                "phone": "9999999"
+            }
+        }).subscription
+
+        self.assertEquals("999*99", updated_subscription.descriptor.name)
+        self.assertEquals("9999999", updated_subscription.descriptor.phone)
 
     def test_cancel_with_successful_response(self):
         subscription = Subscription.create({

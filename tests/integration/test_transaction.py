@@ -1194,10 +1194,10 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertEquals(
-            ErrorCodes.Transaction.Descriptor.NameFormatIsInvalid,
+            ErrorCodes.Descriptor.NameFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
         )
         self.assertEquals(
-            ErrorCodes.Transaction.Descriptor.PhoneFormatIsInvalid,
+            ErrorCodes.Descriptor.PhoneFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
         )

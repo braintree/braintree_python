@@ -3,6 +3,7 @@ from braintree.util.http import Http
 import braintree
 import warnings
 from braintree.add_on import AddOn
+from braintree.descriptor import Descriptor
 from braintree.discount import Discount
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
@@ -89,6 +90,9 @@ class Subscription(Resource):
             "trial_duration_unit",
             "trial_period",
             {
+                "descriptor": [ "name", "phone" ]
+            },
+            {
                 "options": [
                     "do_not_inherit_add_ons_or_discounts",
                     "start_immediately"
@@ -174,6 +178,9 @@ class Subscription(Resource):
             "plan_id",
             "price",
             {
+                "descriptor": [ "name", "phone" ]
+            },
+            {
                 "options": [ "prorate_charges", "replace_all_add_ons_and_discounts", "revert_subscription_on_proration_failure" ]
             }
         ] + Subscription._add_ons_discounts_signature()
@@ -205,6 +212,8 @@ class Subscription(Resource):
         self.next_billing_period_amount = Decimal(self.next_billing_period_amount)
         if "add_ons" in attributes:
             self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
+        if "descriptor" in attributes:
+            self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
         if "discounts" in attributes:
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "transactions" in attributes:

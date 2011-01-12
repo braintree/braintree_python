@@ -80,6 +80,10 @@ class ErrorCodes(object):
         WebsiteIsInvalid = "81616"
         WebsiteIsTooLong = "81615"
 
+    class Descriptor(object):
+        NameFormatIsInvalid = "92201"
+        PhoneFormatIsInvalid = "92202"
+
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
         BillingDayOfMonthIsInvalid = "91914"
@@ -174,10 +178,6 @@ class ErrorCodes(object):
         TaxAmountIsTooLarge = "81536"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
-
-        class Descriptor(object):
-            NameFormatIsInvalid = "91532"
-            PhoneFormatIsInvalid = "91533"
 
         class Options(object):
             VaultIsDisabled = "91525"
