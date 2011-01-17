@@ -8,6 +8,7 @@ class CustomerSearch:
       address_postal_code         = Search.TextNodeBuilder("address_postal_code")
       address_region              = Search.TextNodeBuilder("address_region")
       address_street_address      = Search.TextNodeBuilder("address_street_address")
+      address_country_name        = Search.TextNodeBuilder("address_country_name")
       cardholder_name             = Search.TextNodeBuilder("cardholder_name")
       company                     = Search.TextNodeBuilder("company")
       created_at                  = Search.RangeNodeBuilder("created_at")
