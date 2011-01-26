@@ -47,7 +47,6 @@ class TestHttp(unittest.TestCase):
             http.get("/")
             self.assertTrue(False)
         except pycurl.error, e:
-            print e
             error_code, error_msg = e
             self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
             self.assertTrue(re.search("SSL: certificate subject name", error_msg))

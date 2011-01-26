@@ -15,7 +15,7 @@ class CustomerGateway(object):
 
     def all(self):
         response = self.config.http().post("/customers/advanced_search_ids")
-        return ResourceCollection(None, response, self.__fetch)
+        return ResourceCollection({}, response, self.__fetch)
 
     def confirm_transparent_redirect(self, query_string):
         id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
@@ -35,6 +35,13 @@ class CustomerGateway(object):
             return Customer(self.gateway, response["customer"])
         except NotFoundError:
             raise NotFoundError("customer with id " + customer_id + " not found")
+
+    def search(self, *query):
+        if isinstance(query[0], list):
+            query = query[0]
+
+        response = self.config.http().post("/customers/advanced_search_ids", {"search": self.__criteria(query)})
+        return ResourceCollection(query, response, self.__fetch)
 
     def tr_data_for_create(self, tr_data, redirect_url):
         Resource.verify_keys(tr_data, [{"customer": Customer.create_signature()}])
@@ -60,9 +67,18 @@ class CustomerGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def __fetch(self, query, ids):
+    def __criteria(self, query):
         criteria = {}
-        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
+        for term in query:
+            if criteria.get(term.name):
+                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
+            else:
+                criteria[term.name] = term.to_param()
+        return criteria
+
+    def __fetch(self, query, ids):
+        criteria = self.__criteria(query)
+        criteria["ids"] = braintree.customer_search.CustomerSearch.ids.in_list(ids).to_param()
         response = self.config.http().post("/customers/advanced_search", {"search": criteria})
         return [Customer(self.gateway, item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
 

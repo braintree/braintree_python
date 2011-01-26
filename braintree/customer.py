@@ -111,6 +111,10 @@ class Customer(Resource):
         return Configuration.gateway().customer.find(customer_id)
 
     @staticmethod
+    def search(*query):
+        return Configuration.gateway().customer.search(*query)
+
+    @staticmethod
     def tr_data_for_create(tr_data, redirect_url):
         """ Builds tr_data for creating a Customer. """
 

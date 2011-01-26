@@ -239,6 +239,78 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
 
+    def test_sale_with_shipping_address_id(self):
+        result = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010"
+            }
+        })
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        result = Address.create({
+            "customer_id": customer.id,
+            "street_address": "123 Fake St."
+        })
+        self.assertTrue(result.is_success)
+        address = result.address
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "customer_id": customer.id,
+            "shipping_address_id": address.id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
+        self.assertEquals(address.id, transaction.shipping_details.id)
+
+
+    def test_sale_with_level_2(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "purchase_order_number": "12345",
+            "tax_amount": Decimal("10.00"),
+            "tax_exempt": True,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("12345", transaction.purchase_order_number)
+        self.assertEquals(Decimal("10.00"), transaction.tax_amount)
+        self.assertEquals(True, transaction.tax_exempt)
+
+    def test_create_with_failing_level_2_validations(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "tax_amount": "asdf",
+            "purchase_order_number": "aaaaaaaaaaaaaaaaaa",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.TaxAmountFormatIsInvalid,
+            result.errors.for_object("transaction").on("tax_amount")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Transaction.PurchaseOrderNumberIsTooLong,
+            result.errors.for_object("transaction").on("purchase_order_number")[0].code
+        )
+
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Decline,
@@ -1088,3 +1160,44 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(2, discounts[0].quantity)
         self.assertEquals(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
+
+    def test_descriptors_accepts_name_and_phone(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("123*123456789012345678", transaction.descriptor.name)
+        self.assertEquals("3334445555", transaction.descriptor.phone)
+
+    def test_descriptors_has_validation_errors_if_format_is_invalid(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "descriptor": {
+                "name": "badcompanyname12*badproduct12",
+                "phone": "%bad4445555"
+            }
+        })
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(
+            ErrorCodes.Descriptor.NameFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Descriptor.PhoneFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
+        )
