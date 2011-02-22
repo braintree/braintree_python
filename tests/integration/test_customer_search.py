@@ -51,6 +51,7 @@ class TestCustomerSearch(unittest.TestCase):
             "address_extended_address": "Suite 3",
             "address_locality": "Chicago",
             "address_region": "Illinois",
+            "address_country_name": "United States of America",
             "payment_method_token": token,
             "cardholder_name": "Tim Toole",
             "credit_card_number": "4111111111111111",

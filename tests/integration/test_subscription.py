@@ -1006,6 +1006,24 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, subscription_1000))
         self.assertFalse(TestHelper.includes(collection, subscription_900))
 
+    def test_search_on_transaction_id(self):
+        subscription_found = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+
+        subscription_not_found = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+
+        collection = Subscription.search(
+            SubscriptionSearch.transaction_id == subscription_found.transactions[0].id
+        )
+
+        self.assertTrue(TestHelper.includes(collection, subscription_found))
+        self.assertFalse(TestHelper.includes(collection, subscription_not_found))
+
     def test_search_on_id(self):
         subscription_found = Subscription.create({
             "id": "find_me_%s" % random.randint(1,1000000),
@@ -1022,6 +1040,26 @@ class TestSubscription(unittest.TestCase):
         collection = Subscription.search([
             SubscriptionSearch.id.starts_with("find_me")
         ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription_found))
+        self.assertFalse(TestHelper.includes(collection, subscription_not_found))
+
+    def test_search_on_next_billing_date(self):
+        subscription_found = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"]
+        }).subscription
+
+        subscription_not_found = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"]
+        }).subscription
+
+        next_billing_date_cutoff = datetime.today() + timedelta(days=5)
+
+        collection = Subscription.search(
+            SubscriptionSearch.next_billing_date >= next_billing_date_cutoff
+        )
 
         self.assertTrue(TestHelper.includes(collection, subscription_found))
         self.assertFalse(TestHelper.includes(collection, subscription_not_found))
