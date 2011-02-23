@@ -509,6 +509,14 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
+    def test_advanced_search_authorization_expired_status(self):
+        collection = Transaction.search(
+            TransactionSearch.status == Transaction.Status.AuthorizationExpired
+        )
+
+        self.assertTrue(collection.maximum_size > 0)
+        self.assertEqual(Transaction.Status.AuthorizationExpired, collection.first.status)
+
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
         try:
             collection = Transaction.search([
@@ -876,6 +884,23 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
+
+    def test_advanced_search_range_node_authorization_expired_at(self):
+        two_days_ago = datetime.today() - timedelta(days=2)
+        yesterday = datetime.today() - timedelta(days=1)
+        tomorrow = datetime.today() + timedelta(days=1)
+
+        collection = Transaction.search(
+            TransactionSearch.authorization_expired_at.between(two_days_ago, yesterday)
+        )
+        self.assertEquals(0, collection.maximum_size)
+
+        collection = Transaction.search(
+            TransactionSearch.authorization_expired_at.between(yesterday, tomorrow)
+        )
+        self.assertTrue(collection.maximum_size > 0)
+        self.assertEquals(Transaction.Status.AuthorizationExpired, collection.first.status)
+
 
     def test_advanced_search_range_node_authorized_at(self):
         transaction  = Transaction.sale({
