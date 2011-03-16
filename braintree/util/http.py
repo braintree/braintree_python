@@ -1,6 +1,9 @@
 import httplib
 import base64
+import socket
+import ssl
 from braintree.configuration import Configuration
+from braintree.util.backports import match_hostname
 from braintree.util.xml_util import XmlUtil
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
@@ -64,7 +67,7 @@ class Http(object):
         )
         response = conn.getresponse()
         status = response.status
-
+        
         if Http.is_error_status(status):
             conn.close()
             Http.raise_exception_from_status(status)
@@ -90,27 +93,14 @@ class Http(object):
 
     def __verify_ssl(self):
         if Configuration.use_unsafe_ssl: return
-
-        try:
-            import pycurl
-        except ImportError, e:
-            print "Cannot load PycURL.  Please refer to Braintree documentation."
-            print """
-If you are in an environment where you absolutely cannot load PycURL
-(such as Google App Engine), you can turn off SSL Verification by setting:
-
-    Configuration.use_unsafe_ssl = True
-
-This is highly discouraged, however, since it leaves you susceptible to
-man-in-the-middle attacks."""
-            raise e
-
-        curl = pycurl.Curl()
-        # see http://curl.haxx.se/libcurl/c/curl_easy_setopt.html for info on these options
-        curl.setopt(pycurl.CAINFO, self.environment.ssl_certificate)
-        curl.setopt(pycurl.SSL_VERIFYPEER, 1)
-        curl.setopt(pycurl.SSL_VERIFYHOST, 2)
-        curl.setopt(pycurl.NOBODY, 1)
-        curl.setopt(pycurl.NOSIGNAL, 1)
-        curl.setopt(pycurl.URL, self.environment.protocol + self.environment.server_and_port)
-        curl.perform()
+        
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((self.environment.server, self.environment.port))
+        
+        sslsock = ssl.wrap_socket(
+            sock,
+            ssl_version=ssl.PROTOCOL_SSLv3,
+            cert_reqs=ssl.CERT_REQUIRED,
+            ca_certs=self.environment.ssl_certificate
+        )
+        match_hostname(sslsock.getpeercert(), self.environment.server)
