@@ -78,6 +78,7 @@ class TransactionSearch:
     refund = Search.KeyValueNodeBuilder("refund")
 
     amount = Search.RangeNodeBuilder("amount")
+    authorization_expired_at = Search.RangeNodeBuilder("authorization_expired_at")
     authorized_at = Search.RangeNodeBuilder("authorized_at")
     created_at = Search.RangeNodeBuilder("created_at")
     failed_at = Search.RangeNodeBuilder("failed_at")

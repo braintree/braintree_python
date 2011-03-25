@@ -115,6 +115,7 @@ class Transaction(Resource):
         * braintree.Transaction.Status.Void
         """
 
+        AuthorizationExpired   = "authorization_expired"
         Authorized             = "authorized"
         Authorizing            = "authorizing"
         Failed                 = "failed"
