@@ -29,6 +29,7 @@ class ErrorCodes(object):
         RegionIsTooLong = "81810"
         StreetAddressIsRequired = "81811"
         StreetAddressIsTooLong = "81812"
+        TooManyAddressesPerCustomer = "91818"
 
     class CreditCard(object):
         BillingAddressConflict = "91701"
