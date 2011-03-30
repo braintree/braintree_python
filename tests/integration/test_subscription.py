@@ -138,6 +138,15 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals("sale", transaction.type)
         self.assertEquals(subscription.id, transaction.subscription_id)
 
+    def test_create_has_transaction_with_billing_period_dates(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        transaction = subscription.transactions[0]
+        self.assertEquals(subscription.billing_period_start_date, transaction.subscription_details.billing_period_start_date)
+        self.assertEquals(subscription.billing_period_end_date, transaction.subscription_details.billing_period_end_date)
+
     def test_create_returns_a_transaction_if_transaction_is_declined(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
