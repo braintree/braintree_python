@@ -335,8 +335,8 @@ class Transaction(Resource):
             },
             {
                 "options": [
-                    "store_in_vault", "submit_for_settlement", "add_billing_address_to_payment_method",
-                    "store_shipping_address_in_vault"
+                    "store_in_vault", "store_in_vault_on_success", "submit_for_settlement",
+                    "add_billing_address_to_payment_method", "store_shipping_address_in_vault"
                 ]
             },
             {"custom_fields": ["__any_key__"]},
@@ -392,7 +392,6 @@ class Transaction(Resource):
         """
         The vault credit card associated with this transaction
         """
-
         if self.credit_card_details.token is None:
             return None
         return self.gateway.credit_card.find(self.credit_card_details.token)
@@ -402,5 +401,6 @@ class Transaction(Resource):
         """
         The vault customer associated with this transaction
         """
-
+        if self.customer_details.id is None:
+            return None
         return self.gateway.customer.find(self.customer_details.id)

@@ -429,7 +429,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("custom_fields")[0].code
         )
 
-    def test_create_can_stuff_customer_and_credit_card_in_the_vault(self):
+    def test_create_can_store_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({
             "amount": "100",
             "customer": {
@@ -451,6 +451,52 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
         self.assertNotEqual(None, re.search("\A\w{4,5}\Z", transaction.credit_card_details.token))
         self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
+
+    def test_create_can_store_customer_and_credit_card_in_the_vault_on_success(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "customer": {
+                "first_name": "Adam",
+                "last_name": "Williams"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "store_in_vault_on_success": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
+        self.assertNotEqual(None, re.search("\A\w{4,5}\Z", transaction.credit_card_details.token))
+        self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
+
+    def test_create_does_not_store_customer_and_credit_card_in_the_vault_on_failure(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Decline,
+            "customer": {
+                "first_name": "Adam",
+                "last_name": "Williams"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "store_in_vault_on_success": True
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(None, transaction.customer_details.id)
+        self.assertEqual(None, transaction.credit_card_details.token)
+        self.assertEqual(None, transaction.vault_customer)
+        self.assertEqual(None, transaction.vault_credit_card)
 
     def test_create_associated_a_billing_address_with_credit_card_in_vault(self):
         result = Transaction.sale({
@@ -597,7 +643,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(customer_id, transaction.vault_customer.id)
         self.assertEquals(payment_method_token, transaction.credit_card_details.token)
         self.assertEquals(payment_method_token, transaction.vault_credit_card.token)
-    
+
     def test_create_using_customer_id(self):
         result = Customer.create({
             "first_name": "Mike",
