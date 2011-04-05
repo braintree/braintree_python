@@ -694,6 +694,35 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(credit_card.token, transaction.credit_card_details.token)
         self.assertEquals(credit_card.token, transaction.vault_credit_card.token)
 
+    def test_create_using_payment_method_token_with_cvv(self):
+        result = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            }
+        })
+        self.assertTrue(result.is_success)
+        customer = result.customer
+        credit_card = customer.credit_cards[0]
+
+        result = Transaction.sale({
+            "amount": "100",
+            "payment_method_token": credit_card.token,
+            "credit_card": {
+                "cvv": "301"
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(customer.id, transaction.customer_details.id)
+        self.assertEquals(customer.id, transaction.vault_customer.id)
+        self.assertEquals(credit_card.token, transaction.credit_card_details.token)
+        self.assertEquals(credit_card.token, transaction.vault_credit_card.token)
+        self.assertEquals("S", transaction.cvv_response_code)
+
     def test_create_with_failing_validations(self):
         params = {
             "transaction": {
