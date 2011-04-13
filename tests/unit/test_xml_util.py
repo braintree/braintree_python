@@ -137,6 +137,10 @@ class TestXmlUtil(unittest.TestCase):
         dict = {"a": datetime(2010, 1, 2, 3, 4, 5)}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
+    def test_xml_from_dict_with_unicode_characters(self):
+        dict = {"a": u"\u1f61hat?"}
+        self.assertEqual('<a>&#8033;hat?</a>', XmlUtil.xml_from_dict(dict))
+
     def test_xml_from_dict_with_dates_formats_as_datetime(self):
         dict = {"a": date(2010, 1, 2)}
         self.assertEqual('<a type="datetime">2010-01-02T00:00:00Z</a>', XmlUtil.xml_from_dict(dict))
