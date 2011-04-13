@@ -32,6 +32,33 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
+    def test_create_with_unicode(self):
+        result = Customer.create({
+            "first_name": u"Bill<&>",
+            "last_name": u"G\u1F00t\u1F18s",
+            "company": "Microsoft",
+            "email": "bill@microsoft.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.microsoft.com"
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        self.assertEqual(u"Bill<&>", customer.first_name)
+        self.assertEqual(u"G\u1f00t\u1F18s", customer.last_name)
+        self.assertEqual("Microsoft", customer.company)
+        self.assertEqual("bill@microsoft.com", customer.email)
+        self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("614.555.5678", customer.fax)
+        self.assertEqual("www.microsoft.com", customer.website)
+        self.assertNotEqual(None, customer.id)
+        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
+
+        found_customer = Customer.find(customer.id)
+        self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
+
     def test_create_with_no_attributes(self):
         result = Customer.create()
         self.assertTrue(result.is_success)
