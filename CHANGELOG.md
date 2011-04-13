@@ -1,3 +1,7 @@
+## 2.9.1
+
+* Added improvements to unicode handling.
+
 ## 2.9.0
 
 * Added a new transaction state, AuthorizationExpired.

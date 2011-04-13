@@ -34,7 +34,9 @@ class Generator(object):
         open_tag = "<" + self.__escape(key) + ">"
         close_tag = "</" + self.__escape(key) + ">"
 
-        if isinstance(value, str) or isinstance(value, unicode):
+        if isinstance(value, unicode):
+            return open_tag + self.__escape(value).encode('ascii', 'xmlcharrefreplace') + close_tag
+        elif isinstance(value, str):
             return open_tag + self.__escape(value) + close_tag
         elif isinstance(value, Decimal):
             return open_tag + str(value) + close_tag
