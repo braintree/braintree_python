@@ -808,7 +808,7 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trialless_plan["id"],
             "descriptor": {
                 "name": "123*123456789012345678",
-                "phone": "3334445555"
+                "phone": "1234567890"
             }
         })
 
@@ -817,12 +817,12 @@ class TestSubscription(unittest.TestCase):
         updated_subscription = Subscription.update(subscription.id, {
             "descriptor": {
                 "name": "999*99",
-                "phone": "9999999"
+                "phone": "1234567890"
             }
         }).subscription
 
         self.assertEquals("999*99", updated_subscription.descriptor.name)
-        self.assertEquals("9999999", updated_subscription.descriptor.phone)
+        self.assertEquals("1234567890", updated_subscription.descriptor.phone)
 
     def test_cancel_with_successful_response(self):
         subscription = Subscription.create({
