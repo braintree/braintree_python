@@ -12,6 +12,7 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
@@ -334,8 +335,8 @@ class Transaction(Resource):
             },
             {
                 "options": [
-                    "store_in_vault", "submit_for_settlement", "add_billing_address_to_payment_method",
-                    "store_shipping_address_in_vault"
+                    "store_in_vault", "store_in_vault_on_success", "submit_for_settlement",
+                    "add_billing_address_to_payment_method", "store_shipping_address_in_vault"
                 ]
             },
             {"custom_fields": ["__any_key__"]},
@@ -368,6 +369,8 @@ class Transaction(Resource):
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
             self.status_history = [StatusEvent(gateway, status_event) for status_event in self.status_history]
+        if "subscription" in attributes:
+            self.subscription_details = SubscriptionDetails(attributes.pop("subscription"))
         if "descriptor" in attributes:
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
 
@@ -389,7 +392,6 @@ class Transaction(Resource):
         """
         The vault credit card associated with this transaction
         """
-
         if self.credit_card_details.token is None:
             return None
         return self.gateway.credit_card.find(self.credit_card_details.token)
@@ -399,5 +401,6 @@ class Transaction(Resource):
         """
         The vault customer associated with this transaction
         """
-
+        if self.customer_details.id is None:
+            return None
         return self.gateway.customer.find(self.customer_details.id)

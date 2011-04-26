@@ -1,5 +1,3 @@
-load File.dirname(__FILE__) + "/cruise.rake"
-
 task :default => :test
 
 task :test => ["test:unit", "test:integration"]
@@ -31,21 +29,5 @@ namespace :pypi do
   desc "Upload a new version to PyPI"
   task :upload => :clean do
     sh "python setup.py sdist upload"
-  end
-end
-
-namespace :docs do
-  desc "Generate docs"
-  task :generate => "docs:clean" do
-    Dir.chdir("docs") do
-      sh "make html"
-    end
-  end
-
-  desc "Clean docs"
-  task :clean do
-    Dir.chdir("docs") do
-      sh "make clean"
-    end
   end
 end
