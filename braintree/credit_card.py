@@ -36,9 +36,9 @@ class CreditCard(Resource):
         print(result.credit_card.token)
         print(result.credit_card.masked_number)
 
-    For more information on CreditCards, see http://www.braintreepaymentsolutions.com/gateway/credit-card-api
+    For more information on CreditCards, see http://www.braintreepayments.com/gateway/credit-card-api
 
-    For more information on CreditCard verifications, see http://www.braintreepaymentsolutions.com/gateway/credit-card-verification-api
+    For more information on CreditCard verifications, see http://www.braintreepayments.com/gateway/credit-card-verification-api
     """
     class CardType(object):
         """
