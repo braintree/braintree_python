@@ -108,6 +108,7 @@ man-in-the-middle attacks."""
         curl = pycurl.Curl()
         # see http://curl.haxx.se/libcurl/c/curl_easy_setopt.html for info on these options
         curl.setopt(pycurl.CAINFO, self.environment.ssl_certificate)
+        curl.setopt(pycurl.ENCODING, 'gzip')
         curl.setopt(pycurl.SSL_VERIFYPEER, 1)
         curl.setopt(pycurl.SSL_VERIFYHOST, 2)
         curl.setopt(pycurl.NOBODY, 1)
