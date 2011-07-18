@@ -50,7 +50,7 @@ class Generator(object):
             return open_tag + self.__generate_boolean(value) + close_tag
         elif isinstance(value, (int, long)) and not isinstance(value, bool):
             open_tag = "<" + key + " type=\"integer\">"
-            return open_tag + ("%d" % value) + close_tag
+            return open_tag + str(value) + close_tag
         elif isinstance(value, types.NoneType):
             return open_tag + close_tag
         elif isinstance(value, datetime.datetime) or isinstance(value, datetime.date):
