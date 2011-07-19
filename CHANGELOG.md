@@ -1,3 +1,9 @@
+## 2.10.1
+
+* Enabled gzip encoding for HTTP requests
+* Fixed handling of long integers when generating xml (thanks [glencoates](http://github.com/glencoates))
+* Added new error code
+
 ## 2.10.0
 
 * Added subscription_details to Transaction
