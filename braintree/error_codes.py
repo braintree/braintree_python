@@ -182,6 +182,7 @@ class ErrorCodes(object):
         TaxAmountIsTooLarge = "81536"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
+        UnsupportedVoiceAuthorization = "91539"
 
         class Options(object):
             VaultIsDisabled = "91525"

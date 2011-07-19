@@ -4,7 +4,7 @@ class ValidationErrorCollection(object):
     """
     A class representing a collection of validation errors.
 
-    For more information on ValidationErrors, see http://www.braintreepaymentsolutions.com/gateway/validation-errors
+    For more information on ValidationErrors, see http://www.braintreepayments.com/gateway/validation-errors
     """
 
     def __init__(self, data={"errors": []}):

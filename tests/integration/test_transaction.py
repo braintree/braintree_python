@@ -70,7 +70,7 @@ class TestTransaction(unittest.TestCase):
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
-                "website": "http://braintreepaymentsolutions.com"
+                "website": "http://braintreepayments.com"
             },
             "billing": {
                 "first_name": "Carl",
@@ -126,7 +126,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("dan@example.com", transaction.customer_details.email)
         self.assertEquals("419-555-1234", transaction.customer_details.phone)
         self.assertEquals("419-555-1235", transaction.customer_details.fax)
-        self.assertEquals("http://braintreepaymentsolutions.com", transaction.customer_details.website)
+        self.assertEquals("http://braintreepayments.com", transaction.customer_details.website)
         self.assertEquals("Carl", transaction.billing_details.first_name)
         self.assertEquals("Jones", transaction.billing_details.last_name)
         self.assertEquals("Braintree", transaction.billing_details.company)

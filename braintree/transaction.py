@@ -39,7 +39,7 @@ class Transaction(Resource):
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
-                "website": "http://braintreepaymentsolutions.com"
+                "website": "http://braintreepayments.com"
             },
             "billing": {
                 "first_name": "Carl",
@@ -68,7 +68,7 @@ class Transaction(Resource):
         print(result.transaction.amount)
         print(result.transaction.order_id)
 
-    For more information on Transactions, see http://www.braintreepaymentsolutions.com/gateway/transaction-api
+    For more information on Transactions, see http://www.braintreepayments.com/gateway/transaction-api
     """
 
     class CreatedUsing(object):

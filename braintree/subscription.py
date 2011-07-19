@@ -30,7 +30,7 @@ class Subscription(Resource):
             "trial_period": True
         })
 
-    For more information on Subscriptions, see http://www.braintreepaymentsolutions.com/gateway/subscription-api
+    For more information on Subscriptions, see http://www.braintreepayments.com/gateway/subscription-api
     """
 
     class TrialDurationUnit(object):
