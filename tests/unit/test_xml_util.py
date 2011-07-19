@@ -105,6 +105,14 @@ class TestXmlUtil(unittest.TestCase):
         dict = {"a": "b"}
         self.assertEqual(dict, self.__xml_and_back(dict))
 
+    def test_xml_from_dict_with_integer(self):
+        dict = {"a": 1}
+        self.assertEqual('<a type="integer">1</a>', XmlUtil.xml_from_dict(dict))
+
+    def test_xml_from_dict_with_long(self):
+        dict = {"a": 12341234123412341234}
+        self.assertEqual('<a type="integer">12341234123412341234</a>', XmlUtil.xml_from_dict(dict))
+
     def test_xml_from_dict_with_boolean(self):
         dict = {"a": True}
         self.assertEqual(dict, self.__xml_and_back(dict))

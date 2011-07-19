@@ -48,7 +48,7 @@ class Generator(object):
         elif isinstance(value, bool):
             open_tag = "<" + key + " type=\"boolean\">"
             return open_tag + self.__generate_boolean(value) + close_tag
-        elif isinstance(value, int) and not isinstance(value, bool):
+        elif isinstance(value, (int, long)) and not isinstance(value, bool):
             open_tag = "<" + key + " type=\"integer\">"
             return open_tag + str(value) + close_tag
         elif isinstance(value, types.NoneType):
