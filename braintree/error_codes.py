@@ -34,7 +34,6 @@ class ErrorCodes(object):
     class CreditCard(object):
         BillingAddressConflict = "91701"
         BillingAddressIdIsInvalid = "91702"
-        CannotVerifyWithSuspendedMerchantAccount = "91724"
         CardholderNameIsTooLong = "81723"
         CreditCardTypeIsNotAccepted = "81703"
         CreditCardTypeIsNotAcceptedBySubscriptionMerchantAccount = "81718"
