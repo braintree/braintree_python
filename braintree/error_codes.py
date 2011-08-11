@@ -85,6 +85,11 @@ class ErrorCodes(object):
         NameFormatIsInvalid = "92201"
         PhoneFormatIsInvalid = "92202"
 
+    class SettlementBatchSummary(object):
+        CustomFieldIsInvalid = "82303"
+        SettlementDateIsInvalid = "82302"
+        SettlementDateIsRequired = "82301"
+
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
         BillingDayOfMonthIsInvalid = "91914"
