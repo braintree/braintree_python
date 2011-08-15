@@ -11,14 +11,12 @@ class Parser(object):
 
     def __parse_node(self, root):
         child = root.firstChild
-        if not child:
-            return self.__node_content(root, None)
-
-        if (child.nodeType == minidom.Node.TEXT_NODE):
-            return self.__node_content(root, child.nodeValue)
-
         if self.__get_node_attribute(root, "type") == "array":
             return self.__build_list(child)
+        elif not child:
+            return self.__node_content(root, None)
+        elif (child.nodeType == minidom.Node.TEXT_NODE):
+            return self.__node_content(root, child.nodeValue)
         else:
             return self.__build_dict(child)
 

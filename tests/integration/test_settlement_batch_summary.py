@@ -36,3 +36,25 @@ class TestSettlementBatchSummary(unittest.TestCase):
         visa_records = [row for row in result.settlement_batch_summary.records if row['card_type'] == 'Visa'][0]
         self.assertTrue(int(visa_records['count']) >= 1)
         self.assertTrue(float(visa_records['amount_settled']) >= float(TransactionAmounts.Authorize))
+
+    def test_generate_can_be_grouped_by_a_custom_field(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Sergio Ramos"
+            },
+            "options": {"submit_for_settlement": True},
+            "custom_fields": {
+                "store_me": 1
+            }
+        })
+
+        transaction = result.transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = SettlementBatchSummary.generate(datetime.today().strftime("%Y-%m-%d"), 'store_me')
+        self.assertTrue(result.is_success)
+
+        self.assertTrue('store_me' in result.settlement_batch_summary.records[0])

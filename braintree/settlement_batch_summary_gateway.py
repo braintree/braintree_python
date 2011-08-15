@@ -9,8 +9,13 @@ class SettlementBatchSummaryGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
-    def generate(self, settlement_date):
-        response = self.config.http().post('/settlement_batch_summary', { "settlement_batch_summary": { "settlement_date": settlement_date}})
+    def generate(self, settlement_date, group_by_custom_field=None):
+        criteria = {"settlement_date": settlement_date}
+
+        if group_by_custom_field:
+            criteria["group_by_custom_field"] = group_by_custom_field
+
+        response = self.config.http().post('/settlement_batch_summary', {"settlement_batch_summary": criteria})
         if "settlement_batch_summary" in response:
             return SuccessfulResult({"settlement_batch_summary": SettlementBatchSummary(self.gateway, response["settlement_batch_summary"])})
         elif "api_error_response" in response:
