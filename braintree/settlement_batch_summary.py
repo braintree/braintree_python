@@ -14,4 +14,6 @@ class SettlementBatchSummary(Resource):
         return Configuration.gateway().settlement_batch_summary.generate(settlement_date)
 
     def __init__(self, gateway, attributes):
-        self.records = []
+        Resource.__init__(self, gateway, attributes)
+        if self.records == '':
+            self.records = []
