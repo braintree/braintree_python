@@ -156,7 +156,6 @@ class ErrorCodes(object):
         CannotBeVoided = "91504"
         CannotRefundCredit = "91505"
         CannotRefundUnlessSettled = "91506"
-        CannotRefundWithSuspendedMerchantAccount = "91538"
         CannotSubmitForSettlement = "91507"
         CreditCardIsRequired = "91508"
         CustomFieldIsInvalid = "91526"
