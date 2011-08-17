@@ -42,6 +42,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(date, type(subscription.billing_period_end_date))
         self.assertEquals(date, type(subscription.paid_through_date))
 
+        self.assertEquals(1, subscription.current_billing_cycle)
         self.assertEquals(0, subscription.failure_count)
         self.assertEquals(self.credit_card.token, subscription.payment_method_token)
 
