@@ -1276,3 +1276,60 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Descriptor.PhoneFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
         )
+
+    def test_clone_transaction(self):
+        result = Transaction.sale({
+            "amount": "100.00",
+            "order_id": "123",
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2011",
+            },
+            "customer": {
+                "first_name": "Dan",
+            },
+            "billing": {
+                "first_name": "Carl",
+            },
+            "shipping": {
+                "first_name": "Andrew",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45"})
+        self.assertTrue(clone_result.is_success)
+        clone_transaction = clone_result.transaction
+
+        self.assertNotEquals(transaction.id, clone_transaction.id)
+
+        self.assertEquals(Transaction.Type.Sale, clone_transaction.type)
+        self.assertEquals(Transaction.Status.Authorized, clone_transaction.status)
+        self.assertEquals(Decimal("123.45"), clone_transaction.amount)
+        self.assertEquals("123", clone_transaction.order_id)
+        self.assertEquals("510510******5100", clone_transaction.credit_card_details.masked_number)
+        self.assertEquals("Dan", clone_transaction.customer_details.first_name)
+        self.assertEquals("Carl", clone_transaction.billing_details.first_name)
+        self.assertEquals("Andrew", clone_transaction.shipping_details.first_name)
+
+    def test_clone_transaction_with_validations(self):
+        result = Transaction.credit({
+            "amount": "100.00",
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2011",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45"})
+        self.assertFalse(clone_result.is_success)
+
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotCloneCredit,
+            clone_result.errors.for_object("transaction").on("base")[0].code
+        )
