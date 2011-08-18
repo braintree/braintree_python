@@ -311,7 +311,7 @@ class Transaction(Resource):
 
     @staticmethod
     def clone_signature():
-        return ["amount"]
+        return ["amount", {"options": ["submit_for_settlement"]}]
 
     @staticmethod
     def create_signature():

@@ -1314,6 +1314,24 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("Carl", clone_transaction.billing_details.first_name)
         self.assertEquals("Andrew", clone_transaction.shipping_details.first_name)
 
+    def test_clone_transaction_submits_for_settlement(self):
+        result = Transaction.sale({
+            "amount": "100.00",
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2011",
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45", "options": {"submit_for_settlement": "true"}})
+        self.assertTrue(clone_result.is_success)
+        clone_transaction = clone_result.transaction
+
+        self.assertEquals(Transaction.Type.Sale, clone_transaction.type)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, clone_transaction.status)
+
     def test_clone_transaction_with_validations(self):
         result = Transaction.credit({
             "amount": "100.00",
