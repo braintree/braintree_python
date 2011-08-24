@@ -17,6 +17,7 @@ from errors import Errors
 from environment import Environment
 from resource_collection import ResourceCollection
 from search import Search
+from settlement_batch_summary import SettlementBatchSummary
 from subscription import Subscription
 from subscription_gateway import SubscriptionGateway
 from status_event import StatusEvent

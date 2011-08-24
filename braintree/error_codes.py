@@ -85,6 +85,11 @@ class ErrorCodes(object):
         NameFormatIsInvalid = "92201"
         PhoneFormatIsInvalid = "92202"
 
+    class SettlementBatchSummary(object):
+        CustomFieldIsInvalid = "82303"
+        SettlementDateIsInvalid = "82302"
+        SettlementDateIsRequired = "82301"
+
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
         BillingDayOfMonthIsInvalid = "91914"
@@ -101,6 +106,7 @@ class ErrorCodes(object):
         InconsistentStartDate = "91917"
         InvalidRequestFormat = "91921"
         MerchantAccountIdIsInvalid = "91901"
+        MismatchCurrencyISOCode = "91923"
         NumberOfBillingCyclesCannotBeBlank = "91912"
         NumberOfBillingCyclesIsTooSmall = "91909"
         NumberOfBillingCyclesMustBeGreaterThanZero = "91907"

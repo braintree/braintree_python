@@ -84,6 +84,15 @@ class TestXmlUtil(unittest.TestCase):
         expected = {"container": {"elements": ["val1", "val2", "val3"]}}
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
 
+    def test_dict_from_xml_with_empty_array(self):
+        xml = """
+        <container>
+            <elements type="array" />
+        </container>
+        """
+        expected = {"container": {"elements": []}}
+        self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
+
     def test_dict_from_xml_array_of_hashes(self):
         xml = """
         <container>
