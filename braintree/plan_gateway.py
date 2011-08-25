@@ -14,5 +14,4 @@ class PlanGateway(object):
 
     def all(self):
         response = self.config.http().get("/plans/")
-
         return [Plan(self.gateway, item) for item in ResourceCollection._extract_as_array(response["plans"], "plan")]

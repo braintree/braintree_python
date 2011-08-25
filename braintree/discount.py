@@ -1,4 +1,9 @@
 from braintree.modification import Modification
+from braintree.configuration import Configuration
+
 
 class Discount(Modification):
-    pass
+
+    @staticmethod
+    def all():
+        return Configuration.gateway().discount.all()
