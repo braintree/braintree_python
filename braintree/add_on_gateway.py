@@ -9,5 +9,5 @@ class AddOnGateway(object):
 
     def all(self):
         response = self.config.http().get("/add_ons/")
-        modifications = {"modification": response["modifications"]}
-        return [AddOn(self.gateway, item) for item in ResourceCollection._extract_as_array(modifications, "modification")]
+        add_ons = {"add_on": response["add_ons"]}
+        return [AddOn(self.gateway, item) for item in ResourceCollection._extract_as_array(add_ons, "add_on")]

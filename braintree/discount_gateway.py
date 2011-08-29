@@ -9,5 +9,5 @@ class DiscountGateway(object):
 
     def all(self):
         response = self.config.http().get("/discounts/")
-        modifications = {"modification": response["modifications"]}
-        return [Discount(self.gateway, item) for item in ResourceCollection._extract_as_array(modifications, "modification")]
+        discounts = {"discount": response["discounts"]}
+        return [Discount(self.gateway, item) for item in ResourceCollection._extract_as_array(discounts, "discount")]
