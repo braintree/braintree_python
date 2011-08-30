@@ -1299,7 +1299,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45"})
+        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45", "options": {"submit_for_settlement": "false"}})
         self.assertTrue(clone_result.is_success)
         clone_transaction = clone_result.transaction
 
@@ -1350,4 +1350,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(
             ErrorCodes.Transaction.CannotCloneCredit,
             clone_result.errors.for_object("transaction").on("base")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Transaction.Options.SubmitForSettlementIsRequiredForCloning,
+            clone_result.errors.for_object("transaction").on("submit_for_settlement")[0].code
         )

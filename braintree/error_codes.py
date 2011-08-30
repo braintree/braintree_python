@@ -196,3 +196,4 @@ class ErrorCodes(object):
 
         class Options(object):
             VaultIsDisabled = "91525"
+            SubmitForSettlementIsRequiredForCloning = "91544"
