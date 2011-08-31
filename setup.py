@@ -1,7 +1,7 @@
 import braintree
 from distutils.core import setup
 setup(
-    name="braintree",
+    name="el-braintree",
     version=braintree.version.Version,
     description="Braintree Python Library",
     author="Braintree",
