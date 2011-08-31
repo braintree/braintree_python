@@ -35,12 +35,13 @@ class Configuration(object):
 .. [1] `URL Fetch Python API Overview <http://code.google.com/appengine/docs/python/urlfetch/overview.html>`_
     """
     @staticmethod
-    def configure(environment, merchant_id, public_key, private_key):
+    def configure(environment, merchant_id, public_key, private_key, timeout=15):
         Configuration.environment = environment
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
         Configuration.use_unsafe_ssl = False
+        Configuration.timeout = timeout
 
     @staticmethod
     def gateway():
@@ -52,18 +53,20 @@ class Configuration(object):
             Configuration.environment,
             Configuration.merchant_id,
             Configuration.public_key,
-            Configuration.private_key
+            Configuration.private_key,
+            Configuration.timeout
         )
 
     @staticmethod
     def api_version():
         return "2"
 
-    def __init__(self, environment, merchant_id, public_key, private_key):
+    def __init__(self, environment, merchant_id, public_key, private_key, timeout):
         self.environment = environment
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
+        self.timeout = timeout
 
     def base_merchant_path(self):
         return "/merchants/" + self.merchant_id

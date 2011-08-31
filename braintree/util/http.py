@@ -55,9 +55,9 @@ class Http(object):
     def __http_do(self, http_verb, path, params=None):
         if self.environment.is_ssl:
             self.__verify_ssl()
-            conn = httplib.HTTPSConnection(self.environment.server, self.environment.port)
+            conn = httplib.HTTPSConnection(self.environment.server, self.environment.port, timeout=self.config.timeout)
         else:
-            conn = httplib.HTTPConnection(self.environment.server, self.environment.port)
+            conn = httplib.HTTPConnection(self.environment.server, self.environment.port, timeout=self.config.timeout)
 
         conn.request(
             http_verb,
