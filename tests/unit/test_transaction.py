@@ -29,3 +29,9 @@ class TestTransaction(unittest.TestCase):
         except KeyError, e:
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
+    def test_finding_empty_id_raises_not_found_exception(self):
+        try:
+            Transaction.find(" ")
+            self.assertTrue(false)
+        except NotFoundError, e:
+            self.assertIsNotNone(str(e))

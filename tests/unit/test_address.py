@@ -29,3 +29,16 @@ class TestAddress(unittest.TestCase):
         except KeyError, e:
             self.assertEquals("'Invalid keys: bad_key'", str(e))
 
+    def test_finding_address_with_empty_customer_id_raises_not_found_exception(self):
+        try:
+            Address.find(" ", "address_id")
+            self.assertTrue(false)
+        except NotFoundError, e:
+            self.assertIsNotNone(str(e))
+
+    def test_finding_address_with_empty_address_id_raises_not_found_exception(self):
+        try:
+            Address.find("customer_id", " ")
+            self.assertTrue(false)
+        except NotFoundError, e:
+            self.assertIsNotNone(str(e))

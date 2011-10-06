@@ -14,3 +14,10 @@ class TestSubscription(unittest.TestCase):
             self.assertTrue(False)
         except KeyError, e:
             self.assertEquals("'Invalid keys: bad_key'", str(e))
+
+    def test_finding_empty_id_raises_not_found_exception(self):
+        try:
+            Subscription.find(" ")
+            self.assertTrue(false)
+        except NotFoundError, e:
+            self.assertIsNotNone(str(e))

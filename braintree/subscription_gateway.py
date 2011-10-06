@@ -30,6 +30,8 @@ class SubscriptionGateway(object):
 
     def find(self, subscription_id):
         try:
+            if subscription_id == None or subscription_id.strip() == "":
+                raise NotFoundError()
             response = self.config.http().get("/subscriptions/" + subscription_id)
             return Subscription(self.gateway, response["subscription"])
         except NotFoundError:

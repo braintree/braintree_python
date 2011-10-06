@@ -488,11 +488,6 @@ class TestSubscription(unittest.TestCase):
         except Exception, e:
             self.assertEquals("subscription with id bad_token not found", str(e))
 
-    # This exposes the problem found in Github Issue #12/Mingle #2621
-    #@raises(NotFoundError)
-    #def test_find_with_empty_string(self):
-    #    Subscription.find("")
-
     def test_update_creates_a_prorated_transaction_when_merchant_is_set_to_prorate(self):
         new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
