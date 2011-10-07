@@ -32,13 +32,13 @@ class TestAddress(unittest.TestCase):
     def test_finding_address_with_empty_customer_id_raises_not_found_exception(self):
         try:
             Address.find(" ", "address_id")
-            self.assertTrue(false)
+            self.assertTrue(False)
         except NotFoundError, e:
-            self.assertIsNotNone(str(e))
+            self.assertTrue(True)
 
     def test_finding_address_with_empty_address_id_raises_not_found_exception(self):
         try:
             Address.find("customer_id", " ")
-            self.assertTrue(false)
+            self.assertTrue(False)
         except NotFoundError, e:
-            self.assertIsNotNone(str(e))
+            self.assertTrue(True)

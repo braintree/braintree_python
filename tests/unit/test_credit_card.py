@@ -78,6 +78,6 @@ class TestCreditCard(unittest.TestCase):
     def test_finding_empty_id_raises_not_found_exception(self):
         try:
             CreditCard.find(" ")
-            self.assertTrue(false)
+            self.assertTrue(False)
         except NotFoundError, e:
-            self.assertIsNotNone(str(e))
+            self.assertTrue(True)
