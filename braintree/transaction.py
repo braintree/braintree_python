@@ -139,6 +139,10 @@ class Transaction(Resource):
         Sale = "sale"
 
     @staticmethod
+    def clone_transaction(transaction_id, params):
+        return Configuration.gateway().transaction.clone_transaction(transaction_id, params)
+
+    @staticmethod
     def confirm_transparent_redirect(query_string):
         """
         Confirms a transparent redirect request. It expects the query string from the
@@ -304,6 +308,10 @@ class Transaction(Resource):
             })
         """
         return Configuration.gateway().transaction.create(params)
+
+    @staticmethod
+    def clone_signature():
+        return ["amount", {"options": ["submit_for_settlement"]}]
 
     @staticmethod
     def create_signature():

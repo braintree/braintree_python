@@ -30,7 +30,7 @@ class TestSettlementBatchSummary(unittest.TestCase):
         transaction = result.transaction
         TestHelper.settle_transaction(transaction.id)
 
-        result = SettlementBatchSummary.generate(datetime.today().strftime("%Y-%m-%d"))
+        result = SettlementBatchSummary.generate(TestHelper.now_in_eastern())
         self.assertTrue(result.is_success)
 
         visa_records = [row for row in result.settlement_batch_summary.records if row['card_type'] == 'Visa'][0]
@@ -54,7 +54,7 @@ class TestSettlementBatchSummary(unittest.TestCase):
         transaction = result.transaction
         TestHelper.settle_transaction(transaction.id)
 
-        result = SettlementBatchSummary.generate(datetime.today().strftime("%Y-%m-%d"), 'store_me')
+        result = SettlementBatchSummary.generate(TestHelper.now_in_eastern(), 'store_me')
         self.assertTrue(result.is_success)
 
         self.assertTrue('store_me' in result.settlement_batch_summary.records[0])

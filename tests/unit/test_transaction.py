@@ -1,6 +1,13 @@
 from tests.test_helper import *
 
 class TestTransaction(unittest.TestCase):
+    def test_clone_transaction_raises_exception_with_bad_keys(self):
+        try:
+            Transaction.clone_transaction("an id", {"bad_key": "value"})
+            self.assertTrue(False)
+        except KeyError, e:
+            self.assertEquals("'Invalid keys: bad_key'", str(e))
+
     def test_sale_raises_exception_with_bad_keys(self):
         try:
             Transaction.sale({"bad_key": "value"})

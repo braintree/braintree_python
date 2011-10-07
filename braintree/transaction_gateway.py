@@ -12,6 +12,10 @@ class TransactionGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
+    def clone_transaction(self, transaction_id, params):
+        Resource.verify_keys(params, Transaction.clone_signature())
+        return self._post("/transactions/" + transaction_id + "/clone", {"transaction-clone": params})
+
     def confirm_transparent_redirect(self, query_string):
         id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
         return self._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
