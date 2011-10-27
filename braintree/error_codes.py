@@ -169,6 +169,7 @@ class ErrorCodes(object):
         CustomerDoesNotHaveCreditCard = "91511"
         CustomerIdIsInvalid = "91510"
         HasAlreadyBeenRefunded = "91512"
+        MerchantAccountDoesNotSupportRefunds = "91547"
         MerchantAccountIdIsInvalid = "91513"
         MerchantAccountIsSusped = "91514" # Deprecated
         MerchantAccountIsSuspended = "91514"
