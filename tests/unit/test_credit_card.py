@@ -74,3 +74,10 @@ class TestCreditCard(unittest.TestCase):
             {"options": ["make_default", "verification_merchant_account_id", "verify_card"]}
         ]
         self.assertEquals(expected, CreditCard.update_signature())
+
+    def test_finding_empty_id_raises_not_found_exception(self):
+        try:
+            CreditCard.find(" ")
+            self.assertTrue(False)
+        except NotFoundError, e:
+            self.assertTrue(True)
