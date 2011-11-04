@@ -11,4 +11,5 @@ setup(
     package_data={"braintree": ["ssl/*"]},
     install_requires=["pycurl==7.19.0"],
     tests_require=["pycurl==7.19.0", "nose==0.11.3"]
+    zip_safe=False
 )
