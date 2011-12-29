@@ -290,11 +290,10 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("10.00"), transaction.tax_amount)
         self.assertEquals(True, transaction.tax_exempt)
 
-    def test_create_with_failing_level_2_validations(self):
+    def test_create_with_invalid_tax_amount(self):
         result = Transaction.sale({
             "amount": Decimal("100"),
             "tax_amount": "asdf",
-            "purchase_order_number": "aaaaaaaaaaaaaaaaaa",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -306,8 +305,36 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.TaxAmountFormatIsInvalid,
             result.errors.for_object("transaction").on("tax_amount")[0].code
         )
+
+    def test_create_with_too_long_purchase_order_number(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "purchase_order_number": "aaaaaaaaaaaaaaaaaa",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
         self.assertEquals(
             ErrorCodes.Transaction.PurchaseOrderNumberIsTooLong,
+            result.errors.for_object("transaction").on("purchase_order_number")[0].code
+        )
+
+    def test_create_with_invalid_purchase_order_number(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "purchase_order_number": "\xc3\x9f\xc3\xa5\xe2\x88\x82",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.PurchaseOrderNumberIsInvalid,
             result.errors.for_object("transaction").on("purchase_order_number")[0].code
         )
 
