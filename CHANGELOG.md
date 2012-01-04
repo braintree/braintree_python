@@ -1,3 +1,8 @@
+## 2.12.2
+
+* Added error code for invalid purchase order number
+* Fixed zip_safe=False error when building (GitHub issue #17)
+
 ## 2.12.1
 
 * Added error message for merchant accounts that do not support refunds
