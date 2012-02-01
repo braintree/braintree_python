@@ -1195,7 +1195,7 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
         return transaction
 
-    def test_snapshot_add_ons_and_discounts_from_subscription(self):
+    def test_snapshot_plan_id_add_ons_and_discounts_from_subscription(self):
         credit_card = Customer.create({
             "first_name": "Mike",
             "last_name": "Jones",
@@ -1238,6 +1238,8 @@ class TestTransaction(unittest.TestCase):
         })
 
         transaction = result.subscription.transactions[0]
+
+        self.assertEquals(TestHelper.trialless_plan["id"], transaction.plan_id)
 
         self.assertEquals(2, len(transaction.add_ons))
         add_ons = sorted(transaction.add_ons, key=lambda add_on: add_on.id)
