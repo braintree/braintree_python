@@ -177,6 +177,7 @@ class CreditCard(Resource):
 
         if type == "create":
             signature.append("customer_id")
+            options.append("fail_on_duplicate_payment_method")
         elif type == "update":
             billing_address_params.append({"options": ["update_existing"]})
         elif type == "update_via_customer":
