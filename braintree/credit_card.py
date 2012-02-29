@@ -132,11 +132,6 @@ class CreditCard(Resource):
         return Configuration.gateway().credit_card.delete(credit_card_token)
 
     @staticmethod
-    def duplicates(credit_card_token):
-        """ Return a collection of duplicated credit cards. """
-        return Configuration.gateway().credit_card.duplicates(credit_card_token)
-
-    @staticmethod
     def expired():
         """ Return a collection of expired credit cards. """
         return Configuration.gateway().credit_card.expired()

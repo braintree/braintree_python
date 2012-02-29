@@ -819,25 +819,6 @@ class TestCreditCard(unittest.TestCase):
             result.errors.for_object("credit_card").on("token")[0].code
         )
 
-    def test_duplicates_can_iterate_over_all_items(self):
-        customer = Customer.create().customer
-
-        attributes = {
-            "customer_id": customer.id,
-            "number": "4012000033330026",
-            "expiration_date": "05/2009"
-        }
-
-        card1 = CreditCard.create(attributes).credit_card
-        card2 = CreditCard.create(attributes).credit_card
-
-        collection = CreditCard.duplicates(card1.token)
-        tokens = [credit_card.token for credit_card in collection.items]
-
-        self.assertTrue(collection.maximum_size > 1)
-        self.assertTrue(card1.token in tokens)
-        self.assertTrue(card2.token in tokens)
-
     def test_expired_can_iterate_over_all_items(self):
         customer_id = Customer.all().first.id
 

@@ -25,10 +25,6 @@ class CreditCardGateway(object):
         self.config.http().delete("/payment_methods/" + credit_card_token)
         return SuccessfulResult()
 
-    def duplicates(self, credit_card_token):
-        response = self.config.http().post("/payment_methods/" + credit_card_token + "/duplicate_ids")
-        return ResourceCollection(credit_card_token, response, self.__fetch_duplicates)
-
     def expired(self):
         response = self.config.http().post("/payment_methods/all/expired_ids")
         return ResourceCollection(None, response, self.__fetch_expired)
@@ -72,12 +68,6 @@ class CreditCardGateway(object):
             return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-
-    def __fetch_duplicates(self, credit_card_token, ids):
-        criteria = {}
-        criteria["ids"] = IdsSearch.ids.in_list(ids).to_param()
-        response = self.config.http().post("/payment_methods/" + credit_card_token + "/duplicates", {"search": criteria})
-        return [CreditCard(self.gateway, item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
     def __fetch_expired(self, query, ids):
         criteria = {}
