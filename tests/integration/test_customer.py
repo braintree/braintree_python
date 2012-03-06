@@ -127,6 +127,25 @@ class TestCustomer(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
+    def test_create_customer_with_check_duplicate_payment_method(self):
+        attributes = {
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4000111111111115",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "options": {"fail_on_duplicate_payment_method": True}
+            }
+        }
+
+        Customer.create(attributes)
+        result = Customer.create(attributes)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.CreditCard.DuplicateCardExists, result.errors.for_object("customer").for_object("credit_card").on("number")[0].code)
+        self.assertEquals("Duplicate card exists in the vault.", result.message)
+
     def test_create_customer_with_payment_method_and_billing_address(self):
         result = Customer.create({
             "first_name": "Mike",

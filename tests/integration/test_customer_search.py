@@ -7,6 +7,34 @@ class TestCustomerSearch(unittest.TestCase):
         ])
         self.assertEquals(0, collection.maximum_size)
 
+    def test_advanced_search_finds_duplicate_cards_given_payment_method_token(self):
+        credit_card_dict = {
+            "number": "63049580000009",
+            "expiration_date": "05/2010"
+        }
+
+        jim_dict = {
+            "first_name": "Jim",
+            "credit_card": credit_card_dict
+        }
+
+        joe_dict = {
+            "first_name": "Joe",
+            "credit_card": credit_card_dict
+        }
+
+        jim = Customer.create(jim_dict).customer
+        joe = Customer.create(joe_dict).customer
+
+        collection = Customer.search(
+            CustomerSearch.payment_method_token_with_duplicates == jim.credit_cards[0].token,
+        )
+
+        customer_ids = [customer.id for customer in collection.items]
+        self.assertTrue(jim.id in customer_ids)
+        self.assertTrue(joe.id in customer_ids)
+
+
     def test_advanced_search_searches_all_text_fields(self):
         token = "creditcard%s" % randint(1, 100000)
 

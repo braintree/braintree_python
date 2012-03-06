@@ -245,6 +245,25 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    def test_create_with_fail_on_duplicate_payment_method_set_to_true(self):
+        customer = Customer.create().customer
+        CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2009"
+        })
+
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2009",
+            "options": {"fail_on_duplicate_payment_method": True}
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.CreditCard.DuplicateCardExists, result.errors.for_object("credit_card").on("number")[0].code)
+        self.assertEquals("Duplicate card exists in the vault.", result.message)
+
     def test_create_with_invalid_invalid_options(self):
         customer = Customer.create().customer
         result = CreditCard.create({
