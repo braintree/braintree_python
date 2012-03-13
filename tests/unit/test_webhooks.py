@@ -11,7 +11,7 @@ class TestWebhooks(unittest.TestCase):
 
         self.assertEquals(WebhookNotification.Kind.SubscriptionPastDue, notification.kind)
         self.assertEquals("my_id", notification.subscription.id)
-        self.assertTrue((datetime.utcnow() - notification.timestamp).total_seconds() < 10)
+        self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     @raises(InvalidSignatureError)
     def test_invalid_signature(self):
