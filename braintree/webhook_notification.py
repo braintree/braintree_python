@@ -10,6 +10,10 @@ class WebhookNotification(Resource):
     def parse(signature, payload):
         return Configuration.gateway().webhook_notification.parse(signature, payload)
 
+    @staticmethod
+    def verify(challenge):
+        return Configuration.gateway().webhook_notification.verify(challenge)
+
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
         if "subscription" in attributes['subject']:
