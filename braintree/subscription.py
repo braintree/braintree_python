@@ -207,9 +207,12 @@ class Subscription(Resource):
             self._next_bill_amount = Decimal(attributes["next_bill_amount"])
             del(attributes["next_bill_amount"])
         Resource.__init__(self, gateway, attributes)
-        self.price = Decimal(self.price)
-        self.balance = Decimal(self.balance)
-        self.next_billing_period_amount = Decimal(self.next_billing_period_amount)
+        if "price" in attributes:
+            self.price = Decimal(self.price)
+        if "balance" in attributes:
+            self.balance = Decimal(self.balance)
+        if "next_billing_period_amount" in attributes:
+            self.next_billing_period_amount = Decimal(self.next_billing_period_amount)
         if "add_ons" in attributes:
             self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
         if "descriptor" in attributes:
