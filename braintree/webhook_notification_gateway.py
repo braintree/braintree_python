@@ -26,6 +26,8 @@ class WebhookNotificationGateway(object):
 
     def __validate_signature(self, signature, payload):
         signature_pairs = [pair.split("|") for pair in signature.split("&") if "|" in pair]
+        matching_signature = self.__matching_signature(signature_pairs)
+        payload_signature = Crypto.hmac_hash(self.config.private_key, payload)
 
-        if self.__matching_signature(signature_pairs) != Crypto.hmac_hash(self.config.private_key, payload):
+        if not Crypto.secure_compare(payload_signature, matching_signature):
             raise InvalidSignatureError

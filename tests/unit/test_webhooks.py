@@ -29,7 +29,7 @@ class TestWebhooks(unittest.TestCase):
             "my_id"
         )
 
-        WebhookNotification.parse(signature + "bad_stuff", payload)
+        WebhookNotification.parse(signature[:-1] + "!", payload)
 
     @raises(InvalidSignatureError)
     def test_invalid_public_key(self):
