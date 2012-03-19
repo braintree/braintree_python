@@ -4,7 +4,13 @@ from braintree.subscription import Subscription
 
 class WebhookNotification(Resource):
     class Kind(object):
-        SubscriptionPastDue = "subscription_past_due"
+        SubscriptionCanceled = "subscription_canceled"
+        SubscriptionChargedSuccessfully = "subscription_charged_successfully"
+        SubscriptionChargedUnsuccessfully = "subscription_charged_unsuccessfully"
+        SubscriptionExpired = "subscription_expired"
+        SubscriptionTrialEnded = "subscription_trial_ended"
+        SubscriptionWentActive = "subscription_went_active"
+        SubscriptionWentPastDue = "subscription_went_past_due"
 
     @staticmethod
     def parse(signature, payload):

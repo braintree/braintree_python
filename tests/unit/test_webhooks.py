@@ -3,20 +3,20 @@ from tests.test_helper import *
 class TestWebhooks(unittest.TestCase):
     def test_sample_notification_builds_a_parsable_notification(self):
         signature, payload = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.SubscriptionPastDue,
+            WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
         notification = WebhookNotification.parse(signature, payload)
 
-        self.assertEquals(WebhookNotification.Kind.SubscriptionPastDue, notification.kind)
+        self.assertEquals(WebhookNotification.Kind.SubscriptionWentPastDue, notification.kind)
         self.assertEquals("my_id", notification.subscription.id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     @raises(InvalidSignatureError)
     def test_invalid_signature(self):
         signature, payload = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.SubscriptionPastDue,
+            WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
@@ -25,7 +25,7 @@ class TestWebhooks(unittest.TestCase):
     @raises(InvalidSignatureError)
     def test_modified_signature(self):
         signature, payload = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.SubscriptionPastDue,
+            WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
@@ -34,7 +34,7 @@ class TestWebhooks(unittest.TestCase):
     @raises(InvalidSignatureError)
     def test_invalid_public_key(self):
         signature, payload = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.SubscriptionPastDue,
+            WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
