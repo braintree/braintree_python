@@ -1,6 +1,8 @@
+import sys
 import braintree
 import braintree.util.http_strategy.pycurl_strategy
 import braintree.util.http_strategy.httplib_strategy
+import braintree.util.http_strategy.requests_strategy
 
 class Configuration(object):
     """
@@ -84,4 +86,7 @@ class Configuration(object):
             return self._http_strategy
 
     def _determine_http_strategy(self):
-        return braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(self, self.environment)
+        if sys.version_info.major == 2 and sys.version_info.minor == 5:
+            return braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(self, self.environment)
+        else:
+            return braintree.util.http_strategy.requests_strategy.RequestsStrategy(self, self.environment)

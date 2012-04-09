@@ -1,8 +1,9 @@
 from tests.test_helper import *
+import braintree
+import requests
 import pycurl
 
 class TestHttp(unittest.TestCase):
-
     def test_successful_connection_sandbox(self):
         try:
             config = Configuration(
@@ -31,6 +32,7 @@ class TestHttp(unittest.TestCase):
         environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
         try:
             config = Configuration(environment, "merchant_id", "public_key", "private_key")
+            config._http_strategy = braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(config, config.environment)
             http = config.http()
             http.get("/")
             self.assertTrue(False)
@@ -48,6 +50,8 @@ class TestHttp(unittest.TestCase):
             http = config.http()
             http.get("/")
             self.assertTrue(False)
+        except requests.models.SSLError, e:
+            self.assertEquals("hostname 'braintreegateway.com' doesn't match u'www.braintreegateway.com'", str(e.message))
         except pycurl.error, e:
             error_code, error_msg = e
             self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
@@ -64,4 +68,3 @@ class TestHttp(unittest.TestCase):
             pass
         finally:
             Configuration.use_unsafe_ssl = False;
-
