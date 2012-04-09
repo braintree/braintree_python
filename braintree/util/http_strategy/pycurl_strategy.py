@@ -1,5 +1,6 @@
 import httplib
-import braintree
+import pycurl
+import StringIO
 
 class PycurlStrategy(object):
     def __init__(self, config, environment):
@@ -7,43 +8,40 @@ class PycurlStrategy(object):
         self.environment = environment
 
     def http_do(self, http_verb, path, headers, request_body):
-        if self.environment.is_ssl:
-            self.__verify_ssl()
-            conn = httplib.HTTPSConnection(self.environment.server, self.environment.port)
-        else:
-            conn = httplib.HTTPConnection(self.environment.server, self.environment.port)
-
-        conn.request(http_verb, path, request_body, headers)
-        response = conn.getresponse()
-        status = response.status
-        response_body = response.read()
-        conn.close()
-        return [status, response_body]
-
-    def __verify_ssl(self):
-        if braintree.configuration.Configuration.use_unsafe_ssl: return
-
-        try:
-            import pycurl
-        except ImportError, e:
-            print "Cannot load PycURL.  Please refer to Braintree documentation."
-            print """
-If you are in an environment where you absolutely cannot load PycURL
-(such as Google App Engine), you can turn off SSL Verification by setting:
-
-    Configuration.use_unsafe_ssl = True
-
-This is highly discouraged, however, since it leaves you susceptible to
-man-in-the-middle attacks."""
-            raise e
-
         curl = pycurl.Curl()
-        # see http://curl.haxx.se/libcurl/c/curl_easy_setopt.html for info on these options
-        curl.setopt(pycurl.CAINFO, self.environment.ssl_certificate)
-        curl.setopt(pycurl.ENCODING, 'gzip')
+        response = StringIO.StringIO()
+
+        if self.environment.ssl_certificate:
+            curl.setopt(pycurl.CAINFO, self.environment.ssl_certificate)
         curl.setopt(pycurl.SSL_VERIFYPEER, 1)
         curl.setopt(pycurl.SSL_VERIFYHOST, 2)
-        curl.setopt(pycurl.NOBODY, 1)
-        curl.setopt(pycurl.NOSIGNAL, 1)
-        curl.setopt(pycurl.URL, self.environment.protocol + self.environment.server_and_port)
+        curl.setopt(pycurl.URL, str(self.environment.base_url + path))
+        curl.setopt(pycurl.ENCODING, 'gzip')
+        curl.setopt(pycurl.WRITEFUNCTION, response.write)
+        curl.setopt(pycurl.FOLLOWLOCATION, 1)
+        curl.setopt(pycurl.HTTPHEADER, self._format_headers(headers))
+        self._set_request_method_and_body(curl, http_verb, request_body)
+
         curl.perform()
+
+        status = curl.getinfo(pycurl.HTTP_CODE)
+        response = response.getvalue()
+        return [status, response]
+
+    def _set_request_method_and_body(self, curl, method, body):
+        if method == "GET":
+            curl.setopt(pycurl.HTTPGET, 1)
+        elif method == "POST":
+            curl.setopt(pycurl.POST, 1)
+            curl.setopt(pycurl.POSTFIELDSIZE, len(body))
+        elif method == "PUT":
+            curl.setopt(pycurl.PUT, 1)
+            curl.setopt(pycurl.INFILESIZE, len(body))
+        elif method == "DELETE":
+            curl.setopt(curl.CUSTOMREQUEST, "DELETE")
+
+        if body:
+            curl.setopt(pycurl.READFUNCTION, StringIO.StringIO(body).read)
+
+    def _format_headers(self, headers):
+        return [key + ": " + value for key, value in headers.iteritems()]

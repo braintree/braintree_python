@@ -1,5 +1,4 @@
 import httplib
-import braintree
 
 class HttplibStrategy(object):
     def __init__(self, config, environment):
