@@ -1,5 +1,5 @@
 import httplib
-from braintree.configuration import Configuration
+import braintree
 
 class PycurlStrategy(object):
     def __init__(self, config, environment):
@@ -21,7 +21,7 @@ class PycurlStrategy(object):
         return [status, response_body]
 
     def __verify_ssl(self):
-        if Configuration.use_unsafe_ssl: return
+        if braintree.configuration.Configuration.use_unsafe_ssl: return
 
         try:
             import pycurl

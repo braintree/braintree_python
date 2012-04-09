@@ -1,7 +1,7 @@
 import base64
+import braintree
 from braintree import version
 from braintree.util.xml_util import XmlUtil
-from braintree.configuration import Configuration
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
 from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
@@ -9,7 +9,6 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
-from braintree.util.http_strategy.pycurl_strategy import PycurlStrategy
 
 class Http(object):
     @staticmethod
@@ -50,10 +49,10 @@ class Http(object):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        pycurl_strategy = PycurlStrategy(self.config, self.environment)
+        http_strategy = self.config.http_strategy()
         request_body = XmlUtil.xml_from_dict(params) if params else ''
         full_path = self.config.base_merchant_path() + path
-        status, response_body = pycurl_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
+        status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
 
         if Http.is_error_status(status):
             Http.raise_exception_from_status(status)
@@ -72,6 +71,6 @@ class Http(object):
             "Authorization": self.__authorization_header(),
             "Content-type": "application/xml",
             "User-Agent": "Braintree Python " + version.Version,
-            "X-ApiVersion": Configuration.api_version()
+            "X-ApiVersion": braintree.configuration.Configuration.api_version()
         }
 
