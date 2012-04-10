@@ -1,4 +1,7 @@
-import requests
+try:
+    import requests
+except ImportError:
+    pass
 
 class RequestsStrategy(object):
     def __init__(self, config, environment):

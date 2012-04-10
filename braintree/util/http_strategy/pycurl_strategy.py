@@ -1,6 +1,10 @@
 import httplib
-import pycurl
 import StringIO
+
+try:
+    import pycurl
+except ImportError:
+    pass
 
 class PycurlStrategy(object):
     def __init__(self, config, environment):

@@ -90,7 +90,7 @@ class Configuration(object):
         if "PYTHON_HTTP_STRATEGY" in os.environ:
             return self.__http_strategy_from_environment()
 
-        if sys.version_info.major == 2 and sys.version_info.minor == 5:
+        if sys.version_info[0] == 2 and sys.version_info[1] == 5:
             return braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(self, self.environment)
         else:
             return braintree.util.http_strategy.requests_strategy.RequestsStrategy(self, self.environment)
