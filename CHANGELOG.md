@@ -1,3 +1,7 @@
+## HEAD
+
+* Removes relative imports for python 3.0 (thanks [MichaelBlume](https://github.com/MichaelBlume))
+
 ## 2.13.0
 
 * Adds search for duplicate credit cards given a payment method token
