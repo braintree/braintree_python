@@ -5,11 +5,10 @@ setup(
     version=braintree.version.Version,
     description="Braintree Python Library",
     author="Braintree",
-    author_email="support@getbraintree.com",
-    url="http://www.braintreepayments.com/docs/python",
+    author_email="support@braintreepayments.com",
+    url="https://www.braintreepayments.com/docs/python",
     packages=["braintree", "braintree.exceptions", "braintree.util"],
     package_data={"braintree": ["ssl/*"]},
-    install_requires=["pycurl==7.19.0"],
-    tests_require=["pycurl==7.19.0", "nose==0.11.3"],
+    install_requires=["requests>=0.11.1,<1.0"],
     zip_safe=False
 )
