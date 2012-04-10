@@ -64,6 +64,7 @@ class TestHttp(unittest.TestCase):
         try:
             environment = Environment("braintreegateway.com", "443", True, Environment.Production.ssl_certificate)
             config = Configuration(environment, "merchant_id", "public_key", "private_key")
+            config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
             http = config.http()
             http.get("/")
             self.assertTrue(False)
