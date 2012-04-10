@@ -1,4 +1,5 @@
 from tests.test_helper import *
+import platform
 import braintree
 import requests
 import pycurl
@@ -40,6 +41,22 @@ class TestHttp(unittest.TestCase):
             error_code, error_msg = e
             self.assertEquals(pycurl.E_SSL_CACERT, error_code)
             self.assertTrue(re.search('verif(y|ication) failed', error_msg))
+        except AuthenticationError:
+            self.fail("Expected to Receive an SSL error from pycurl, but received an Authentication Error instead, check your local openssl installation")
+
+    def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert_on_requests(self):
+        if platform.system() == "Darwin":
+            return
+
+        environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
+        try:
+            config = Configuration(environment, "merchant_id", "public_key", "private_key")
+            config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
+            http = config.http()
+            http.get("/")
+            self.assertTrue(False)
+        except requests.models.SSLError, e:
+            self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e.message))
         except AuthenticationError:
             self.fail("Expected to Receive an SSL error from pycurl, but received an Authentication Error instead, check your local openssl installation")
 
