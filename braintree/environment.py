@@ -18,6 +18,10 @@ class Environment(object):
         self.ssl_certificate = ssl_certificate
 
     @property
+    def base_url(self):
+        return "%s%s:%s" % (self.protocol, self.server, self.port)
+
+    @property
     def port(self):
         return int(self.__port)
 

@@ -1,4 +1,9 @@
+import os
+import sys
 import braintree
+import braintree.util.http_strategy.pycurl_strategy
+import braintree.util.http_strategy.httplib_strategy
+import braintree.util.http_strategy.requests_strategy
 
 class Configuration(object):
     """
@@ -64,6 +69,7 @@ class Configuration(object):
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
+        self._http_strategy = self.__determine_http_strategy()
 
     def base_merchant_path(self):
         return "/merchants/" + self.merchant_id
@@ -74,3 +80,28 @@ class Configuration(object):
     def http(self):
         return braintree.util.http.Http(self)
 
+    def http_strategy(self):
+        if Configuration.use_unsafe_ssl:
+            return braintree.util.http_strategy.httplib_strategy.HttplibStrategy(self, self.environment)
+        else:
+            return self._http_strategy
+
+    def __determine_http_strategy(self):
+        if "PYTHON_HTTP_STRATEGY" in os.environ:
+            return self.__http_strategy_from_environment()
+
+        if sys.version_info[0] == 2 and sys.version_info[1] == 5:
+            return braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(self, self.environment)
+        else:
+            return braintree.util.http_strategy.requests_strategy.RequestsStrategy(self, self.environment)
+
+    def __http_strategy_from_environment(self):
+        strategy_name = os.environ["PYTHON_HTTP_STRATEGY"]
+        if strategy_name == "httplib":
+            return braintree.util.http_strategy.httplib_strategy.HttplibStrategy(self, self.environment)
+        elif strategy_name == "pycurl":
+            return braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(self, self.environment)
+        elif strategy_name == "requests":
+            return braintree.util.http_strategy.requests_strategy.RequestsStrategy(self, self.environment)
+        else:
+            raise ValueError("invalid http strategy")

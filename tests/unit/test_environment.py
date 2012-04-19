@@ -5,6 +5,10 @@ class TestEnvironment(unittest.TestCase):
         port = os.getenv("GATEWAY_PORT") or "3000"
         self.assertEquals("localhost:" + port, Environment.Development.server_and_port)
 
+    def test_base_url(self):
+        self.assertEquals("https://sandbox.braintreegateway.com:443", Environment.Sandbox.base_url)
+        self.assertEquals("https://www.braintreegateway.com:443", Environment.Production.base_url)
+
     def test_server_and_port_for_sandbox(self):
         self.assertEquals("sandbox.braintreegateway.com:443", Environment.Sandbox.server_and_port)
 
