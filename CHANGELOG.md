@@ -1,3 +1,7 @@
+## 2.14.1
+
+* Adds new package braintree.util.http_stategy to setup.py
+
 ## 2.14.0
 
 * Removes relative imports for python 3.0 (thanks [MichaelBlume](https://github.com/MichaelBlume))
