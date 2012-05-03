@@ -30,6 +30,8 @@ class TestHttp(unittest.TestCase):
             pass
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert(self):
+        if platform.system() == "Darwin":
+            return
         environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
         try:
             config = Configuration(environment, "merchant_id", "public_key", "private_key")

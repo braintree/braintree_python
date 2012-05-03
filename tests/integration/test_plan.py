@@ -2,6 +2,22 @@ from tests.test_helper import *
 
 class TestPlan(unittest.TestCase):
 
+    def test_all_returns_empty_list(self):
+        Configuration.configure(
+            Environment.Development,
+            "test_merchant_id",
+            "test_public_key",
+            "test_private_key"
+        )
+        plans = Plan.all()
+        self.assertEquals(plans, [])
+        Configuration.configure(
+            Environment.Development,
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key"
+        )
+
     def test_all_returns_all_the_plans(self):
         plan_token = str(random.randint(1, 1000000))
         attributes = {
