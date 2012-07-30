@@ -71,6 +71,10 @@ class Transaction(Resource):
     For more information on Transactions, see http://www.braintreepayments.com/gateway/transaction-api
     """
 
+    def __repr__(self):
+        detail_list = ["amount", "credit_card", "payment_method_token", "customer_id"]
+        return super(Transaction, self).__repr__(detail_list)
+
     class CreatedUsing(object):
         """
         Constants representing how the transaction was created.  Available types are:

@@ -27,6 +27,11 @@ class Address(Resource):
         print(result.customer.last_name)
     """
 
+    def __repr__(self):
+        detail_list = ["customer_id", "street_address", "extended_address", "postal_code", "country_code_alpha2"]
+        return super(Address, self).__repr__(detail_list)
+
+
     @staticmethod
     def create(params={}):
         """
