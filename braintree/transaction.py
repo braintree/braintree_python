@@ -116,6 +116,7 @@ class Transaction(Resource):
         * braintree.Transaction.Status.ProcessorDeclined
         * braintree.Transaction.Status.Settled
         * braintree.Transaction.Status.SettlementFailed
+        * braintree.Transaction.Status.Settling
         * braintree.Transaction.Status.SubmittedForSettlement
         * braintree.Transaction.Status.Void
         """
@@ -128,6 +129,7 @@ class Transaction(Resource):
         ProcessorDeclined      = "processor_declined"
         Settled                = "settled"
         SettlementFailed       = "settlement_failed"
+        Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
 
