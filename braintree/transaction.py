@@ -71,6 +71,10 @@ class Transaction(Resource):
     For more information on Transactions, see http://www.braintreepayments.com/gateway/transaction-api
     """
 
+    def __repr__(self):
+        detail_list = ["amount", "credit_card", "payment_method_token", "customer_id"]
+        return super(Transaction, self).__repr__(detail_list)
+
     class CreatedUsing(object):
         """
         Constants representing how the transaction was created.  Available types are:
@@ -112,6 +116,7 @@ class Transaction(Resource):
         * braintree.Transaction.Status.ProcessorDeclined
         * braintree.Transaction.Status.Settled
         * braintree.Transaction.Status.SettlementFailed
+        * braintree.Transaction.Status.Settling
         * braintree.Transaction.Status.SubmittedForSettlement
         * braintree.Transaction.Status.Void
         """
@@ -124,6 +129,7 @@ class Transaction(Resource):
         ProcessorDeclined      = "processor_declined"
         Settled                = "settled"
         SettlementFailed       = "settlement_failed"
+        Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
 

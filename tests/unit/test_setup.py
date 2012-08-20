@@ -16,4 +16,4 @@ class TestSetup(unittest.TestCase):
                 if package_from_directory not in directories_that_dont_have_packages:
                     packages_from_directories.append(package_from_directory)
 
-        self.assertEquals(packages_from_directories, packages_from_setup)
+        self.assertEquals(sorted(packages_from_directories), sorted(packages_from_setup))

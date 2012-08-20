@@ -58,6 +58,10 @@ class Customer(Resource):
     For more information on Customers, see http://www.braintreepayments.com/gateway/customer-api
     """
 
+    def __repr__(self):
+        detail_list = ["first_name", "last_name", "id"]
+        return super(Customer, self).__repr__(detail_list)
+
     @staticmethod
     def all():
         """ Return a collection of all customers. """
