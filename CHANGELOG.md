@@ -1,3 +1,7 @@
+## 2.14.2
+
+* Add settling transaction status to transaction search
+
 ## 2.14.1
 
 * Adds new package braintree.util.http_stategy to setup.py
