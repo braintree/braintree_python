@@ -859,3 +859,43 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
 
         self.assertEquals(set(['2010']), TestHelper.unique([credit_card.expiration_year for credit_card in collection.items]))
+
+    def test_prepaid_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4500600000000061",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Prepaid.Yes, credit_card.prepaid)
+
+    def test_all_negative_card_type_identifiers(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Prepaid.No, credit_card.prepaid)
+
+    def test_card_without_card_type_identifiers(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "378282246310005",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Prepaid.Unknown, credit_card.prepaid)
+

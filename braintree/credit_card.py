@@ -84,6 +84,18 @@ class CreditCard(Resource):
         International = "international"
         US = "us"
 
+    class Prepaid(object):
+        """
+        Constants representing the three states for the prepaid attribute
+
+        * braintree.CreditCard.Prepaid.Yes
+        * braintree.CreditCard.Prepaid.No
+        * braintree.CreditCard.Prepaid.Unknown
+        """
+        Yes = "Yes"
+        No = "No"
+        Unknown = "Unknown"
+
     @staticmethod
     def confirm_transparent_redirect(query_string):
         """
