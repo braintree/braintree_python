@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Adds prepaid attribute to credit cards (possible values of: Yes, No, Unknown)
+
 ## 2.14.2
 
 * Add settling transaction status to transaction search
