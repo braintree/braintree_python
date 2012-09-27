@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.test.credit_card_numbers import CreditCardNumbers
 
 class TestCreditCard(unittest.TestCase):
     def test_create_adds_credit_card_to_existing_customer(self):
@@ -860,11 +861,76 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertEquals(set(['2010']), TestHelper.unique([credit_card.expiration_year for credit_card in collection.items]))
 
+    def test_commercial_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.Commercial,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Commercial.Yes, credit_card.commercial)
+
+    def test_durbin_regulated_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.DurbinRegulated,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.DurbinRegulated.Yes, credit_card.durbin_regulated)
+
+    def test_debit_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.Debit,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Debit.Yes, credit_card.debit)
+
+    def test_healthcare_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.Healthcare,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Healthcare.Yes, credit_card.healthcare)
+
+    def test_payroll_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.Payroll,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(CreditCard.Payroll.Yes, credit_card.payroll)
+
     def test_prepaid_card(self):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4500600000000061",
+            "number": CreditCardNumbers.CardTypeIndicators.Prepaid,
             "expiration_date": "05/2014",
             "options": {"verify_card": True}
         })
@@ -877,25 +943,34 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "4111111111111111",
+            "number": CreditCardNumbers.CardTypeIndicators.No,
             "expiration_date": "05/2014",
             "options": {"verify_card": True}
         })
 
         credit_card = result.credit_card
 
+        self.assertEquals(CreditCard.Debit.No, credit_card.debit)
+        self.assertEquals(CreditCard.DurbinRegulated.No, credit_card.durbin_regulated)
         self.assertEquals(CreditCard.Prepaid.No, credit_card.prepaid)
+        self.assertEquals(CreditCard.Payroll.No, credit_card.payroll)
+        self.assertEquals(CreditCard.Commercial.No, credit_card.commercial)
+        self.assertEquals(CreditCard.Healthcare.No, credit_card.healthcare)
 
     def test_card_without_card_type_identifiers(self):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
-            "number": "378282246310005",
+            "number": CreditCardNumbers.CardTypeIndicators.Unknown,
             "expiration_date": "05/2014",
             "options": {"verify_card": True}
         })
 
         credit_card = result.credit_card
 
+        self.assertEquals(CreditCard.Debit.Unknown, credit_card.debit)
+        self.assertEquals(CreditCard.DurbinRegulated.Unknown, credit_card.durbin_regulated)
         self.assertEquals(CreditCard.Prepaid.Unknown, credit_card.prepaid)
-
+        self.assertEquals(CreditCard.Payroll.Unknown, credit_card.payroll)
+        self.assertEquals(CreditCard.Commercial.Unknown, credit_card.commercial)
+        self.assertEquals(CreditCard.Healthcare.Unknown, credit_card.healthcare)

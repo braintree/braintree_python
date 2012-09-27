@@ -84,6 +84,66 @@ class CreditCard(Resource):
         International = "international"
         US = "us"
 
+    class Commercial(object):
+        """
+        Constants representing the three states for the commercial attribute
+
+        * braintree.CreditCard.Commercial.Yes
+        * braintree.CreditCard.Commercial.No
+        * braintree.CreditCard.Commercial.Unknown
+        """
+        Yes = "Yes"
+        No = "No"
+        Unknown = "Unknown"
+
+    class DurbinRegulated(object):
+        """
+        Constants representing the three states for the durbin_regulated attribute
+
+        * braintree.CreditCard.DurbinRegulated.Yes
+        * braintree.CreditCard.DurbinRegulated.No
+        * braintree.CreditCard.DurbinRegulated.Unknown
+        """
+        Yes = "Yes"
+        No = "No"
+        Unknown = "Unknown"
+
+    class Debit(object):
+        """
+        Constants representing the three states for the debit attribute
+
+        * braintree.CreditCard.Debit.Yes
+        * braintree.CreditCard.Debit.No
+        * braintree.CreditCard.Debit.Unknown
+        """
+        Yes = "Yes"
+        No = "No"
+        Unknown = "Unknown"
+
+    class Healthcare(object):
+        """
+        Constants representing the three states for the healthcare attribute
+
+        * braintree.CreditCard.Healthcare.Yes
+        * braintree.CreditCard.Healthcare.No
+        * braintree.CreditCard.Healthcare.Unknown
+        """
+        Yes = "Yes"
+        No = "No"
+        Unknown = "Unknown"
+
+    class Payroll(object):
+        """
+        Constants representing the three states for the payroll attribute
+
+        * braintree.CreditCard.Payroll.Yes
+        * braintree.CreditCard.Payroll.No
+        * braintree.CreditCard.Payroll.Unknown
+        """
+        Yes = "Yes"
+        No = "No"
+        Unknown = "Unknown"
+
     class Prepaid(object):
         """
         Constants representing the three states for the prepaid attribute
