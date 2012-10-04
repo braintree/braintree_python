@@ -322,7 +322,7 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "purchase_order_number", "shipping_address_id", "tax_amount", "tax_exempt", "type",
+            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id", "tax_amount", "tax_exempt", "type",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
