@@ -1,4 +1,5 @@
 from braintree.attribute_getter import AttributeGetter
+from braintree.configuration import Configuration
 
 class CreditCardVerification(AttributeGetter):
 
@@ -25,3 +26,16 @@ class CreditCardVerification(AttributeGetter):
             self.processor_response_code = None
         if "processor_response_text" not in attributes:
             self.processor_response_text = None
+
+    @staticmethod
+    def find(verification_id):
+       return Configuration.gateway().verification.find(verification_id)
+
+    @staticmethod
+    def search(*query):
+      return Configuration.gateway().verification.search(*query)
+
+    def __eq__(self, other):
+      if not isinstance(other, CreditCardVerification):
+        return False
+      return self.id == other.id

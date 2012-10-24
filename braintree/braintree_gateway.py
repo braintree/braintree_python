@@ -8,6 +8,7 @@ from braintree.settlement_batch_summary_gateway import SettlementBatchSummaryGat
 from braintree.subscription_gateway import SubscriptionGateway
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
+from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing_gateway import WebhookTestingGateway
 
@@ -24,5 +25,6 @@ class BraintreeGateway(object):
         self.subscription = SubscriptionGateway(self)
         self.transaction = TransactionGateway(self)
         self.transparent_redirect = TransparentRedirectGateway(self)
+        self.verification = CreditCardVerificationGateway(self)
         self.webhook_notification = WebhookNotificationGateway(self)
         self.webhook_testing = WebhookTestingGateway(self)

@@ -7,6 +7,7 @@ from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.credit_card_gateway import CreditCardGateway
 from braintree.credit_card_verification import CreditCardVerification
+from braintree.credit_card_verification_search import CreditCardVerificationSearch
 from braintree.customer import Customer
 from braintree.customer_search import CustomerSearch
 from braintree.customer_gateway import CustomerGateway

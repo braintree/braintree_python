@@ -9,3 +9,9 @@ class CreditCardNumbers(object):
 
         No  = "4111111111310101"
         Unknown = "4111111111112101"
+
+    class FailsSandboxVerification(object):
+        AmEx       = "378734493671000"
+        Discover   = "6011000990139424"
+        MasterCard = "5105105105105100"
+        Visa       = "4000111111111115"
