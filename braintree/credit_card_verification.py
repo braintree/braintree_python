@@ -29,13 +29,13 @@ class CreditCardVerification(AttributeGetter):
 
     @staticmethod
     def find(verification_id):
-       return Configuration.gateway().verification.find(verification_id)
+        return Configuration.gateway().verification.find(verification_id)
 
     @staticmethod
     def search(*query):
-      return Configuration.gateway().verification.search(*query)
+        return Configuration.gateway().verification.search(*query)
 
     def __eq__(self, other):
-      if not isinstance(other, CreditCardVerification):
-        return False
-      return self.id == other.id
+        if not isinstance(other, CreditCardVerification):
+            return False
+        return self.id == other.id

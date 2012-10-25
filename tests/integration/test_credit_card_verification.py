@@ -16,5 +16,5 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(created_verification, found_verification)
 
     def test_verification_not_found(self):
-      self.assertRaises(NotFoundError, CreditCardVerification.find,
+        self.assertRaises(NotFoundError, CreditCardVerification.find,
           "invalid-id")
