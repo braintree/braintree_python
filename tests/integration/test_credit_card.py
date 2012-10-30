@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.test.credit_card_defaults import CreditCardDefaults
 from braintree.test.credit_card_numbers import CreditCardNumbers
 
 class TestCreditCard(unittest.TestCase):
@@ -874,6 +875,31 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertEquals(CreditCard.Commercial.Yes, credit_card.commercial)
 
+    def test_issuing_bank(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.IssuingBank,
+            "expiration_date": "05/2014"
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(credit_card.issuing_bank, CreditCardDefaults.IssuingBank)
+
+    def test_country_of_issuance(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.CountryOfIssuance,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEquals(credit_card.country_of_issuance, CreditCardDefaults.CountryOfIssuance)
+
     def test_durbin_regulated_card(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -939,7 +965,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertEquals(CreditCard.Prepaid.Yes, credit_card.prepaid)
 
-    def test_all_negative_card_type_identifiers(self):
+    def test_all_negative_card_type_indicators(self):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
@@ -957,7 +983,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(CreditCard.Commercial.No, credit_card.commercial)
         self.assertEquals(CreditCard.Healthcare.No, credit_card.healthcare)
 
-    def test_card_without_card_type_identifiers(self):
+    def test_card_without_card_type_indicators(self):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
@@ -974,3 +1000,5 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(CreditCard.Payroll.Unknown, credit_card.payroll)
         self.assertEquals(CreditCard.Commercial.Unknown, credit_card.commercial)
         self.assertEquals(CreditCard.Healthcare.Unknown, credit_card.healthcare)
+        self.assertEquals(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
+        self.assertEquals(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
