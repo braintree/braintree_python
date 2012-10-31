@@ -11,31 +11,39 @@ The Braintree library provides integration access to the Braintree Gateway.
 Quick Start
 -----------
 
-See: http://www.braintreepayments.com/gateway/python
+See: https://www.braintreepayments.com/docs/python/guide/overview
 
-Resources
----------
+Braintree Objects
+-----------------
 
 .. toctree::
    :maxdepth: 2
 
    address
    credit_card
+   credit_card_verification
    customer
-   resource_collection
    subscription
    transaction
-   transparent_redirect
 
-Validations
------------
+Utility Objects
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   resource_collection
+   transparent_redirect
+   successful_result
+
+Errors
+------
 
 .. toctree::
    :maxdepth: 2
 
    error_codes
    error_result
-   successful_result
    validation_error
    validation_error_collection
 
@@ -61,6 +69,7 @@ Exceptions
    exceptions/not_found_error
    exceptions/server_error
    exceptions/unexpected_error
+   exceptions/upgrade_required_error
 
 Indices
 -------

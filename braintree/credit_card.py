@@ -36,9 +36,8 @@ class CreditCard(Resource):
         print(result.credit_card.token)
         print(result.credit_card.masked_number)
 
-    For more information on CreditCards, see http://www.braintreepayments.com/gateway/credit-card-api
+    For more information on CreditCards, see https://www.braintreepayments.com/docs/python/credit_cards/create
 
-    For more information on CreditCard verifications, see http://www.braintreepayments.com/gateway/credit-card-verification-api
     """
     class CardType(object):
         """
@@ -114,12 +113,15 @@ class CreditCard(Resource):
     @staticmethod
     def create(params={}):
         """
-        Create an CreditCard.  A number and expiration_date are required. ::
+        Create a CreditCard.
+
+        A number and expiration_date are required. ::
 
             result = braintree.CreditCard.create({
                 "number": "4111111111111111",
                 "expiration_date": "12/2012"
             })
+
         """
 
         return Configuration.gateway().credit_card.create(params)
@@ -127,11 +129,14 @@ class CreditCard(Resource):
     @staticmethod
     def update(credit_card_token, params={}):
         """
-        Update an existing CreditCard by credit_card_id.  The params are similar to create::
+        Update an existing CreditCard
+
+        By credit_card_id.  The params are similar to create::
 
             result = braintree.CreditCard.update("my_credit_card_id", {
                 "cardholder_name": "John Doe"
             })
+
         """
 
         return Configuration.gateway().credit_card.update(credit_card_token, params)
@@ -139,9 +144,12 @@ class CreditCard(Resource):
     @staticmethod
     def delete(credit_card_token):
         """
-        Delete a credit card, given a credit_card_id::
+        Delete a credit card
+
+        Given a credit_card_id::
 
             result = braintree.CreditCard.delete("my_credit_card_id")
+
         """
 
         return Configuration.gateway().credit_card.delete(credit_card_token)

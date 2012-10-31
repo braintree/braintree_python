@@ -30,7 +30,8 @@ class Subscription(Resource):
             "trial_period": True
         })
 
-    For more information on Subscriptions, see http://www.braintreepayments.com/gateway/subscription-api
+    For more information on Subscriptions, see https://www.braintreepayments.com/docs/python/subscriptions/overview
+
     """
 
     class TrialDurationUnit(object):
@@ -64,12 +65,15 @@ class Subscription(Resource):
     @staticmethod
     def create(params={}):
         """
-        Create a Subscription:::
+        Create a Subscription
+
+        Token and Plan are required:::
 
             result = braintree.Subscription.create({
                 "payment_method_token": "my_payment_token",
                 "plan_id": "some_plan_id",
             })
+
         """
 
         return Configuration.gateway().subscription.create(params)
@@ -124,12 +128,15 @@ class Subscription(Resource):
     @staticmethod
     def update(subscription_id, params={}):
         """
-        Update an existing subscription by subscription_id.  The params are similar to create::
+        Update an existing subscription
+
+        By subscription_id. The params are similar to create::
 
 
             result = braintree.Subscription.update("my_subscription_id", {
                 "price": "9.99",
             })
+
         """
 
         return Configuration.gateway().subscription.update(subscription_id, params)
@@ -137,9 +144,12 @@ class Subscription(Resource):
     @staticmethod
     def cancel(subscription_id):
         """
-        Cancel a subscription by subscription_id:::
+        Cancel a subscription
+
+        By subscription_id::
 
             result = braintree.Subscription.cancel("my_subscription_id")
+
         """
 
         return Configuration.gateway().subscription.cancel(subscription_id)

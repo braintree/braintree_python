@@ -4,6 +4,6 @@ class NotFoundError(BraintreeError):
     """
     Raised when an object is not found in the gateway, such as a Transaction.find("bad_id").
 
-    http://www.braintreepayments.com/docs/python/general/exceptions#not_found_error
+    https://www.braintreepayments.com/docs/python/general/exceptions#not_found_error
     """
     pass

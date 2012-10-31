@@ -39,7 +39,7 @@ class Transaction(Resource):
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
-                "website": "http://braintreepayments.com"
+                "website": "https://www.braintreepayments.com"
             },
             "billing": {
                 "first_name": "Carl",
@@ -68,7 +68,8 @@ class Transaction(Resource):
         print(result.transaction.amount)
         print(result.transaction.order_id)
 
-    For more information on Transactions, see http://www.braintreepayments.com/gateway/transaction-api
+    For more information on Transactions, see https://www.braintreepayments.com/docs/python/transactions/create
+
     """
 
     def __repr__(self):
@@ -163,7 +164,9 @@ class Transaction(Resource):
     @staticmethod
     def credit(params={}):
         """
-        Creates a transaction of type Credit. Amount is required. Also, a credit card,
+        Creates a transaction of type Credit.
+
+        Amount is required. Also, a credit card,
         customer_id or payment_method_token is required. ::
 
             result = braintree.Transaction.credit({
@@ -183,6 +186,7 @@ class Transaction(Resource):
                 "amount": "100.00",
                 "customer_id": "my_customer_id"
             })
+
         """
 
         params["type"] = Transaction.Type.Credit
@@ -203,9 +207,12 @@ class Transaction(Resource):
     @staticmethod
     def refund(transaction_id, amount=None):
         """
-        Refunds an existing transaction. It expects a transaction_id. ::
+        Refunds an existing transaction.
+
+        It expects a transaction_id.::
 
             result = braintree.Transaction.refund("my_transaction_id")
+
         """
 
         return Configuration.gateway().transaction.refund(transaction_id, amount)
@@ -246,9 +253,12 @@ class Transaction(Resource):
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):
         """
-        Submits an authorized transaction for settlement. ::
+        Submits an authorized transaction for settlement.
+
+        Requires the transaction id::
 
             result = braintree.Transaction.submit_for_settlement("my_transaction_id")
+
         """
 
         return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount)
@@ -279,9 +289,12 @@ class Transaction(Resource):
     @staticmethod
     def void(transaction_id):
         """
-        Voids an existing transaction. It expects a transaction_id. ::
+        Voids an existing transaction.
+
+        It expects a transaction_id.::
 
             result = braintree.Transaction.void("my_transaction_id")
+
         """
 
         return Configuration.gateway().transaction.void(transaction_id)
