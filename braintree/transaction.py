@@ -335,7 +335,8 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id", "tax_amount", "tax_exempt", "type",
+            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "purchase_order_number", "recurring",
+            "shipping_address_id", "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -363,7 +364,8 @@ class Transaction(Resource):
             {
                 "options": [
                     "store_in_vault", "store_in_vault_on_success", "submit_for_settlement",
-                    "add_billing_address_to_payment_method", "store_shipping_address_in_vault"
+                    "add_billing_address_to_payment_method", "store_shipping_address_in_vault",
+                    "venmo_sdk_session"
                 ]
             },
             {"custom_fields": ["__any_key__"]},
