@@ -1,3 +1,9 @@
+## 2.18.0
+
+* Add params for Venmo SDK
+* Add additional card types for card type indicators
+* Added ability to allow TR query parameters with no value (thanks @dmathieu!)
+
 ## 2.17.0
 
 * Adds verification search
