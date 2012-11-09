@@ -17,7 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.append(os.path.abspath('.'))
-sys.path.append(os.path.dirname(__file__) + '/../')
+sys.path.insert(0, os.path.dirname(__file__) + '/../')
 import braintree
 
 # -- General configuration -----------------------------------------------------
@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Braintree'
-copyright = u'2010, Braintree Payment Solutions'
+copyright = u'2012, Braintree Payment Solutions'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

@@ -13,7 +13,7 @@ _Note:_ Although discouraged, the dependency on PycURL can be bypassed during de
 
 ## Documentation
 
- * [Official documentation](http://www.braintreepayments.com/docs/python)
+ * [Official documentation](https://www.braintreepayments.com/docs/python)
 
 ## Quick Start Example
 

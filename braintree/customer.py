@@ -55,7 +55,8 @@ class Customer(Resource):
         print(result.customer.id)
         print(result.customer.first_name)
 
-    For more information on Customers, see http://www.braintreepayments.com/gateway/customer-api
+    For more information on Customers, see https://www.braintreepayments.com/docs/python/customers/create
+
     """
 
     def __repr__(self):
@@ -82,12 +83,15 @@ class Customer(Resource):
     @staticmethod
     def create(params={}):
         """
-        Create a Customer::
+        Create a Customer
+
+        No field is required::
 
             result = braintree.Customer.create({
                 "company": "Some company",
                 "first_name": "John"
             })
+
         """
 
         return Configuration.gateway().customer.create(params)
@@ -95,9 +99,12 @@ class Customer(Resource):
     @staticmethod
     def delete(customer_id):
         """
-        Delete a customer, given a customer_id::
+        Delete a customer
+
+        Given a customer_id::
 
             result = braintree.Customer.delete("my_customer_id")
+
         """
 
         return Configuration.gateway().customer.delete(customer_id)
@@ -147,11 +154,14 @@ class Customer(Resource):
     @staticmethod
     def update(customer_id, params={}):
         """
-        Update an existing Customer by customer_id.  The params are similar to create::
+        Update an existing Customer
+
+        By customer_id. The params are similar to create::
 
             result = braintree.Customer.update("my_customer_id", {
                 "last_name": "Smith"
             })
+
         """
 
         return Configuration.gateway().customer.update(customer_id, params)

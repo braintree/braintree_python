@@ -37,7 +37,7 @@ class Configuration(object):
         proxy server cannot detect "man in the middle" attacks between App
         Engine and the remote host when using HTTPS.
 
-.. [1] `URL Fetch Python API Overview <http://code.google.com/appengine/docs/python/urlfetch/overview.html>`_
+.. [1] `URL Fetch Python API Overview <https://developers.google.com/appengine/docs/python/urlfetch/overview>`_
     """
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key):

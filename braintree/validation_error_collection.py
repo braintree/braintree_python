@@ -4,7 +4,8 @@ class ValidationErrorCollection(object):
     """
     A class representing a collection of validation errors.
 
-    For more information on ValidationErrors, see http://www.braintreepayments.com/gateway/validation-errors
+    For more information on ValidationErrors, see https://www.braintreepayments.com/docs/python/general/validation_errors
+
     """
 
     def __init__(self, data={"errors": []}):
@@ -27,20 +28,26 @@ class ValidationErrorCollection(object):
 
     def for_object(self, nested_key):
         """
-        Returns a :class:`ValidationErrorCollection <braintree.validation_error_collection.ValidationErrorCollection>` representing the errors at the nested level:::
+        Returns a :class:`ValidationErrorCollection <braintree.validation_error_collection.ValidationErrorCollection>`
+
+        It represents the errors at the nested level:::
 
             error_result = Transaction.sale({"credit_card": {"number": "invalid"}})
             print error_result.errors.for_object("transaction").for_object("credit_card").on("number")[0].code
+
         """
 
         return self.__get_nested_errrors(nested_key)
 
     def on(self, attribute):
         """
-        Returns the list of errors for a given attribute::
+        Returns the list of errors
+
+        Restricted to a given attribute::
 
             error_result = Transaction.sale({"credit_card": {"number": "invalid"}})
             print [ error.code for error in error_result.errors.for_object("transaction").for_object("credit_card").on("number") ]
+
         """
         return [error for error in self.errors if error.attribute == attribute]
 

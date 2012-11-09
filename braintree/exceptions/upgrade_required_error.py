@@ -4,6 +4,6 @@ class UpgradeRequiredError(BraintreeError):
     """
     Raised for unsupported client library versions.
 
-    See http://www.braintreepayments.com/docs/python/general/exceptions#upgrade_required_error
+    See https://www.braintreepayments.com/docs/python/general/exceptions#upgrade_required_error
     """
     pass

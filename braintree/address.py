@@ -35,7 +35,9 @@ class Address(Resource):
     @staticmethod
     def create(params={}):
         """
-        Create an Address. A customer_id is required::
+        Create an Address.
+
+        A customer_id is required::
 
             customer = braintree.Customer.create().customer
             result = braintree.Address.create({
@@ -43,6 +45,7 @@ class Address(Resource):
                 "first_name": "John",
                 ...
             })
+
         """
 
         return Configuration.gateway().address.create(params)
@@ -50,9 +53,12 @@ class Address(Resource):
     @staticmethod
     def delete(customer_id, address_id):
         """
-        Delete an address, given a customer_id and address_id::
+        Delete an address
+
+        Given a customer_id and address_id::
 
             result = braintree.Address.delete("my_customer_id", "my_address_id")
+
         """
 
         return Configuration.gateway().address.delete(customer_id, address_id)
@@ -71,11 +77,14 @@ class Address(Resource):
     @staticmethod
     def update(customer_id, address_id, params={}):
         """
-        Update an existing Address. A customer_id and address_id are required::
+        Update an existing Address.
+
+        A customer_id and address_id are required::
 
             result = braintree.Address.update("my_customer_id", "my_address_id", {
                 "first_name": "John"
             })
+
         """
 
         return Configuration.gateway().address.update(customer_id, address_id, params)

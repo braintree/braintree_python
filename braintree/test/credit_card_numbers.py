@@ -6,6 +6,8 @@ class CreditCardNumbers(object):
         Healthcare = "4111111510101010"
         Payroll  = "4111111114101010"
         Prepaid = "4111111111111210"
+        IssuingBank = "4111111141010101"
+        CountryOfIssuance = "4111111111121102"
 
         No  = "4111111111310101"
         Unknown = "4111111111112101"

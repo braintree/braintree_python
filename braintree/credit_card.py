@@ -36,9 +36,8 @@ class CreditCard(Resource):
         print(result.credit_card.token)
         print(result.credit_card.masked_number)
 
-    For more information on CreditCards, see http://www.braintreepayments.com/gateway/credit-card-api
+    For more information on CreditCards, see https://www.braintreepayments.com/docs/python/credit_cards/create
 
-    For more information on CreditCard verifications, see http://www.braintreepayments.com/gateway/credit-card-verification-api
     """
     class CardType(object):
         """
@@ -84,77 +83,20 @@ class CreditCard(Resource):
         International = "international"
         US = "us"
 
-    class Commercial(object):
+    class CardTypeIndicator(object):
         """
-        Constants representing the three states for the commercial attribute
+        Constants representing the three states for the card type indicator attributes
 
-        * braintree.CreditCard.Commercial.Yes
-        * braintree.CreditCard.Commercial.No
-        * braintree.CreditCard.Commercial.Unknown
+        * braintree.CreditCard.CardTypeIndicator.Yes
+        * braintree.CreditCard.CardTypeIndicator.No
+        * braintree.CreditCard.CardTypeIndicator.Unknown
         """
         Yes = "Yes"
         No = "No"
         Unknown = "Unknown"
 
-    class DurbinRegulated(object):
-        """
-        Constants representing the three states for the durbin_regulated attribute
-
-        * braintree.CreditCard.DurbinRegulated.Yes
-        * braintree.CreditCard.DurbinRegulated.No
-        * braintree.CreditCard.DurbinRegulated.Unknown
-        """
-        Yes = "Yes"
-        No = "No"
-        Unknown = "Unknown"
-
-    class Debit(object):
-        """
-        Constants representing the three states for the debit attribute
-
-        * braintree.CreditCard.Debit.Yes
-        * braintree.CreditCard.Debit.No
-        * braintree.CreditCard.Debit.Unknown
-        """
-        Yes = "Yes"
-        No = "No"
-        Unknown = "Unknown"
-
-    class Healthcare(object):
-        """
-        Constants representing the three states for the healthcare attribute
-
-        * braintree.CreditCard.Healthcare.Yes
-        * braintree.CreditCard.Healthcare.No
-        * braintree.CreditCard.Healthcare.Unknown
-        """
-        Yes = "Yes"
-        No = "No"
-        Unknown = "Unknown"
-
-    class Payroll(object):
-        """
-        Constants representing the three states for the payroll attribute
-
-        * braintree.CreditCard.Payroll.Yes
-        * braintree.CreditCard.Payroll.No
-        * braintree.CreditCard.Payroll.Unknown
-        """
-        Yes = "Yes"
-        No = "No"
-        Unknown = "Unknown"
-
-    class Prepaid(object):
-        """
-        Constants representing the three states for the prepaid attribute
-
-        * braintree.CreditCard.Prepaid.Yes
-        * braintree.CreditCard.Prepaid.No
-        * braintree.CreditCard.Prepaid.Unknown
-        """
-        Yes = "Yes"
-        No = "No"
-        Unknown = "Unknown"
+    Commercial = DurbinRegulated = Debit = Healthcare = \
+            CountryOfIssuance = IssuingBank = Payroll = Prepaid = CardTypeIndicator
 
     @staticmethod
     def confirm_transparent_redirect(query_string):
@@ -171,12 +113,15 @@ class CreditCard(Resource):
     @staticmethod
     def create(params={}):
         """
-        Create an CreditCard.  A number and expiration_date are required. ::
+        Create a CreditCard.
+
+        A number and expiration_date are required. ::
 
             result = braintree.CreditCard.create({
                 "number": "4111111111111111",
                 "expiration_date": "12/2012"
             })
+
         """
 
         return Configuration.gateway().credit_card.create(params)
@@ -184,11 +129,14 @@ class CreditCard(Resource):
     @staticmethod
     def update(credit_card_token, params={}):
         """
-        Update an existing CreditCard by credit_card_id.  The params are similar to create::
+        Update an existing CreditCard
+
+        By credit_card_id.  The params are similar to create::
 
             result = braintree.CreditCard.update("my_credit_card_id", {
                 "cardholder_name": "John Doe"
             })
+
         """
 
         return Configuration.gateway().credit_card.update(credit_card_token, params)
@@ -196,9 +144,12 @@ class CreditCard(Resource):
     @staticmethod
     def delete(credit_card_token):
         """
-        Delete a credit card, given a credit_card_id::
+        Delete a credit card
+
+        Given a credit_card_id::
 
             result = braintree.CreditCard.delete("my_credit_card_id")
+
         """
 
         return Configuration.gateway().credit_card.delete(credit_card_token)
@@ -238,11 +189,11 @@ class CreditCard(Resource):
             "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
             "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
         ]
-        options = ["make_default", "verification_merchant_account_id", "verify_card"]
+        options = ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session"]
 
         signature = [
             "billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
-            "number", "token",
+            "number", "token", "venmo_sdk_payment_method_code",
             {"billing_address": billing_address_params},
             {"options": options}
         ]

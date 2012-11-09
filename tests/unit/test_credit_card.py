@@ -50,20 +50,22 @@ class TestCreditCard(unittest.TestCase):
         )
 
     def test_create_signature(self):
-        expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+        expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month",
+            "expiration_year", "number", "token", "venmo_sdk_payment_method_code",
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
                     "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "fail_on_duplicate_payment_method"]},
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session", "fail_on_duplicate_payment_method"]},
             "customer_id"
         ]
         self.assertEquals(expected, CreditCard.create_signature())
 
     def test_update_signature(self):
-        expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", "token",
+        expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month",
+            "expiration_year", "number", "token", "venmo_sdk_payment_method_code",
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
@@ -71,7 +73,7 @@ class TestCreditCard(unittest.TestCase):
                     {"options": ["update_existing"]}
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card"]}
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session"]}
         ]
         self.assertEquals(expected, CreditCard.update_signature())
 
