@@ -58,6 +58,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.sale({
             "amount": "100.00",
             "order_id": "123",
+            "channel": "MyShoppingCartProvider",
             "credit_card": {
                 "cardholder_name": "The Cardholder",
                 "number": "5105105105105100",
@@ -110,6 +111,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
         self.assertEquals(Decimal("100.00"), transaction.amount)
         self.assertEquals("123", transaction.order_id)
+        self.assertEquals("MyShoppingCartProvider", transaction.channel)
         self.assertEquals("1000", transaction.processor_response_code)
         self.assertEquals(datetime, type(transaction.created_at))
         self.assertEquals(datetime, type(transaction.updated_at))
@@ -1368,7 +1370,13 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45", "options": {"submit_for_settlement": "false"}})
+        clone_result = Transaction.clone_transaction(
+                transaction.id,
+                {
+                    "amount": "123.45",
+                    "channel": "MyShoppingCartProvider",
+                    "options": {"submit_for_settlement": "false"}
+                })
         self.assertTrue(clone_result.is_success)
         clone_transaction = clone_result.transaction
 
@@ -1377,6 +1385,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Type.Sale, clone_transaction.type)
         self.assertEquals(Transaction.Status.Authorized, clone_transaction.status)
         self.assertEquals(Decimal("123.45"), clone_transaction.amount)
+        self.assertEquals("MyShoppingCartProvider", clone_transaction.channel)
         self.assertEquals("123", clone_transaction.order_id)
         self.assertEquals("510510******5100", clone_transaction.credit_card_details.masked_number)
         self.assertEquals("Dan", clone_transaction.customer_details.first_name)

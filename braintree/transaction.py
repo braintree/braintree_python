@@ -27,6 +27,7 @@ class Transaction(Resource):
         result = Transaction.sale({
             "amount": "100.00",
             "order_id": "123",
+            "channel": "MyShoppingCartProvider",
             "credit_card": {
                 "number": "5105105105105100",
                 "expiration_date": "05/2011",
@@ -330,12 +331,12 @@ class Transaction(Resource):
 
     @staticmethod
     def clone_signature():
-        return ["amount", {"options": ["submit_for_settlement"]}]
+        return ["amount", "channel", {"options": ["submit_for_settlement"]}]
 
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "merchant_account_id", "order_id", "payment_method_token", "purchase_order_number", "recurring",
+            "amount", "customer_id", "merchant_account_id", "order_id", "channel", "payment_method_token", "purchase_order_number", "recurring",
             "shipping_address_id", "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code",
             {
                 "credit_card": [

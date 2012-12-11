@@ -163,6 +163,7 @@ class ErrorCodes(object):
         CannotRefundUnlessSettled = "91506"
         CannotRefundWithSuspendedMerchantAccount = "91538"
         CannotSubmitForSettlement = "91507"
+        ChannelIsTooLong = "91550"
         CreditCardIsRequired = "91508"
         CustomFieldIsInvalid = "91526"
         CustomFieldIsTooLong = "81527"
