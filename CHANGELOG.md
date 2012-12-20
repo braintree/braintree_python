@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds channel field to transactions.
+
 ## 2.18.0
 
 * Add additional card types for card type indicators
