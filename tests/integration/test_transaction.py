@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.test.credit_card_numbers import CreditCardNumbers
 
 class TestTransaction(unittest.TestCase):
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
@@ -57,6 +58,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.sale({
             "amount": "100.00",
             "order_id": "123",
+            "channel": "MyShoppingCartProvider",
             "credit_card": {
                 "cardholder_name": "The Cardholder",
                 "number": "5105105105105100",
@@ -109,6 +111,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
         self.assertEquals(Decimal("100.00"), transaction.amount)
         self.assertEquals("123", transaction.order_id)
+        self.assertEquals("MyShoppingCartProvider", transaction.channel)
         self.assertEquals("1000", transaction.processor_response_code)
         self.assertEquals(datetime, type(transaction.created_at))
         self.assertEquals(datetime, type(transaction.updated_at))
@@ -455,6 +458,27 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.CustomFieldIsInvalid,
             result.errors.for_object("transaction").on("custom_fields")[0].code
         )
+
+    def test_card_type_indicators(self):
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "credit_card": {
+                "number": CreditCardNumbers.CardTypeIndicators.Unknown,
+                "expiration_month": "05",
+                "expiration_year": "2012"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(CreditCard.Prepaid.Unknown, transaction.credit_card_details.prepaid)
+        self.assertEquals(CreditCard.Debit.Unknown, transaction.credit_card_details.debit)
+        self.assertEquals(CreditCard.Commercial.Unknown, transaction.credit_card_details.commercial)
+        self.assertEquals(CreditCard.Healthcare.Unknown, transaction.credit_card_details.healthcare)
+        self.assertEquals(CreditCard.Payroll.Unknown, transaction.credit_card_details.payroll)
+        self.assertEquals(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
+        self.assertEquals(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
+        self.assertEquals(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
 
     def test_create_can_set_recurring_flag(self):
         result = Transaction.sale({
@@ -1346,7 +1370,13 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45", "options": {"submit_for_settlement": "false"}})
+        clone_result = Transaction.clone_transaction(
+                transaction.id,
+                {
+                    "amount": "123.45",
+                    "channel": "MyShoppingCartProvider",
+                    "options": {"submit_for_settlement": "false"}
+                })
         self.assertTrue(clone_result.is_success)
         clone_transaction = clone_result.transaction
 
@@ -1355,6 +1385,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Type.Sale, clone_transaction.type)
         self.assertEquals(Transaction.Status.Authorized, clone_transaction.status)
         self.assertEquals(Decimal("123.45"), clone_transaction.amount)
+        self.assertEquals("MyShoppingCartProvider", clone_transaction.channel)
         self.assertEquals("123", clone_transaction.order_id)
         self.assertEquals("510510******5100", clone_transaction.credit_card_details.masked_number)
         self.assertEquals("Dan", clone_transaction.customer_details.first_name)
