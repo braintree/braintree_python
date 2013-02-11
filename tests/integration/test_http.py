@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from distutils.version import LooseVersion
 import platform
 import braintree
 import requests
@@ -51,31 +52,54 @@ class TestHttp(unittest.TestCase):
             return
 
         environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
-        try:
-            config = Configuration(environment, "merchant_id", "public_key", "private_key")
-            config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
-            http = config.http()
-            http.get("/")
+        config = Configuration(environment, "merchant_id", "public_key", "private_key")
+        config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
+        http = config.http()
+        if LooseVersion(requests.__version__) >= LooseVersion('1.0.0'):
             self.assertTrue(False)
-        except requests.models.SSLError, e:
-            self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e.message))
-        except AuthenticationError:
-            self.fail("Expected to Receive an SSL error from pycurl, but received an Authentication Error instead, check your local openssl installation")
+            try:
+                http.get("/")
+                self.assertTrue(False)
+            except requests.models.SSLError, e:
+                self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e.message))
+            except AuthenticationError:
+                self.fail("Expected to Receive an SSL error from requests, but received an Authentication Error instead, check your local openssl installation")
+        else:
+            try:
+                http.get("/")
+                self.assertTrue(False)
+            except requests.models.SSLError, e:
+                self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e.message))
+            except AuthenticationError:
+                self.fail("Expected to Receive an SSL error from requests, but received an Authentication Error instead, check your local openssl installation")
+
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
-        try:
-            environment = Environment("braintreegateway.com", "443", True, Environment.Production.ssl_certificate)
-            config = Configuration(environment, "merchant_id", "public_key", "private_key")
-            config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
-            http = config.http()
-            http.get("/")
-            self.assertTrue(False)
-        except requests.models.SSLError, e:
-            self.assertEquals("hostname 'braintreegateway.com' doesn't match u'www.braintreegateway.com'", str(e.message))
-        except pycurl.error, e:
-            error_code, error_msg = e
-            self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
-            self.assertTrue(re.search("SSL: certificate subject name", error_msg))
+        environment = Environment("braintreegateway.com", "443", True, Environment.Production.ssl_certificate)
+        config = Configuration(environment, "merchant_id", "public_key", "private_key")
+        config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
+        http = config.http()
+        if LooseVersion(requests.__version__) >= LooseVersion('1.0.0'):
+            try:
+                http.get("/")
+                self.assertTrue(False)
+            except requests.exceptions.SSLError, e:
+                self.assertEquals("hostname 'braintreegateway.com' doesn't match u'www.braintreegateway.com'", str(e.message))
+            except pycurl.error, e:
+                error_code, error_msg = e
+                self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
+                self.assertTrue(re.search("SSL: certificate subject name", error_msg))
+        else:
+            try:
+                http.get("/")
+                self.assertTrue(False)
+            except requests.models.SSLError, e:
+                self.assertEquals("hostname 'braintreegateway.com' doesn't match u'www.braintreegateway.com'", str(e.message))
+            except pycurl.error, e:
+                error_code, error_msg = e
+                self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
+                self.assertTrue(re.search("SSL: certificate subject name", error_msg))
+
 
     def test_unsafe_ssl_connection(self):
         try:
