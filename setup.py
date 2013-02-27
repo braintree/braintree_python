@@ -9,6 +9,6 @@ setup(
     url="https://www.braintreepayments.com/docs/python",
     packages=["braintree", "braintree.exceptions", "braintree.util", "braintree.test", "braintree.util.http_strategy"],
     package_data={"braintree": ["ssl/*"]},
-    install_requires=["requests>=0.11.1,<1.0"],
+    install_requires=["requests>=0.11.1,<1.2"],
     zip_safe=False
 )
