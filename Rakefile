@@ -12,6 +12,15 @@ namespace :test do
   task :integration do
     sh "nosetests tests/integration"
   end
+
+  desc "test all http strategies"
+  task :http do
+    %w[requests pycurl httplib].each do |strategy|
+      sh "env PYTHON_HTTP_STRATEGY=#{strategy} nosetests tests/unit"
+      sh "env PYTHON_HTTP_STRATEGY=#{strategy} nosetests tests/integration"
+    end
+  end
+
 end
 
 task :clean do
