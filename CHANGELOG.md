@@ -1,3 +1,8 @@
+## 2.20.0
+
+* Support requests >= 1.0
+* Add new validation errors and rename old ones
+
 ## 2.19.0
 
 * Adds channel field to transactions.
