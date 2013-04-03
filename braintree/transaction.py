@@ -12,6 +12,7 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.service_fee import ServiceFee
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
@@ -369,6 +370,7 @@ class Transaction(Resource):
                     "venmo_sdk_session"
                 ]
             },
+            {"service_fee": ["merchant_account_id", "amount"]},
             {"custom_fields": ["__any_key__"]},
             {"descriptor": ["name", "phone"]}
         ]
@@ -403,6 +405,8 @@ class Transaction(Resource):
             self.subscription_details = SubscriptionDetails(attributes.pop("subscription"))
         if "descriptor" in attributes:
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
+        if "service_fee" in attributes:
+            self.service_fee = ServiceFee(attributes.pop("service_fee"))
 
     @property
     def refund_id(self):
