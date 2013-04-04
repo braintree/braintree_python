@@ -894,6 +894,25 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_service_fee_not_allowed_with_credits(self):
+        result = Transaction.credit({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee": {
+                "amount": "1.00",
+                "merchant_account_id": TestHelper.non_default_merchant_account_id
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertIn(
+            ErrorCodes.Transaction.ServiceFeeIsNotAllowedOnCredits,
+            [error.code for error in result.errors.for_object("transaction").on("base")]
+        )
+
     def test_credit_with_merchant_account_id(self):
         result = Transaction.credit({
             "amount": TransactionAmounts.Authorize,
