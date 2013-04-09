@@ -1,5 +1,6 @@
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
@@ -459,6 +460,16 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.service_fee.amount, "1.00")
         self.assertEqual(transaction.service_fee.merchant_account_id, TestHelper.default_merchant_account_id)
 
+    def test_sale_with_venmo_sdk_payment_method_code(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+
     def test_validation_error_on_invalid_service_fee(self):
         result = Transaction.sale({
             "amount": "10.01",
@@ -908,9 +919,8 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertIn(
-            ErrorCodes.Transaction.ServiceFeeIsNotAllowedOnCredits,
-            [error.code for error in result.errors.for_object("transaction").on("base")]
+        self.assertTrue(
+            ErrorCodes.Transaction.ServiceFeeIsNotAllowedOnCredits in [error.code for error in result.errors.for_object("transaction").on("base")]
         )
 
     def test_credit_with_merchant_account_id(self):

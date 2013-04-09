@@ -1,6 +1,7 @@
 from tests.test_helper import *
 from braintree.test.credit_card_defaults import CreditCardDefaults
 from braintree.test.credit_card_numbers import CreditCardNumbers
+import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCreditCard(unittest.TestCase):
     def test_create_adds_credit_card_to_existing_customer(self):
@@ -310,6 +311,16 @@ class TestCreditCard(unittest.TestCase):
             ErrorCodes.Address.CountryNameIsNotAccepted,
             result.errors.for_object("credit_card").for_object("billing_address").on("country_name")[0].code
         )
+
+    def test_create_with_venmo_sdk_payment_method_code(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals("411111", result.credit_card.bin)
 
     def test_update_with_valid_options(self):
         customer = Customer.create().customer

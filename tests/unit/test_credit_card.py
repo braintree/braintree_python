@@ -1,4 +1,5 @@
 from tests.test_helper import *
+import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCreditCard(unittest.TestCase):
     def test_create_raises_exception_with_bad_keys(self):
