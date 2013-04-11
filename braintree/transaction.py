@@ -409,7 +409,7 @@ class Transaction(Resource):
         if "service_fee" in attributes:
             self.service_fee = ServiceFee(attributes.pop("service_fee"))
         if "deposit_details" in attributes:
-            self.deposit_details = DepositDetail(gateway, attributes.pop("deposit_details"))
+            self.deposit_details = DepositDetail(attributes.pop("deposit_details"))
 
     @property
     def refund_id(self):
@@ -441,3 +441,8 @@ class Transaction(Resource):
         if self.customer_details.id is None:
             return None
         return self.gateway.customer.find(self.customer_details.id)
+
+    @property
+    def is_deposited(self):
+       return self.deposit_details.is_valid 
+

@@ -67,3 +67,29 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(tran.deposit_details.disbursed_at, datetime(2013, 4, 11, 0, 0, 0))
         self.assertEquals(tran.deposit_details.deposit_date, date(2013, 4, 10))
         self.assertEquals(tran.deposit_details.funds_held, False)
+        self.assertEquals(tran.is_deposited, True)
+
+    def test_is_deposited_false(self):
+        attributes = {
+            'amount': '27.00',
+            'tax_amount': '1.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'order_id': '106601',
+            'channel': '101',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'deposit_details': {
+                'settlement_amount': None,
+                'settlement_currency_iso_code': None,
+                'settlement_currency_exchange_rate': None,
+                'disbursed_at': None,
+                'deposit_date': None,
+                'funds_held': None,
+            }
+        }
+
+        tran = Transaction(None, attributes)
+
+        self.assertEquals(tran.is_deposited, False)
