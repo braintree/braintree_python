@@ -886,7 +886,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(transaction.id, collection.first.id)
 
     def test_advanced_search_range_node_deposit_date_less_than_or_equal_to(self):
-        transaction_id = "deposit_transaction"
+        transaction_id = "deposittransaction"
         deposit_time = datetime(2013, 4, 10, 0, 0, 0)
         past = deposit_time - timedelta(minutes=10)
         future = deposit_time + timedelta(minutes=10)
@@ -915,7 +915,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(transaction_id, collection.first.id)
 
     def test_advanced_search_range_node_deposit_date_greater_than_or_equal_to(self):
-        transaction_id = "deposit_transaction"
+        transaction_id = "deposittransaction"
         deposit_time = datetime(2013, 4, 10, 0, 0, 0)
         past = deposit_time - timedelta(minutes=10)
         future = deposit_time + timedelta(days=1)
@@ -944,7 +944,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_range_node_deposit_date_between(self):
-        transaction_id = "deposit_transaction"
+        transaction_id = "deposittransaction"
         deposit_time = datetime(2013, 4, 10, 0, 0, 0)
         past = deposit_time - timedelta(days=1)
         future = deposit_time + timedelta(days=1)
@@ -982,7 +982,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_range_node_deposit_date_is(self):
-        transaction_id = "deposit_transaction"
+        transaction_id = "deposittransaction"
         deposit_time = datetime(2013, 4, 10, 0, 0, 0)
         past = deposit_time - timedelta(days=10)
         now = deposit_time
@@ -1012,7 +1012,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(0, collection.maximum_size)
 
     def test_advanced_search_range_node_deposit_date_with_dates(self):
-        transaction_id = "deposit_transaction"
+        transaction_id = "deposittransaction"
         deposit_date = date(2013, 4, 10)
         past = deposit_date - timedelta(days=1)
         future = deposit_date + timedelta(days=1)

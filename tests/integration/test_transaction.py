@@ -1519,7 +1519,7 @@ class TestTransaction(unittest.TestCase):
         )
 
     def test_find_exposes_deposit_details(self):
-        transaction = Transaction.find("deposit_transaction")
+        transaction = Transaction.find("deposittransaction")
         deposit_details = transaction.deposit_details
 
         self.assertEquals(date(2013, 4, 10), deposit_details.deposit_date)
