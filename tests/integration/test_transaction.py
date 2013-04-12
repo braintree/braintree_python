@@ -1523,7 +1523,7 @@ class TestTransaction(unittest.TestCase):
         deposit_details = transaction.deposit_details
 
         self.assertEquals(date(2013, 4, 10), deposit_details.deposit_date)
-        self.assertEquals(datetime(2013, 4, 11, 0, 0, 0), deposit_details.disbursed_at)
+        self.assertEquals(datetime(2013, 4, 9, 0, 0, 0), deposit_details.disbursed_at)
         self.assertEquals("USD", deposit_details.settlement_currency_iso_code)
         self.assertEquals(Decimal("1"), deposit_details.settlement_currency_exchange_rate)
         self.assertEquals(False, deposit_details.funds_held)
