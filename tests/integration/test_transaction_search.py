@@ -885,22 +885,22 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
 
-    def test_advanced_search_range_node_deposit_date_less_than_or_equal_to(self):
+    def test_advanced_search_range_node_disbursement_date_less_than_or_equal_to(self):
         transaction_id = "deposittransaction"
-        deposit_time = datetime(2013, 4, 10, 0, 0, 0)
-        past = deposit_time - timedelta(minutes=10)
-        future = deposit_time + timedelta(minutes=10)
+        disbursement_time = datetime(2013, 4, 10, 0, 0, 0)
+        past = disbursement_time - timedelta(minutes=10)
+        future = disbursement_time + timedelta(minutes=10)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date <= past
+            TransactionSearch.disbursement_date <= past
         ])
 
         self.assertEquals(0, collection.maximum_size)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date <= deposit_time
+            TransactionSearch.disbursement_date <= disbursement_time
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -908,21 +908,21 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date <= future
+            TransactionSearch.disbursement_date <= future
         ])
 
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction_id, collection.first.id)
 
-    def test_advanced_search_range_node_deposit_date_greater_than_or_equal_to(self):
+    def test_advanced_search_range_node_disbursement_date_greater_than_or_equal_to(self):
         transaction_id = "deposittransaction"
-        deposit_time = datetime(2013, 4, 10, 0, 0, 0)
-        past = deposit_time - timedelta(minutes=10)
-        future = deposit_time + timedelta(days=1)
+        disbursement_time = datetime(2013, 4, 10, 0, 0, 0)
+        past = disbursement_time - timedelta(minutes=10)
+        future = disbursement_time + timedelta(days=1)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date >= past
+            TransactionSearch.disbursement_date >= past
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -930,7 +930,7 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date >= deposit_time
+            TransactionSearch.disbursement_date >= disbursement_time
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -938,21 +938,21 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date >= future
+            TransactionSearch.disbursement_date >= future
         ])
 
         self.assertEquals(0, collection.maximum_size)
 
-    def test_advanced_search_range_node_deposit_date_between(self):
+    def test_advanced_search_range_node_disbursement_date_between(self):
         transaction_id = "deposittransaction"
-        deposit_time = datetime(2013, 4, 10, 0, 0, 0)
-        past = deposit_time - timedelta(days=1)
-        future = deposit_time + timedelta(days=1)
-        future2 = deposit_time + timedelta(days=2)
+        disbursement_time = datetime(2013, 4, 10, 0, 0, 0)
+        past = disbursement_time - timedelta(days=1)
+        future = disbursement_time + timedelta(days=1)
+        future2 = disbursement_time + timedelta(days=2)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date.between(past, deposit_time)
+            TransactionSearch.disbursement_date.between(past, disbursement_time)
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -960,7 +960,7 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date.between(deposit_time, future)
+            TransactionSearch.disbursement_date.between(disbursement_time, future)
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -968,7 +968,7 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date.between(past, future)
+            TransactionSearch.disbursement_date.between(past, future)
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -976,29 +976,29 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date.between(future, future2)
+            TransactionSearch.disbursement_date.between(future, future2)
         ])
 
         self.assertEquals(0, collection.maximum_size)
 
-    def test_advanced_search_range_node_deposit_date_is(self):
+    def test_advanced_search_range_node_disbursement_date_is(self):
         transaction_id = "deposittransaction"
-        deposit_time = datetime(2013, 4, 10, 0, 0, 0)
-        past = deposit_time - timedelta(days=10)
-        now = deposit_time
-        future = deposit_time + timedelta(days=10)
-        future2 = deposit_time + timedelta(days=20)
+        disbursement_time = datetime(2013, 4, 10, 0, 0, 0)
+        past = disbursement_time - timedelta(days=10)
+        now = disbursement_time
+        future = disbursement_time + timedelta(days=10)
+        future2 = disbursement_time + timedelta(days=20)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date == past
+            TransactionSearch.disbursement_date == past
         ])
 
         self.assertEquals(0, collection.maximum_size)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date == now
+            TransactionSearch.disbursement_date == now
         ])
 
         self.assertEquals(1, collection.maximum_size)
@@ -1006,20 +1006,20 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date == future
+            TransactionSearch.disbursement_date == future
         ])
 
         self.assertEquals(0, collection.maximum_size)
 
-    def test_advanced_search_range_node_deposit_date_with_dates(self):
+    def test_advanced_search_range_node_disbursement_date_with_dates(self):
         transaction_id = "deposittransaction"
-        deposit_date = date(2013, 4, 10)
-        past = deposit_date - timedelta(days=1)
-        future = deposit_date + timedelta(days=1)
+        disbursement_date = date(2013, 4, 10)
+        past = disbursement_date - timedelta(days=1)
+        future = disbursement_date + timedelta(days=1)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.deposit_date.between(past, future)
+            TransactionSearch.disbursement_date.between(past, future)
         ])
 
         self.assertEquals(1, collection.maximum_size)

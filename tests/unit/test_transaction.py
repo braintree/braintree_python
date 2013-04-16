@@ -38,7 +38,7 @@ class TestTransaction(unittest.TestCase):
         except NotFoundError, e:
             self.assertTrue(True)
 
-    def test_constructor_includes_deposit_information(self):
+    def test_constructor_includes_disbursement_information(self):
         attributes = {
             'amount': '27.00',
             'tax_amount': '1.00',
@@ -49,27 +49,25 @@ class TestTransaction(unittest.TestCase):
             'payment_method_token': 'sometoken',
             'purchase_order_number': '20202',
             'recurring': 'False',
-            'deposit_details': {
+            'disbursement_details': {
                 'settlement_amount': '27.00',
                 'settlement_currency_iso_code': 'USD',
                 'settlement_currency_exchange_rate': '1',
-                'disbursed_at': datetime(2013, 4, 11, 0, 0, 0),
-                'deposit_date': date(2013, 4, 10),
+                'disbursement_date': date(2013, 4, 10),
                 'funds_held': False
             }
         }
 
         tran = Transaction(None, attributes)
 
-        self.assertEquals(tran.deposit_details.settlement_amount, Decimal('27.00'))
-        self.assertEquals(tran.deposit_details.settlement_currency_iso_code, 'USD')
-        self.assertEquals(tran.deposit_details.settlement_currency_exchange_rate, Decimal('1'))
-        self.assertEquals(tran.deposit_details.disbursed_at, datetime(2013, 4, 11, 0, 0, 0))
-        self.assertEquals(tran.deposit_details.deposit_date, date(2013, 4, 10))
-        self.assertEquals(tran.deposit_details.funds_held, False)
-        self.assertEquals(tran.is_deposited, True)
+        self.assertEquals(tran.disbursement_details.settlement_amount, Decimal('27.00'))
+        self.assertEquals(tran.disbursement_details.settlement_currency_iso_code, 'USD')
+        self.assertEquals(tran.disbursement_details.settlement_currency_exchange_rate, Decimal('1'))
+        self.assertEquals(tran.disbursement_details.disbursement_date, date(2013, 4, 10))
+        self.assertEquals(tran.disbursement_details.funds_held, False)
+        self.assertEquals(tran.is_disbursed, True)
 
-    def test_is_deposited_false(self):
+    def test_is_disbursed_false(self):
         attributes = {
             'amount': '27.00',
             'tax_amount': '1.00',
@@ -80,16 +78,15 @@ class TestTransaction(unittest.TestCase):
             'payment_method_token': 'sometoken',
             'purchase_order_number': '20202',
             'recurring': 'False',
-            'deposit_details': {
+            'disbursement_details': {
                 'settlement_amount': None,
                 'settlement_currency_iso_code': None,
                 'settlement_currency_exchange_rate': None,
-                'disbursed_at': None,
-                'deposit_date': None,
+                'disbursement_date': None,
                 'funds_held': None,
             }
         }
 
         tran = Transaction(None, attributes)
 
-        self.assertEquals(tran.is_deposited, False)
+        self.assertEquals(tran.is_disbursed, False)

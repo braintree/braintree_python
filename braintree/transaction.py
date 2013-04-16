@@ -3,7 +3,7 @@ import urllib
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
-from braintree.deposit_detail import DepositDetail
+from braintree.disbursement_detail import DisbursementDetail
 from braintree.discount import Discount
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
@@ -408,8 +408,8 @@ class Transaction(Resource):
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
         if "service_fee" in attributes:
             self.service_fee = ServiceFee(attributes.pop("service_fee"))
-        if "deposit_details" in attributes:
-            self.deposit_details = DepositDetail(attributes.pop("deposit_details"))
+        if "disbursement_details" in attributes:
+            self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
 
     @property
     def refund_id(self):
@@ -443,6 +443,6 @@ class Transaction(Resource):
         return self.gateway.customer.find(self.customer_details.id)
 
     @property
-    def is_deposited(self):
-       return self.deposit_details.is_valid 
+    def is_disbursed(self):
+       return self.disbursement_details.is_valid
 

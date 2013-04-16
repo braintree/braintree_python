@@ -1,7 +1,7 @@
 from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
 
-class DepositDetail(AttributeGetter):
+class DisbursementDetail(AttributeGetter):
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
 
@@ -12,4 +12,4 @@ class DepositDetail(AttributeGetter):
 
     @property
     def is_valid(self):
-        return self.deposit_date is not None
+        return self.disbursement_date is not None
