@@ -24,6 +24,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("05/2009", credit_card.expiration_date)
         self.assertEquals("John Doe", credit_card.cardholder_name)
         self.assertNotEquals(re.search("\A\w{32}\Z", credit_card.unique_number_identifier), None)
+        self.assertFalse(credit_card.venmo_sdk)
 
     def test_create_and_make_default(self):
         customer = Customer.create().customer
@@ -321,6 +322,46 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEquals("411111", result.credit_card.bin)
+        self.assertTrue(result.credit_card.venmo_sdk)
+
+    def test_create_with_invalid_venmo_sdk_payment_method_code(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "venmo_sdk_payment_method_code": venmo_sdk.InvalidPaymentMethodCode
+        })
+
+        self.assertFalse(result.is_success)
+
+    def test_create_with_venmo_sdk_session(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options": {
+                "venmo_sdk_session": venmo_sdk.Session
+            }
+        })
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.credit_card.venmo_sdk)
+
+    def test_create_with_invalid_venmo_sdk_session(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options": {
+                "venmo_sdk_session": venmo_sdk.InvalidSession
+            }
+        })
+        self.assertTrue(result.is_success)
+        self.assertFalse(result.credit_card.venmo_sdk)
 
     def test_update_with_valid_options(self):
         customer = Customer.create().customer
