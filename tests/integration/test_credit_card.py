@@ -25,6 +25,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("John Doe", credit_card.cardholder_name)
         self.assertNotEquals(re.search("\A\w{32}\Z", credit_card.unique_number_identifier), None)
         self.assertFalse(credit_card.venmo_sdk)
+        self.assertNotEquals(re.search("png", credit_card.image_url), None)
 
     def test_create_and_make_default(self):
         customer = Customer.create().customer
