@@ -444,7 +444,7 @@ class TestTransaction(unittest.TestCase):
     def test_sale_with_service_fee(self):
         result = Transaction.sale({
             "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -1203,7 +1203,7 @@ class TestTransaction(unittest.TestCase):
     def test_submit_for_settlement_with_validation_error_on_service_fee(self):
         transaction = Transaction.sale({
             "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
