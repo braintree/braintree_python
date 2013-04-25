@@ -333,6 +333,9 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
+        self.assertEquals(result.message, "Invalid VenmoSDK payment method code")
+        self.assertEquals(result.errors.for_object("credit_card") \
+                .on("venmo_sdk_payment_method_code")[0].code, ErrorCodes.CreditCard.InvalidVenmoSDKPaymentMethodCode)
 
     def test_create_with_venmo_sdk_session(self):
         customer = Customer.create().customer
