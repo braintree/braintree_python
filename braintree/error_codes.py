@@ -211,6 +211,7 @@ class ErrorCodes(object):
         ServiceFeeIsNotAllowedOnCredits = "91552"
         SettlementAmountIsLessThanServiceFeeAmount = "91551"
         SettlementAmountIsTooLarge = "91522"
+        SubMerchantAccountRequiresServiceFee = "91553"
         SubscriptionDoesNotBelongToCustomer = "91529"
         SubscriptionIdIsInvalid = "91528"
         SubscriptionStatusMustBePastDue = "91531"
@@ -227,10 +228,12 @@ class ErrorCodes(object):
 
     class ServiceFee(object):
         AmountCannotBeNegative = "92501"
-        AmountIsRequired = "92502"
         AmountFormatIsInvalid = "92503"
+        AmountIsRequired = "92502"
         AmountIsTooLarge = "92504"
-        MerchantAccountNotSupported = "92505"
-        MerchantAccountIdIsInvalid = "92506"
+        MasterMerchantAccountDoesNotSupportServiceFees = "92510"
+        MerchantAccountCannotBeASubMerchantAccount = "92509"
         MerchantAccountCannotMatchTransactionMerchantAccount = "92507"
         MerchantAccountCurrenciesMustMatch = "92508"
+        MerchantAccountIdIsInvalid = "92506"
+        MerchantAccountNotSupported = "92505"

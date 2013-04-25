@@ -460,6 +460,59 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.service_fee.amount, "1.00")
         self.assertEqual(transaction.service_fee.merchant_account_id, TestHelper.default_merchant_account_id)
 
+    def test_sale_on_master_merchant_accoount_is_invalid_with_service_fee(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee": {
+                "merchant_account_id": TestHelper.default_merchant_account_id,
+                "amount": "1.00"
+            }
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.ServiceFee.MasterMerchantAccountDoesNotSupportServiceFees,
+            result.errors.for_object("transaction").for_object("service_fee").on("base")[0].code
+        )
+
+    def test_sale_is_invalid_with_sub_merchant_account_in_service_fee(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee": {
+                "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+                "amount": "1.00"
+            }
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.ServiceFee.MerchantAccountCannotBeASubMerchantAccount,
+            result.errors.for_object("transaction").for_object("service_fee").on("merchant_account_id")[0].code
+        )
+
+    def test_sale_on_submerchant_is_invalid_without_with_service_fee(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.SubMerchantAccountRequiresServiceFee,
+            result.errors.for_object("transaction").on("merchant_account_id")[0].code
+        )
+
     def test_sale_with_venmo_sdk_payment_method_code(self):
         result = Transaction.sale({
             "amount": "10.00",
