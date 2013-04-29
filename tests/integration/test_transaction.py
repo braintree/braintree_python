@@ -475,7 +475,7 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertFalse(result.is_success)
         self.assertEquals(
-            ErrorCodes.ServiceFee.MasterMerchantAccountDoesNotSupportServiceFees,
+            ErrorCodes.ServiceFee.MerchantAccountNotSupported,
             result.errors.for_object("transaction").for_object("service_fee").on("base")[0].code
         )
 

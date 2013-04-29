@@ -231,7 +231,6 @@ class ErrorCodes(object):
         AmountFormatIsInvalid = "92503"
         AmountIsRequired = "92502"
         AmountIsTooLarge = "92504"
-        MasterMerchantAccountDoesNotSupportServiceFees = "92510"
         MerchantAccountCannotBeASubMerchantAccount = "92509"
         MerchantAccountCannotMatchTransactionMerchantAccount = "92507"
         MerchantAccountCurrenciesMustMatch = "92508"
