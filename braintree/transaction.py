@@ -3,6 +3,7 @@ import urllib
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
+from braintree.disbursement_detail import DisbursementDetail
 from braintree.discount import Discount
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
@@ -403,6 +404,8 @@ class Transaction(Resource):
             self.subscription_details = SubscriptionDetails(attributes.pop("subscription"))
         if "descriptor" in attributes:
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
+        if "disbursement_details" in attributes:
+            self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
 
     @property
     def refund_id(self):
@@ -434,3 +437,8 @@ class Transaction(Resource):
         if self.customer_details.id is None:
             return None
         return self.gateway.customer.find(self.customer_details.id)
+
+    @property
+    def is_disbursed(self):
+       return self.disbursement_details.is_valid
+

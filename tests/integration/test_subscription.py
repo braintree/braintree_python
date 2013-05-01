@@ -996,6 +996,35 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, subscription_default_ma))
         self.assertFalse(TestHelper.includes(collection, subscription_non_default_ma))
 
+    def test_search_on_bogus_merchant_account_id(self):
+        subscription = Subscription.create({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trial_plan["id"],
+            "price": Decimal("4")
+        }).subscription
+
+        collection = Subscription.search([
+            SubscriptionSearch.merchant_account_id == subscription.merchant_account_id,
+            SubscriptionSearch.price == Decimal("4")
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription))
+
+        collection = Subscription.search([
+            SubscriptionSearch.merchant_account_id.in_list(["totally_bogus_id", subscription.merchant_account_id]),
+            SubscriptionSearch.price == Decimal("4")
+        ])
+
+        self.assertTrue(TestHelper.includes(collection, subscription))
+
+        collection = Subscription.search([
+            SubscriptionSearch.merchant_account_id == "totally_bogus_id",
+            SubscriptionSearch.price == Decimal("4")
+        ])
+
+        self.assertFalse(TestHelper.includes(collection, subscription))
+
     def test_search_on_price(self):
         subscription_900 = Subscription.create({
             "payment_method_token": self.credit_card.token,

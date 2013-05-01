@@ -1,5 +1,6 @@
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
@@ -439,6 +440,16 @@ class TestTransaction(unittest.TestCase):
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
+
+    def test_sale_with_venmo_sdk_payment_method_code(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("411111", transaction.credit_card_details.bin)
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
@@ -1429,3 +1440,14 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.CannotCloneCredit,
             clone_result.errors.for_object("transaction").on("base")[0].code
         )
+
+    def test_find_exposes_disbursement_details(self):
+        transaction = Transaction.find("deposittransaction")
+        disbursement_details = transaction.disbursement_details
+
+        self.assertEquals(date(2013, 4, 10), disbursement_details.disbursement_date)
+        self.assertEquals("USD", disbursement_details.settlement_currency_iso_code)
+        self.assertEquals(Decimal("1"), disbursement_details.settlement_currency_exchange_rate)
+        self.assertEquals(False, disbursement_details.funds_held)
+        self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
+

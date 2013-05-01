@@ -1,4 +1,6 @@
 from tests.test_helper import *
+from datetime import datetime
+from datetime import date
 
 class TestTransaction(unittest.TestCase):
     def test_clone_transaction_raises_exception_with_bad_keys(self):
@@ -35,3 +37,56 @@ class TestTransaction(unittest.TestCase):
             self.assertTrue(False)
         except NotFoundError, e:
             self.assertTrue(True)
+
+    def test_constructor_includes_disbursement_information(self):
+        attributes = {
+            'amount': '27.00',
+            'tax_amount': '1.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'order_id': '106601',
+            'channel': '101',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'disbursement_details': {
+                'settlement_amount': '27.00',
+                'settlement_currency_iso_code': 'USD',
+                'settlement_currency_exchange_rate': '1',
+                'disbursement_date': date(2013, 4, 10),
+                'funds_held': False
+            }
+        }
+
+        tran = Transaction(None, attributes)
+
+        self.assertEquals(tran.disbursement_details.settlement_amount, Decimal('27.00'))
+        self.assertEquals(tran.disbursement_details.settlement_currency_iso_code, 'USD')
+        self.assertEquals(tran.disbursement_details.settlement_currency_exchange_rate, Decimal('1'))
+        self.assertEquals(tran.disbursement_details.disbursement_date, date(2013, 4, 10))
+        self.assertEquals(tran.disbursement_details.funds_held, False)
+        self.assertEquals(tran.is_disbursed, True)
+
+    def test_is_disbursed_false(self):
+        attributes = {
+            'amount': '27.00',
+            'tax_amount': '1.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'order_id': '106601',
+            'channel': '101',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'disbursement_details': {
+                'settlement_amount': None,
+                'settlement_currency_iso_code': None,
+                'settlement_currency_exchange_rate': None,
+                'disbursement_date': None,
+                'funds_held': None,
+            }
+        }
+
+        tran = Transaction(None, attributes)
+
+        self.assertEquals(tran.is_disbursed, False)

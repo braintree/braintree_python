@@ -31,7 +31,7 @@ class Configuration(object):
 
     If you are using Google App Engine, you must use unsafe ssl [1]_::
 
-        The proxy the URL Fetch service uses cannot authenticate the host it
+        The proxy the URL Fetch servicr uses cannot authenticate the host it
         is contacting. Because there is no certificate trust chain, the proxy
         accepts all certificates, including self-signed certificates. The
         proxy server cannot detect "man in the middle" attacks between App

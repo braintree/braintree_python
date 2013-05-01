@@ -1,4 +1,5 @@
 from tests.test_helper import *
+import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCustomer(unittest.TestCase):
     def test_all(self):
@@ -231,6 +232,18 @@ class TestCustomer(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Customer.CustomFieldIsInvalid, result.errors.for_object("customer").on("custom_fields")[0].code)
+
+    def test_create_with_venmo_sdk_payment_method_code(self):
+        result = Customer.create({
+            "first_name": "Jack",
+            "last_name": "Kennedy",
+            "credit_card": {
+                "venmo_sdk_payment_method_code": venmo_sdk.generate_test_payment_method_code("4111111111111111")
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals("411111", result.customer.credit_cards[0].bin)
 
     def test_delete_with_valid_customer(self):
         customer = Customer.create().customer
