@@ -208,10 +208,7 @@ class ErrorCodes(object):
         PurchaseOrderNumberIsInvalid = "91548"
         PurchaseOrderNumberIsTooLong = "91537"
         RefundAmountIsTooLarge = "91521"
-        ServiceFeeIsNotAllowedOnCredits = "91552"
-        SettlementAmountIsLessThanServiceFeeAmount = "91551"
         SettlementAmountIsTooLarge = "91522"
-        SubMerchantAccountRequiresServiceFee = "91553"
         SubscriptionDoesNotBelongToCustomer = "91529"
         SubscriptionIdIsInvalid = "91528"
         SubscriptionStatusMustBePastDue = "91531"
@@ -225,14 +222,3 @@ class ErrorCodes(object):
         class Options(object):
             VaultIsDisabled = "91525"
             SubmitForSettlementIsRequiredForCloning = "91544"
-
-    class ServiceFee(object):
-        AmountCannotBeNegative = "92501"
-        AmountFormatIsInvalid = "92503"
-        AmountIsRequired = "92502"
-        AmountIsTooLarge = "92504"
-        MerchantAccountCannotBeASubMerchantAccount = "92509"
-        MerchantAccountCannotMatchTransactionMerchantAccount = "92507"
-        MerchantAccountCurrenciesMustMatch = "92508"
-        MerchantAccountIdIsInvalid = "92506"
-        MerchantAccountNotSupported = "92505"

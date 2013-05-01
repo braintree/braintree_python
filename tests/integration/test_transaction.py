@@ -441,78 +441,6 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
-    def test_sale_with_service_fee(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "service_fee": {
-                "merchant_account_id": TestHelper.default_merchant_account_id,
-                "amount": "1.00"
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertEqual(transaction.service_fee.amount, "1.00")
-        self.assertEqual(transaction.service_fee.merchant_account_id, TestHelper.default_merchant_account_id)
-
-    def test_sale_on_master_merchant_accoount_is_invalid_with_service_fee(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_merchant_account_id,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "service_fee": {
-                "merchant_account_id": TestHelper.default_merchant_account_id,
-                "amount": "1.00"
-            }
-        })
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.ServiceFee.MerchantAccountNotSupported,
-            result.errors.for_object("transaction").for_object("service_fee").on("base")[0].code
-        )
-
-    def test_sale_is_invalid_with_sub_merchant_account_in_service_fee(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_merchant_account_id,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "service_fee": {
-                "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
-                "amount": "1.00"
-            }
-        })
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.ServiceFee.MerchantAccountCannotBeASubMerchantAccount,
-            result.errors.for_object("transaction").for_object("service_fee").on("merchant_account_id")[0].code
-        )
-
-    def test_sale_on_submerchant_is_invalid_without_with_service_fee(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            }
-        })
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.SubMerchantAccountRequiresServiceFee,
-            result.errors.for_object("transaction").on("merchant_account_id")[0].code
-        )
-
     def test_sale_with_venmo_sdk_payment_method_code(self):
         result = Transaction.sale({
             "amount": "10.00",
@@ -522,25 +450,6 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual("411111", transaction.credit_card_details.bin)
-
-    def test_validation_error_on_invalid_service_fee(self):
-        result = Transaction.sale({
-            "amount": "10.01",
-            "merchant_account_id": TestHelper.non_default_merchant_account_id,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "service_fee": {
-                "merchant_account_id": TestHelper.default_merchant_account_id
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.ServiceFee.AmountIsRequired,
-            result.errors.for_object("transaction").for_object("service_fee").on("amount")[0].code
-        )
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
@@ -958,24 +867,6 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
-    def test_service_fee_not_allowed_with_credits(self):
-        result = Transaction.credit({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "service_fee": {
-                "amount": "1.00",
-                "merchant_account_id": TestHelper.non_default_merchant_account_id
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertTrue(
-            ErrorCodes.Transaction.ServiceFeeIsNotAllowedOnCredits in [error.code for error in result.errors.for_object("transaction").on("base")]
-        )
-
     def test_credit_with_merchant_account_id(self):
         result = Transaction.credit({
             "amount": TransactionAmounts.Authorize,
@@ -1250,27 +1141,6 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEquals(
             ErrorCodes.Transaction.SettlementAmountIsTooLarge,
-            result.errors.for_object("transaction").on("amount")[0].code
-        )
-
-    def test_submit_for_settlement_with_validation_error_on_service_fee(self):
-        transaction = Transaction.sale({
-            "amount": "10.00",
-            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "service_fee": {
-                "amount": "5.00"
-            }
-        }).transaction
-
-        result = Transaction.submit_for_settlement(transaction.id, "1.00")
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.SettlementAmountIsLessThanServiceFeeAmount,
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
