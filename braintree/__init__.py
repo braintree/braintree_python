@@ -22,6 +22,7 @@ from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
 from braintree.resource_collection import ResourceCollection
 from braintree.search import Search
+from braintree.service_fee import ServiceFee
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.subscription import Subscription
 from braintree.subscription_gateway import SubscriptionGateway
