@@ -42,7 +42,12 @@ class TestCustomer(unittest.TestCase):
             "phone": "312.555.1234",
             "fax": "614.555.5678",
             "website": "www.microsoft.com",
-            "device_session_id": "abc123"
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "device_session_id": "abc123"
+            }
         })
 
         self.assertTrue(result.is_success)
