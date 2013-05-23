@@ -13,7 +13,6 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
-from braintree.service_fee import ServiceFee
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
@@ -340,7 +339,7 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
-            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code",
+            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -372,7 +371,6 @@ class Transaction(Resource):
                     "venmo_sdk_session"
                 ]
             },
-            {"service_fee": ["merchant_account_id", "amount"]},
             {"custom_fields": ["__any_key__"]},
             {"descriptor": ["name", "phone"]}
         ]
@@ -407,8 +405,6 @@ class Transaction(Resource):
             self.subscription_details = SubscriptionDetails(attributes.pop("subscription"))
         if "descriptor" in attributes:
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
-        if "service_fee" in attributes:
-            self.service_fee = ServiceFee(attributes.pop("service_fee"))
         if "disbursement_details" in attributes:
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
 
