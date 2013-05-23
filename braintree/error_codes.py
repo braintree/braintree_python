@@ -102,6 +102,14 @@ class ErrorCodes(object):
         NameFormatIsInvalid = "92201"
         PhoneFormatIsInvalid = "92202"
 
+    class MerchantAccount(object):
+        IdIsTooLong = "82602"                      
+        IdFormatIsInvalid = "82603"                
+        IdIsInUse = "82604"                        
+        IdIsNotAllowed = "82605"                   
+        MasterMerchantAccountIdIsRequired = "82606"
+        MasterMerchantAccountIdIsInvalid = "82607" 
+        MasterMerchantAccountMustBeActive = "82608"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
