@@ -1,3 +1,7 @@
+## 2.21.0
+* Adds disbursement details to transactions.
+* Adds image_url to transactions.
+
 ## 2.20.0
 
 * Support requests >= 1.0

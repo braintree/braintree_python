@@ -72,6 +72,7 @@ class ErrorCodes(object):
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
             VerificationMerchantAccountIdIsInvalid = "91728"
+            UpdateExistingTokenNotAllowed = "91729"
 
 
     class Customer(object):

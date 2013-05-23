@@ -33,6 +33,25 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
+    def test_create_with_device_session_id(self):
+        result = Customer.create({
+            "first_name": "Bill",
+            "last_name": "Gates",
+            "company": "Microsoft",
+            "email": "bill@microsoft.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.microsoft.com",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "device_session_id": "abc123"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
     def test_create_with_unicode(self):
         result = Customer.create({
             "first_name": u"Bill<&>",
