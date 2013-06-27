@@ -1,0 +1,69 @@
+from tests.test_helper import *
+
+class TestMerchantAccount(unittest.TestCase):
+    def test_create_does_not_require_an_id(self):
+        customer = Customer.create().customer
+        result = MerchantAccount.create({
+            "applicant_details": {
+                "first_name": "Joe",
+                "last_name": "Bloggs",
+                "email": "joe@bloggs.com",
+                "address": {
+                    "street_address": "123 Credibility St.",
+                    "postal_code": "60606",
+                    "locality": "Chicago",
+                    "region": "IL",
+                    },
+                "date_of_birth": "10/9/1980",
+                "ssn": "123-000-1234",
+                "routing_number": "1234567890",
+                "account_number": "43759348798"
+                },
+            "tos_accepted": True,
+            "master_merchant_account_id": "sandbox_master_merchant_account"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(MerchantAccount.Status.Pending, result.merchant_account.status)
+        self.assertEquals("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
+
+    def test_create_allows_an_id_to_pass(self):
+        new_id = str(random.randint(1, 1000000))
+        sub_merchant_account_id = "sub_merchant_account_id" + new_id
+        result = MerchantAccount.create({
+           "id": sub_merchant_account_id,
+            "applicant_details": {
+                "first_name": "Joe",
+                "last_name": "Bloggs",
+                "email": "joe@bloggs.com",
+                "address": {
+                    "street_address": "123 Credibility St.",
+                    "postal_code": "60606",
+                    "locality": "Chicago",
+                    "region": "IL",
+                    },
+                "date_of_birth": "10/9/1980",
+                "ssn": "123-000-1234",
+                "routing_number": "1234567890",
+                "account_number": "43759348798"
+                },
+            "tos_accepted": True,
+            "master_merchant_account_id": "sandbox_master_merchant_account"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(MerchantAccount.Status.Pending, result.merchant_account.status)
+        self.assertEquals(sub_merchant_account_id, result.merchant_account.id)
+        self.assertEquals("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
+
+    def test_create_handles_unsuccessful_results(self):
+        result = MerchantAccount.create({})
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.MerchantAccount.MasterMerchantAccountIdIsRequired, result.errors.for_object("merchant_account").on("master_merchant_account_id")[0].code)
+        
+    def test_create_requires_all_fields(self):
+        result = MerchantAccount.create(
+            {"master_merchant_account_id": "sandbox_master_merchant_account"}
+        )
+        self.assertFalse(result.is_success)
+        self.assertEquals(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")[0].code) 

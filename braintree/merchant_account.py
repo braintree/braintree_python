@@ -1,4 +1,5 @@
 from braintree.resource import Resource
+from braintree.configuration import Configuration
 
 class MerchantAccount(Resource):
     class Status(object):
@@ -12,8 +13,12 @@ class MerchantAccount(Resource):
             self.master_merchant_account = MerchantAccount(gateway, self.master_merchant_account)
 
     @staticmethod
+    def create(params={}):
+        return Configuration.gateway().merchant_account.create(params)
+
+    @staticmethod
     def create_signature():
-        return CreditCard.signature("create")
+        return MerchantAccount.signature("create")
 
     @staticmethod
     def signature(type):
