@@ -1,12 +1,11 @@
-from braintree.resource import Resource
-from braintree.util.http import Http
-from braintree.successful_result import SuccessfulResult
-from braintree.error_result import ErrorResult
 from braintree.configuration import Configuration
+from braintree.resource import Resource
 
 class MerchantAccount(Resource):
     class Status(object):
+        Active = "active"
         Pending = "pending"
+        Suspended = "suspended"
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
@@ -23,8 +22,12 @@ class MerchantAccount(Resource):
 
     @staticmethod
     def create_signature():
-        return [
-            {"applicant_details": [
-                "first_name", "last_name", "email", "date_of_birth", "ssn", "routing_number", "account_number",
-                {"address": ["street_address", "postal_code", "locality", "region"]}]
-            }, "tos_accepted", "master_merchant_account_id", "id"]
+        signature = [
+            {'applicant_details': [
+                'first_name', 'last_name', 'email', 'date_of_birth', 'ssn', 'routing_number', 'account_number',
+                {'address': ['street_address', 'postal_code', 'locality', 'region']}]
+            },
+            'tos_accepted', 'master_merchant_account_id', 'id'
+        ]
+
+        return signature

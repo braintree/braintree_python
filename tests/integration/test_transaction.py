@@ -937,7 +937,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertTrue(
-            ErrorCodes.Transaction.ServiceFeeAmountIsNotAllowedOnCredits in [error.code for error in result.errors.for_object("transaction").on("base")]
+            ErrorCodes.Transaction.ServiceFeeIsNotAllowedOnCredits in [error.code for error in result.errors.for_object("transaction").on("base")]
         )
 
     def test_credit_with_merchant_account_id(self):
