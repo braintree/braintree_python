@@ -3,6 +3,7 @@ from braintree.configuration import Configuration
 from braintree.subscription import Subscription
 from braintree.merchant_account import MerchantAccount
 from braintree.error_result import ErrorResult
+from braintree.validation_error_collection import ValidationErrorCollection
 
 class WebhookNotification(Resource):
     class Kind(object):
@@ -26,9 +27,17 @@ class WebhookNotification(Resource):
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
-        if "subscription" in attributes['subject']:
-            self.subscription = Subscription(gateway, attributes['subject']['subscription'])
-        elif "merchant_account" in attributes['subject']:
-            self.merchant_account = MerchantAccount(gateway, attributes['subject']['merchant_account'])
-        elif "api_error_response" in attributes['subject']:
-            self.errors = ErrorResult(gateway, attributes['subject']['api_error_response'])
+
+        if "api_error_response" in attributes["subject"]:
+            node_wrapper = attributes["subject"]["api_error_response"]
+        else:
+            node_wrapper = attributes["subject"]
+
+        if "subscription" in node_wrapper:
+            self.subscription = Subscription(gateway, node_wrapper['subscription'])
+        elif "merchant_account" in node_wrapper:
+            self.merchant_account = MerchantAccount(gateway, node_wrapper['merchant_account'])
+
+        if "errors" in node_wrapper:
+            self.errors = ValidationErrorCollection(node_wrapper['errors'])
+            self.message = node_wrapper['message']
