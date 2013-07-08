@@ -8,16 +8,13 @@ class WebhookTestingGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
-    def sample_notification(self, kind, data):
-        if not isinstance(data, dict):
-            data = {"id": data}
-
-        payload = base64.encodestring(self.__sample_xml(kind, data))
+    def sample_notification(self, kind, id):
+        payload = base64.encodestring(self.__sample_xml(kind, id))
         hmac_payload = Crypto.hmac_hash(self.gateway.config.private_key, payload)
         signature = "%s|%s" % (self.gateway.config.public_key, hmac_payload)
         return signature, payload
 
-    def __sample_xml(self, kind, data):
+    def __sample_xml(self, kind, id):
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         return """
             <notification>
@@ -25,17 +22,17 @@ class WebhookTestingGateway(object):
                 <kind>%s</kind>
                 <subject>%s</subject>
             </notification>
-        """ % (timestamp, kind, self.__subject_sample_xml(kind, data))
+        """ % (timestamp, kind, self.__subject_sample_xml(kind, id))
 
-    def __subject_sample_xml(self, kind, data):
+    def __subject_sample_xml(self, kind, id):
         if kind == WebhookNotification.Kind.SubMerchantAccountApproved:
-            return self.__merchant_account_sample_xml(data)
+            return self.__merchant_account_approved_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubMerchantAccountDeclined:
-            return self.__merchant_account_declined_sample_xml(data)
+            return self.__merchant_account_declined_sample_xml(id)
         else:
-            return self.__subscription_sample_xml(data)
+            return self.__subscription_sample_xml(id)
 
-    def __subscription_sample_xml(self, data):
+    def __subscription_sample_xml(self, id):
         return """
             <subscription>
                 <id>%s</id>
@@ -43,49 +40,43 @@ class WebhookTestingGateway(object):
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>
-        """ % data["id"]
+        """ % id
 
-    def __merchant_account_sample_xml(self, data):
-        sub_merchant_account_id = data["id"]
-        sub_merchant_account_status = data["status"]
-        master_merchant_account_id = data["master_merchant_account"]["id"]
-        master_merchant_account_status = data["master_merchant_account"]["status"]
+    def __merchant_account_approved_sample_xml(self, id):
         return """
-            <merchant_account>
+            <merchant-account>
                 <id>%s</id>
-                    <master_merchant_account>
-                        <id>%s</id>
-                        <status>%s</status>
-                    </master_merchant_account>
-                <status>%s</status>
-            </merchant_account>
-        """ % (sub_merchant_account_id, master_merchant_account_id, master_merchant_account_status, sub_merchant_account_status)
+                <status>active</status>
+                <master-merchant-account>
+                    <id>master_ma_for_%s</id>
+                    <status>active</status>
+                </master-merchant-account>
+            </merchant-account>
+        """ % (id, id)
 
-    def __merchant_account_declined_sample_xml(self, data):
-        message = data["message"]
+    def __merchant_account_declined_sample_xml(self, id):
         return """
             <api-error-response>
-              <message>%s</message>
-              <errors>
-                <merchant-account>
-                  <errors type="array">%s</errors>
-                </merchant-account>
-              </errors>
-              %s
+                <message>Credit score is too low</message>
+                <errors>
+                    <errors type="array"/>
+                        <merchant-account>
+                            <errors type="array">
+                                <error>
+                                    <code>82621</code>
+                                    <message>Credit score is too low</message>
+                                    <attribute type="symbol">base</attribute>
+                                </error>
+                            </errors>
+                        </merchant-account>
+                    </errors>
+                    <merchant-account>
+                        <id>%s</id>
+                        <status>suspended</status>
+                        <master-merchant-account>
+                            <id>master_ma_for_%s</id>
+                            <status>suspended</status>
+                        </master-merchant-account>
+                    </merchant-account>
             </api-error-response>
-        """ % (message, self.__errors_sample_xml(data["errors"]), self.__merchant_account_sample_xml(data["merchant_account"]))
-
-    def __errors_sample_xml(self, errors):
-        return "\n".join([self.__error_sample_xml(error) for error in errors])
-
-    def __error_sample_xml(self, error):
-        attribute = error["attribute"]
-        code = error["code"]
-        message = error["message"]
-        return """
-            <error>
-                <attribute>%s</attribute>
-                <code>%s</code>
-                <message>%s</message>
-            </error>
-        """ % (attribute, code, message)
+            """ % (id, id)
