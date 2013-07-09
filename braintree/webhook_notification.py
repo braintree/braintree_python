@@ -2,6 +2,7 @@ from braintree.resource import Resource
 from braintree.configuration import Configuration
 from braintree.subscription import Subscription
 from braintree.merchant_account import MerchantAccount
+from braintree.transaction import Transaction
 from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 
@@ -16,6 +17,7 @@ class WebhookNotification(Resource):
         SubscriptionWentPastDue = "subscription_went_past_due"
         SubMerchantAccountApproved = "sub_merchant_account_approved"
         SubMerchantAccountDeclined = "sub_merchant_account_declined"
+        TransactionDisbursed = "transaction_disbursed"
 
     @staticmethod
     def parse(signature, payload):
@@ -37,6 +39,8 @@ class WebhookNotification(Resource):
             self.subscription = Subscription(gateway, node_wrapper['subscription'])
         elif "merchant_account" in node_wrapper:
             self.merchant_account = MerchantAccount(gateway, node_wrapper['merchant_account'])
+        elif "transaction" in node_wrapper:
+            self.transaction = Transaction(gateway, node_wrapper['transaction'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

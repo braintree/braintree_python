@@ -73,3 +73,16 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(MerchantAccount.Status.Suspended, notification.merchant_account.master_merchant_account.status)
         self.assertEquals("Credit score is too low", notification.message)
         self.assertEquals(ErrorCodes.MerchantAccount.ApplicantDetails.DeclinedOFAC, notification.errors.for_object("merchant_account").on("base")[0].code)
+
+    def test_builds_notification_for_disbursed_transactions(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.TransactionDisbursed,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.TransactionDisbursed, notification.kind)
+        self.assertEquals("my_id", notification.transaction.id)
+        self.assertEquals(100, notification.transaction.amount)
+        self.assertEquals(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)

@@ -29,8 +29,24 @@ class WebhookTestingGateway(object):
             return self.__merchant_account_approved_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubMerchantAccountDeclined:
             return self.__merchant_account_declined_sample_xml(id)
+        elif kind == WebhookNotification.Kind.TransactionDisbursed:
+            return self.__transaction_disbursed_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
+
+    def __transaction_disbursed_sample_xml(self, id):
+        return """
+            <transaction>
+              <id>%s</id>
+              <amount>100</amount>
+              <tax-amount>10</tax-amount>
+              <disbursement-details>
+                <settlement-amount>100</settlement-amount>
+                <settlement-currency-exchange-rate>10</settlement-currency-exchange-rate>
+                <disbursement-date type="datetime">2013-07-09T18:23:29Z</disbursement-date>
+              </disbursement-details>
+            </transaction>
+        """ % id
 
     def __subscription_sample_xml(self, id):
         return """
