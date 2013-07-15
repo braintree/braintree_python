@@ -339,6 +339,7 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
+            "device_data",
             "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [

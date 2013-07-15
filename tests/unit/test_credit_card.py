@@ -53,6 +53,7 @@ class TestCreditCard(unittest.TestCase):
     def test_create_signature(self):
         expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month",
             "expiration_year", "device_session_id", "number", "token", "venmo_sdk_payment_method_code",
+            "device_data",
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
@@ -67,6 +68,7 @@ class TestCreditCard(unittest.TestCase):
     def test_update_signature(self):
         expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month",
             "expiration_year", "device_session_id", "number", "token", "venmo_sdk_payment_method_code",
+            "device_data",
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
