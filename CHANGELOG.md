@@ -1,3 +1,6 @@
+## 2.22.0
+* Adds device data to transactions, customers, and credit cards.
+
 ## 2.21.0
 * Adds disbursement details to transactions.
 * Adds image_url to transactions.
