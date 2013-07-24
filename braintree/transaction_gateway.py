@@ -16,6 +16,13 @@ class TransactionGateway(object):
         Resource.verify_keys(params, Transaction.clone_signature())
         return self._post("/transactions/" + transaction_id + "/clone", {"transaction-clone": params})
 
+    def cancel_release(self, transaction_id):
+        response = self.config.http().put("/transactions/" + transaction_id + "/cancel_release", {})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+
     def confirm_transparent_redirect(self, query_string):
         id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
         return self._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
@@ -32,6 +39,19 @@ class TransactionGateway(object):
             return Transaction(self.gateway, response["transaction"])
         except NotFoundError:
             raise NotFoundError("transaction with id " + transaction_id + " not found")
+
+    def hold_for_escrow(self, transaction_id):
+        """
+        Holds an existing submerchant transaction for escrow. It expects a transaction_id. ::
+
+            result = braintree.Transaction.hold_for_escrow("my_transaction_id")
+        """
+
+        response = self.config.http().put("/transactions/" + transaction_id + "/hold_for_escrow", {})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def refund(self, transaction_id, amount=None):
         """
@@ -52,6 +72,13 @@ class TransactionGateway(object):
 
         response = self.config.http().post("/transactions/advanced_search_ids", {"search": self.__criteria(query)})
         return ResourceCollection(query, response, self.__fetch)
+
+    def submit_for_release(self, transaction_id):
+        response = self.config.http().put("/transactions/" + transaction_id + "/submit_for_release", {})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
 
     def submit_for_settlement(self, transaction_id, amount=None):
         response = self.config.http().put("/transactions/" + transaction_id + "/submit_for_settlement",

@@ -66,6 +66,10 @@ class TestHelper(object):
         Configuration.instantiate().http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription.id, number_of_days_past_due))
 
     @staticmethod
+    def escrow_transaction(transaction_id):
+        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/escrow")
+
+    @staticmethod
     def settle_transaction(transaction_id):
         Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settle")
 
