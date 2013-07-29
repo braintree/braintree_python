@@ -24,10 +24,25 @@ class MerchantAccount(Resource):
     def create_signature():
         signature = [
             {'applicant_details': [
-                'first_name', 'last_name', 'email', 'date_of_birth', 'ssn', 'routing_number', 'account_number',
-                {'address': ['street_address', 'postal_code', 'locality', 'region']}]
+                'company_name',
+                'first_name',
+                'last_name',
+                'email',
+                'date_of_birth',
+                'ssn',
+                'tax_id',
+                'routing_number',
+                'account_number',
+                {'address': [
+                    'street_address',
+                    'postal_code',
+                    'locality',
+                    'region']}
+                ]
             },
-            'tos_accepted', 'master_merchant_account_id', 'id'
+            'tos_accepted',
+            'master_merchant_account_id',
+            'id'
         ]
 
         return signature
