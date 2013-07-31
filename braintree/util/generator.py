@@ -1,6 +1,15 @@
 import datetime
-import types
+import sys
 from decimal import Decimal
+
+if sys.version_info[0] == 2:
+    integer_types = int, long
+    text_type = unicode
+    binary_type = str
+else:
+    integer_types = int,
+    text_type = str
+    binary_type = bytes
 
 class Generator(object):
     def __init__(self, dict):
@@ -34,9 +43,9 @@ class Generator(object):
         open_tag = "<" + self.__escape(key) + ">"
         close_tag = "</" + self.__escape(key) + ">"
 
-        if isinstance(value, unicode):
+        if isinstance(value, text_type):
             return open_tag + self.__escape(value).encode('ascii', 'xmlcharrefreplace') + close_tag
-        elif isinstance(value, str):
+        elif isinstance(value, binary_type):
             return open_tag + self.__escape(value) + close_tag
         elif isinstance(value, Decimal):
             return open_tag + str(value) + close_tag
@@ -48,10 +57,10 @@ class Generator(object):
         elif isinstance(value, bool):
             open_tag = "<" + key + " type=\"boolean\">"
             return open_tag + self.__generate_boolean(value) + close_tag
-        elif isinstance(value, (int, long)) and not isinstance(value, bool):
+        elif isinstance(value, integer_types) and not isinstance(value, bool):
             open_tag = "<" + key + " type=\"integer\">"
             return open_tag + str(value) + close_tag
-        elif isinstance(value, types.NoneType):
+        elif isinstance(value, type(None)):
             return open_tag + close_tag
         elif isinstance(value, datetime.datetime) or isinstance(value, datetime.date):
             open_tag = "<" + key + " type=\"datetime\">"
