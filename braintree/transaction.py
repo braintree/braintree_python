@@ -1,5 +1,4 @@
 import braintree
-import urllib
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
