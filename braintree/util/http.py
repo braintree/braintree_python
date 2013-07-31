@@ -1,4 +1,5 @@
 import base64
+import requests
 import braintree
 from braintree import version
 from braintree.util.xml_util import XmlUtil
@@ -32,9 +33,9 @@ class Http(object):
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 
-    def __init__(self, config):
+    def __init__(self, config, environment=None):
         self.config = config
-        self.environment = self.config.environment
+        self.environment = environment or self.config.environment
 
     def post(self, path, params={}):
         return self.__http_do("POST", path, params)
@@ -49,7 +50,7 @@ class Http(object):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        http_strategy = self.config.http_strategy()
+        http_strategy = self.config().http_strategy
         request_body = XmlUtil.xml_from_dict(params) if params else ''
         full_path = self.config.base_merchant_path() + path
         status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
@@ -61,6 +62,26 @@ class Http(object):
                 return {}
             else:
                 return XmlUtil.dict_from_xml(response_body)
+
+    def http_do(self, http_verb, path, headers, request_body):
+        response = self.__request_function(http_verb)(
+            self.environment.base_url + path,
+            headers=headers,
+            data=request_body,
+            verify=self.environment.ssl_certificate
+        )
+
+        return [response.status_code, response.text]
+
+    def __request_function(self, method):
+        if method == "GET":
+            return requests.get
+        elif method == "POST":
+            return requests.post
+        elif method == "PUT":
+            return requests.put
+        elif method == "DELETE":
+            return requests.delete
 
     def __authorization_header(self):
         return "Basic " + base64.encodestring(self.config.public_key + ":" + self.config.private_key).strip()
