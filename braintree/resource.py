@@ -21,7 +21,7 @@ class Resource(AttributeGetter):
             return [ "%s[%s]" % (parent, params) ]
         else:
             keys = []
-            for key, val in params.iteritems():
+            for key, val in list(params.items()):
                 full_key = "%s[%s]" % (parent, key) if parent else key
                 if isinstance(val, dict):
                     keys += Resource.__flattened_params_keys(val, full_key)
@@ -37,7 +37,7 @@ class Resource(AttributeGetter):
         flat_sig = []
         for item in signature:
             if isinstance(item, dict):
-                for key, val in item.iteritems():
+                for key, val in list(item.items()):
                     full_key = parent + "[" + key + "]" if parent else key
                     flat_sig += Resource.__flattened_signature(val, full_key)
             else:

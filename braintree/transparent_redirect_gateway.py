@@ -71,7 +71,7 @@ class TransparentRedirectGateway(object):
 
     def __flatten_dictionary(self, params, parent=None):
         data = {}
-        for key, val in params.iteritems():
+        for key, val in list(params.items()):
             full_key = parent + "[" + key + "]" if parent else key
             if isinstance(val, dict):
                 data.update(self.__flatten_dictionary(val, full_key))
