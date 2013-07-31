@@ -360,7 +360,7 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.created_using == "noSuchCreatedUsing"
             ])
             self.assertTrue(False)
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertEquals("Invalid argument(s) for created_using: noSuchCreatedUsing", str(error))
 
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
@@ -401,7 +401,7 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.credit_card_customer_location == "noSuchCreditCardCustomerLocation"
             ])
             self.assertTrue(False)
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertEquals("Invalid argument(s) for credit_card_customer_location: noSuchCreditCardCustomerLocation", str(error))
 
     def test_advanced_search_multiple_value_node_merchant_account_id(self):
@@ -474,7 +474,7 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.credit_card_card_type == "noSuchCreditCardCardType"
             ])
             self.assertTrue(False)
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertEquals("Invalid argument(s) for credit_card_card_type: noSuchCreditCardCardType", str(error))
 
     def test_advanced_search_multiple_value_node_status(self):
@@ -523,7 +523,7 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.status == "noSuchStatus"
             ])
             self.assertTrue(False)
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertEquals("Invalid argument(s) for status: noSuchStatus", str(error))
 
     def test_advanced_search_multiple_value_node_source(self):
@@ -564,7 +564,7 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.source == "noSuchSource"
             ])
             self.assertTrue(False)
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertEquals("Invalid argument(s) for source: noSuchSource", str(error))
 
     def test_advanced_search_multiple_value_node_type(self):
@@ -605,7 +605,7 @@ class TestTransactionSearch(unittest.TestCase):
                 TransactionSearch.type == "noSuchType"
             ])
             self.assertTrue(False)
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertEquals("Invalid argument(s) for type: noSuchType", str(error))
 
     def test_advanced_search_multiple_value_node_type_with_refund(self):
