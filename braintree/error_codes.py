@@ -68,6 +68,7 @@ class ErrorCodes(object):
         TokenIsRequired = "91722"
         TokenIsTooLong = "91720"
         VenmoSDKPaymentMethodCodeCardTypeIsNotAccepted = "91726"
+        VerificationNotSupportedOnThisMerchantAccount = "91730"
 
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
