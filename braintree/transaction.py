@@ -112,18 +112,18 @@ class Transaction(Resource):
         """
         Constants representing transaction escrow statuses. Available statuses are:
 
-        * braintree.Transaction.EscrowStatus.PendingTransactionSettlement
+        * braintree.Transaction.EscrowStatus.HoldPending
         * braintree.Transaction.EscrowStatus.Held
         * braintree.Transaction.EscrowStatus.ReleasePending
         * braintree.Transaction.EscrowStatus.Released
         * braintree.Transaction.EscrowStatus.Refunded
         """
 
-        PendingTransactionSettlement = "pending_transaction_settlement"
-        Held                         = "held"
-        ReleasePending               = "release_pending"
-        Released                     = "released"
-        Refunded                     = "refunded"
+        HoldPending    = "hold_pending"
+        Held           = "held"
+        ReleasePending = "release_pending"
+        Released       = "released"
+        Refunded       = "refunded"
 
     class Status(object):
         """

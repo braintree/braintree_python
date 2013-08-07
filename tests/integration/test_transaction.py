@@ -514,7 +514,7 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         self.assertEquals(
-            Transaction.EscrowStatus.PendingTransactionSettlement,
+            Transaction.EscrowStatus.HoldPending,
             result.transaction.escrow_status
         )
 
@@ -550,7 +550,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.hold_in_escrow(result.transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(
-            Transaction.EscrowStatus.PendingTransactionSettlement,
+            Transaction.EscrowStatus.HoldPending,
             result.transaction.escrow_status
         )
 
