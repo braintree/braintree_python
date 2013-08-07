@@ -112,16 +112,18 @@ class Transaction(Resource):
         """
         Constants representing transaction escrow statuses. Available statuses are:
 
-        * braintree.Transaction.EscrowStatus.SubmittedForEscrow
-        * braintree.Transaction.EscrowStatus.HeldInEscrow
-        * braintree.Transaction.EscrowStatus.SubmittedForRelease
+        * braintree.Transaction.EscrowStatus.PendingTransactionSettlement
+        * braintree.Transaction.EscrowStatus.Held
+        * braintree.Transaction.EscrowStatus.ReleasePending
         * braintree.Transaction.EscrowStatus.Released
+        * braintree.Transaction.EscrowStatus.Refunded
         """
-        
-        SubmittedForEscrow  = "submitted_for_escrow"
-        HeldInEscrow        = "held_in_escrow"
-        SubmittedForRelease = "submitted_for_release"
-        Released            = "released"
+
+        PendingTransactionSettlement = "pending_transaction_settlement"
+        Held                         = "held"
+        ReleasePending               = "release_pending"
+        Released                     = "released"
+        Refunded                     = "refunded"
 
     class Status(object):
         """
@@ -235,15 +237,15 @@ class Transaction(Resource):
 
 
     @staticmethod
-    def hold_for_escrow(transaction_id):
+    def hold_in_escrow(transaction_id):
         """
         Holds an existing submerchant transaction for escrow.
 
         It expects a transaction_id.::
 
-            result = braintree.Transaction.hold_for_escrow("my_transaction_id")
+            result = braintree.Transaction.hold_in_escrow("my_transaction_id")
         """
-        return Configuration.gateway().transaction.hold_for_escrow(transaction_id)
+        return Configuration.gateway().transaction.hold_in_escrow(transaction_id)
 
 
     @staticmethod
@@ -421,7 +423,7 @@ class Transaction(Resource):
             {
                 "options": [
                     "add_billing_address_to_payment_method",
-                    "hold_for_escrow",
+                    "hold_in_escrow",
                     "store_in_vault",
                     "store_in_vault_on_success",
                     "store_shipping_address_in_vault",

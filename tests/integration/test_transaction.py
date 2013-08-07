@@ -499,7 +499,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("merchant_account_id")[0].code
         )
 
-    def test_sale_with_hold_for_escrow_option(self):
+    def test_sale_with_hold_in_escrow_option(self):
         result = Transaction.sale({
             "amount": "10.00",
             "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
@@ -508,17 +508,17 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             },
             "options": {
-                "hold_for_escrow": True
+                "hold_in_escrow": True
             },
             "service_fee_amount": "1.00"
         })
         self.assertTrue(result.is_success)
         self.assertEquals(
-            Transaction.EscrowStatus.SubmittedForEscrow,
+            Transaction.EscrowStatus.PendingTransactionSettlement,
             result.transaction.escrow_status
         )
 
-    def test_sale_with_hold_for_escrow_option_fails_for_master_merchant_account(self):
+    def test_sale_with_hold_in_escrow_option_fails_for_master_merchant_account(self):
         result = Transaction.sale({
             "amount": "10.00",
             "merchant_account_id": TestHelper.non_default_merchant_account_id,
@@ -527,7 +527,7 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             },
             "options": {
-                "hold_for_escrow": True
+                "hold_in_escrow": True
             }
         })
         self.assertFalse(result.is_success)
@@ -536,7 +536,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
-    def test_hold_for_escrow_after_sale(self):
+    def test_hold_in_escrow_after_sale(self):
         result = Transaction.sale({
             "amount": "10.00",
             "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
@@ -547,14 +547,14 @@ class TestTransaction(unittest.TestCase):
             "service_fee_amount": "1.00"
         })
         self.assertTrue(result.is_success)
-        result = Transaction.hold_for_escrow(result.transaction.id)
+        result = Transaction.hold_in_escrow(result.transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(
-            Transaction.EscrowStatus.SubmittedForEscrow,
+            Transaction.EscrowStatus.PendingTransactionSettlement,
             result.transaction.escrow_status
         )
 
-    def test_hold_for_escrow_after_sale_fails_for_master_merchant_account(self):
+    def test_hold_in_escrow_after_sale_fails_for_master_merchant_account(self):
         result = Transaction.sale({
             "amount": "10.00",
             "merchant_account_id": TestHelper.non_default_merchant_account_id,
@@ -564,7 +564,7 @@ class TestTransaction(unittest.TestCase):
             }
         })
         self.assertTrue(result.is_success)
-        result = Transaction.hold_for_escrow(result.transaction.id)
+        result = Transaction.hold_in_escrow(result.transaction.id)
         self.assertFalse(result.is_success)
         self.assertEquals(
             ErrorCodes.Transaction.CannotHoldForEscrow,
@@ -576,7 +576,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.submit_for_release(transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(
-            Transaction.EscrowStatus.SubmittedForRelease,
+            Transaction.EscrowStatus.ReleasePending,
             result.transaction.escrow_status
         )
 
@@ -604,7 +604,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.cancel_release(submit_result.transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(
-                Transaction.EscrowStatus.HeldInEscrow,
+                Transaction.EscrowStatus.Held,
                 result.transaction.escrow_status
         )
 
@@ -1469,7 +1469,7 @@ class TestTransaction(unittest.TestCase):
             "service_fee_amount": "10.00",
             "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
             "options": {
-                "hold_for_escrow": True
+                "hold_in_escrow": True
             }
         }).transaction
 

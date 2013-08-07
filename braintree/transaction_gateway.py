@@ -40,14 +40,14 @@ class TransactionGateway(object):
         except NotFoundError:
             raise NotFoundError("transaction with id " + transaction_id + " not found")
 
-    def hold_for_escrow(self, transaction_id):
+    def hold_in_escrow(self, transaction_id):
         """
         Holds an existing submerchant transaction for escrow. It expects a transaction_id. ::
 
-            result = braintree.Transaction.hold_for_escrow("my_transaction_id")
+            result = braintree.Transaction.hold_in_escrow("my_transaction_id")
         """
 
-        response = self.config.http().put("/transactions/" + transaction_id + "/hold_for_escrow", {})
+        response = self.config.http().put("/transactions/" + transaction_id + "/hold_in_escrow", {})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
