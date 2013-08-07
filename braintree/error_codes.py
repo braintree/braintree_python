@@ -219,7 +219,7 @@ class ErrorCodes(object):
         CannotCloneTransactionWithVaultCreditCard = "91540"
         CannotCloneUnsuccessfulTransaction = "91542"
         CannotCloneVoiceAuthorizations = "91541"
-        CannotHoldForEscrow = "91560"
+        CannotHoldInEscrow = "91560"
         CannotPartiallyRefundEscrowedTransaction = "91563"
         CannotRefundCredit = "91505"
         CannotRefundUnlessSettled = "91506"

@@ -532,7 +532,7 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertFalse(result.is_success)
         self.assertEquals(
-            ErrorCodes.Transaction.CannotHoldForEscrow,
+            ErrorCodes.Transaction.CannotHoldInEscrow,
             result.errors.for_object("transaction").on("base")[0].code
         )
 
@@ -567,7 +567,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.hold_in_escrow(result.transaction.id)
         self.assertFalse(result.is_success)
         self.assertEquals(
-            ErrorCodes.Transaction.CannotHoldForEscrow,
+            ErrorCodes.Transaction.CannotHoldInEscrow,
             result.errors.for_object("transaction").on("base")[0].code
         )
 
