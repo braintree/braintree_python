@@ -571,9 +571,9 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
-    def test_submit_for_release_from_escrow(self):
+    def test_release_from_escrow_from_escrow(self):
         transaction = self.__create_escrowed_transaction()
-        result = Transaction.submit_for_release(transaction.id)
+        result = Transaction.release_from_escrow(transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(
             Transaction.EscrowStatus.ReleasePending,
@@ -581,7 +581,7 @@ class TestTransaction(unittest.TestCase):
         )
 
 
-    def test_submit_for_release_from_escrow_fails_when_transaction_not_in_escrow(self):
+    def test_release_from_escrow_from_escrow_fails_when_transaction_not_in_escrow(self):
         result = Transaction.sale({
             "amount": "10.00",
             "merchant_account_id": TestHelper.non_default_merchant_account_id,
@@ -591,16 +591,16 @@ class TestTransaction(unittest.TestCase):
             }
         })
         self.assertTrue(result.is_success)
-        result = Transaction.submit_for_release(result.transaction.id)
+        result = Transaction.release_from_escrow(result.transaction.id)
         self.assertFalse(result.is_success)
         self.assertEquals(
-            ErrorCodes.Transaction.CannotSubmitForRelease,
+            ErrorCodes.Transaction.CannotReleaseFromEscrow,
             result.errors.for_object("transaction").on("base")[0].code
         )
 
     def test_cancel_release_from_escrow(self):
         transaction = self.__create_escrowed_transaction()
-        submit_result = Transaction.submit_for_release(transaction.id)
+        submit_result = Transaction.release_from_escrow(transaction.id)
         result = Transaction.cancel_release(submit_result.transaction.id)
         self.assertTrue(result.is_success)
         self.assertEquals(

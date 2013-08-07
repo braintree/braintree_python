@@ -73,8 +73,8 @@ class TransactionGateway(object):
         response = self.config.http().post("/transactions/advanced_search_ids", {"search": self.__criteria(query)})
         return ResourceCollection(query, response, self.__fetch)
 
-    def submit_for_release(self, transaction_id):
-        response = self.config.http().put("/transactions/" + transaction_id + "/submit_for_release", {})
+    def release_from_escrow(self, transaction_id):
+        response = self.config.http().put("/transactions/" + transaction_id + "/release_from_escrow", {})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:

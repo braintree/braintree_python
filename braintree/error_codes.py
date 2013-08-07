@@ -225,7 +225,7 @@ class ErrorCodes(object):
         CannotRefundUnlessSettled = "91506"
         CannotRefundWithPendingMerchantAccount = "91559"
         CannotRefundWithSuspendedMerchantAccount = "91538"
-        CannotSubmitForRelease = "91561"
+        CannotReleaseFromEscrow = "91561"
         CannotSubmitForSettlement = "91507"
         ChannelIsTooLong = "91550"
         ChannelIsTooLong = "91550"

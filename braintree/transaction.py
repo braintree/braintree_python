@@ -295,17 +295,17 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.search(*query)
 
     @staticmethod
-    def submit_for_release(transaction_id):
+    def release_from_escrow(transaction_id):
         """
         Submits an escrowed transaction for release.
 
         Requires the transaction id::
 
-            result = braintree.Transaction.submit_for_release("my_transaction_id")
+            result = braintree.Transaction.release_from_escrow("my_transaction_id")
 
         """
 
-        return Configuration.gateway().transaction.submit_for_release(transaction_id)
+        return Configuration.gateway().transaction.release_from_escrow(transaction_id)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):
