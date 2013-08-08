@@ -28,6 +28,7 @@ class MerchantAccount(Resource):
                 'first_name',
                 'last_name',
                 'email',
+                'phone',
                 'date_of_birth',
                 'ssn',
                 'tax_id',
