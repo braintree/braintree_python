@@ -453,6 +453,185 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
+    def test_sale_with_service_fee(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee_amount": "1.00"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(transaction.service_fee_amount, "1.00")
+
+    def test_sale_on_master_merchant_accoount_is_invalid_with_service_fee(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee_amount": "1.00"
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ServiceFeeAmountNotAllowedOnMasterMerchantAccount,
+            result.errors.for_object("transaction").on("service_fee_amount")[0].code
+        )
+
+    def test_sale_on_submerchant_is_invalid_without_with_service_fee(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.SubMerchantAccountRequiresServiceFeeAmount,
+            result.errors.for_object("transaction").on("merchant_account_id")[0].code
+        )
+
+    def test_sale_with_hold_in_escrow_option(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "hold_in_escrow": True
+            },
+            "service_fee_amount": "1.00"
+        })
+        self.assertTrue(result.is_success)
+        self.assertEquals(
+            Transaction.EscrowStatus.HoldPending,
+            result.transaction.escrow_status
+        )
+
+    def test_sale_with_hold_in_escrow_option_fails_for_master_merchant_account(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "hold_in_escrow": True
+            }
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotHoldInEscrow,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_hold_in_escrow_after_sale(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee_amount": "1.00"
+        })
+        self.assertTrue(result.is_success)
+        result = Transaction.hold_in_escrow(result.transaction.id)
+        self.assertTrue(result.is_success)
+        self.assertEquals(
+            Transaction.EscrowStatus.HoldPending,
+            result.transaction.escrow_status
+        )
+
+    def test_hold_in_escrow_after_sale_fails_for_master_merchant_account(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        result = Transaction.hold_in_escrow(result.transaction.id)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotHoldInEscrow,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_release_from_escrow_from_escrow(self):
+        transaction = self.__create_escrowed_transaction()
+        result = Transaction.release_from_escrow(transaction.id)
+        self.assertTrue(result.is_success)
+        self.assertEquals(
+            Transaction.EscrowStatus.ReleasePending,
+            result.transaction.escrow_status
+        )
+
+
+    def test_release_from_escrow_from_escrow_fails_when_transaction_not_in_escrow(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        result = Transaction.release_from_escrow(result.transaction.id)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotReleaseFromEscrow,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_cancel_release_from_escrow(self):
+        transaction = self.__create_escrowed_transaction()
+        submit_result = Transaction.release_from_escrow(transaction.id)
+        result = Transaction.cancel_release(submit_result.transaction.id)
+        self.assertTrue(result.is_success)
+        self.assertEquals(
+                Transaction.EscrowStatus.Held,
+                result.transaction.escrow_status
+        )
+
+    def test_cancel_release_from_escrow_fails_if_transaction_is_not_pending_release(self):
+        transaction = self.__create_escrowed_transaction()
+        result = Transaction.cancel_release(transaction.id)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotCancelRelease,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_sale_with_venmo_sdk_session(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "venmo_sdk_session": venmo_sdk.Session
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.transaction.credit_card_details.venmo_sdk)
+
     def test_sale_with_venmo_sdk_payment_method_code(self):
         result = Transaction.sale({
             "amount": "10.00",
@@ -879,6 +1058,21 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_service_fee_not_allowed_with_credits(self):
+        result = Transaction.credit({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee_amount": "1.00"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertTrue(
+            ErrorCodes.Transaction.ServiceFeeIsNotAllowedOnCredits in [error.code for error in result.errors.for_object("transaction").on("base")]
+        )
+
     def test_credit_with_merchant_account_id(self):
         result = Transaction.credit({
             "amount": TransactionAmounts.Authorize,
@@ -1156,6 +1350,25 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_submit_for_settlement_with_validation_error_on_service_fee(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "service_fee_amount": "5.00"
+        }).transaction
+
+        result = Transaction.submit_for_settlement(transaction.id, "1.00")
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.SettlementAmountIsLessThanServiceFeeAmount,
+            result.errors.for_object("transaction").on("amount")[0].code
+        )
+
     def test_status_history(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1258,6 +1471,23 @@ class TestTransaction(unittest.TestCase):
         }).transaction
 
         TestHelper.settle_transaction(transaction.id)
+        return transaction
+
+    def __create_escrowed_transaction(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012"
+            },
+            "service_fee_amount": "10.00",
+            "merchant_account_id": TestHelper.non_default_sub_merchant_account_id,
+            "options": {
+                "hold_in_escrow": True
+            }
+        }).transaction
+
+        TestHelper.escrow_transaction(transaction.id)
         return transaction
 
     def test_snapshot_plan_id_add_ons_and_discounts_from_subscription(self):

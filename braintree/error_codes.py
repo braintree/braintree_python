@@ -68,10 +68,12 @@ class ErrorCodes(object):
         TokenIsRequired = "91722"
         TokenIsTooLong = "91720"
         VenmoSDKPaymentMethodCodeCardTypeIsNotAccepted = "91726"
+        VerificationNotSupportedOnThisMerchantAccount = "91730"
 
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
             VerificationMerchantAccountIdIsInvalid = "91728"
+            UpdateExistingTokenNotAllowed = "91729"
 
 
     class Customer(object):
@@ -101,6 +103,46 @@ class ErrorCodes(object):
         NameFormatIsInvalid = "92201"
         PhoneFormatIsInvalid = "92202"
 
+    class MerchantAccount(object):
+        IdFormatIsInvalid = "82603"
+        IdIsInUse = "82604"
+        IdIsNotAllowed = "82605"
+        IdIsTooLong = "82602"
+        MasterMerchantAccountIdIsInvalid = "82607"
+        MasterMerchantAccountIdIsRequired = "82606"
+        MasterMerchantAccountMustBeActive = "82608"
+        TosAcceptedIsRequired = "82610"
+
+        class ApplicantDetails(object):
+            AccountNumberIsRequired = "82614"
+            CompanyNameIsInvalid = "82631"
+            CompanyNameIsRequiredWithTaxId = "82633"
+            DateOfBirthIsRequired = "82612"
+            Declined = "82626"
+            DeclinedMasterCardMatch = "82622"
+            DeclinedOFAC = "82621"
+            DeclinedFailedKYC = "82623"
+            DeclinedSsnInvalid = "82624"
+            DeclinedSsnMatchesDeceased = "82625"
+            EmailAddressIsInvalid = "82616"
+            FirstNameIsInvalid = "82627"
+            FirstNameIsRequired = "82609"
+            LastNameIsInvalid = "82628"
+            LastNameIsRequired = "82611"
+            PhoneIsInvalid = "82636"
+            RoutingNumberIsInvalid = "82635"
+            RoutingNumberIsRequired = "82613"
+            SsnIsInvalid = "82615"
+            TaxIdIsInvalid = "82632"
+            TaxIdIsRequiredWithCompanyName = "82634"
+
+            class Address(object):
+                LocalityIsRequired = "82618"
+                PostalCodeIsInvalid = "82630"
+                PostalCodeIsRequired = "82619"
+                RegionIsRequired = "82620"
+                StreetAddressIsInvalid = "82629"
+                StreetAddressIsRequired = "82617"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
@@ -172,13 +214,18 @@ class ErrorCodes(object):
         AmountMustBeGreaterThanZero = "81531"
         BillingAddressConflict = "91530"
         CannotBeVoided = "91504"
+        CannotCancelRelease = "91562"
         CannotCloneCredit = "91543"
         CannotCloneTransactionWithVaultCreditCard = "91540"
         CannotCloneUnsuccessfulTransaction = "91542"
         CannotCloneVoiceAuthorizations = "91541"
+        CannotHoldInEscrow = "91560"
+        CannotPartiallyRefundEscrowedTransaction = "91563"
         CannotRefundCredit = "91505"
         CannotRefundUnlessSettled = "91506"
+        CannotRefundWithPendingMerchantAccount = "91559"
         CannotRefundWithSuspendedMerchantAccount = "91538"
+        CannotReleaseFromEscrow = "91561"
         CannotSubmitForSettlement = "91507"
         ChannelIsTooLong = "91550"
         ChannelIsTooLong = "91550"
@@ -189,6 +236,7 @@ class ErrorCodes(object):
         CustomerDoesNotHaveCreditCard = "91511"
         CustomerIdIsInvalid = "91510"
         HasAlreadyBeenRefunded = "91512"
+        MerchantAccountDoesNotSupportMOTO = "91558"
         MerchantAccountDoesNotSupportRefunds = "91547"
         MerchantAccountIdIsInvalid = "91513"
         MerchantAccountIsSusped = "91514" # Deprecated
@@ -208,7 +256,14 @@ class ErrorCodes(object):
         PurchaseOrderNumberIsInvalid = "91548"
         PurchaseOrderNumberIsTooLong = "91537"
         RefundAmountIsTooLarge = "91521"
+        ServiceFeeAmountCannotBeNegative = "91554"
+        ServiceFeeAmountFormatIsInvalid = "91555"
+        ServiceFeeAmountIsTooLarge = "91556"
+        ServiceFeeAmountNotAllowedOnMasterMerchantAccount = "91557"
+        ServiceFeeIsNotAllowedOnCredits = "91552"
+        SettlementAmountIsLessThanServiceFeeAmount = "91551"
         SettlementAmountIsTooLarge = "91522"
+        SubMerchantAccountRequiresServiceFeeAmount = "91553"
         SubscriptionDoesNotBelongToCustomer = "91529"
         SubscriptionIdIsInvalid = "91528"
         SubscriptionStatusMustBePastDue = "91531"
@@ -222,3 +277,4 @@ class ErrorCodes(object):
         class Options(object):
             VaultIsDisabled = "91525"
             SubmitForSettlementIsRequiredForCloning = "91544"
+

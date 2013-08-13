@@ -17,7 +17,11 @@ class ErrorResult(object):
     """
 
     def __init__(self, gateway, attributes):
-        self.params = attributes["params"]
+        if "params" in attributes:
+            self.params = attributes["params"]
+        else:
+            self.params = None
+
         self.errors = Errors(attributes["errors"])
         self.message = attributes["message"]
 
@@ -35,6 +39,11 @@ class ErrorResult(object):
             self.subscription = braintree.subscription.Subscription(gateway, attributes["subscription"])
         else:
             self.subscription = None
+
+        if "merchant_account" in attributes:
+            self.merchant_account = braintree.merchant_account.MerchantAccount(gateway, attributes["merchant_account"])
+        else:
+            self.merchant_account = None
 
     def __repr__(self):
         return "<%s '%s' at %x>" % (self.__class__.__name__, self.message, id(self))

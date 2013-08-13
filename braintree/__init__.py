@@ -18,6 +18,8 @@ from braintree.error_codes import ErrorCodes
 from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.environment import Environment
+from braintree.merchant_account import MerchantAccount
+from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
 from braintree.resource_collection import ResourceCollection

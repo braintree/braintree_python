@@ -108,6 +108,23 @@ class Transaction(Resource):
         ControlPanel = "control_panel"
         Recurring = "recurring"
 
+    class EscrowStatus(object):
+        """
+        Constants representing transaction escrow statuses. Available statuses are:
+
+        * braintree.Transaction.EscrowStatus.HoldPending
+        * braintree.Transaction.EscrowStatus.Held
+        * braintree.Transaction.EscrowStatus.ReleasePending
+        * braintree.Transaction.EscrowStatus.Released
+        * braintree.Transaction.EscrowStatus.Refunded
+        """
+
+        HoldPending    = "hold_pending"
+        Held           = "held"
+        ReleasePending = "release_pending"
+        Released       = "released"
+        Refunded       = "refunded"
+
     class Status(object):
         """
         Constants representing transaction statuses. Available statuses are:
@@ -150,6 +167,19 @@ class Transaction(Resource):
     @staticmethod
     def clone_transaction(transaction_id, params):
         return Configuration.gateway().transaction.clone_transaction(transaction_id, params)
+
+    @staticmethod
+    def cancel_release(transaction_id):
+        """
+        Cancels a pending release from escrow for a transaction.
+
+        Requires the transaction id::
+
+            result = braintree.Transaction.cancel_release("my_transaction_id")
+
+        """
+
+        return Configuration.gateway().transaction.cancel_release(transaction_id)
 
     @staticmethod
     def confirm_transparent_redirect(query_string):
@@ -207,6 +237,18 @@ class Transaction(Resource):
 
 
     @staticmethod
+    def hold_in_escrow(transaction_id):
+        """
+        Holds an existing submerchant transaction for escrow.
+
+        It expects a transaction_id.::
+
+            result = braintree.Transaction.hold_in_escrow("my_transaction_id")
+        """
+        return Configuration.gateway().transaction.hold_in_escrow(transaction_id)
+
+
+    @staticmethod
     def refund(transaction_id, amount=None):
         """
         Refunds an existing transaction.
@@ -251,6 +293,19 @@ class Transaction(Resource):
     @staticmethod
     def search(*query):
         return Configuration.gateway().transaction.search(*query)
+
+    @staticmethod
+    def release_from_escrow(transaction_id):
+        """
+        Submits an escrowed transaction for release.
+
+        Requires the transaction id::
+
+            result = braintree.Transaction.release_from_escrow("my_transaction_id")
+
+        """
+
+        return Configuration.gateway().transaction.release_from_escrow(transaction_id)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None):
@@ -339,8 +394,8 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
-            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code",
             "device_data",
+            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -367,8 +422,12 @@ class Transaction(Resource):
             },
             {
                 "options": [
-                    "store_in_vault", "store_in_vault_on_success", "submit_for_settlement",
-                    "add_billing_address_to_payment_method", "store_shipping_address_in_vault",
+                    "add_billing_address_to_payment_method",
+                    "hold_in_escrow",
+                    "store_in_vault",
+                    "store_in_vault_on_success",
+                    "store_shipping_address_in_vault",
+                    "submit_for_settlement",
                     "venmo_sdk_session"
                 ]
             },
