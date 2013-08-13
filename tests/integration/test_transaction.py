@@ -617,6 +617,20 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
+    def test_sale_with_venmo_sdk_session(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "venmo_sdk_session": venmo_sdk.Session
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.transaction.credit_card_details.venmo_sdk)
 
     def test_sale_with_venmo_sdk_payment_method_code(self):
         result = Transaction.sale({

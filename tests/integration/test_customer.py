@@ -252,6 +252,22 @@ class TestCustomer(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Customer.CustomFieldIsInvalid, result.errors.for_object("customer").on("custom_fields")[0].code)
 
+    def test_create_with_venmo_sdk_session(self):
+        result = Customer.create({
+            "first_name": "Jack",
+            "last_name": "Kennedy",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "options": {
+                    "venmo_sdk_session": venmo_sdk.Session
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.customer.credit_cards[0].venmo_sdk)
+
     def test_create_with_venmo_sdk_payment_method_code(self):
         result = Customer.create({
             "first_name": "Jack",
