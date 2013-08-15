@@ -3,11 +3,14 @@ from braintree.configuration import Configuration
 from braintree.subscription import Subscription
 from braintree.merchant_account import MerchantAccount
 from braintree.transaction import Transaction
+from braintree.partner_user import PartnerUser
 from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 
 class WebhookNotification(Resource):
     class Kind(object):
+        PartnerUserCreated = "partner_user_created"
+        PartnerUserDeleted = "partner_user_deleted"
         SubscriptionCanceled = "subscription_canceled"
         SubscriptionChargedSuccessfully = "subscription_charged_successfully"
         SubscriptionChargedUnsuccessfully = "subscription_charged_unsuccessfully"
@@ -41,6 +44,8 @@ class WebhookNotification(Resource):
             self.merchant_account = MerchantAccount(gateway, node_wrapper['merchant_account'])
         elif "transaction" in node_wrapper:
             self.transaction = Transaction(gateway, node_wrapper['transaction'])
+        elif "partner_user" in node_wrapper:
+            self.partner_user= PartnerUser(gateway, node_wrapper['partner_user'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

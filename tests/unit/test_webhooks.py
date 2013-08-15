@@ -86,3 +86,31 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals("my_id", notification.transaction.id)
         self.assertEquals(100, notification.transaction.amount)
         self.assertEquals(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
+
+
+    def test_builds_notification_for_partner_user_created(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.PartnerUserCreated,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.PartnerUserCreated, notification.kind)
+        self.assertEquals("abc123", notification.partner_user.partner_user_id)
+        self.assertEquals("public_key", notification.partner_user.public_key)
+        self.assertEquals("private_key", notification.partner_user.private_key)
+        self.assertEquals("public_id", notification.partner_user.merchant_public_id)
+        self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
+
+    def test_builds_notification_for_partner_user_deleted(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.PartnerUserDeleted,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.PartnerUserDeleted, notification.kind)
+        self.assertEquals("abc123", notification.partner_user.partner_user_id)
+        self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
