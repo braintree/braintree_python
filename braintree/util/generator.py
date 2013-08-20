@@ -19,7 +19,7 @@ class Generator(object):
         return self.__generate_dict(self.dict)
 
     def __escape(self, value):
-        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace("\"", "&quot;");
+        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace('"', "&quot;")
 
     def __generate_boolean(self, value):
         return str(value).lower()
@@ -44,7 +44,7 @@ class Generator(object):
         close_tag = "</" + self.__escape(key) + ">"
 
         if isinstance(value, text_type):
-            return open_tag + self.__escape(value).encode('ascii', 'xmlcharrefreplace') + close_tag
+            return open_tag + self.__escape(value).encode('ascii', 'xmlcharrefreplace').decode('utf-8') + close_tag
         elif isinstance(value, binary_type):
             return open_tag + self.__escape(value) + close_tag
         elif isinstance(value, Decimal):

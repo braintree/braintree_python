@@ -84,7 +84,7 @@ class Http(object):
             return requests.delete
 
     def __authorization_header(self):
-        return "Basic " + base64.encodestring(self.config.public_key + ":" + self.config.private_key).strip()
+        return b"Basic " + base64.encodestring(self.config.public_key.encode('ascii') + b":" + self.config.private_key.encode('ascii')).strip()
 
     def __headers(self):
         return {

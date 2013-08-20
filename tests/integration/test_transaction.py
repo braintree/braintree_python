@@ -1269,7 +1269,7 @@ class TestTransaction(unittest.TestCase):
             result = Transaction.confirm_transparent_redirect(query_string)
             self.fail()
         except AuthorizationError as e:
-            self.assertEquals("Invalid params: transaction[bad]", e.message)
+            self.assertEquals("Invalid params: transaction[bad]", str(e))
 
     def test_credit_from_transparent_redirect_with_successful_result(self):
         tr_data = {

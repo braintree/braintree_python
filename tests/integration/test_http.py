@@ -41,7 +41,7 @@ class TestHttp(unittest.TestCase):
         try:
             http.get("/")
         except self.SSLError as e:
-            self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e.message))
+            self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e))
         except AuthenticationError:
             self.fail("Expected to receive an SSL error but received an Authentication Error instead, check your local openssl installation")
         else:
