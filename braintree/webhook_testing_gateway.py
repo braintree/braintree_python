@@ -35,6 +35,8 @@ class WebhookTestingGateway(object):
             return self.__partner_user_created_sample_xml()
         elif kind == WebhookNotification.Kind.PartnerUserDeleted:
             return self.__partner_user_deleted_sample_xml()
+        elif kind == WebhookNotification.Kind.PartnerMerchantDeclined:
+            return self.__partner_merchant_declined_sample_xml()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -112,6 +114,13 @@ class WebhookTestingGateway(object):
             """
 
     def __partner_user_deleted_sample_xml(self):
+        return """
+            <partner_user>
+                <partner_user_id>abc123</partner_user_id>
+            </partner_user>
+            """
+
+    def __partner_merchant_declined_sample_xml(self):
         return """
             <partner_user>
                 <partner_user_id>abc123</partner_user_id>

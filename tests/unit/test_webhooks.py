@@ -114,3 +114,15 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(WebhookNotification.Kind.PartnerUserDeleted, notification.kind)
         self.assertEquals("abc123", notification.partner_user.partner_user_id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
+
+    def test_builds_notification_for_partner_merchant_declined(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.PartnerMerchantDeclined,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.PartnerMerchantDeclined, notification.kind)
+        self.assertEquals("abc123", notification.partner_user.partner_user_id)
+        self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)

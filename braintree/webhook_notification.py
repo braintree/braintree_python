@@ -11,6 +11,7 @@ class WebhookNotification(Resource):
     class Kind(object):
         PartnerUserCreated = "partner_user_created"
         PartnerUserDeleted = "partner_user_deleted"
+        PartnerMerchantDeclined = "partner_merchant_declined"
         SubscriptionCanceled = "subscription_canceled"
         SubscriptionChargedSuccessfully = "subscription_charged_successfully"
         SubscriptionChargedUnsuccessfully = "subscription_charged_unsuccessfully"
