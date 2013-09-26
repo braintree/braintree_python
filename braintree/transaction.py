@@ -87,7 +87,8 @@ class Transaction(Resource):
         """
 
         FullInformation = "full_information"
-        Token = "token"
+        Token           = "token"
+        Unrecognized    = "unrecognized"
 
     class GatewayRejectionReason(object):
         """
@@ -98,15 +99,18 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
         """
-        Avs = "avs"
-        AvsAndCvv = "avs_and_cvv"
-        Cvv = "cvv"
-        Duplicate = "duplicate"
+        Avs          = "avs"
+        AvsAndCvv    = "avs_and_cvv"
+        Cvv          = "cvv"
+        Duplicate    = "duplicate"
+        Fraud        = "fraud"
+        Unrecognized = "unrecognized"
 
     class Source(object):
-        Api = "api"
+        Api          = "api"
         ControlPanel = "control_panel"
-        Recurring = "recurring"
+        Recurring    = "recurring"
+        Unrecognized = "unrecognized"
 
     class EscrowStatus(object):
         """
@@ -124,6 +128,7 @@ class Transaction(Resource):
         ReleasePending = "release_pending"
         Released       = "released"
         Refunded       = "refunded"
+        Unrecognized   = "unrecognized"
 
     class Status(object):
         """
@@ -152,6 +157,7 @@ class Transaction(Resource):
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
+        Unrecognized           = "unrecognized"
 
     class Type(object):
         """
