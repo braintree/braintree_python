@@ -20,6 +20,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
+        self.assertEquals(None, transaction.voice_referral_number)
 
     def test_sale_allows_amount_as_a_decimal(self):
         result = Transaction.sale({
