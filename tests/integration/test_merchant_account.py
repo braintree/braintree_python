@@ -50,7 +50,9 @@ class TestMerchantAccount(unittest.TestCase):
 
     def test_create_requires_all_fields(self):
         result = MerchantAccount.create(
-            {"master_merchant_account_id": "sandbox_master_merchant_account"}
+            {"master_merchant_account_id": "sandbox_master_merchant_account",
+             "applicant_details": {},
+            "tos_accepted": True}
         )
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")[0].code) 
