@@ -276,14 +276,15 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
         self.assertEquals(address.id, transaction.shipping_details.id)
 
-    def test_sale_with_device_id(self):
+    def test_sale_with_device_session_id_and_fraud_merchant_id(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2010"
             },
-            "device_session_id": "abc123"
+            "device_session_id": "abc123",
+            "fraud_merchant_id": "456"
         })
 
         self.assertTrue(result.is_success)
