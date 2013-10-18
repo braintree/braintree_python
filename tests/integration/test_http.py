@@ -97,11 +97,11 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
             self.fail("Expected to receive an SSL error but no exception was raised")
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
-        environment = Environment("braintreegateway.com", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("www.braintreepayments.com", "443", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
         except self.SSLError, e:
-            self.assertEquals("hostname 'braintreegateway.com' doesn't match u'www.braintreegateway.com'", str(e.message))
+            pass
         else:
             self.fail("Expected to receive an SSL error but no exception was raised")
