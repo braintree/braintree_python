@@ -46,7 +46,7 @@ class Configuration(object):
         Configuration.public_key = public_key
         Configuration.private_key = private_key
         Configuration.use_unsafe_ssl = False
-        Configuration._http_strategy = http_strategy
+        Configuration.default_http_strategy = http_strategy
 
     @staticmethod
     def gateway():
@@ -59,7 +59,7 @@ class Configuration(object):
             merchant_id=Configuration.merchant_id,
             public_key=Configuration.public_key,
             private_key=Configuration.private_key,
-            http_strategy=Configuration._http_strategy
+            http_strategy=Configuration.default_http_strategy
         )
 
     @staticmethod
