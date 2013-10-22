@@ -1,3 +1,6 @@
+## 2.23.1
+* Add configuration option for custom HTTP strategies
+
 ## 2.23.0
 * Adds hold_in_escrow method
 * Add error codes for verification not supported error
