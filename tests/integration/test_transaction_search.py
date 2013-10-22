@@ -1312,3 +1312,10 @@ class TestTransactionSearch(unittest.TestCase):
 
         transaction_ids = [transaction.id for transaction in collection.items]
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(transaction_ids)))
+
+    @raises(DownForMaintenanceError)
+    def test_search_handles_a_search_timeout(self):
+        Transaction.search([
+            TransactionSearch.amount.between("-1100", "1600")
+        ])
+
