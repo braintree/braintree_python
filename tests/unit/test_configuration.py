@@ -41,11 +41,11 @@ class TestConfiguration(unittest.TestCase):
                 os.environ["PYTHON_HTTP_STRATEGY"] = old_http_strategy
 
     def test_configuring_with_an_http_strategy(self):
-        old_http_strategy = Configuration._http_strategy
+        old_http_strategy = Configuration.default_http_strategy
 
         try:
-            Configuration._http_strategy = braintree.util.http_strategy.httplib_strategy.HttplibStrategy
+            Configuration.default_http_strategy = braintree.util.http_strategy.httplib_strategy.HttplibStrategy
             strategy = Configuration.instantiate().http_strategy()
             self.assertTrue(isinstance(strategy, braintree.util.http_strategy.httplib_strategy.HttplibStrategy))
         finally:
-            Configuration._http_strategy = old_http_strategy
+            Configuration.default_http_strategy = old_http_strategy
