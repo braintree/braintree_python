@@ -40,12 +40,13 @@ class Configuration(object):
 .. [1] `URL Fetch Python API Overview <https://developers.google.com/appengine/docs/python/urlfetch/overview>`_
     """
     @staticmethod
-    def configure(environment, merchant_id, public_key, private_key):
+    def configure(environment, merchant_id, public_key, private_key, http_strategy=None):
         Configuration.environment = environment
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
         Configuration.use_unsafe_ssl = False
+        Configuration._http_strategy = http_strategy
 
     @staticmethod
     def gateway():
@@ -54,22 +55,27 @@ class Configuration(object):
     @staticmethod
     def instantiate():
         return Configuration(
-            Configuration.environment,
-            Configuration.merchant_id,
-            Configuration.public_key,
-            Configuration.private_key
+            environment=Configuration.environment,
+            merchant_id=Configuration.merchant_id,
+            public_key=Configuration.public_key,
+            private_key=Configuration.private_key,
+            http_strategy=Configuration._http_strategy
         )
 
     @staticmethod
     def api_version():
         return "3"
 
-    def __init__(self, environment, merchant_id, public_key, private_key):
+    def __init__(self, environment, merchant_id, public_key, private_key, http_strategy=None):
         self.environment = environment
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
-        self._http_strategy = self.__determine_http_strategy()
+
+        if http_strategy:
+            self._http_strategy = http_strategy(self, self.environment)
+        else:
+            self._http_strategy = self.__determine_http_strategy()
 
     def base_merchant_path(self):
         return "/merchants/" + self.merchant_id
