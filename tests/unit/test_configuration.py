@@ -4,7 +4,7 @@ import os
 
 class TestConfiguration(unittest.TestCase):
     def test_base_merchant_path_for_development(self):
-        self.assertTrue("/merchants/integration_merchnat_id", Configuration.instantiate().base_merchant_path())
+        self.assertEqual("/merchants/integration_merchant_id", Configuration.instantiate().base_merchant_path())
 
     def test_overriding_http_strategy_blows_up_if_setting_an_invalid_strategy(self):
         old_http_strategy = None
