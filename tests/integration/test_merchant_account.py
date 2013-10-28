@@ -15,7 +15,7 @@ class TestMerchantAccount(unittest.TestCase):
                     "region": "IL",
                     },
                 "date_of_birth": "10/9/1980",
-                "ssn": "123-000-1234",
+                "ssn": "123-00-1234",
                 "tax_id": "123456789",
                 "routing_number": "122100024",
                 "account_number": "43759348798"
@@ -47,10 +47,12 @@ class TestMerchantAccount(unittest.TestCase):
         result = MerchantAccount.create({})
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.MerchantAccount.MasterMerchantAccountIdIsRequired, result.errors.for_object("merchant_account").on("master_merchant_account_id")[0].code)
-        
+
     def test_create_requires_all_fields(self):
         result = MerchantAccount.create(
-            {"master_merchant_account_id": "sandbox_master_merchant_account"}
+            {"master_merchant_account_id": "sandbox_master_merchant_account",
+             "applicant_details": {},
+            "tos_accepted": True}
         )
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")[0].code) 

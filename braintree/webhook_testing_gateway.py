@@ -31,6 +31,12 @@ class WebhookTestingGateway(object):
             return self.__merchant_account_declined_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionDisbursed:
             return self.__transaction_disbursed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.PartnerMerchantConnected:
+            return self.__partner_merchant_connected_sample_xml()
+        elif kind == WebhookNotification.Kind.PartnerMerchantDisconnected:
+            return self.__partner_merchant_disconnected_sample_xml()
+        elif kind == WebhookNotification.Kind.PartnerMerchantDeclined:
+            return self.__partner_merchant_declined_sample_xml()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -96,3 +102,28 @@ class WebhookTestingGateway(object):
                     </merchant-account>
             </api-error-response>
             """ % (id, id)
+
+    def __partner_merchant_connected_sample_xml(self):
+        return """
+            <partner_merchant>
+                <partner_merchant_id>abc123</partner_merchant_id>
+                <public_key>public_key</public_key>
+                <private_key>private_key</private_key>
+                <merchant_public_id>public_id</merchant_public_id>
+                <client_side_encryption_key>cse_key</client_side_encryption_key>
+            </partner_merchant>
+            """
+
+    def __partner_merchant_disconnected_sample_xml(self):
+        return """
+            <partner_merchant>
+                <partner_merchant_id>abc123</partner_merchant_id>
+            </partner_merchant>
+            """
+
+    def __partner_merchant_declined_sample_xml(self):
+        return """
+            <partner_merchant>
+                <partner_merchant_id>abc123</partner_merchant_id>
+            </partner_merchant>
+            """

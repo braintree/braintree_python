@@ -77,7 +77,8 @@ class TestCreditCard(unittest.TestCase):
             "expiration_year": "2009",
             "cvv": "100",
             "cardholder_name": "John Doe",
-            "device_session_id": "abc123"
+            "device_session_id": "abc123",
+            "fraud_merchant_id": "456"
         })
 
         self.assertTrue(result.is_success)

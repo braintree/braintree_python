@@ -169,7 +169,7 @@ class Customer(Resource):
     @staticmethod
     def create_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data",
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id",
             {"credit_card": CreditCard.create_signature()},
             {"custom_fields": ["__any_key__"]}
         ]
@@ -177,7 +177,7 @@ class Customer(Resource):
     @staticmethod
     def update_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data",
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id",
             {"credit_card": CreditCard.signature("update_via_customer")},
             {"custom_fields": ["__any_key__"]}
         ]
