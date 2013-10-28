@@ -20,6 +20,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("411111", transaction.credit_card_details.bin)
         self.assertEquals("1111", transaction.credit_card_details.last_4)
         self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
+        self.assertEquals(None, transaction.voice_referral_number)
 
     def test_sale_allows_amount_as_a_decimal(self):
         result = Transaction.sale({
@@ -275,14 +276,15 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
         self.assertEquals(address.id, transaction.shipping_details.id)
 
-    def test_sale_with_device_id(self):
+    def test_sale_with_device_session_id_and_fraud_merchant_id(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2010"
             },
-            "device_session_id": "abc123"
+            "device_session_id": "abc123",
+            "fraud_merchant_id": "456"
         })
 
         self.assertTrue(result.is_success)
@@ -452,6 +454,19 @@ class TestTransaction(unittest.TestCase):
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
+
+    def test_sale_with_gateway_rejected_with_fraud(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4000111111111511",
+                "expiration_date": "05/2017",
+                "cvv": "333"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_service_fee(self):
         result = Transaction.sale({

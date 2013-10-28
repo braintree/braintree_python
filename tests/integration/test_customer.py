@@ -33,7 +33,7 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
-    def test_create_with_device_session_id(self):
+    def test_create_with_device_session_id_and_fraud_merchant_id(self):
         result = Customer.create({
             "first_name": "Bill",
             "last_name": "Gates",
@@ -46,7 +46,8 @@ class TestCustomer(unittest.TestCase):
                 "number": "4111111111111111",
                 "expiration_date": "05/2010",
                 "cvv": "100",
-                "device_session_id": "abc123"
+                "device_session_id": "abc123",
+                "fraud_merchant_id": "456"
             }
         })
 

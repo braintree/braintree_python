@@ -87,7 +87,8 @@ class Transaction(Resource):
         """
 
         FullInformation = "full_information"
-        Token = "token"
+        Token           = "token"
+        Unrecognized    = "unrecognized"
 
     class GatewayRejectionReason(object):
         """
@@ -98,15 +99,18 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
         """
-        Avs = "avs"
-        AvsAndCvv = "avs_and_cvv"
-        Cvv = "cvv"
-        Duplicate = "duplicate"
+        Avs          = "avs"
+        AvsAndCvv    = "avs_and_cvv"
+        Cvv          = "cvv"
+        Duplicate    = "duplicate"
+        Fraud        = "fraud"
+        Unrecognized = "unrecognized"
 
     class Source(object):
-        Api = "api"
+        Api          = "api"
         ControlPanel = "control_panel"
-        Recurring = "recurring"
+        Recurring    = "recurring"
+        Unrecognized = "unrecognized"
 
     class EscrowStatus(object):
         """
@@ -124,6 +128,7 @@ class Transaction(Resource):
         ReleasePending = "release_pending"
         Released       = "released"
         Refunded       = "refunded"
+        Unrecognized   = "unrecognized"
 
     class Status(object):
         """
@@ -152,6 +157,7 @@ class Transaction(Resource):
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
+        Unrecognized           = "unrecognized"
 
     class Type(object):
         """
@@ -392,7 +398,7 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "device_session_id", "merchant_account_id", "order_id", "channel",
+            "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
             "device_data",
             "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",

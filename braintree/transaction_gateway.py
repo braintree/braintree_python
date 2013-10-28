@@ -6,6 +6,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
 
 class TransactionGateway(object):
     def __init__(self, gateway):
@@ -71,7 +72,10 @@ class TransactionGateway(object):
             query = query[0]
 
         response = self.config.http().post("/transactions/advanced_search_ids", {"search": self.__criteria(query)})
-        return ResourceCollection(query, response, self.__fetch)
+        if "search_results" in response:
+            return ResourceCollection(query, response, self.__fetch)
+        else:
+            raise DownForMaintenanceError("search timeout")
 
     def release_from_escrow(self, transaction_id):
         response = self.config.http().put("/transactions/" + transaction_id + "/release_from_escrow", {})

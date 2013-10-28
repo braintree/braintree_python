@@ -1,3 +1,7 @@
+## 2.24.0
+* Add partnership support
+* Add partner configuration
+
 ## 2.23.1
 * Add configuration option for custom HTTP strategies
 
