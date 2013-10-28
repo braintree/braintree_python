@@ -1,6 +1,11 @@
-import httplib
 import StringIO
 
+# Fixes python 3 incompatibility
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
+    
 try:
     import pycurl
 except ImportError:
