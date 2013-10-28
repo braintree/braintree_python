@@ -49,6 +49,16 @@ class Configuration(object):
         Configuration.default_http_strategy = http_strategy
 
     @staticmethod
+    def for_partner(environment, partner_id, public_key, private_key, http_strategy=None):
+        return Configuration(
+            environment=environment,
+            merchant_id=partner_id,
+            public_key=public_key,
+            private_key=private_key,
+            http_strategy=Configuration.default_http_strategy
+        )
+
+    @staticmethod
     def gateway():
         return braintree.braintree_gateway.BraintreeGateway(Configuration.instantiate())
 

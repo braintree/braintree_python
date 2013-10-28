@@ -6,6 +6,30 @@ class TestConfiguration(unittest.TestCase):
     def test_base_merchant_path_for_development(self):
         self.assertEqual("/merchants/integration_merchant_id", Configuration.instantiate().base_merchant_path())
 
+    def test_configuration_construction_for_merchant(self):
+        config = Configuration(
+            environment=braintree.Environment.Sandbox,
+            merchant_id='my_merchant_id',
+            public_key='public_key',
+            private_key='private_key',
+            http_strategy=Configuration.default_http_strategy
+        )
+        self.assertEqual(config.merchant_id, 'my_merchant_id')
+        self.assertEqual(config.public_key, 'public_key')
+        self.assertEqual(config.private_key, 'private_key')
+
+    def test_configuration_construction_for_partner(self):
+        config = Configuration.for_partner(
+            environment=braintree.Environment.Sandbox,
+            partner_id='my_partner_id',
+            public_key='public_key',
+            private_key='private_key',
+            http_strategy=Configuration.default_http_strategy
+        )
+        self.assertEqual(config.merchant_id, 'my_partner_id')
+        self.assertEqual(config.public_key, 'public_key')
+        self.assertEqual(config.private_key, 'private_key')
+
     def test_overriding_http_strategy_blows_up_if_setting_an_invalid_strategy(self):
         old_http_strategy = None
 
