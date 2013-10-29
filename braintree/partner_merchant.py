@@ -18,4 +18,4 @@ class PartnerMerchant(Resource):
 
     def __repr__(self):
         detail_list = ["partner_merchant_id", "public_key", "private_key", "merchant_public_id", "client_side_encryption_key"]
-        return super.__repr__(detail_list)
+        return super(PartnerMerchant, self).__repr__(detail_list)
