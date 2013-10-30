@@ -55,7 +55,7 @@ class Configuration(object):
             merchant_id=partner_id,
             public_key=public_key,
             private_key=private_key,
-            http_strategy=(http_strategy or Configuration.default_http_strategy)
+            http_strategy=http_strategy
         )
 
     @staticmethod
