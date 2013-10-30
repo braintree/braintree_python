@@ -17,5 +17,5 @@ class PartnerMerchant(Resource):
             self.client_side_encryption_key = attributes.pop("client_side_encryption_key")
 
     def __repr__(self):
-        detail_list = ["partner_merchant_id", "public_key", "private_key", "merchant_public_id", "client_side_encryption_key"]
+        detail_list = ["partner_merchant_id", "public_key", "merchant_public_id", "client_side_encryption_key"]
         return super(PartnerMerchant, self).__repr__(detail_list)

@@ -7,4 +7,9 @@ class TestPartnerMerchant(unittest.TestCase):
                                           "public_key": "my_public_key",
                                           "merchant_public_id": "foobar",
                                           "client_side_encryption_key": "cse_key"})
-        self.assertTrue("<PartnerMerchant {partner_merchant_id: 'abc123', public_key: 'my_public_key', private_key: 'my_private_key', merchant_public_id: 'foobar', client_side_encryption_key: 'cse_key'} at" in repr(merchant))
+        self.assertTrue("partner_merchant_id: 'abc123'" in repr(merchant))
+        self.assertTrue("public_key: 'my_public_key'" in repr(merchant))
+        self.assertTrue("merchant_public_id: 'foobar'" in repr(merchant))
+        self.assertTrue("client_side_encryption_key: 'cse_key'" in repr(merchant))
+
+        self.assertFalse("private_key: 'my_private_key'" in repr(merchant))
