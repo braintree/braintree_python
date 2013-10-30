@@ -1,6 +1,10 @@
 import cgi
+import sys
 from datetime import datetime
-import urllib
+if sys.version_info[0] == 2:
+    from urllib import urlencode
+else:
+    from urllib.parse import urlencode
 import braintree
 from braintree.util.crypto import Crypto
 from braintree.error_result import ErrorResult
@@ -40,7 +44,7 @@ class TransparentRedirectGateway(object):
         data["public_key"] = self.config.public_key
         data["api_version"] = self.config.api_version()
 
-        tr_content = urllib.urlencode(data)
+        tr_content = urlencode(data)
         tr_hash = Crypto.hmac_hash(self.config.private_key, tr_content)
         return tr_hash + "|" + tr_content
 
@@ -71,7 +75,7 @@ class TransparentRedirectGateway(object):
 
     def __flatten_dictionary(self, params, parent=None):
         data = {}
-        for key, val in params.iteritems():
+        for key, val in list(params.items()):
             full_key = parent + "[" + key + "]" if parent else key
             if isinstance(val, dict):
                 data.update(self.__flatten_dictionary(val, full_key))

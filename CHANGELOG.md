@@ -1,3 +1,10 @@
+## 3.0.0-beta
+
+* Drop Python 2.5 support
+* Remove use_unsafe_ssl option
+* Remove httplib strategy and pycurl strategy
+* Add Python 3.3+ support
+
 ## 2.24.0
 * Add partnership support
 * Add partner configuration

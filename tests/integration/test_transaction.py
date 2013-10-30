@@ -1130,7 +1130,7 @@ class TestTransaction(unittest.TestCase):
         try:
             Transaction.find("notreal")
             self.assertTrue(False)
-        except NotFoundError, e:
+        except NotFoundError as e:
             self.assertEquals("transaction with id notreal not found", str(e))
 
     def test_void_with_successful_result(self):
@@ -1268,8 +1268,8 @@ class TestTransaction(unittest.TestCase):
         try:
             result = Transaction.confirm_transparent_redirect(query_string)
             self.fail()
-        except AuthorizationError, e:
-            self.assertEquals("Invalid params: transaction[bad]", e.message)
+        except AuthorizationError as e:
+            self.assertEquals("Invalid params: transaction[bad]", str(e))
 
     def test_credit_from_transparent_redirect_with_successful_result(self):
         tr_data = {

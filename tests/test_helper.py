@@ -1,9 +1,14 @@
-import httplib
 import os
 import random
 import re
 import unittest
-import urllib
+import sys
+if sys.version_info[0] == 2:
+    from urllib import urlencode
+    from httplib import HTTPConnection
+else:
+    from urllib.parse import urlencode
+    from http.client import HTTPConnection
 import warnings
 from braintree import *
 from braintree.exceptions import *
@@ -75,8 +80,8 @@ class TestHelper(object):
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
-        form_data = urllib.urlencode(post_params)
-        conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
+        form_data = urlencode(post_params)
+        conn = HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
         response = conn.getresponse()
         query_string = response.getheader("location").split("?", 1)[1]

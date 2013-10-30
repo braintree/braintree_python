@@ -16,13 +16,14 @@ class WebhookTestingGateway(object):
 
     def __sample_xml(self, kind, id):
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-        return """
+        sample_xml = """
             <notification>
                 <timestamp type="datetime">%s</timestamp>
                 <kind>%s</kind>
                 <subject>%s</subject>
             </notification>
         """ % (timestamp, kind, self.__subject_sample_xml(kind, id))
+        return sample_xml.encode('utf-8')
 
     def __subject_sample_xml(self, kind, id):
         if kind == WebhookNotification.Kind.SubMerchantAccountApproved:

@@ -20,6 +20,7 @@ from braintree.errors import Errors
 from braintree.environment import Environment
 from braintree.merchant_account import MerchantAccount
 from braintree.merchant_account_gateway import MerchantAccountGateway
+from braintree.partner_merchant import PartnerMerchant
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
 from braintree.resource_collection import ResourceCollection
