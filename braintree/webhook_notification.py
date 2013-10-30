@@ -46,7 +46,7 @@ class WebhookNotification(Resource):
         elif "transaction" in node_wrapper:
             self.transaction = Transaction(gateway, node_wrapper['transaction'])
         elif "partner_merchant" in node_wrapper:
-            self.partner_merchant= PartnerMerchant(gateway, node_wrapper['partner_merchant'])
+            self.partner_merchant = PartnerMerchant(gateway, node_wrapper['partner_merchant'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

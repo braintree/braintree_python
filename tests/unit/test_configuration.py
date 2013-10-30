@@ -11,8 +11,7 @@ class TestConfiguration(unittest.TestCase):
             environment=braintree.Environment.Sandbox,
             merchant_id='my_merchant_id',
             public_key='public_key',
-            private_key='private_key',
-            http_strategy=Configuration.default_http_strategy
+            private_key='private_key'
         )
         self.assertEqual(config.merchant_id, 'my_merchant_id')
         self.assertEqual(config.public_key, 'public_key')
@@ -23,8 +22,7 @@ class TestConfiguration(unittest.TestCase):
             environment=braintree.Environment.Sandbox,
             partner_id='my_partner_id',
             public_key='public_key',
-            private_key='private_key',
-            http_strategy=Configuration.default_http_strategy
+            private_key='private_key'
         )
         self.assertEqual(config.merchant_id, 'my_partner_id')
         self.assertEqual(config.public_key, 'public_key')
