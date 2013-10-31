@@ -3,6 +3,7 @@ from braintree.add_on_gateway import AddOnGateway
 from braintree.address import Address
 from braintree.address_gateway import AddressGateway
 from braintree.braintree_gateway import BraintreeGateway
+from braintree.client_api.authorization_fingerprint import AuthorizationFingerprint
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.credit_card_gateway import CreditCardGateway

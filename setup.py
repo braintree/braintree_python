@@ -7,7 +7,7 @@ setup(
     author="Braintree",
     author_email="support@braintreepayments.com",
     url="https://www.braintreepayments.com/docs/python",
-    packages=["braintree", "braintree.exceptions", "braintree.merchant_account", "braintree.util", "braintree.test", "braintree.util.http_strategy"],
+    packages=["braintree", "braintree.client_api", "braintree.exceptions", "braintree.merchant_account", "braintree.util", "braintree.test", "braintree.util.http_strategy"],
     package_data={"braintree": ["ssl/*"]},
     install_requires=["requests>=0.11.1,<3.0"],
     zip_safe=False
