@@ -6,6 +6,7 @@ from braintree.util.crypto import Crypto
 from braintree.error_result import ErrorResult
 from braintree.exceptions.forged_query_string_error import ForgedQueryStringError
 from braintree.util.http import Http
+from braintree.signature_service import SignatureService
 from braintree.successful_result import SuccessfulResult
 from braintree.transparent_redirect import TransparentRedirect
 
@@ -40,9 +41,7 @@ class TransparentRedirectGateway(object):
         data["public_key"] = self.config.public_key
         data["api_version"] = self.config.api_version()
 
-        tr_content = urllib.urlencode(data)
-        tr_hash = Crypto.hmac_hash(self.config.private_key, tr_content)
-        return tr_hash + "|" + tr_content
+        return SignatureService(self.config.private_key).sign(data)
 
     def url(self):
         """
