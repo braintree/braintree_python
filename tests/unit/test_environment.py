@@ -6,23 +6,23 @@ class TestEnvironment(unittest.TestCase):
         self.assertEquals("localhost:" + port, Environment.Development.server_and_port)
 
     def test_base_url(self):
-        self.assertEquals("https://sandbox.braintreegateway.com:443", Environment.Sandbox.base_url)
-        self.assertEquals("https://www.braintreegateway.com:443", Environment.Production.base_url)
+        self.assertEquals("https://api.sandbox.braintreegateway.com:443", Environment.Sandbox.base_url)
+        self.assertEquals("https://api.braintreegateway.com:443", Environment.Production.base_url)
 
     def test_server_and_port_for_sandbox(self):
-        self.assertEquals("sandbox.braintreegateway.com:443", Environment.Sandbox.server_and_port)
+        self.assertEquals("api.sandbox.braintreegateway.com:443", Environment.Sandbox.server_and_port)
 
     def test_server_and_port_for_production(self):
-        self.assertEquals("www.braintreegateway.com:443", Environment.Production.server_and_port)
+        self.assertEquals("api.braintreegateway.com:443", Environment.Production.server_and_port)
 
     def test_server_for_development(self):
         self.assertEquals("localhost", Environment.Development.server)
 
     def test_server_for_sandbox(self):
-        self.assertEquals("sandbox.braintreegateway.com", Environment.Sandbox.server)
+        self.assertEquals("api.sandbox.braintreegateway.com", Environment.Sandbox.server)
 
     def test_server_for_production(self):
-        self.assertEquals("www.braintreegateway.com", Environment.Production.server)
+        self.assertEquals("api.braintreegateway.com", Environment.Production.server)
 
     def test_port_for_development(self):
         port = os.getenv("GATEWAY_PORT") or "3000"

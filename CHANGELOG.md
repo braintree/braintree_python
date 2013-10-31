@@ -1,3 +1,6 @@
+## 2.24.1
+* Update configuration URLs
+
 ## 2.24.0
 * Add partnership support
 * Add partner configuration
