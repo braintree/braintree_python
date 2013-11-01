@@ -46,6 +46,11 @@ _Note:_ Although discouraged, the dependency on PycURL / requests can be bypasse
             print "  code: " + error.code
             print "  message: " + error.message
 
+
+## Open Source Attribution
+
+A list of open source projects that help power Braintree can be found [here](https://www.braintreepayments.com/developers/open-source).
+
 ## License
 
 See the LICENSE file.
