@@ -10,7 +10,7 @@ class WebhookTestingGateway(object):
 
     def sample_notification(self, kind, id):
         payload = base64.encodestring(self.__sample_xml(kind, id))
-        hmac_payload = Crypto.hmac_hash(self.gateway.config.private_key, payload)
+        hmac_payload = Crypto.sha1_hmac_hash(self.gateway.config.private_key, payload)
         signature = "%s|%s" % (self.gateway.config.public_key, hmac_payload)
         return signature, payload
 

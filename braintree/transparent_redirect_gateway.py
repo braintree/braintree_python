@@ -66,7 +66,7 @@ class TransparentRedirectGateway(object):
 
     def _is_valid_tr_query_string(self, query_string):
         content, hash = query_string.split("&hash=")
-        return hash == Crypto.hmac_hash(self.config.private_key, content)
+        return hash == Crypto.sha1_hmac_hash(self.config.private_key, content)
 
     def __flatten_dictionary(self, params, parent=None):
         data = {}

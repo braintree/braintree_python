@@ -9,6 +9,6 @@ class FakeDigest(object):
 class TestSignatureService(unittest.TestCase):
 
     def test_hashes_with_digest(self):
-        signature_service = SignatureService("fake_key", FakeDigest)
+        signature_service = SignatureService("fake_key", FakeDigest.hmac_hash)
         signed = signature_service.sign({"foo": "bar"})
         self.assertEquals("foo=bar_signed_with_fake_key|foo=bar", signed)

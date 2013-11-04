@@ -14,4 +14,4 @@ class AuthorizationFingerprint(object):
             "created_at": datetime.datetime.now()
         }
         data = dict(params.items() + default_values.items())
-        return SignatureService(Configuration.private_key).sign(data)
+        return SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
