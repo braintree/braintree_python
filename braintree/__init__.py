@@ -19,6 +19,9 @@ from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.environment import Environment
 from braintree.merchant_account import MerchantAccount
+from braintree.merchant_account.business_details import BusinessDetails
+from braintree.merchant_account.funding_details import FundingDetails
+from braintree.merchant_account.individual_details import IndividualDetails
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.partner_merchant import PartnerMerchant
 from braintree.plan import Plan
