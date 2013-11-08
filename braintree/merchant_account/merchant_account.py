@@ -10,9 +10,9 @@ class MerchantAccount(Resource):
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
-        self.individual_details = IndividualDetails(attributes.get("individual_details", {}))
-        self.business_details = BusinessDetails(attributes.get("business_details", {}))
-        self.funding_details = FundingDetails(attributes.get("funding_details", {}))
+        self.individual_details = IndividualDetails(attributes.get("individual", {}))
+        self.business_details = BusinessDetails(attributes.get("business", {}))
+        self.funding_details = FundingDetails(attributes.get("funding", {}))
         if "master_merchant_account" in attributes:
             self.master_merchant_account = MerchantAccount(gateway, attributes.pop("master_merchant_account"))
 

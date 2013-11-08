@@ -27,7 +27,7 @@ class IndividualDetails(AttributeGetter):
 
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
-        self.address = IndividualDetails.AddressDetails(attributes.get("address_details", {}))
+        self.address_details = IndividualDetails.AddressDetails(attributes.get("address", {}))
 
     def __repr__(self):
         return super(IndividualDetails, self).__repr__(self.detail_list)
