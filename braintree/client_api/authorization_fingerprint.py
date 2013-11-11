@@ -8,10 +8,17 @@ class AuthorizationFingerprint(object):
 
     @staticmethod
     def generate(params={}):
-        default_values = {
+        data = {
             "merchant_id": Configuration.merchant_id,
             "public_key": Configuration.public_key,
             "created_at": datetime.datetime.now()
         }
-        data = dict(params.items() + default_values.items())
+
+        if "customer_id" in params:
+            data["customer_id"] = params["customer_id"]
+
+        for option in ["verify_card", "make_default", "fail_on_duplicate_payment_method"]:
+            if option in params:
+                data["credit_card[options][%s]" % option] = params[option]
+
         return SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
