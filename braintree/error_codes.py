@@ -158,39 +158,39 @@ class ErrorCodes(object):
                 StreetAddressIsRequired = "82617"
                 RegionIsInvalid = "82664"
 
-    class Individual(object):
-        FirstNameIsRequired = "82637"
-        LastNameIsRequired = "82638"
-        DateOfBirthIsRequired = "82639"
-        SsnIsInvalid = "82642"
-        EmailAddressIsInvalid = "82643"
-        FirstNameIsInvalid = "82644"
-        LastNameIsInvalid = "82645"
-        PhoneIsInvalid = "82656"
-        DateOfBirthIsInvalid = "82666"
-        EmailAddressIsRequired = "82667"
+        class Individual(object):
+            FirstNameIsRequired = "82637"
+            LastNameIsRequired = "82638"
+            DateOfBirthIsRequired = "82639"
+            SsnIsInvalid = "82642"
+            EmailAddressIsInvalid = "82643"
+            FirstNameIsInvalid = "82644"
+            LastNameIsInvalid = "82645"
+            PhoneIsInvalid = "82656"
+            DateOfBirthIsInvalid = "82666"
+            EmailAddressIsRequired = "82667"
 
-        class Address(object):
-            StreetAddressIsRequired = "82657"
-            LocalityIsRequired = "82658"
-            PostalCodeIsRequired = "82659"
-            RegionIsRequired = "82660"
-            StreetAddressIsInvalid = "82661"
-            PostalCodeIsInvalid = "82662"
-            RegionIsInvalid = "82668"
+            class Address(object):
+                StreetAddressIsRequired = "82657"
+                LocalityIsRequired = "82658"
+                PostalCodeIsRequired = "82659"
+                RegionIsRequired = "82660"
+                StreetAddressIsInvalid = "82661"
+                PostalCodeIsInvalid = "82662"
+                RegionIsInvalid = "82668"
 
-    class Business(object):
-        NameIsInvalid = "82646"
-        TaxIdIsInvalid = "82647"
-        TaxIdIsRequiredWithName = "82648"
-        NameIsRequiredWithTaxId = "82669"
-        TaxIdMustBeBlank = "82672"
+        class Business(object):
+            NameIsInvalid = "82646"
+            TaxIdIsInvalid = "82647"
+            TaxIdIsRequiredWithName = "82648"
+            NameIsRequiredWithTaxId = "82669"
+            TaxIdMustBeBlank = "82672"
 
-    class Funding(object):
-        RoutingNumberIsRequired = "82640"
-        AccountNumberIsRequired = "82641"
-        RoutingNumberIsInvalid = "82649"
-        AccountNumberIsInvalid = "82671"
+        class Funding(object):
+            RoutingNumberIsRequired = "82640"
+            AccountNumberIsRequired = "82641"
+            RoutingNumberIsInvalid = "82649"
+            AccountNumberIsInvalid = "82671"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
