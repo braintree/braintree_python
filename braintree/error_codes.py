@@ -180,17 +180,28 @@ class ErrorCodes(object):
                 RegionIsInvalid = "82668"
 
         class Business(object):
-            NameIsInvalid = "82646"
+            DbaNameIsInvalid = "82646"
+            LegalNameIsInvalid = "82677"
+            LegalNameIsRequiredWithTaxId = "82669"
             TaxIdIsInvalid = "82647"
-            TaxIdIsRequiredWithName = "82648"
-            NameIsRequiredWithTaxId = "82669"
+            TaxIdIsRequiredWithLegalName = "82648"
             TaxIdMustBeBlank = "82672"
+            class Address(object):
+                StreetAddressIsInvalid = "82685"
+                PostalCodeIsInvalid = "82686"
+                RegionIsInvalid = "82684"
 
         class Funding(object):
             RoutingNumberIsRequired = "82640"
             AccountNumberIsRequired = "82641"
             RoutingNumberIsInvalid = "82649"
             AccountNumberIsInvalid = "82671"
+            DestinationIsInvalid = "82679"
+            DestinationIsRequired = "82678"
+            EmailAddressIsInvalid = "82681"
+            EmailAddressIsRequired = "82680"
+            MobilePhoneIsInvalid = "82683"
+            MobilePhoneIsRequired = "82682"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"

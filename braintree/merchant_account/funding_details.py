@@ -4,6 +4,9 @@ class FundingDetails(AttributeGetter):
     detail_list = [
         "account_number_last_4",
         "routing_number",
+        "destination",
+        "email",
+        "mobile_phone",
     ]
 
     def __init__(self, attributes):

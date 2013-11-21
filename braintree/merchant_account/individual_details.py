@@ -1,20 +1,7 @@
 from braintree.attribute_getter import AttributeGetter
+from braintree.merchant_account.address_details import AddressDetails
 
 class IndividualDetails(AttributeGetter):
-    class AddressDetails(AttributeGetter):
-        detail_list = [
-            "street_address",
-            "locality",
-            "region",
-            "postal_code",
-        ]
-
-        def __init__(self, attributes):
-            AttributeGetter.__init__(self, attributes)
-
-        def __repr__(self):
-            return super(IndividualDetails.AddressDetails, self).__repr__(self.detail_list)
-
     detail_list = [
         "first_name",
         "last_name",
@@ -27,7 +14,7 @@ class IndividualDetails(AttributeGetter):
 
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
-        self.address_details = IndividualDetails.AddressDetails(attributes.get("address", {}))
+        self.address_details = AddressDetails(attributes.get("address", {}))
 
     def __repr__(self):
         return super(IndividualDetails, self).__repr__(self.detail_list)

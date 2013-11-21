@@ -83,12 +83,21 @@ class MerchantAccountGateway(object):
             },
             {'business': [
                 'dba_name',
+                'legal_name',
                 'tax_id',
+                {'address': [
+                    'street_address',
+                    'postal_code',
+                    'locality',
+                    'region']}
                 ]
             },
             {'funding': [
                 'routing_number',
                 'account_number',
+                'destination',
+                'email',
+                'mobile_phone',
                 ]
             },
             'tos_accepted',
@@ -115,12 +124,21 @@ class MerchantAccountGateway(object):
             },
             {'business': [
                 'dba_name',
+                'legal_name',
                 'tax_id',
+                {'address': [
+                    'street_address',
+                    'postal_code',
+                    'locality',
+                    'region']}
                 ]
             },
             {'funding': [
                 'routing_number',
                 'account_number',
+                'destination',
+                'email',
+                'mobile_phone',
                 ]
             },
             'master_merchant_account_id',
