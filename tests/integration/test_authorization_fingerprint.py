@@ -117,7 +117,7 @@ class TestAuthorizationFingerprint(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 200)
+        self.assertEqual(status_code, 201)
 
         status_code, response = http.add_card({
             "credit_card": {
@@ -126,7 +126,7 @@ class TestAuthorizationFingerprint(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 200)
+        self.assertEqual(status_code, 201)
 
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(len(customer.credit_cards), 2)
@@ -155,7 +155,7 @@ class TestAuthorizationFingerprint(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 200)
+        self.assertEqual(status_code, 201)
 
         fingerprint = AuthorizationFingerprint.generate({
             "customer_id": customer_id,

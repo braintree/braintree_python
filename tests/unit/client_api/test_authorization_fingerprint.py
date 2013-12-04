@@ -27,3 +27,13 @@ class TestAuthorizationFingerprint(unittest.TestCase):
 
         self.assertTrue(len(signature) > 1)
         self.assertFalse("merchant_id=1234" in encoded_data)
+
+    def test_credit_card_options_require_customer_id(self):
+        for option in ["verify_card", "make_default", "fail_on_duplicate_payment_method"]:
+            try:
+                fingerprint = AuthorizationFingerprint.generate({
+                    option: True
+                })
+                self.assertTrue(False, "Should have raised an exception")
+            except InvalidSignatureError, e:
+                self.assertTrue(str(e).find(option))
