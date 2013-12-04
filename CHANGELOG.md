@@ -1,3 +1,8 @@
+## 2.25.0
+
+* Merchant account update API
+* Merchant account create API v2
+
 ## 2.24.1
 * Update configuration URLs
 
