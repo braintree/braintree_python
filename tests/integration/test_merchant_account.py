@@ -53,7 +53,7 @@ class TestMerchantAccount(unittest.TestCase):
         "funding": {
             "routing_number": "122100024",
             "account_number": "43759348798",
-            "destination": MerchantAccount.FundingDestinations.Bank
+            "destination": MerchantAccount.FundingDestination.Bank
         },
         "tos_accepted": True,
         "master_merchant_account_id": "sandbox_master_merchant_account"
@@ -101,20 +101,20 @@ class TestMerchantAccount(unittest.TestCase):
 
     def test_create_funding_destination_accepts_a_bank(self):
         params = self.VALID_APPLICATION_PARAMS.copy()
-        params['funding']['destination'] = MerchantAccount.FundingDestinations.Bank
+        params['funding']['destination'] = MerchantAccount.FundingDestination.Bank
         result = MerchantAccount.create(params)
         self.assertTrue(result.is_success)
 
     def test_create_funding_destination_accepts_an_email(self):
         params = self.VALID_APPLICATION_PARAMS.copy()
-        params['funding']['destination'] = MerchantAccount.FundingDestinations.Email
+        params['funding']['destination'] = MerchantAccount.FundingDestination.Email
         params['funding']['email'] = "junkman@hotmail.com"
         result = MerchantAccount.create(params)
         self.assertTrue(result.is_success)
 
     def test_create_funding_destination_accepts_a_mobile_phone(self):
         params = self.VALID_APPLICATION_PARAMS.copy()
-        params['funding']['destination'] = MerchantAccount.FundingDestinations.MobilePhone
+        params['funding']['destination'] = MerchantAccount.FundingDestination.MobilePhone
         params['funding']['mobile_phone'] = "1112223333"
         result = MerchantAccount.create(params)
         self.assertTrue(result.is_success)
@@ -149,7 +149,7 @@ class TestMerchantAccount(unittest.TestCase):
             "funding": {
                 "routing_number": "071000013",
                 "account_number": "666666789",
-                "destination": MerchantAccount.FundingDestinations.Email,
+                "destination": MerchantAccount.FundingDestination.Email,
                 "email": "check@this.com",
                 "mobile_phone": "9998887777"
             }
@@ -178,7 +178,7 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEquals(result.merchant_account.business_details.address_details.region, "MI")
         self.assertEquals(result.merchant_account.funding_details.routing_number, "071000013")
         self.assertEquals(result.merchant_account.funding_details.account_number_last_4, "6789")
-        self.assertEquals(result.merchant_account.funding_details.destination, MerchantAccount.FundingDestinations.Email)
+        self.assertEquals(result.merchant_account.funding_details.destination, MerchantAccount.FundingDestination.Email)
         self.assertEquals(result.merchant_account.funding_details.email, "check@this.com")
         self.assertEquals(result.merchant_account.funding_details.mobile_phone, "9998887777")
 
@@ -315,7 +315,7 @@ class TestMerchantAccount(unittest.TestCase):
     def test_update_handles_validation_errors_for_funding_fields(self):
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
             "funding": {
-                "destination": MerchantAccount.FundingDestinations.Bank,
+                "destination": MerchantAccount.FundingDestination.Bank,
                 "routing_number": "",
                 "account_number": ""
                 }
@@ -328,7 +328,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
             "funding": {
-                "destination": MerchantAccount.FundingDestinations.Email,
+                "destination": MerchantAccount.FundingDestination.Email,
                 "email": ""
                 }
             }
@@ -339,7 +339,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
             "funding": {
-                "destination": MerchantAccount.FundingDestinations.MobilePhone,
+                "destination": MerchantAccount.FundingDestination.MobilePhone,
                 "mobile_phone": ""
                 }
             }

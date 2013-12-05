@@ -8,10 +8,12 @@ class MerchantAccount(Resource):
         Pending = "pending"
         Suspended = "suspended"
 
-    class FundingDestinations(object):
+    class FundingDestination(object):
         Bank = "bank"
         Email = "email"
         MobilePhone = "mobile_phone"
+
+    FundingDestinations = FundingDestination
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
