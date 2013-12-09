@@ -689,6 +689,34 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual("411111", transaction.credit_card_details.bin)
 
+    def test_sale_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        fingerprint = AuthorizationFingerprint.generate()
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": fingerprint,
+            "session_identifier": "fake_identifier",
+            "session_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+
+
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

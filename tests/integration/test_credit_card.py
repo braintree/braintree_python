@@ -351,6 +351,33 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(result.errors.for_object("credit_card") \
                 .on("venmo_sdk_payment_method_code")[0].code, ErrorCodes.CreditCard.InvalidVenmoSDKPaymentMethodCode)
 
+    def test_create_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        fingerprint = AuthorizationFingerprint.generate()
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": fingerprint,
+            "session_identifier": "fake_identifier",
+            "session_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+        customer = Customer.create().customer
+
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals("411111", result.credit_card.bin)
+
     def test_create_with_venmo_sdk_session(self):
         customer = Customer.create().customer
         result = CreditCard.create({

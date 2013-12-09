@@ -194,6 +194,7 @@ class CreditCard(Resource):
         signature = [
             "billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
             "device_session_id", "fraud_merchant_id", "number", "token", "venmo_sdk_payment_method_code", "device_data",
+            "payment_method_nonce",
             {"billing_address": billing_address_params},
             {"options": options}
         ]

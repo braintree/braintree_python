@@ -281,6 +281,33 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEquals("411111", result.customer.credit_cards[0].bin)
 
+    def test_create_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        fingerprint = AuthorizationFingerprint.generate()
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": fingerprint,
+            "session_identifier": "fake_identifier",
+            "session_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+
+        result = Customer.create({
+            "credit_card": {
+                "payment_method_nonce": nonce
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals("411111", result.customer.credit_cards[0].bin)
+
     def test_delete_with_valid_customer(self):
         customer = Customer.create().customer
         result = Customer.delete(customer.id)

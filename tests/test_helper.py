@@ -5,6 +5,7 @@ import re
 import unittest
 import urllib
 import warnings
+import json
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
@@ -119,4 +120,54 @@ class TestHelper(object):
         return {
             "Accept": "application/xml",
             "Content-type": "application/x-www-form-urlencoded",
+        }
+
+class ClientApiHttp(Http):
+    def __init__(self, config, options):
+        self.config = config
+        self.options = options
+        self.http = Http(config)
+
+    def get(self, path):
+        return self.__http_do("GET", path)
+
+    def post(self, path, params = None):
+        return self.__http_do("POST", path, params)
+
+    def __http_do(self, http_verb, path, params=None):
+        http_strategy = self.config.http_strategy()
+        request_body = json.dumps(params)
+        return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
+
+    def set_fingerprint(self, new_fingerprint):
+        self.options['authorization_fingerprint'] = new_fingerprint
+
+    def get_cards(self):
+        encoded_fingerprint = urllib.quote_plus(self.options["authorization_fingerprint"])
+        url = "/client_api/credit_cards.json"
+        url += "?authorizationFingerprint=%s" % encoded_fingerprint
+        url += "&sessionIdentifier=%s" % self.options["session_identifier"]
+        url += "&sessionIdentifierType=%s" % self.options["session_identifier_type"]
+
+        return self.get(url)
+
+    def add_card(self, params):
+        url = "/client_api/credit_cards.json"
+
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        if 'session_identifier' in self.options:
+            params['sessionIdentifier'] = self.options['session_identifier']
+
+        if 'session_identifier_type' in self.options:
+            params['sessionIdentifierType'] = self.options['session_identifier_type']
+
+        return self.post(url, params)
+
+    def __headers(self):
+        return {
+            "Content-type": "application/json",
+            "User-Agent": "Braintree Python " + version.Version,
+            "X-ApiVersion": Configuration.api_version()
         }
