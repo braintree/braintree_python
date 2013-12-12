@@ -144,7 +144,7 @@ class ClientApiHttp(Http):
 
     def get_cards(self):
         encoded_fingerprint = urllib.quote_plus(self.options["authorization_fingerprint"])
-        url = "/client_api/credit_cards.json"
+        url = "/merchants/%s/client_api/credit_cards.json" % self.config.merchant_id
         url += "?authorizationFingerprint=%s" % encoded_fingerprint
         url += "&sessionIdentifier=%s" % self.options["session_identifier"]
         url += "&sessionIdentifierType=%s" % self.options["session_identifier_type"]
@@ -152,7 +152,7 @@ class ClientApiHttp(Http):
         return self.get(url)
 
     def add_card(self, params):
-        url = "/client_api/credit_cards.json"
+        url = "/merchants/%s/client_api/credit_cards.json" % self.config.merchant_id
 
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
