@@ -12,7 +12,8 @@ class AuthorizationFingerprint(object):
         data = {
             "merchant_id": Configuration.merchant_id,
             "public_key": Configuration.public_key,
-            "created_at": datetime.datetime.now()
+            "created_at": datetime.datetime.now(),
+            "base_url": Configuration.instantiate().base_merchant_url()
         }
 
         if "customer_id" in params:
