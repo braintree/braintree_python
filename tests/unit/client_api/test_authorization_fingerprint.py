@@ -10,7 +10,8 @@ class TestAuthorizationFingerprint(unittest.TestCase):
         self.assertTrue("public_key=%s" % Configuration.public_key in encoded_data)
         self.assertTrue("created_at=" in encoded_data)
 
-        base_url = "http://localhost:3000/merchants/%s" % Configuration.merchant_id
+        port = os.getenv("GATEWAY_PORT") or "3000"
+        base_url = "http://localhost:%s/merchants/%s" % (port, Configuration.merchant_id)
         self.assertTrue("base_url=%s" % base_url  in encoded_data)
 
     def test_fingerprint_optionally_contains_customer_id(self):
