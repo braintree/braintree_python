@@ -11,8 +11,9 @@ class TestAuthorizationFingerprint(unittest.TestCase):
         self.assertTrue("created_at=" in encoded_data)
 
         port = os.getenv("GATEWAY_PORT") or "3000"
-        base_url = "http://localhost:%s/merchants/%s" % (port, Configuration.merchant_id)
-        self.assertTrue("base_url=%s" % base_url  in encoded_data)
+        client_api_url = "http://localhost:%s/merchants/%s/client_api" % (port, Configuration.merchant_id)
+        self.assertTrue("client_api_url=%s" % client_api_url in encoded_data)
+        self.assertTrue("auth_url=http://auth.venmo.dev:4567" in encoded_data)
 
     def test_fingerprint_optionally_contains_customer_id(self):
         fingerprint = AuthorizationFingerprint.generate({

@@ -13,7 +13,8 @@ class AuthorizationFingerprint(object):
             "merchant_id": Configuration.merchant_id,
             "public_key": Configuration.public_key,
             "created_at": datetime.datetime.now(),
-            "base_url": Configuration.instantiate().base_merchant_url()
+            "client_api_url": Configuration.instantiate().base_merchant_url() + "/client_api",
+            "auth_url": Configuration.instantiate().environment.auth_url
         }
 
         if "customer_id" in params:
