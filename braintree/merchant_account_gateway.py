@@ -2,6 +2,7 @@ from braintree.error_result import ErrorResult
 from braintree.merchant_account import MerchantAccount
 from braintree.resource import Resource
 from braintree.successful_result import SuccessfulResult
+from braintree.exceptions.not_found_error import NotFoundError
 
 class MerchantAccountGateway(object):
     def __init__(self, gateway):
@@ -15,6 +16,15 @@ class MerchantAccountGateway(object):
     def update(self, merchant_account_id, params={}):
         Resource.verify_keys(params, MerchantAccountGateway._update_signature())
         return self._put("/merchant_accounts/%s/update_via_api" % merchant_account_id, {"merchant_account": params})
+
+    def find(self, merchant_account_id):
+        try:
+            if merchant_account_id == None or merchant_account_id.strip() == "":
+                raise NotFoundError()
+            response = self.config.http().get("/merchant_accounts/" + merchant_account_id)
+            return MerchantAccount(self.gateway, response["merchant_account"])
+        except NotFoundError:
+            raise NotFoundError("merchant account with id " + merchant_account_id + " not found")
 
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)

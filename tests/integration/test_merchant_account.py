@@ -347,3 +347,17 @@ class TestMerchantAccount(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("mobile_phone")[0].code, ErrorCodes.MerchantAccount.Funding.MobilePhoneIsRequired)
+
+    def test_find(self):
+        result = MerchantAccount.create(self.VALID_APPLICATION_PARAMS)
+        self.assertTrue(result.is_success)
+        merchant_account_id = result.merchant_account.id
+        merchant_account = MerchantAccount.find(merchant_account_id)
+
+    def test_find_404(self):
+        try:
+            MerchantAccount.find("not_a_real_id")
+        except NotFoundError:
+            pass
+        else:
+            self.assertTrue(False)

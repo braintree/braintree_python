@@ -34,3 +34,7 @@ class MerchantAccount(Resource):
     @staticmethod
     def update(id, attributes):
         return Configuration.gateway().merchant_account.update(id, attributes)
+
+    @staticmethod
+    def find(id):
+        return Configuration.gateway().merchant_account.find(id)
