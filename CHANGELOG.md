@@ -1,3 +1,7 @@
+## 2.26.0
+
+* Merchant account find API
+
 ## 2.25.0
 
 * Merchant account update API
