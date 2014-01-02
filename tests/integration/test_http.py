@@ -26,7 +26,7 @@ class CommonHttpTests(object):
 
     def test_unsafe_ssl_connection(self):
         Configuration.use_unsafe_ssl = True;
-        environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
+        environment = Environment(Environment.Sandbox.server, "443", "http://auth.venmo.dev:4567", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -45,7 +45,7 @@ class TestPyCurl(CommonHttpTests, unittest.TestCase):
         if platform.system() == "Darwin":
             return
 
-        environment = Environment("www.google.com", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("www.google.com", "443", "http://auth.venmo.dev:4567", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -60,7 +60,7 @@ class TestPyCurl(CommonHttpTests, unittest.TestCase):
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         #ip address of api.braintreegateway.com
-        environment = Environment("204.109.13.121", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("204.109.13.121", "443", "http://auth.venmo.dev:4567", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -86,7 +86,7 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
         if platform.system() == "Darwin":
             return
 
-        environment = Environment("www.google.com", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("www.google.com", "443", "http://auth.venmo.dev:4567", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -99,7 +99,7 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         #ip address of api.braintreegateway.com
-        environment = Environment("204.109.13.121", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("204.109.13.121", "443", "http://auth.venmo.dev:4567", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
