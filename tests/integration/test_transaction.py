@@ -1,3 +1,4 @@
+import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 import braintree.test.venmo_sdk as venmo_sdk
@@ -691,7 +692,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        fingerprint = AuthorizationFingerprint.generate()
+        fingerprint = json.loads(AuthorizationInfo.generate())["fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": fingerprint,
             "session_identifier": "fake_identifier",

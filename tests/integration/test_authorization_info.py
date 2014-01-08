@@ -1,15 +1,16 @@
 from tests.test_helper import *
 import base64
+import json
 import urllib
 import datetime
 import braintree
 from braintree.util import Http
 
-class TestAuthorizationFingerprint(unittest.TestCase):
+class TestAuthorizationInfo(unittest.TestCase):
 
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
-        fingerprint = AuthorizationFingerprint.generate()
+        fingerprint = json.loads(AuthorizationInfo.generate())["fingerprint"]
 
         http = ClientApiHttp(config, {
             "authorization_fingerprint": fingerprint,
@@ -25,10 +26,11 @@ class TestAuthorizationFingerprint(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        fingerprint = AuthorizationFingerprint.generate({
+        auth_info = AuthorizationInfo.generate({
             "customer_id": customer_id,
             "verify_card": True,
         })
+        fingerprint = json.loads(auth_info)["fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": fingerprint,
             "session_identifier": "fake_identifier",
@@ -49,10 +51,11 @@ class TestAuthorizationFingerprint(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        fingerprint = AuthorizationFingerprint.generate({
+        auth_info = AuthorizationInfo.generate({
             "customer_id": customer_id,
             "make_default": True,
         })
+        fingerprint = json.loads(auth_info)["fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": fingerprint,
             "session_identifier": "fake_identifier",
@@ -88,9 +91,10 @@ class TestAuthorizationFingerprint(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        fingerprint = AuthorizationFingerprint.generate({
+        auth_info = AuthorizationInfo.generate({
             "customer_id": customer_id,
         })
+        fingerprint = json.loads(auth_info)["fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": fingerprint,
             "session_identifier": "fake_identifier",
@@ -106,10 +110,11 @@ class TestAuthorizationFingerprint(unittest.TestCase):
         })
         self.assertEqual(status_code, 201)
 
-        fingerprint = AuthorizationFingerprint.generate({
+        auth_info = AuthorizationInfo.generate({
             "customer_id": customer_id,
             "fail_on_duplicate_payment_method": True,
         })
+        fingerprint = json.loads(auth_info)["fingerprint"]
         http.set_fingerprint(fingerprint)
         status_code, response = http.add_card({
             "credit_card": {

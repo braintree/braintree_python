@@ -1,20 +1,18 @@
 import datetime
+import json
 import urllib
 from braintree.configuration import Configuration
 from braintree.signature_service import SignatureService
 from braintree.util.crypto import Crypto
 from braintree import exceptions
 
-class AuthorizationFingerprint(object):
+class AuthorizationInfo(object):
 
     @staticmethod
     def generate(params={}):
         data = {
-            "merchant_id": Configuration.merchant_id,
             "public_key": Configuration.public_key,
-            "created_at": datetime.datetime.now(),
-            "client_api_url": Configuration.instantiate().base_merchant_url() + "/client_api",
-            "auth_url": Configuration.instantiate().environment.auth_url
+            "created_at": datetime.datetime.now()
         }
 
         if "customer_id" in params:
@@ -26,4 +24,10 @@ class AuthorizationFingerprint(object):
                     raise exceptions.InvalidSignatureError("cannot specify %s without a customer_id" % option)
                 data["credit_card[options][%s]" % option] = params[option]
 
-        return SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
+        fingerprint = SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
+
+        return json.dumps({
+            "fingerprint": fingerprint,
+            "client_api_url": Configuration.instantiate().base_merchant_url() + "/client_api",
+            "auth_url": Configuration.instantiate().environment.auth_url
+        })

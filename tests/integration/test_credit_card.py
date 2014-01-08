@@ -353,7 +353,7 @@ class TestCreditCard(unittest.TestCase):
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        fingerprint = AuthorizationFingerprint.generate()
+        fingerprint = json.loads(AuthorizationInfo.generate())["fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": fingerprint,
             "session_identifier": "fake_identifier",
