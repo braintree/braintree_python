@@ -257,12 +257,14 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(1, add_ons[0].quantity)
         self.assertEquals(None, add_ons[0].number_of_billing_cycles)
         self.assertTrue(add_ons[0].never_expires)
+        self.assertEquals(0, add_ons[0].current_billing_cycle)
 
         self.assertEquals("increase_20", add_ons[1].id)
         self.assertEquals(Decimal("20.00"), add_ons[1].amount)
         self.assertEquals(1, add_ons[1].quantity)
         self.assertEquals(None, add_ons[1].number_of_billing_cycles)
         self.assertTrue(add_ons[1].never_expires)
+        self.assertEquals(0, add_ons[1].current_billing_cycle)
 
         self.assertEquals(2, len(subscription.discounts))
         discounts = sorted(subscription.discounts, key=lambda discount: discount.id)
@@ -272,12 +274,14 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(1, discounts[0].quantity)
         self.assertEquals(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
+        self.assertEquals(0, discounts[0].current_billing_cycle)
 
         self.assertEquals("discount_7", discounts[1].id)
         self.assertEquals(Decimal("7.00"), discounts[1].amount)
         self.assertEquals(1, discounts[1].quantity)
         self.assertEquals(None, discounts[1].number_of_billing_cycles)
         self.assertTrue(discounts[1].never_expires)
+        self.assertEquals(0, discounts[1].current_billing_cycle)
 
     def test_create_allows_overriding_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
@@ -319,12 +323,14 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(2, add_ons[0].quantity)
         self.assertEquals(5, add_ons[0].number_of_billing_cycles)
         self.assertFalse(add_ons[0].never_expires)
+        self.assertEquals(0, add_ons[0].current_billing_cycle)
 
         self.assertEquals("increase_20", add_ons[1].id)
         self.assertEquals(Decimal("100.00"), add_ons[1].amount)
         self.assertEquals(4, add_ons[1].quantity)
         self.assertEquals(None, add_ons[1].number_of_billing_cycles)
         self.assertTrue(add_ons[1].never_expires)
+        self.assertEquals(0, add_ons[1].current_billing_cycle)
 
         self.assertEquals(2, len(subscription.discounts))
         discounts = sorted(subscription.discounts, key=lambda discount: discount.id)
@@ -334,12 +340,14 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(1, discounts[0].quantity)
         self.assertEquals(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
+        self.assertEquals(0, discounts[0].current_billing_cycle)
 
         self.assertEquals("discount_7", discounts[1].id)
         self.assertEquals(Decimal("15.00"), discounts[1].amount)
         self.assertEquals(3, discounts[1].quantity)
         self.assertEquals(19, discounts[1].number_of_billing_cycles)
         self.assertFalse(discounts[1].never_expires)
+        self.assertEquals(0, discounts[1].current_billing_cycle)
 
     def test_create_allows_deleting_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
@@ -354,7 +362,6 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         self.assertEquals(0, len(subscription.add_ons))
-
         self.assertEquals(1, len(subscription.discounts))
         self.assertEquals("discount_11", subscription.discounts[0].id)
 
@@ -392,6 +399,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(2, subscription.add_ons[0].quantity)
         self.assertEquals(5, subscription.add_ons[0].number_of_billing_cycles)
         self.assertFalse(subscription.add_ons[0].never_expires)
+        self.assertEquals(0, subscription.add_ons[0].current_billing_cycle)
 
         self.assertEquals(1, len(subscription.discounts))
 
@@ -400,6 +408,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(1, subscription.discounts[0].quantity)
         self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
+        self.assertEquals(0, subscription.discounts[0].current_billing_cycle)
 
     def test_create_properly_parses_validation_errors_for_arrays(self):
         result = Subscription.create({
