@@ -81,6 +81,7 @@ class Configuration(object):
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
+        self.use_unsafe_ssl = getattr(Configuration, 'use_unsafe_ssl', False)
 
         if http_strategy:
             self._http_strategy = http_strategy(self, self.environment)
@@ -97,7 +98,7 @@ class Configuration(object):
         return braintree.util.http.Http(self)
 
     def http_strategy(self):
-        if Configuration.use_unsafe_ssl:
+        if self.use_unsafe_ssl:
             return braintree.util.http_strategy.httplib_strategy.HttplibStrategy(self, self.environment)
         else:
             return self._http_strategy
