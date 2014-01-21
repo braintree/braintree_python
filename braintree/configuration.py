@@ -39,13 +39,14 @@ class Configuration(object):
 
 .. [1] `URL Fetch Python API Overview <https://developers.google.com/appengine/docs/python/urlfetch/overview>`_
     """
+    use_unsafe_ssl = False
+
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key, http_strategy=None):
         Configuration.environment = environment
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
-        Configuration.use_unsafe_ssl = False
         Configuration.default_http_strategy = http_strategy
 
     @staticmethod

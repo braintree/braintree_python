@@ -1,3 +1,7 @@
+## 2.26.1
+
+* Fix using instantiated Configuration objects without first calling Configuration.configure
+
 ## 2.26.0
 
 * Merchant account find API
