@@ -1,8 +1,7 @@
-import braintree
 from distutils.core import setup
 setup(
     name="braintree",
-    version=braintree.version.Version,
+    version="3.0.0-beta",
     description="Braintree Python Library",
     author="Braintree",
     author_email="support@braintreepayments.com",
