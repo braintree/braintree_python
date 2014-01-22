@@ -1,1 +1,3 @@
-Version = "3.0.0-beta"
+import pkg_resources
+
+Version = pkg_resources.get_distribution("braintree").version
