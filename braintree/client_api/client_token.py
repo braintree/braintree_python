@@ -6,7 +6,7 @@ from braintree.signature_service import SignatureService
 from braintree.util.crypto import Crypto
 from braintree import exceptions
 
-class AuthorizationInfo(object):
+class ClientToken(object):
 
     @staticmethod
     def generate(params={}):
@@ -24,10 +24,10 @@ class AuthorizationInfo(object):
                     raise exceptions.InvalidSignatureError("cannot specify %s without a customer_id" % option)
                 data["credit_card[options][%s]" % option] = params[option]
 
-        fingerprint = SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
+        authorization_fingerprint = SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
 
         return json.dumps({
-            "fingerprint": fingerprint,
+            "authorization_fingerprint": authorization_fingerprint,
             "client_api_url": Configuration.instantiate().base_merchant_url() + "/client_api",
             "auth_url": Configuration.instantiate().environment.auth_url
         })

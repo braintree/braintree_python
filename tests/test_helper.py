@@ -139,8 +139,8 @@ class ClientApiHttp(Http):
         request_body = json.dumps(params)
         return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
 
-    def set_fingerprint(self, new_fingerprint):
-        self.options['authorization_fingerprint'] = new_fingerprint
+    def set_authorization_fingerprint(self, authorization_fingerprint):
+        self.options['authorization_fingerprint'] = authorization_fingerprint
 
     def get_cards(self):
         encoded_fingerprint = urllib.quote_plus(self.options["authorization_fingerprint"])

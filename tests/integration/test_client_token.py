@@ -6,14 +6,14 @@ import datetime
 import braintree
 from braintree.util import Http
 
-class TestAuthorizationInfo(unittest.TestCase):
+class TestClientToken(unittest.TestCase):
 
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
-        fingerprint = json.loads(AuthorizationInfo.generate())["fingerprint"]
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorization_fingerprint"]
 
         http = ClientApiHttp(config, {
-            "authorization_fingerprint": fingerprint,
+            "authorization_fingerprint": authorization_fingerprint,
             "session_identifier": "fake_identifier",
             "session_identifier_type": "testing"
         })
@@ -26,13 +26,13 @@ class TestAuthorizationInfo(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        auth_info = AuthorizationInfo.generate({
+        client_token = ClientToken.generate({
             "customer_id": customer_id,
             "verify_card": True,
         })
-        fingerprint = json.loads(auth_info)["fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
         http = ClientApiHttp(config, {
-            "authorization_fingerprint": fingerprint,
+            "authorization_fingerprint": authorization_fingerprint,
             "session_identifier": "fake_identifier",
             "session_identifier_type": "testing"
         })
@@ -51,13 +51,13 @@ class TestAuthorizationInfo(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        auth_info = AuthorizationInfo.generate({
+        client_token = ClientToken.generate({
             "customer_id": customer_id,
             "make_default": True,
         })
-        fingerprint = json.loads(auth_info)["fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
         http = ClientApiHttp(config, {
-            "authorization_fingerprint": fingerprint,
+            "authorization_fingerprint": authorization_fingerprint,
             "session_identifier": "fake_identifier",
             "session_identifier_type": "testing"
         })
@@ -91,12 +91,12 @@ class TestAuthorizationInfo(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        auth_info = AuthorizationInfo.generate({
+        client_token = ClientToken.generate({
             "customer_id": customer_id,
         })
-        fingerprint = json.loads(auth_info)["fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
         http = ClientApiHttp(config, {
-            "authorization_fingerprint": fingerprint,
+            "authorization_fingerprint": authorization_fingerprint,
             "session_identifier": "fake_identifier",
             "session_identifier_type": "testing"
         })
@@ -110,12 +110,12 @@ class TestAuthorizationInfo(unittest.TestCase):
         })
         self.assertEqual(status_code, 201)
 
-        auth_info = AuthorizationInfo.generate({
+        client_token = ClientToken.generate({
             "customer_id": customer_id,
             "fail_on_duplicate_payment_method": True,
         })
-        fingerprint = json.loads(auth_info)["fingerprint"]
-        http.set_fingerprint(fingerprint)
+        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        http.set_authorization_fingerprint(authorization_fingerprint)
         status_code, response = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",

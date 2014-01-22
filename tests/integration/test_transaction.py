@@ -692,9 +692,9 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        fingerprint = json.loads(AuthorizationInfo.generate())["fingerprint"]
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorization_fingerprint"]
         http = ClientApiHttp(config, {
-            "authorization_fingerprint": fingerprint,
+            "authorization_fingerprint": authorization_fingerprint,
             "session_identifier": "fake_identifier",
             "session_identifier_type": "testing"
         })
