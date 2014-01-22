@@ -15,7 +15,7 @@ class TestClientToken(unittest.TestCase):
         client_api_url = "http://localhost:%s/merchants/%s/client_api" % (port, Configuration.merchant_id)
 
         self.assertEqual(client_token["client_api_url"], client_api_url)
-        self.assertEqual(client_token["auth_url"], "http://auth.venmo.dev:4567")
+        self.assertEqual(client_token["auth_url"], "http://auth.venmo.dev:9292")
 
     def test_fingerprint_optionally_contains_customer_id(self):
         client_token = ClientToken.generate({

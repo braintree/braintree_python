@@ -46,6 +46,6 @@ class Environment(object):
     def braintree_root():
         return os.path.dirname(inspect.getfile(Environment))
 
-Environment.Development = Environment("localhost", os.getenv("GATEWAY_PORT") or "3000", "http://auth.venmo.dev:4567", False, None)
+Environment.Development = Environment("localhost", os.getenv("GATEWAY_PORT") or "3000", "http://auth.venmo.dev:9292", False, None)
 Environment.Sandbox = Environment("api.sandbox.braintreegateway.com", "443", "https://auth.sandbox.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
 Environment.Production = Environment("api.braintreegateway.com", "443", "https://auth.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
