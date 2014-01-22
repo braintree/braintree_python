@@ -39,13 +39,15 @@ class Configuration(object):
 
 .. [1] `URL Fetch Python API Overview <https://developers.google.com/appengine/docs/python/urlfetch/overview>`_
     """
+
+    use_unsafe_ssl = False
+
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key, http_strategy=None):
         Configuration.environment = environment
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
-        Configuration.use_unsafe_ssl = False
         Configuration.default_http_strategy = http_strategy
 
     @staticmethod
@@ -81,7 +83,6 @@ class Configuration(object):
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
-        self.use_unsafe_ssl = getattr(Configuration, 'use_unsafe_ssl', False)
 
         if http_strategy:
             self._http_strategy = http_strategy(self, self.environment)
@@ -98,7 +99,7 @@ class Configuration(object):
         return braintree.util.http.Http(self)
 
     def http_strategy(self):
-        if self.use_unsafe_ssl:
+        if Configuration.use_unsafe_ssl:
             return braintree.util.http_strategy.httplib_strategy.HttplibStrategy(self, self.environment)
         else:
             return self._http_strategy
