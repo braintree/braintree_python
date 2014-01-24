@@ -1,6 +1,8 @@
-## 2.26.1
+## 2.27.0
 
 * Fix using instantiated Configuration objects without first calling Configuration.configure
+* Accept billing_address_id on transaction create
+* Expose current_billing_cycle on addons and discounts
 
 ## 2.26.0
 
