@@ -283,7 +283,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifer": "fake_identifier",

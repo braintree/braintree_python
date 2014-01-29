@@ -10,7 +10,7 @@ class TestClientToken(unittest.TestCase):
 
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
 
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
@@ -30,7 +30,7 @@ class TestClientToken(unittest.TestCase):
             "customer_id": customer_id,
             "verify_card": True,
         })
-        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifer": "fake_identifier",
@@ -55,7 +55,7 @@ class TestClientToken(unittest.TestCase):
             "customer_id": customer_id,
             "make_default": True,
         })
-        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifer": "fake_identifier",
@@ -94,7 +94,7 @@ class TestClientToken(unittest.TestCase):
         client_token = ClientToken.generate({
             "customer_id": customer_id,
         })
-        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifer": "fake_identifier",
@@ -114,7 +114,7 @@ class TestClientToken(unittest.TestCase):
             "customer_id": customer_id,
             "fail_on_duplicate_payment_method": True,
         })
-        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http.set_authorization_fingerprint(authorization_fingerprint)
         status_code, response = http.add_card({
             "credit_card": {

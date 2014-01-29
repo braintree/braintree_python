@@ -27,7 +27,7 @@ class ClientToken(object):
         authorization_fingerprint = SignatureService(Configuration.private_key, Crypto.sha256_hmac_hash).sign(data)
 
         return json.dumps({
-            "authorization_fingerprint": authorization_fingerprint,
-            "client_api_url": Configuration.instantiate().base_merchant_url() + "/client_api",
-            "auth_url": Configuration.instantiate().environment.auth_url
+            "authorizationFingerprint": authorization_fingerprint,
+            "clientApiUrl": Configuration.instantiate().base_merchant_url() + "/client_api",
+            "authUrl": Configuration.instantiate().environment.auth_url
         })

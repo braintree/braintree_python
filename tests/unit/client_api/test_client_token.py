@@ -4,7 +4,7 @@ from tests.test_helper import *
 class TestClientToken(unittest.TestCase):
     def test_fingerprint_contains_required_data(self):
         client_token = json.loads(ClientToken.generate())
-        authorization_fingerprint = client_token["authorization_fingerprint"]
+        authorization_fingerprint = client_token["authorizationFingerprint"]
         signature, encoded_data = authorization_fingerprint.split("|")
 
         self.assertTrue(len(signature) > 1)
@@ -14,14 +14,14 @@ class TestClientToken(unittest.TestCase):
         port = os.getenv("GATEWAY_PORT") or "3000"
         client_api_url = "http://localhost:%s/merchants/%s/client_api" % (port, Configuration.merchant_id)
 
-        self.assertEqual(client_token["client_api_url"], client_api_url)
-        self.assertEqual(client_token["auth_url"], "http://auth.venmo.dev:9292")
+        self.assertEqual(client_token["clientApiUrl"], client_api_url)
+        self.assertEqual(client_token["authUrl"], "http://auth.venmo.dev:9292")
 
     def test_fingerprint_optionally_contains_customer_id(self):
         client_token = ClientToken.generate({
             "customer_id": "1234"
         })
-        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         signature, encoded_data = authorization_fingerprint.split("|")
 
         self.assertTrue(len(signature) > 1)
@@ -31,7 +31,7 @@ class TestClientToken(unittest.TestCase):
         client_token = ClientToken.generate({
             "merchant_id": "1234"
         })
-        authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         signature, encoded_data = authorization_fingerprint.split("|")
 
         self.assertTrue(len(signature) > 1)
