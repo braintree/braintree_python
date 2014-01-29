@@ -146,8 +146,8 @@ class ClientApiHttp(Http):
         encoded_fingerprint = urllib.quote_plus(self.options["authorization_fingerprint"])
         url = "/merchants/%s/client_api/credit_cards.json" % self.config.merchant_id
         url += "?authorizationFingerprint=%s" % encoded_fingerprint
-        url += "&sessionIdentifier=%s" % self.options["session_identifier"]
-        url += "&sessionIdentifierType=%s" % self.options["session_identifier_type"]
+        url += "&sharedCustomerIdentifier=%s" % self.options["shared_customer_identifer"]
+        url += "&sharedCustomerIdentifierType=%s" % self.options["shared_customer_identifer_type"]
 
         return self.get(url)
 
@@ -157,11 +157,11 @@ class ClientApiHttp(Http):
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
 
-        if 'session_identifier' in self.options:
-            params['sessionIdentifier'] = self.options['session_identifier']
+        if 'shared_customer_identifer' in self.options:
+            params['sharedCustomerIdentifier'] = self.options['shared_customer_identifer']
 
-        if 'session_identifier_type' in self.options:
-            params['sessionIdentifierType'] = self.options['session_identifier_type']
+        if 'shared_customer_identifer_type' in self.options:
+            params['sharedCustomerIdentifierType'] = self.options['shared_customer_identifer_type']
 
         return self.post(url, params)
 

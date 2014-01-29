@@ -14,8 +14,8 @@ class TestClientToken(unittest.TestCase):
 
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
-            "session_identifier": "fake_identifier",
-            "session_identifier_type": "testing"
+            "shared_customer_identifer": "fake_identifier",
+            "shared_customer_identifer_type": "testing"
         })
 
         status_code, response = http.get_cards()
@@ -33,8 +33,8 @@ class TestClientToken(unittest.TestCase):
         authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
-            "session_identifier": "fake_identifier",
-            "session_identifier_type": "testing"
+            "shared_customer_identifer": "fake_identifier",
+            "shared_customer_identifer_type": "testing"
         })
 
         status_code, response = http.add_card({
@@ -58,8 +58,8 @@ class TestClientToken(unittest.TestCase):
         authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
-            "session_identifier": "fake_identifier",
-            "session_identifier_type": "testing"
+            "shared_customer_identifer": "fake_identifier",
+            "shared_customer_identifer_type": "testing"
         })
 
         status_code, response = http.add_card({
@@ -97,8 +97,8 @@ class TestClientToken(unittest.TestCase):
         authorization_fingerprint = json.loads(client_token)["authorization_fingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
-            "session_identifier": "fake_identifier",
-            "session_identifier_type": "testing"
+            "shared_customer_identifer": "fake_identifier",
+            "shared_customer_identifer_type": "testing"
         })
 
         status_code, response = http.add_card({
