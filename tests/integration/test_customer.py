@@ -286,8 +286,8 @@ class TestCustomer(unittest.TestCase):
         authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifer": "fake_identifier",
-            "shared_customer_identifer_type": "testing"
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
         })
         status_code, response = http.add_card({
             "credit_card": {
