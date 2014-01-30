@@ -135,6 +135,7 @@ class ClientApiHttp(Http):
         return self.__http_do("POST", path, params)
 
     def __http_do(self, http_verb, path, params=None):
+        self.config.use_unsafe_ssl = True
         http_strategy = self.config.http_strategy()
         request_body = json.dumps(params)
         return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
