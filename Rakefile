@@ -10,7 +10,7 @@ namespace :test do
 
   desc "run integration tests"
   task :integration do
-    sh "env PYTHON_HTTP_STRATEGY=pycurl nosetests tests/integration"
+    sh "env PYTHON_HTTP_STRATEGY=requests nosetests tests/integration"
   end
 
   desc "test all http strategies"
