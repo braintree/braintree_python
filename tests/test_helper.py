@@ -137,7 +137,7 @@ class ClientApiHttp(Http):
     def __http_do(self, http_verb, path, params=None):
         self.config.use_unsafe_ssl = True
         http_strategy = self.config.http_strategy()
-        request_body = json.dumps(params)
+        request_body = json.dumps(params) if params else None
         return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
 
     def set_authorization_fingerprint(self, authorization_fingerprint):
