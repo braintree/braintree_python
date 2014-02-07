@@ -36,7 +36,7 @@ class TestHttp(unittest.TestCase):
         if platform.system() == "Darwin":
             return
 
-        environment = Environment(Environment.Sandbox.server, "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("www.google.com", "443", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -48,7 +48,8 @@ class TestHttp(unittest.TestCase):
             self.fail("Expected to receive an SSL error but no exception was raised")
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
-        environment = Environment("www.braintreepayments.com", "443", True, Environment.Production.ssl_certificate)
+        #ip address of api.braintreegateway.com
+        environment = Environment("204.109.13.121", "443", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")

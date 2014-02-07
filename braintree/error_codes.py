@@ -112,18 +112,27 @@ class ErrorCodes(object):
         MasterMerchantAccountIdIsRequired = "82606"
         MasterMerchantAccountMustBeActive = "82608"
         TosAcceptedIsRequired = "82610"
+        CannotBeUpdated = "82674"
+        IdCannotBeUpdated = "82675"
+        MasterMerchantAccountIdCannotBeUpdated = "82676"
+        Declined = "82626"
+        DeclinedMasterCardMatch = "82622"
+        DeclinedOFAC = "82621"
+        DeclinedFailedKYC = "82623"
+        DeclinedSsnInvalid = "82624"
+        DeclinedSsnMatchesDeceased = "82625"
 
         class ApplicantDetails(object):
             AccountNumberIsRequired = "82614"
             CompanyNameIsInvalid = "82631"
             CompanyNameIsRequiredWithTaxId = "82633"
             DateOfBirthIsRequired = "82612"
-            Declined = "82626"
-            DeclinedMasterCardMatch = "82622"
-            DeclinedOFAC = "82621"
-            DeclinedFailedKYC = "82623"
-            DeclinedSsnInvalid = "82624"
-            DeclinedSsnMatchesDeceased = "82625"
+            Declined = "82626" # Keep for backwards compatibility
+            DeclinedMasterCardMatch = "82622" # Keep for backwards compatibility
+            DeclinedOFAC = "82621" # Keep for backwards compatibility
+            DeclinedFailedKYC = "82623" # Keep for backwards compatibility
+            DeclinedSsnInvalid = "82624" # Keep for backwards compatibility
+            DeclinedSsnMatchesDeceased = "82625" # Keep for backwards compatibility
             EmailAddressIsInvalid = "82616"
             FirstNameIsInvalid = "82627"
             FirstNameIsRequired = "82609"
@@ -135,6 +144,10 @@ class ErrorCodes(object):
             SsnIsInvalid = "82615"
             TaxIdIsInvalid = "82632"
             TaxIdIsRequiredWithCompanyName = "82634"
+            DateOfBirthIsInvalid = "82663"
+            EmailAddressIsRequired = "82665"
+            AccountNumberIsInvalid = "82670"
+            TaxIdMustBeBlank = "82673"
 
             class Address(object):
                 LocalityIsRequired = "82618"
@@ -143,6 +156,52 @@ class ErrorCodes(object):
                 RegionIsRequired = "82620"
                 StreetAddressIsInvalid = "82629"
                 StreetAddressIsRequired = "82617"
+                RegionIsInvalid = "82664"
+
+        class Individual(object):
+            FirstNameIsRequired = "82637"
+            LastNameIsRequired = "82638"
+            DateOfBirthIsRequired = "82639"
+            SsnIsInvalid = "82642"
+            EmailAddressIsInvalid = "82643"
+            FirstNameIsInvalid = "82644"
+            LastNameIsInvalid = "82645"
+            PhoneIsInvalid = "82656"
+            DateOfBirthIsInvalid = "82666"
+            EmailAddressIsRequired = "82667"
+
+            class Address(object):
+                StreetAddressIsRequired = "82657"
+                LocalityIsRequired = "82658"
+                PostalCodeIsRequired = "82659"
+                RegionIsRequired = "82660"
+                StreetAddressIsInvalid = "82661"
+                PostalCodeIsInvalid = "82662"
+                RegionIsInvalid = "82668"
+
+        class Business(object):
+            DbaNameIsInvalid = "82646"
+            LegalNameIsInvalid = "82677"
+            LegalNameIsRequiredWithTaxId = "82669"
+            TaxIdIsInvalid = "82647"
+            TaxIdIsRequiredWithLegalName = "82648"
+            TaxIdMustBeBlank = "82672"
+            class Address(object):
+                StreetAddressIsInvalid = "82685"
+                PostalCodeIsInvalid = "82686"
+                RegionIsInvalid = "82684"
+
+        class Funding(object):
+            RoutingNumberIsRequired = "82640"
+            AccountNumberIsRequired = "82641"
+            RoutingNumberIsInvalid = "82649"
+            AccountNumberIsInvalid = "82671"
+            DestinationIsInvalid = "82679"
+            DestinationIsRequired = "82678"
+            EmailAddressIsInvalid = "82681"
+            EmailAddressIsRequired = "82680"
+            MobilePhoneIsInvalid = "82683"
+            MobilePhoneIsRequired = "82682"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"

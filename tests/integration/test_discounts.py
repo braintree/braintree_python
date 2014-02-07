@@ -20,14 +20,16 @@ class TestDiscounts(unittest.TestCase):
 
         for discount in discounts:
             if discount.id == new_id:
-                actual_discount = discount
+                break
+        else:
+            discount = None
 
-        self.assertNotEquals(None, actual_discount)
+        self.assertNotEquals(None, discount)
 
-        self.assertEquals(attributes["amount"], "100.00")
-        self.assertEquals(attributes["description"], "some description")
-        self.assertEquals(attributes["id"], new_id)
-        self.assertEquals(attributes["kind"], "discount")
-        self.assertEquals(attributes["name"], "python_discount")
-        self.assertEquals(attributes["never_expires"], False)
-        self.assertEquals(attributes["number_of_billing_cycles"], 1)
+        self.assertEquals(discount.amount, Decimal("100.00"))
+        self.assertEquals(discount.description, "some description")
+        self.assertEquals(discount.id, new_id)
+        self.assertEquals(discount.kind, "discount")
+        self.assertEquals(discount.name, "python_discount")
+        self.assertEquals(discount.never_expires, False)
+        self.assertEquals(discount.number_of_billing_cycles, 1)
