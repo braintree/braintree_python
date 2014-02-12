@@ -4,6 +4,7 @@ from braintree.subscription import Subscription
 from braintree.merchant_account import MerchantAccount
 from braintree.transaction import Transaction
 from braintree.partner_merchant import PartnerMerchant
+from braintree.transfer import Transfer
 from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 
@@ -22,6 +23,7 @@ class WebhookNotification(Resource):
         SubMerchantAccountApproved = "sub_merchant_account_approved"
         SubMerchantAccountDeclined = "sub_merchant_account_declined"
         TransactionDisbursed = "transaction_disbursed"
+        TransferException = "transfer_exception"
 
     @staticmethod
     def parse(signature, payload):
@@ -47,6 +49,8 @@ class WebhookNotification(Resource):
             self.transaction = Transaction(gateway, node_wrapper['transaction'])
         elif "partner_merchant" in node_wrapper:
             self.partner_merchant = PartnerMerchant(gateway, node_wrapper['partner_merchant'])
+        elif "transfer" in node_wrapper:
+            self.transfer = Transfer(gateway, node_wrapper['transfer'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

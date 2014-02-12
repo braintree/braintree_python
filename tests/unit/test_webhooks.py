@@ -87,6 +87,20 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(100, notification.transaction.amount)
         self.assertEquals(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
 
+    def test_builds_notification_for_transfer_exceptions(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.TransferException,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.TransferException, notification.kind)
+        self.assertEquals("my_id", notification.transfer.id)
+        self.assertEquals(100, notification.transfer.amount)
+        self.assertEquals("invalid_account_number", notification.transfer.message)
+        self.assertEquals("update", notification.transfer.follow_up_action)
+        self.assertEquals(date(2013, 7, 9), notification.transfer.disbursement_date)
 
     def test_builds_notification_for_partner_merchant_connected(self):
         signature, payload = WebhookTesting.sample_notification(
