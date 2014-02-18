@@ -10,7 +10,8 @@ class TestClientToken(unittest.TestCase):
 
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        client_token = ClientToken.generate()
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
 
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
@@ -28,7 +29,9 @@ class TestClientToken(unittest.TestCase):
 
         client_token = ClientToken.generate({
             "customer_id": customer_id,
-            "verify_card": True,
+            "options": {
+                "verify_card": True
+            }
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
@@ -53,7 +56,9 @@ class TestClientToken(unittest.TestCase):
 
         client_token = ClientToken.generate({
             "customer_id": customer_id,
-            "make_default": True,
+            "options": {
+                "make_default": True
+            }
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
@@ -112,7 +117,9 @@ class TestClientToken(unittest.TestCase):
 
         client_token = ClientToken.generate({
             "customer_id": customer_id,
-            "fail_on_duplicate_payment_method": True,
+            "options": {
+                "fail_on_duplicate_payment_method": True
+            }
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http.set_authorization_fingerprint(authorization_fingerprint)
@@ -127,3 +134,12 @@ class TestClientToken(unittest.TestCase):
 
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(len(customer.credit_cards), 1)
+
+    def test_required_data_cannot_be_overridden(self):
+        try:
+            client_token = ClientToken.generate({
+                "merchant_id": "1234"
+            })
+            self.fail("Should have raised exception!")
+        except Exception, e:
+            self.assertEqual("'Invalid keys: merchant_id'", str(e))
