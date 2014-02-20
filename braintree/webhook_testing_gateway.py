@@ -38,7 +38,7 @@ class WebhookTestingGateway(object):
         elif kind == WebhookNotification.Kind.PartnerMerchantDeclined:
             return self.__partner_merchant_declined_sample_xml()
         elif kind == WebhookNotification.Kind.TransferException:
-            return self.__transfer_exception_sample_xml(id)
+            return self.__disbursement_exception_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
 
@@ -56,16 +56,16 @@ class WebhookTestingGateway(object):
             </transaction>
         """ % id
 
-    def __transfer_exception_sample_xml(self, id):
+    def __disbursement_exception_sample_xml(self, id):
         return """
-            <transfer>
+            <disbursement-exception>
               <merchant-account-unique-identifier>abcdef</merchant-account-unique-identifier>
               <id>%s</id>
               <message>invalid_account_number</message>
               <amount>100</amount>
               <disbursement-date type="date">2013-07-09</disbursement-date>
               <follow-up-action>update</follow-up-action>
-            </transfer>
+            </disbursement-exception>
         """ % id
 
     def __subscription_sample_xml(self, id):

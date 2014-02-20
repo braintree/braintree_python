@@ -12,7 +12,7 @@ class TestTransfer(unittest.TestCase):
             'follow_up_action': 'update'
         }
 
-        transfer = Transfer(None, attributes)
+        disbursement_exception = DisbursementException(None, attributes)
 
-        self.assertEquals(transfer.id, '123456')
-        self.assertEquals(transfer.amount, Decimal('100.00'))
+        self.assertEquals(disbursement_exception.id, '123456')
+        self.assertEquals(disbursement_exception.amount, Decimal('100.00'))
