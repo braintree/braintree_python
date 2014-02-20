@@ -6,6 +6,7 @@ class Transfer(Resource):
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
         self.amount = Decimal(self.amount)
+        self._memoized_merchant_account = None
 
     def __repr__(self):
         detail_list = ["amount", "disbursement_date", "message", "follow_up_action", "id"]
@@ -13,7 +14,9 @@ class Transfer(Resource):
 
     @property
     def merchant_account(self):
-        return self.gateway.merchant_account.find(self.merchant_account_id)
+        if not self._memoized_merchant_account:
+            self._memoized_merchant_account = self.gateway.merchant_account.find(self.merchant_account_id)
+        return self._memoized_merchant_account
 
     @property
     def transactions(self):
