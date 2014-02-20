@@ -1,7 +1,7 @@
 from tests.test_helper import *
 from datetime import date
 
-class TestTransfer(unittest.TestCase):
+class TestDisbursementException(unittest.TestCase):
     def test_disbursement_exception_has_merchant_account(self):
         disbursement_exception = DisbursementException(Configuration.gateway(), {"merchant_account_id": "sandbox_sub_merchant_account", "amount": 100})
 

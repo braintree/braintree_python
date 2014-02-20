@@ -89,13 +89,13 @@ class TestWebhooks(unittest.TestCase):
 
     def test_builds_notification_for_disbursement_exceptions(self):
         signature, payload = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.TransferException,
+            WebhookNotification.Kind.DisbursementException,
             "my_id"
         )
 
         notification = WebhookNotification.parse(signature, payload)
 
-        self.assertEquals(WebhookNotification.Kind.TransferException, notification.kind)
+        self.assertEquals(WebhookNotification.Kind.DisbursementException, notification.kind)
         self.assertEquals("my_id", notification.disbursement_exception.id)
         self.assertEquals(100, notification.disbursement_exception.amount)
         self.assertEquals("invalid_account_number", notification.disbursement_exception.message)

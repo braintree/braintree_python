@@ -23,7 +23,7 @@ class WebhookNotification(Resource):
         SubMerchantAccountApproved = "sub_merchant_account_approved"
         SubMerchantAccountDeclined = "sub_merchant_account_declined"
         TransactionDisbursed = "transaction_disbursed"
-        TransferException = "disbursement_exception"
+        DisbursementException = "disbursement_exception"
 
     @staticmethod
     def parse(signature, payload):

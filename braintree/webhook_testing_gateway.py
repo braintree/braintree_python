@@ -37,7 +37,7 @@ class WebhookTestingGateway(object):
             return self.__partner_merchant_disconnected_sample_xml()
         elif kind == WebhookNotification.Kind.PartnerMerchantDeclined:
             return self.__partner_merchant_declined_sample_xml()
-        elif kind == WebhookNotification.Kind.TransferException:
+        elif kind == WebhookNotification.Kind.DisbursementException:
             return self.__disbursement_exception_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
