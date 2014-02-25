@@ -35,7 +35,7 @@ from braintree.status_event import StatusEvent
 from braintree.transaction import Transaction
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_search import TransactionSearch
-from braintree.disbursement_exception import DisbursementException
+from braintree.disbursement import Disbursement
 from braintree.subscription_search import SubscriptionSearch
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction_amounts import TransactionAmounts

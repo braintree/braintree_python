@@ -39,6 +39,8 @@ class WebhookTestingGateway(object):
             return self.__partner_merchant_declined_sample_xml()
         elif kind == WebhookNotification.Kind.DisbursementException:
             return self.__disbursement_exception_sample_xml(id)
+        elif kind == WebhookNotification.Kind.Disbursement:
+            return self.__disbursement_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
 
@@ -58,14 +60,48 @@ class WebhookTestingGateway(object):
 
     def __disbursement_exception_sample_xml(self, id):
         return """
-            <disbursement-exception>
-              <merchant-account-unique-identifier>abcdef</merchant-account-unique-identifier>
+            <disbursement>
               <id>%s</id>
-              <message>invalid_account_number</message>
-              <amount>100</amount>
-              <disbursement-date type="date">2013-07-09</disbursement-date>
-              <follow-up-action>update</follow-up-action>
-            </disbursement-exception>
+              <transaction-ids type="array">
+                <item>afv56j</item>
+                <item>kj8hjk</item>
+              </transaction-ids>
+              <success type="boolean">false</success>
+              <retry type="boolean">false</retry>
+              <merchant-account>
+                <id>merchant_account_token</id>
+                <currency-iso-code>USD</currency-iso-code>
+                <sub-merchant-account type="boolean">false</sub-merchant-account>
+                <status>active</status>
+              </merchant-account>
+              <amount>100.00</amount>
+              <disbursement-date type="date">2014-02-09</disbursement-date>
+              <exception-message>bank_rejected</exception-message>
+              <follow-up-action>update_funding_information</follow-up-action>
+            </disbursement>
+        """ % id
+
+    def __disbursement_sample_xml(self, id):
+        return """
+            <disbursement>
+              <id>%s</id>
+              <transaction-ids type="array">
+                <item>afv56j</item>
+                <item>kj8hjk</item>
+              </transaction-ids>
+              <success type="boolean">true</success>
+              <retry type="boolean">false</retry>
+              <merchant-account>
+                <id>merchant_account_token</id>
+                <currency-iso-code>USD</currency-iso-code>
+                <sub-merchant-account type="boolean">false</sub-merchant-account>
+                <status>active</status>
+              </merchant-account>
+              <amount>100.00</amount>
+              <disbursement-date type="date">2014-02-09</disbursement-date>
+              <exception-message nil="true"/>
+              <follow-up-action nil="true"/>
+            </disbursement>
         """ % id
 
     def __subscription_sample_xml(self, id):

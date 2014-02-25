@@ -87,6 +87,21 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(100, notification.transaction.amount)
         self.assertEquals(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
 
+    def test_builds_notification_for_disbursements(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.Disbursement,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.Disbursement, notification.kind)
+        self.assertEquals("my_id", notification.disbursement.id)
+        self.assertEquals(100, notification.disbursement.amount)
+        self.assertEquals(None, notification.disbursement.exception_message)
+        self.assertEquals(None, notification.disbursement.follow_up_action)
+        self.assertEquals(date(2014, 2, 9), notification.disbursement.disbursement_date)
+
     def test_builds_notification_for_disbursement_exceptions(self):
         signature, payload = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisbursementException,
@@ -96,11 +111,11 @@ class TestWebhooks(unittest.TestCase):
         notification = WebhookNotification.parse(signature, payload)
 
         self.assertEquals(WebhookNotification.Kind.DisbursementException, notification.kind)
-        self.assertEquals("my_id", notification.disbursement_exception.id)
-        self.assertEquals(100, notification.disbursement_exception.amount)
-        self.assertEquals("invalid_account_number", notification.disbursement_exception.message)
-        self.assertEquals("update", notification.disbursement_exception.follow_up_action)
-        self.assertEquals(date(2013, 7, 9), notification.disbursement_exception.disbursement_date)
+        self.assertEquals("my_id", notification.disbursement.id)
+        self.assertEquals(100, notification.disbursement.amount)
+        self.assertEquals("bank_rejected", notification.disbursement.exception_message)
+        self.assertEquals("update_funding_information", notification.disbursement.follow_up_action)
+        self.assertEquals(date(2014, 2, 9), notification.disbursement.disbursement_date)
 
     def test_builds_notification_for_partner_merchant_connected(self):
         signature, payload = WebhookTesting.sample_notification(
