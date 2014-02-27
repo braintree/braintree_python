@@ -13,10 +13,7 @@ class Disbursement(Resource):
         detail_list = ["amount", "disbursement_date", "exception_message", "follow_up_action", "id", "success", "retry"]
         return super(Disbursement, self).__repr__(detail_list)
 
-    @property
     def transactions(self):
-        return self.gateway.transaction.search([
-            TransactionSearch.ids.in_list(self.transaction_ids)
-        ])
+        return self.gateway.transaction.search([TransactionSearch.ids.in_list(self.transaction_ids)])
 
 
