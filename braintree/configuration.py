@@ -14,6 +14,8 @@ class Configuration(object):
             "your_private_key"
         )
     """
+    use_unsafe_ssl = False
+
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key, http_strategy=None):
         Configuration.environment = environment
