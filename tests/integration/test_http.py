@@ -3,9 +3,13 @@ from distutils.version import LooseVersion
 import platform
 import braintree
 import requests
-import pycurl
 
-class CommonHttpTests(object):
+class TestHttp(unittest.TestCase):
+    if LooseVersion(requests.__version__) >= LooseVersion('1.0.0'):
+        SSLError = requests.exceptions.SSLError
+    else:
+        SSLError = requests.models.SSLError
+
     def test_successful_connection_sandbox(self):
         http = self.get_http(Environment.Sandbox)
         try:
@@ -79,7 +83,6 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
 
     def get_http(self, environment):
         config = Configuration(environment, "merchant_id", "public_key", "private_key")
-        config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
         return config.http()
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert(self):
@@ -90,8 +93,8 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
         http = self.get_http(environment)
         try:
             http.get("/")
-        except self.SSLError, e:
-            self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e.message))
+        except self.SSLError as e:
+            self.assertTrue("SSL3_GET_SERVER_CERTIFICATE:certificate verify failed" in str(e))
         except AuthenticationError:
             self.fail("Expected to receive an SSL error but received an Authentication Error instead, check your local openssl installation")
         else:
@@ -103,7 +106,7 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
         http = self.get_http(environment)
         try:
             http.get("/")
-        except self.SSLError, e:
+        except self.SSLError as e:
             pass
         else:
             self.fail("Expected to receive an SSL error but no exception was raised")

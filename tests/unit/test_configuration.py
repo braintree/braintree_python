@@ -47,46 +47,16 @@ class TestConfiguration(unittest.TestCase):
         self.assertEqual(config.public_key, 'public_key')
         self.assertEqual(config.private_key, 'private_key')
 
-    def test_overriding_http_strategy_blows_up_if_setting_an_invalid_strategy(self):
-        old_http_strategy = None
-
-        if "PYTHON_HTTP_STRATEGY" in os.environ:
-            old_http_strategy = os.environ["PYTHON_HTTP_STRATEGY"]
-
-        try:
-            os.environ["PYTHON_HTTP_STRATEGY"] = "invalid"
-            strategy = Configuration.instantiate().http_strategy()
-            self.assertTrue(False, "Expected StandardError")
-        except ValueError, e:
-            self.assertEqual("invalid http strategy", e.message)
-        finally:
-            if old_http_strategy == None:
-                del(os.environ["PYTHON_HTTP_STRATEGY"])
-            else:
-                os.environ["PYTHON_HTTP_STRATEGY"] = old_http_strategy
-
-    def test_overriding_http_strategy(self):
-        old_http_strategy = None
-
-        if "PYTHON_HTTP_STRATEGY" in os.environ:
-            old_http_strategy = os.environ["PYTHON_HTTP_STRATEGY"]
-
-        try:
-            os.environ["PYTHON_HTTP_STRATEGY"] = "httplib"
-            strategy = Configuration.instantiate().http_strategy()
-            self.assertTrue(isinstance(strategy, braintree.util.http_strategy.httplib_strategy.HttplibStrategy))
-        finally:
-            if old_http_strategy == None:
-                del(os.environ["PYTHON_HTTP_STRATEGY"])
-            else:
-                os.environ["PYTHON_HTTP_STRATEGY"] = old_http_strategy
-
     def test_configuring_with_an_http_strategy(self):
         old_http_strategy = Configuration.default_http_strategy
 
+        class FakeStrategy(object):
+            def __init__(self, config, environment):
+                pass
+
         try:
-            Configuration.default_http_strategy = braintree.util.http_strategy.httplib_strategy.HttplibStrategy
+            Configuration.default_http_strategy = FakeStrategy
             strategy = Configuration.instantiate().http_strategy()
-            self.assertTrue(isinstance(strategy, braintree.util.http_strategy.httplib_strategy.HttplibStrategy))
+            self.assertTrue(isinstance(strategy, FakeStrategy))
         finally:
             Configuration.default_http_strategy = old_http_strategy
