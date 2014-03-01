@@ -34,7 +34,7 @@ class TransactionGateway(object):
 
     def find(self, transaction_id):
         try:
-            if transaction_id == None or transaction_id.strip() == "":
+            if transaction_id is None or transaction_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get("/transactions/" + transaction_id)
             return Transaction(self.gateway, response["transaction"])

@@ -38,7 +38,7 @@ class CreditCardGateway(object):
 
     def find(self, credit_card_token):
         try:
-            if credit_card_token == None or credit_card_token.strip() == "":
+            if credit_card_token is None or credit_card_token.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get("/payment_methods/" + credit_card_token)
             return CreditCard(self.gateway, response["credit_card"])

@@ -11,7 +11,7 @@ class CreditCardVerificationGateway(object):
 
     def find(self, verification_id):
         try:
-            if verification_id == None or verification_id.strip() == "":
+            if verification_id is None or verification_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get("/verifications/" + verification_id)
             return CreditCardVerification(self.gateway, response["verification"])
