@@ -28,8 +28,8 @@ class TestErrorResult(unittest.TestCase):
 
     def test_transaction_is_none_if_not_set(self):
         result = ErrorResult("gateway", {"errors": {}, "params": {}, "message": "brief description"})
-        self.assertTrue(result.transaction == None)
+        self.assertTrue(result.transaction is None)
 
     def test_verification_is_none_if_not_set(self):
         result = ErrorResult("gateway", {"errors": {}, "params": {}, "message": "brief description"})
-        self.assertTrue(result.credit_card_verification == None)
+        self.assertTrue(result.credit_card_verification is None)
