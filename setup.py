@@ -1,5 +1,8 @@
 import braintree
-from setuptools import setup
+from setuptools import setup, dist
+
+dist.Distribution(dict(setup_requires='requests'))
+
 setup(
     name="braintree",
     version=braintree.version.Version,
