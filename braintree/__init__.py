@@ -41,7 +41,7 @@ from braintree.transaction_amounts import TransactionAmounts
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.validation_error_collection import ValidationErrorCollection
-from braintree.version import Version
+from braintree.version import __version__
 from braintree.webhook_notification import WebhookNotification
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing import WebhookTesting
