@@ -70,7 +70,7 @@ class Http(object):
             "Accept": "application/xml",
             "Authorization": self.__authorization_header(),
             "Content-type": "application/xml",
-            "User-Agent": "Braintree Python " + version.Version,
+            "User-Agent": "Braintree Python " + version.__version__,
             "X-ApiVersion": braintree.configuration.Configuration.api_version()
         }
 
