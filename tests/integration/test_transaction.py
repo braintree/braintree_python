@@ -1738,5 +1738,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("USD", disbursement_details.settlement_currency_iso_code)
         self.assertEquals(Decimal("1"), disbursement_details.settlement_currency_exchange_rate)
         self.assertEquals(False, disbursement_details.funds_held)
+        self.assertEquals(True, disbursement_details.success)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 
