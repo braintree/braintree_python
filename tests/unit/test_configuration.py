@@ -15,7 +15,7 @@ class TestConfiguration(unittest.TestCase):
             )
             config.http_strategy()
         except AttributeError, e:
-            print e
+            print(e)
             self.assertTrue(False)
         finally:
             # repopulate class level attributes on Configuration
