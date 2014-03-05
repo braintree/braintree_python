@@ -53,7 +53,7 @@ class TestPyCurl(CommonHttpTests, unittest.TestCase):
         http = self.get_http(environment)
         try:
             http.get("/")
-        except pycurl.error, e:
+        except pycurl.error as e:
             error_code, error_msg = e
             self.assertEquals(pycurl.E_SSL_CACERT, error_code)
             self.assertTrue(re.search('verif(y|ication) failed', error_msg))
@@ -68,7 +68,7 @@ class TestPyCurl(CommonHttpTests, unittest.TestCase):
         http = self.get_http(environment)
         try:
             http.get("/")
-        except pycurl.error, e:
+        except pycurl.error as e:
             error_code, error_msg = e
             self.assertEquals(pycurl.E_SSL_PEER_CERTIFICATE, error_code)
             self.assertTrue(re.search("SSL: certificate subject name", error_msg))
