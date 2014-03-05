@@ -14,7 +14,7 @@ class TestConfiguration(unittest.TestCase):
                 private_key='private_key'
             )
             config.http_strategy()
-        except AttributeError, e:
+        except AttributeError as e:
             print(e)
             self.assertTrue(False)
         finally:
