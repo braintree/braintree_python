@@ -1,4 +1,8 @@
-from setuptools import setup
+from __future__ import with_statement
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 with open('braintree/version.py') as f:
     exec(f.read())
