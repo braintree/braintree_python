@@ -29,9 +29,6 @@ class TestPlan(unittest.TestCase):
             "name": "python test plan",
             "number_of_billing_cycles": 1,
             "price": "1.00",
-            "trial_duration": 3,
-            "trial_duration_unit": "day",
-            "trial_period": True,
         }
 
         Configuration.instantiate().http().post("/plans/create_plan_for_tests", {"plan": attributes})
@@ -74,9 +71,6 @@ class TestPlan(unittest.TestCase):
         self.assertEquals(attributes["name"], "python test plan")
         self.assertEquals(attributes["number_of_billing_cycles"], 1)
         self.assertEquals(attributes["price"], "1.00")
-        self.assertEquals(attributes["trial_duration"], 3)
-        self.assertEquals(attributes["trial_duration_unit"], "day")
-        self.assertEquals(attributes["trial_period"], True)
 
         self.assertEquals(add_on_attributes["name"], actual_plan.add_ons[0].name)
         self.assertEquals(discount_attributes["name"], actual_plan.discounts[0].name)
