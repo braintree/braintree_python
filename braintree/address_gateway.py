@@ -30,7 +30,7 @@ class AddressGateway(object):
 
     def find(self, customer_id, address_id):
         try:
-            if customer_id == None or customer_id.strip() == "" or address_id == None or address_id.strip() == "":
+            if customer_id is None or customer_id.strip() == "" or address_id is None or address_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get("/customers/" + customer_id + "/addresses/" + address_id)
             return Address(self.gateway, response["address"])

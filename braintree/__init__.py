@@ -19,6 +19,9 @@ from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.environment import Environment
 from braintree.merchant_account import MerchantAccount
+from braintree.merchant_account.business_details import BusinessDetails
+from braintree.merchant_account.funding_details import FundingDetails
+from braintree.merchant_account.individual_details import IndividualDetails
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.partner_merchant import PartnerMerchant
 from braintree.plan import Plan
@@ -32,13 +35,14 @@ from braintree.status_event import StatusEvent
 from braintree.transaction import Transaction
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_search import TransactionSearch
+from braintree.disbursement import Disbursement
 from braintree.subscription_search import SubscriptionSearch
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction_amounts import TransactionAmounts
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.validation_error_collection import ValidationErrorCollection
-from braintree.version import Version
+from braintree.version import __version__
 from braintree.webhook_notification import WebhookNotification
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing import WebhookTesting

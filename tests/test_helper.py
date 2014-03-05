@@ -3,13 +3,10 @@ import random
 import re
 import unittest
 import sys
-if sys.version_info[0] == 2:
-    from urllib import urlencode
-    from httplib import HTTPConnection
-else:
-    from urllib.parse import urlencode
-    from http.client import HTTPConnection
+from six.moves.urllib.parse import urlencode
+from six.moves.http_client import HTTPConnection
 import warnings
+from random import randint
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
@@ -25,9 +22,11 @@ Configuration.configure(
     "integration_private_key"
 )
 
+
 def showwarning(message, category, filename, lineno, file=None, line=None):
     pass
 warnings.showwarning = showwarning
+
 
 class TestHelper(object):
 

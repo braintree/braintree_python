@@ -276,6 +276,38 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
         self.assertEquals(address.id, transaction.shipping_details.id)
 
+    def test_sale_with_billing_address_id(self):
+        result = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010"
+            }
+        })
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        result = Address.create({
+            "customer_id": customer.id,
+            "street_address": "123 Fake St."
+        })
+        self.assertTrue(result.is_success)
+        address = result.address
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "customer_id": customer.id,
+            "billing_address_id": address.id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals("123 Fake St.", transaction.billing_details.street_address)
+        self.assertEquals(address.id, transaction.billing_details.id)
+
     def test_sale_with_device_session_id_and_fraud_merchant_id(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1706,5 +1738,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("USD", disbursement_details.settlement_currency_iso_code)
         self.assertEquals(Decimal("1"), disbursement_details.settlement_currency_exchange_rate)
         self.assertEquals(False, disbursement_details.funds_held)
+        self.assertEquals(True, disbursement_details.success)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 

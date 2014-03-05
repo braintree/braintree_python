@@ -5,6 +5,28 @@
 * Remove httplib strategy and pycurl strategy
 * Add Python 3.3+ support
 
+## 2.28.0
+
+* Disbursement Webhooks
+
+## 2.27.0
+
+* Fix using instantiated Configuration objects without first calling Configuration.configure
+* Accept billing_address_id on transaction create
+* Expose current_billing_cycle on addons and discounts
+
+## 2.26.0
+
+* Merchant account find API
+
+## 2.25.0
+
+* Merchant account update API
+* Merchant account create API v2
+
+## 2.24.1
+* Update configuration URLs
+
 ## 2.24.0
 * Add partnership support
 * Add partner configuration

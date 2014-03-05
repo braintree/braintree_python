@@ -3,6 +3,25 @@ import braintree
 import os
 
 class TestConfiguration(unittest.TestCase):
+    def test_works_with_unconfigured_configuration(self):
+        try:
+            # reset class level attributes on Configuration set in test helper
+            reload(braintree.configuration)
+            config = Configuration(
+                environment=braintree.Environment.Sandbox,
+                merchant_id='my_merchant_id',
+                public_key='public_key',
+                private_key='private_key'
+            )
+            config.http_strategy()
+        except AttributeError as e:
+            print(e)
+            self.assertTrue(False)
+        finally:
+            # repopulate class level attributes on Configuration
+            import tests.test_helper
+            reload(tests.test_helper)
+
     def test_base_merchant_path_for_development(self):
         self.assertEqual("/merchants/integration_merchant_id", Configuration.instantiate().base_merchant_path())
 
