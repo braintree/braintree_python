@@ -82,6 +82,7 @@ class TransactionSearch:
     authorized_at = Search.RangeNodeBuilder("authorized_at")
     created_at = Search.RangeNodeBuilder("created_at")
     disbursement_date = Search.RangeNodeBuilder("disbursement_date")
+    dispute_date = Search.RangeNodeBuilder("dispute_date")
     failed_at = Search.RangeNodeBuilder("failed_at")
     gateway_rejected_at = Search.RangeNodeBuilder("gateway_rejected_at")
     processor_declined_at = Search.RangeNodeBuilder("processor_declined_at")

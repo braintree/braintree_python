@@ -1025,6 +1025,146 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction_id, collection.first.id)
 
+    def test_advanced_search_range_node_disputed_date_less_than_or_equal_to(self):
+        transaction_id = "disputedtransaction"
+        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
+        past = disputed_time - timedelta(minutes=10)
+        future = disputed_time + timedelta(minutes=10)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date <= past
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date <= disputed_time
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date <= future
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+    def test_advanced_search_range_node_disputed_date_greater_than_or_equal_to(self):
+        transaction_id = "disputedtransaction"
+        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
+        past = disputed_time - timedelta(minutes=10)
+        future = disputed_time + timedelta(days=1)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date >= past
+        ])
+
+        self.assertEquals(2, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date >= disputed_time
+        ])
+
+        self.assertEquals(2, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date >= future
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+
+    def test_advanced_search_range_node_disputed_date_between(self):
+        transaction_id = "disputedtransaction"
+        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
+        past = disputed_time - timedelta(days=1)
+        future = disputed_time + timedelta(days=1)
+        future2 = disputed_time + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date.between(past, disputed_time)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date.between(disputed_time, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date.between(future, future2)
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_disputed_date_is(self):
+        transaction_id = "disputedtransaction"
+        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
+        past = disputed_time - timedelta(days=10)
+        now = disputed_time
+        future = disputed_time + timedelta(days=10)
+        future2 = disputed_time + timedelta(days=20)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date == past
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date == now
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date == future
+        ])
+
+        self.assertEquals(0, collection.maximum_size)
+
+    def test_advanced_search_range_node_disputed_date_with_dates(self):
+        transaction_id = "disputedtransaction"
+        disputed_date = date(2014, 3, 1)
+        past = disputed_date - timedelta(days=1)
+        future = disputed_date + timedelta(days=1)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.dispute_date.between(past, future)
+        ])
+
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction_id, collection.first.id)
+
     def test_advanced_search_range_node_authorization_expired_at(self):
         two_days_ago = datetime.today() - timedelta(days=2)
         yesterday = datetime.today() - timedelta(days=1)
