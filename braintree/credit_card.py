@@ -176,6 +176,17 @@ class CreditCard(Resource):
         return Configuration.gateway().credit_card.find(credit_card_token)
 
     @staticmethod
+    def from_nonce(nonce):
+        """
+        Convert a payment method nonce into a CreditCard. This does not return
+        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided
+        credit_card_id is not found. ::
+
+            credit_card = braintree.CreditCard.from_nonce("my_payment_method_nonce")
+        """
+        return Configuration.gateway().credit_card.from_nonce(nonce)
+
+    @staticmethod
     def create_signature():
         return CreditCard.signature("create")
 
