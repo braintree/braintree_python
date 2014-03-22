@@ -6,9 +6,11 @@ class Dispute(AttributeGetter):
         """
         Constants representing dispute statuses. Available types are:
 
+        * braintree.Dispute.Status.Open
         * braintree.Dispute.Status.Won
         * braintree.Dispute.Status.Lost
         """
+        Open  = "open"
         Won  = "won"
         Lost = "lost"
 
