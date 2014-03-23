@@ -1747,6 +1747,7 @@ class TestTransaction(unittest.TestCase):
         dispute = transaction.disputes[0]
 
         self.assertEquals(date(2014, 3, 1), dispute.received_date)
+        self.assertEquals(date(2014, 3, 21), dispute.reply_by_date)
         self.assertEquals("USD", dispute.currency_iso_code)
         self.assertEquals(Decimal("250.00"), dispute.amount)
         self.assertEquals(Dispute.Status.Won, dispute.status)
