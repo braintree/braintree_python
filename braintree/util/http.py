@@ -63,7 +63,7 @@ class Http(object):
                 return XmlUtil.dict_from_xml(response_body)
 
     def __authorization_header(self):
-        return "Basic " + base64.encodestring(self.config.public_key + ":" + self.config.private_key).strip()
+        return "Basic " + base64.encodestring(self.config.public_key + ":" + self.config.private_key).replace("\n", "").strip()
 
     def __headers(self):
         return {

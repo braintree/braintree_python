@@ -1769,3 +1769,23 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(False, disbursement_details.funds_held)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 
+    def test_sale_with_three_d_secure_token(self):
+        with TestHelper.three_d_secure_merchant():
+            three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2009",
+            })
+
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "three_d_secure_token": three_d_secure_token
+            })
+
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertEquals(Transaction.Type.Sale, transaction.type)
