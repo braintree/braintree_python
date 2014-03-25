@@ -1816,3 +1816,26 @@ class TestTransaction(unittest.TestCase):
                 ErrorCodes.Transaction.ThreeDSecureTokenIsInvalid,
                 result.errors.for_object("transaction").on("three_d_secure_token")[0].code
             )
+
+    def test_sale_returns_error_with_mismatched_3ds_verification_data(self):
+        with TestHelper.three_d_secure_merchant():
+            three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2009",
+            })
+
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "5105105105105100",
+                    "expiration_date": "05/2009"
+                },
+                "three_d_secure_token": three_d_secure_token
+            })
+
+            self.assertFalse(result.is_success)
+            self.assertEquals(
+                ErrorCodes.Transaction.ThreeDSecureTransactionDataDoesntMatchVerify,
+                result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+            )
