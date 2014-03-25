@@ -1787,5 +1787,32 @@ class TestTransaction(unittest.TestCase):
             })
 
             self.assertTrue(result.is_success)
-            transaction = result.transaction
-            self.assertEquals(Transaction.Type.Sale, transaction.type)
+
+    def test_sale_without_three_d_secure_token(self):
+        with TestHelper.three_d_secure_merchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                }
+            })
+
+            self.assertTrue(result.is_success)
+
+    def test_sale_returns_error_with_none_three_d_secure_token(self):
+        with TestHelper.three_d_secure_merchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "three_d_secure_token": None
+            })
+
+            self.assertFalse(result.is_success)
+            self.assertEquals(
+                ErrorCodes.Transaction.ThreeDSecureTokenIsInvalid,
+                result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+            )
