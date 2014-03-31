@@ -1,5 +1,6 @@
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
@@ -1741,3 +1742,13 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(True, disbursement_details.success)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 
+    def test_find_exposes_disputes(self):
+        transaction = Transaction.find("disputedtransaction")
+        dispute = transaction.disputes[0]
+
+        self.assertEquals(date(2014, 3, 1), dispute.received_date)
+        self.assertEquals(date(2014, 3, 21), dispute.reply_by_date)
+        self.assertEquals("USD", dispute.currency_iso_code)
+        self.assertEquals(Decimal("250.00"), dispute.amount)
+        self.assertEquals(Dispute.Status.Won, dispute.status)
+        self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
