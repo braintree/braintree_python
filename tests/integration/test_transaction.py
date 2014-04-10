@@ -1744,7 +1744,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
-        dispute = sorted(transaction.disputes, key=lambda x: x.received_date)[0]
+        dispute = transaction.disputes[0]
 
         self.assertEquals(date(2014, 3, 1), dispute.received_date)
         self.assertEquals(date(2014, 3, 21), dispute.reply_by_date)
