@@ -37,6 +37,7 @@ from braintree.transaction import Transaction
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_search import TransactionSearch
 from braintree.signature_service import SignatureService
+from braintree.disbursement import Disbursement
 from braintree.subscription_search import SubscriptionSearch
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction_amounts import TransactionAmounts
