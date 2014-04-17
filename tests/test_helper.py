@@ -31,7 +31,7 @@ class TestHelper(object):
     default_merchant_account_id = "sandbox_credit_card"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
     non_default_sub_merchant_account_id = "sandbox_sub_merchant_account"
-    three_d_secure_merchant_account_id = "euro_ladders_instant"
+    three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",
          "id": "integration_plan_with_add_ons_and_discounts",
@@ -88,10 +88,10 @@ class TestHelper(object):
 
     @staticmethod
     def create_3ds_verification(merchant_account_id, params):
-        response = Configuration.instantiate().http().post("/three_d_secure/create_test_3ds/" + merchant_account_id, {
-            "cardinal_verification": params
+        response = Configuration.instantiate().http().post("/three_d_secure/create_verification/" + merchant_account_id, {
+            "three_d_secure_verification": params
         })
-        return response["cardinal_verification"]["public_id"]
+        return response["three_d_secure_verification"]["three_d_secure_token"]
 
     @staticmethod
     @contextmanager
@@ -110,12 +110,6 @@ class TestHelper(object):
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
-
-    @staticmethod
-    @contextmanager
-    def three_d_secure_merchant():
-        with TestHelper.other_merchant("cardinal_integration_merchant_id", "cardinal_integration_public_key", "cardinal_integration_private_key"):
-            yield
 
     @staticmethod
     def includes(collection, expected):
