@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.dispute import Dispute
 
 class TestWebhooks(unittest.TestCase):
     def test_sample_notification_builds_a_parsable_notification(self):
@@ -116,6 +117,42 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals("bank_rejected", notification.disbursement.exception_message)
         self.assertEquals("update_funding_information", notification.disbursement.follow_up_action)
         self.assertEquals(date(2014, 2, 9), notification.disbursement.disbursement_date)
+
+    def test_builds_notification_for_dispute_opened(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeOpened,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.DisputeOpened, notification.kind)
+        self.assertEquals("my_id", notification.transaction.id)
+        self.assertEquals(Dispute.Status.Open, notification.transaction.disputes[0].status)
+
+    def test_builds_notification_for_dispute_lost(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeLost,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.DisputeLost, notification.kind)
+        self.assertEquals("my_id", notification.transaction.id)
+        self.assertEquals(Dispute.Status.Lost, notification.transaction.disputes[0].status)
+
+    def test_builds_notification_for_dispute_won(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeWon,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload)
+
+        self.assertEquals(WebhookNotification.Kind.DisputeWon, notification.kind)
+        self.assertEquals("my_id", notification.transaction.id)
+        self.assertEquals(Dispute.Status.Won, notification.transaction.disputes[0].status)
 
     def test_builds_notification_for_partner_merchant_connected(self):
         signature, payload = WebhookTesting.sample_notification(

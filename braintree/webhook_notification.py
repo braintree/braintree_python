@@ -25,6 +25,9 @@ class WebhookNotification(Resource):
         TransactionDisbursed = "transaction_disbursed"
         DisbursementException = "disbursement_exception"
         Disbursement = "disbursement"
+        DisputeOpened = "dispute_opened"
+        DisputeLost = "dispute_lost"
+        DisputeWon = "dispute_won"
 
     @staticmethod
     def parse(signature, payload):
