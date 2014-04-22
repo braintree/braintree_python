@@ -32,9 +32,9 @@ class WebhookNotificationGateway(object):
         signature = self.__matching_signature(signature_pairs)
         if not signature:
             raise InvalidSignatureError("no matching public key")
-        if not any(self.__valid_signature(signature, p) for p in [payload, payload + "\n"]):
+        if not any(self.__payload_matches(signature, p) for p in [payload, payload + "\n"]):
             raise InvalidSignatureError("signature does not match payload - one has been modified")
 
-    def __valid_signature(self, signature, payload):
+    def __payload_matches(self, signature, payload):
         payload_signature = Crypto.sha1_hmac_hash(self.config.private_key, payload)
         return Crypto.secure_compare(payload_signature, signature)
