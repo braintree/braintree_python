@@ -1,3 +1,4 @@
+import re
 import base64
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
 from braintree.util.crypto import Crypto
@@ -10,6 +11,8 @@ class WebhookNotificationGateway(object):
         self.config = gateway.config
 
     def parse(self, signature, payload):
+        if re.search("[^A-Za-z0-9+=\/\n]", payload):
+            raise InvalidSignatureError("payload contains illegal characters")
         self.__validate_signature(signature, payload)
         attributes = XmlUtil.dict_from_xml(base64.decodestring(payload))
         return WebhookNotification(self.gateway, attributes['notification'])
@@ -24,10 +27,14 @@ class WebhookNotificationGateway(object):
                 return signature
         return None
 
-    def __validate_signature(self, signature, payload):
-        signature_pairs = [pair.split("|") for pair in signature.split("&") if "|" in pair]
-        matching_signature = self.__matching_signature(signature_pairs)
-        payload_signature = Crypto.sha1_hmac_hash(self.config.private_key, payload)
+    def __validate_signature(self, signature_string, payload):
+        signature_pairs = [pair.split("|") for pair in signature_string.split("&") if "|" in pair]
+        signature = self.__matching_signature(signature_pairs)
+        if not signature:
+            raise InvalidSignatureError("no matching public key")
+        if not any(self.__valid_signature(signature, p) for p in [payload, payload + "\n"]):
+            raise InvalidSignatureError("signature does not match payload - one has been modified")
 
-        if not Crypto.secure_compare(payload_signature, matching_signature):
-            raise InvalidSignatureError
+    def __valid_signature(self, signature, payload):
+        payload_signature = Crypto.sha1_hmac_hash(self.config.private_key, payload)
+        return Crypto.secure_compare(payload_signature, signature)

@@ -14,7 +14,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     @raises(InvalidSignatureError)
-    def test_invalid_signature(self):
+    def test_completely_invalid_signature(self):
         signature, payload = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
@@ -22,23 +22,64 @@ class TestWebhooks(unittest.TestCase):
 
         WebhookNotification.parse("bad_stuff", payload)
 
-    @raises(InvalidSignatureError)
-    def test_modified_signature(self):
+    def test_parse_raises_when_public_key_is_wrong(self):
         signature, payload = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
-        WebhookNotification.parse(signature[:-1] + "!", payload)
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="wrong_public_key",
+            private_key="wrong_private_key"
+        )
+        gateway = BraintreeGateway(config)
 
-    @raises(InvalidSignatureError)
-    def test_invalid_public_key(self):
+        try:
+            gateway.webhook_notification.parse(signature, payload)
+        except InvalidSignatureError, e:
+            self.assertEquals("no matching public key", e.message)
+        else:
+            self.assertFalse("raises exception")
+
+    def test_invalid_signature_when_payload_modified(self):
         signature, payload = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
-        WebhookNotification.parse("bad_stuff" + signature, payload)
+        try:
+            WebhookNotification.parse(signature, "badstuff" + payload)
+        except InvalidSignatureError, e:
+            self.assertEquals("signature does not match payload - one has been modified", e.message)
+        else:
+            self.assertFalse("raises exception")
+
+    def test_invalid_signature_when_contains_invalid_characters(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionWentPastDue,
+            "my_id"
+        )
+
+        try:
+            WebhookNotification.parse(signature, "~* invalid! *~")
+        except InvalidSignatureError, e:
+            self.assertEquals("payload contains illegal characters", e.message)
+        else:
+            self.assertFalse("raises exception")
+
+    def test_parse_retries_payload_with_a_newline(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionWentPastDue,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(signature, payload.rstrip())
+
+        self.assertEquals(WebhookNotification.Kind.SubscriptionWentPastDue, notification.kind)
+        self.assertEquals("my_id", notification.subscription.id)
+        self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     def test_verify_returns_a_correct_challenge_response(self):
         response = WebhookNotification.verify("verification_token")
