@@ -69,6 +69,17 @@ class TestWebhooks(unittest.TestCase):
         else:
             self.assertFalse("raises exception")
 
+    def test_parse_allows_all_valid_characters(self):
+        signature, payload = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionWentPastDue,
+            "my_id"
+        )
+
+        try:
+            WebhookNotification.parse(signature, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+=/\n")
+        except InvalidSignatureError, e:
+            self.assertNotEquals("payload contains illegal characters", e.message)
+
     def test_parse_retries_payload_with_a_newline(self):
         signature, payload = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,

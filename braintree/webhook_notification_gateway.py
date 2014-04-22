@@ -11,7 +11,7 @@ class WebhookNotificationGateway(object):
         self.config = gateway.config
 
     def parse(self, signature, payload):
-        if re.search("[^A-Za-z0-9+=\/\n]", payload):
+        if re.search("[^A-Za-z0-9+=/\n]", payload):
             raise InvalidSignatureError("payload contains illegal characters")
         self.__validate_signature(signature, payload)
         attributes = XmlUtil.dict_from_xml(base64.decodestring(payload))
