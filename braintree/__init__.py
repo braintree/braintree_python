@@ -41,6 +41,7 @@ from braintree.disbursement import Disbursement
 from braintree.subscription_search import SubscriptionSearch
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction_amounts import TransactionAmounts
+from braintree.transaction_details import TransactionDetails
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.validation_error_collection import ValidationErrorCollection

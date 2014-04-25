@@ -1,5 +1,6 @@
 from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
+from braintree.transaction_details import TransactionDetails
 
 class Dispute(AttributeGetter):
     class Status(object):
@@ -46,3 +47,5 @@ class Dispute(AttributeGetter):
 
         if self.amount is not None:
             self.amount = Decimal(self.amount)
+        if "transaction" in attributes:
+            self.transaction_details = TransactionDetails(attributes.pop("transaction"))

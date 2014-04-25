@@ -1781,3 +1781,5 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("250.00"), dispute.amount)
         self.assertEquals(Dispute.Status.Won, dispute.status)
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
+        self.assertEquals("disputedtransaction", dispute.transaction_details.id)
+        self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
