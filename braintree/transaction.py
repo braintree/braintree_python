@@ -38,7 +38,7 @@ class Transaction(Resource):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",

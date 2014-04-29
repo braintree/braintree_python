@@ -72,7 +72,7 @@ class TestTransaction(unittest.TestCase):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
@@ -129,7 +129,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("M", transaction.avs_street_address_response_code)
         self.assertEquals("Dan", transaction.customer_details.first_name)
         self.assertEquals("Smith", transaction.customer_details.last_name)
-        self.assertEquals("Braintree Payment Solutions", transaction.customer_details.company)
+        self.assertEquals("Braintree", transaction.customer_details.company)
         self.assertEquals("dan@example.com", transaction.customer_details.email)
         self.assertEquals("419-555-1234", transaction.customer_details.phone)
         self.assertEquals("419-555-1235", transaction.customer_details.fax)
