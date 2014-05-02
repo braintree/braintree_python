@@ -179,8 +179,8 @@ class TestWebhooks(unittest.TestCase):
         notification = WebhookNotification.parse(signature, payload)
 
         self.assertEquals(WebhookNotification.Kind.DisputeOpened, notification.kind)
-        self.assertEquals("my_id", notification.transaction.id)
-        self.assertEquals(Dispute.Status.Open, notification.transaction.disputes[0].status)
+        self.assertEquals("my_id", notification.dispute.id)
+        self.assertEquals(Dispute.Status.Open, notification.dispute.status)
 
     def test_builds_notification_for_dispute_lost(self):
         signature, payload = WebhookTesting.sample_notification(
@@ -191,8 +191,8 @@ class TestWebhooks(unittest.TestCase):
         notification = WebhookNotification.parse(signature, payload)
 
         self.assertEquals(WebhookNotification.Kind.DisputeLost, notification.kind)
-        self.assertEquals("my_id", notification.transaction.id)
-        self.assertEquals(Dispute.Status.Lost, notification.transaction.disputes[0].status)
+        self.assertEquals("my_id", notification.dispute.id)
+        self.assertEquals(Dispute.Status.Lost, notification.dispute.status)
 
     def test_builds_notification_for_dispute_won(self):
         signature, payload = WebhookTesting.sample_notification(
@@ -203,8 +203,8 @@ class TestWebhooks(unittest.TestCase):
         notification = WebhookNotification.parse(signature, payload)
 
         self.assertEquals(WebhookNotification.Kind.DisputeWon, notification.kind)
-        self.assertEquals("my_id", notification.transaction.id)
-        self.assertEquals(Dispute.Status.Won, notification.transaction.disputes[0].status)
+        self.assertEquals("my_id", notification.dispute.id)
+        self.assertEquals(Dispute.Status.Won, notification.dispute.status)
 
     def test_builds_notification_for_partner_merchant_connected(self):
         signature, payload = WebhookTesting.sample_notification(
