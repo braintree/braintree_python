@@ -1,3 +1,8 @@
+## 2.29.1
+
+* Make webhook parsing more robust with newlines
+* Add messages to InvalidSignature exceptions
+
 ## 2.29.0
 
 * Include Dispute information on Transaction
