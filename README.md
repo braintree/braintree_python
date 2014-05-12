@@ -46,6 +46,9 @@ _Note:_ Although discouraged, the dependency on PycURL / requests can be bypasse
             print "  code: " + error.code
             print "  message: " + error.message
 
+## Testing
+
+Our friends at [Venmo](https://venmo.com) have [an open source library](https://github.com/venmo/btnamespace) designed to simplify testing of applications using this library.
 
 ## Open Source Attribution
 

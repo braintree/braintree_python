@@ -1,3 +1,4 @@
+import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.dispute import Dispute
@@ -71,7 +72,7 @@ class TestTransaction(unittest.TestCase):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
@@ -128,7 +129,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("M", transaction.avs_street_address_response_code)
         self.assertEquals("Dan", transaction.customer_details.first_name)
         self.assertEquals("Smith", transaction.customer_details.last_name)
-        self.assertEquals("Braintree Payment Solutions", transaction.customer_details.company)
+        self.assertEquals("Braintree", transaction.customer_details.company)
         self.assertEquals("dan@example.com", transaction.customer_details.email)
         self.assertEquals("419-555-1234", transaction.customer_details.phone)
         self.assertEquals("419-555-1235", transaction.customer_details.fax)
@@ -684,6 +685,34 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.sale({
             "amount": "10.00",
             "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+
+    def test_sale_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+
+
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": nonce
         })
 
         self.assertTrue(result.is_success)

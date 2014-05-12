@@ -351,6 +351,33 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(result.errors.for_object("credit_card") \
                 .on("venmo_sdk_payment_method_code")[0].code, ErrorCodes.CreditCard.InvalidVenmoSDKPaymentMethodCode)
 
+    def test_create_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+        customer = Customer.create().customer
+
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals("411111", result.credit_card.bin)
+
     def test_create_with_venmo_sdk_session(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -649,6 +676,124 @@ class TestCreditCard(unittest.TestCase):
             self.assertTrue(False)
         except Exception, e:
             self.assertEquals("payment method with token bad_token not found", str(e))
+
+    def test_from_nonce_with_unlocked_nonce(self):
+        config = Configuration.instantiate()
+        customer = Customer.create().customer
+
+        client_token = ClientToken.generate({
+            "customer_id": customer.id,
+        })
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            }
+        })
+        self.assertEqual(status_code, 201)
+        nonce = json.loads(response)["nonce"]
+
+        card = CreditCard.from_nonce(nonce)
+        customer = Customer.find(customer.id)
+        self.assertEquals(customer.credit_cards[0].token, card.token)
+
+    def test_from_nonce_with_unlocked_nonce_pointing_to_shared_card(self):
+        config = Configuration.instantiate()
+
+        client_token = ClientToken.generate()
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        self.assertEqual(status_code, 201)
+        nonce = json.loads(response)["nonce"]
+
+        try:
+            CreditCard.from_nonce(nonce)
+            self.assertTrue(False)
+        except Exception, e:
+            self.assertIn("not found", str(e))
+
+    def test_from_nonce_with_consumed_nonce(self):
+        config = Configuration.instantiate()
+        customer = Customer.create().customer
+
+        client_token = ClientToken.generate({
+            "customer_id": customer.id,
+        })
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            }
+        })
+        self.assertEqual(status_code, 201)
+        nonce = json.loads(response)["nonce"]
+
+        CreditCard.from_nonce(nonce)
+        try:
+            CreditCard.from_nonce(nonce)
+            self.assertTrue(False)
+        except Exception, e:
+            self.assertIn("consumed", str(e))
+
+    def test_from_nonce_with_locked_nonce(self):
+        config = Configuration.instantiate()
+
+        client_token = ClientToken.generate()
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        self.assertEqual(status_code, 201)
+
+        status_code, response = http.get_cards()
+        self.assertEqual(status_code, 200)
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
+
+        try:
+            CreditCard.from_nonce(nonce)
+            self.assertTrue(False)
+        except Exception, e:
+            self.assertIn("locked", str(e))
 
     def test_create_from_transparent_redirect(self):
         customer = Customer.create().customer

@@ -38,7 +38,7 @@ class Transaction(Resource):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
@@ -401,7 +401,7 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
-            "device_data", "billing_address_id",
+            "device_data", "billing_address_id", "payment_method_nonce",
             "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [

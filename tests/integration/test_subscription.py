@@ -46,6 +46,35 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(0, subscription.failure_count)
         self.assertEquals(self.credit_card.token, subscription.payment_method_token)
 
+    def test_create_returns_successful_result_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        authorization_fingerprint = json.loads(ClientToken.generate({"customer_id": customer_id}))["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+
+        result = Subscription.create({
+            "payment_method_nonce": nonce,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.subscription.transactions[0]
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+
+
     def test_create_can_set_the_id(self):
         new_id = str(random.randint(1, 1000000))
         result = Subscription.create({
@@ -616,6 +645,36 @@ class TestSubscription(unittest.TestCase):
 
         subscription = result.subscription
         self.assertEquals(newCard.token, subscription.payment_method_token)
+
+    def test_update_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        customer_id = self.credit_card.customer_id
+        authorization_fingerprint = json.loads(ClientToken.generate({"customer_id": customer_id}))["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4242424242424242",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+
+        result = Subscription.update(self.updateable_subscription.id, {
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+
+        subscription = result.subscription
+        newCard = CreditCard.find(subscription.payment_method_token)
+        self.assertEquals("4242", newCard.last_4)
+        self.assertNotEquals(newCard.last_4, self.credit_card.last_4)
 
     def test_update_with_number_of_billing_cycles(self):
         result = Subscription.update(self.updateable_subscription.id, {

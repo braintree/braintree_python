@@ -16,4 +16,6 @@ class TestSetup(unittest.TestCase):
                 if package_from_directory not in directories_that_dont_have_packages:
                     packages_from_directories.append(package_from_directory)
 
-        self.assertEquals(sorted(packages_from_directories), sorted(packages_from_setup))
+        mismatch_message = "List of packages in setup.py doesn't match subdirectories of 'braintree' - " \
+                + "add your new directory to 'packages, or if none, `git clean -df` to remove a stale directory"
+        self.assertEquals(sorted(packages_from_directories), sorted(packages_from_setup), mismatch_message)

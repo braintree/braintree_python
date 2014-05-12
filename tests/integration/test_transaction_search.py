@@ -1055,7 +1055,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEquals(transaction_id, collection.first.id)
 
     def test_advanced_search_range_node_disputed_date_greater_than_or_equal_to(self):
-        transaction_id = "disputedtransaction"
+        transaction_id = "2disputetransaction"
         disputed_time = datetime(2014, 3, 1, 0, 0, 0)
         past = disputed_time - timedelta(minutes=10)
         future = disputed_time + timedelta(days=1)
