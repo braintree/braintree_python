@@ -110,3 +110,37 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEquals(found_credit_card.__class__, CreditCard)
         self.assertEquals(found_credit_card.bin, "411111")
 
+    def test_delete_deletes_a_credit_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        })
+        self.assertTrue(result.is_success)
+
+        delete_result = PaymentMethod.delete(result.credit_card.token)
+        self.assertTrue(delete_result.is_success)
+        self.assertRaises(NotFoundError, PaymentMethod.find, result.credit_card.token)
+
+    def test_delete_deletes_a_paypal_account(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "paypal_account": {"consent-code": "consent-code"},
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce
+        })
+        self.assertTrue(result.is_success)
+
+        delete_result = PaymentMethod.delete(result.payment_method.token)
+        self.assertTrue(delete_result.is_success)
+        self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)

@@ -31,6 +31,9 @@ class PaymentMethodGateway(object):
         except NotFoundError:
             raise NotFoundError("payment method with token " + payment_method_token + " not found")
 
+    def delete(self, payment_method_token):
+        self.config.http().delete("/payment_methods/any/" + payment_method_token)
+        return SuccessfulResult()
 
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)

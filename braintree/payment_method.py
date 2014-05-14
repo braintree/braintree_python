@@ -12,6 +12,10 @@ class PaymentMethod(Resource):
         return Configuration.gateway().payment_method.find(payment_method_token)
 
     @staticmethod
+    def delete(payment_method_token):
+        return Configuration.gateway().payment_method.delete(payment_method_token)
+
+    @staticmethod
     def create_signature():
         return PaymentMethod.signature("create")
 
