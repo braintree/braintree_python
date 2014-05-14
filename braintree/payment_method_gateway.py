@@ -35,8 +35,9 @@ class PaymentMethodGateway(object):
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)
         if "paypal_account" in response:
-            print response["paypal_account"]
             return SuccessfulResult({"payment_method": PayPalAccount(self.gateway, response["paypal_account"])})
+        elif "credit_card" in response:
+            return SuccessfulResult({"payment_method": CreditCard(self.gateway, response["credit_card"])}) 
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 

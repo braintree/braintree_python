@@ -203,6 +203,9 @@ class ErrorCodes(object):
             MobilePhoneIsInvalid = "82683"
             MobilePhoneIsRequired = "82682"
 
+    class PayPalAccount(object):
+        CannotVaultOneTimeUsePayPalAccount = "82902"
+
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
         SettlementDateIsInvalid = "82302"

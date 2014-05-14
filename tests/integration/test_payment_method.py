@@ -25,6 +25,53 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, found_account)
         self.assertEquals(found_account.token, created_account.token)
 
+    def test_create_with_paypal_one_time_nonce_fails(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "paypal_account": {"access-token": "access-token"},
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertFalse(result.is_success)
+        error_code = result.errors.for_object("paypal_account").on("base")[0].code
+        self.assertEquals(error_code, ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount)
+
+    def test_create_with_credit_card_nonce(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_credit_card_nonce({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expirationMonth": "12",
+                "expirationYear": "2020",
+                "options": {"validate": False}
+            },
+        })
+        self.assertEquals(status_code, 202)
+
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        created_credit_card = result.payment_method
+        self.assertEquals(created_credit_card.__class__, CreditCard)
+        self.assertEquals(created_credit_card.bin, "411111")
+
+        found_credit_card = PaymentMethod.find(result.payment_method.token)
+        self.assertNotEqual(None, found_credit_card)
+        self.assertEquals(found_credit_card.token, created_credit_card.token)
+
     def test_find_returns_a_paypal_account(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({

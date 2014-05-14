@@ -190,6 +190,19 @@ class ClientApiHttp(Http):
         return [status_code, nonce]
 
 
+    def get_credit_card_nonce(self, params):
+        url = "/merchants/%s/client_api/v1/payment_methods/credit_cards" % self.config.merchant_id
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        status_code, response = self.post(url, params)
+
+        nonce = None
+        if status_code == 202:
+            nonce = json.loads(response)["creditCards"][0]["nonce"]
+
+        return [status_code, nonce]
+
     def __headers(self):
         return {
             "Content-type": "application/json",
