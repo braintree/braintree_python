@@ -1453,6 +1453,27 @@ class TestTransactionSearch(unittest.TestCase):
         transaction_ids = [transaction.id for transaction in collection.items]
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(transaction_ids)))
 
+    def test_advanced_search_can_search_on_paypal_fields(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "access_token": "PAYPAL-ACCESS-TOKEN",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.paypal_payer_email == transaction.paypal_details.payer_email,
+            TransactionSearch.paypal_sale_id == transaction.paypal_details.sale_id,
+            TransactionSearch.paypal_payment_id == transaction.paypal_details.payment_id,
+        ])
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
     @raises(DownForMaintenanceError)
     def test_search_handles_a_search_timeout(self):
         Transaction.search([

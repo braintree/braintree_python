@@ -38,6 +38,9 @@ class TransactionSearch:
     shipping_postal_code         = Search.TextNodeBuilder("shipping_postal_code")
     shipping_region              = Search.TextNodeBuilder("shipping_region")
     shipping_street_address      = Search.TextNodeBuilder("shipping_street_address")
+    paypal_payer_email           = Search.TextNodeBuilder("paypal_payer_email")
+    paypal_payment_id            = Search.TextNodeBuilder("paypal_payment_id")
+    paypal_sale_id               = Search.TextNodeBuilder("paypal_sale_id")
 
     credit_card_expiration_date  = Search.EqualityNodeBuilder("credit_card_expiration_date")
     credit_card_number           = Search.PartialMatchNodeBuilder("credit_card_number")
