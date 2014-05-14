@@ -1793,7 +1793,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         status_code, nonce = http.get_paypal_nonce({
-            "paypal_account": {"access_token": "PAYPAL-ACCESS-TOKEN"},
+            "access_token": "PAYPAL-ACCESS-TOKEN",
             "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)
@@ -1812,6 +1812,33 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.paypal_details.payer_last_name, "Doe")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.sale_id))
+
+    def test_creating_paypal_transaction_with_one_time_use_nonce_and_store_in_vault(self):
+        config = Configuration.instantiate()
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, nonce = http.get_paypal_nonce({
+            "access_token": "PAYPAL-ACCESS-TOKEN",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce,
+            "options": {"store_in_vault": True}
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEquals(transaction.paypal_details.token, None)
 
     def test_creating_paypal_transaction_with_future_payment_nonce(self):
         config = Configuration.instantiate()
@@ -1823,7 +1850,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         status_code, nonce = http.get_paypal_nonce({
-            "paypal_account": {"consent-code": "consent-code"},
+            "consent-code": "consent-code",
             "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)
@@ -1842,3 +1869,44 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.paypal_details.payer_last_name, "Doe")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.sale_id))
+
+    def test_creating_paypal_transaction_with_one_time_nonce_and_store_in_vault_fails_gracefully(self):
+        http = ClientApiHttp.create()
+
+        status_code, nonce = http.get_paypal_nonce({
+            "access-token": "access-token",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce,
+            "options": {"store_in_vault": True}
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(None, transaction.paypal_details.token)
+
+    def test_creating_paypal_transaction_with_future_payment_nonce_and_store_in_vault(self):
+        http = ClientApiHttp.create()
+
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce,
+            "options": {"store_in_vault": True}
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertNotEqual(None, transaction.paypal_details.token)
+        paypal_account = PaymentMethod.find(transaction.paypal_details.token)
+        self.assertEquals(paypal_account.email, transaction.paypal_details.payer_email)

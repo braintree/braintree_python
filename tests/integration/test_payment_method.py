@@ -4,7 +4,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_create_with_paypal_future_payments_nonce(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
-            "paypal_account": {"consent-code": "consent-code"},
+            "consent-code": "consent-code",
             "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)
@@ -28,7 +28,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_create_with_paypal_one_time_nonce_fails(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
-            "paypal_account": {"access-token": "access-token"},
+            "access-token": "access-token",
             "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)
@@ -47,12 +47,10 @@ class TestPaymentMethod(unittest.TestCase):
     def test_create_with_credit_card_nonce(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_credit_card_nonce({
-            "credit_card": {
-                "number": "4111111111111111",
-                "expirationMonth": "12",
-                "expirationYear": "2020",
-                "options": {"validate": False}
-            },
+            "number": "4111111111111111",
+            "expirationMonth": "12",
+            "expirationYear": "2020",
+            "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)
 
@@ -75,7 +73,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_find_returns_a_paypal_account(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
-            "paypal_account": {"consent-code": "consent-code"},
+            "consent-code": "consent-code",
             "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)
@@ -128,7 +126,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_delete_deletes_a_paypal_account(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
-            "paypal_account": {"consent-code": "consent-code"},
+            "consent-code": "consent-code",
             "options": {"validate": False}
         })
         self.assertEquals(status_code, 202)

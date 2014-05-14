@@ -176,8 +176,9 @@ class ClientApiHttp(Http):
 
         return self.post(url, params)
 
-    def get_paypal_nonce(self, params):
+    def get_paypal_nonce(self, paypal_params):
         url = "/merchants/%s/client_api/v1/payment_methods/paypal_accounts" % self.config.merchant_id
+        params = {"paypal_account": paypal_params}
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
 
@@ -190,8 +191,9 @@ class ClientApiHttp(Http):
         return [status_code, nonce]
 
 
-    def get_credit_card_nonce(self, params):
+    def get_credit_card_nonce(self, credit_card_params):
         url = "/merchants/%s/client_api/v1/payment_methods/credit_cards" % self.config.merchant_id
+        params = {"credit_card": credit_card_params}
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
 
