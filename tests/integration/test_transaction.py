@@ -1870,6 +1870,35 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.sale_id))
 
+    def test_creating_paypal_transaction_with_vaulted_token(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction_result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": result.payment_method.token
+        })
+
+        self.assertTrue(transaction_result.is_success)
+        transaction = transaction_result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEquals(transaction.paypal_details.payer_id, "PAYER_ID")
+
+
     def test_creating_paypal_transaction_with_one_time_nonce_and_store_in_vault_fails_gracefully(self):
         http = ClientApiHttp.create()
 
