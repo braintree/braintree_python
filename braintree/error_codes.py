@@ -205,6 +205,7 @@ class ErrorCodes(object):
 
     class PayPalAccount(object):
         CannotVaultOneTimeUsePayPalAccount = "82902"
+        CannotHaveBothAccessTokenAndConsentCode = "82903"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
@@ -311,6 +312,7 @@ class ErrorCodes(object):
         PaymentMethodDoesNotBelongToSubscription = "91527"
         PaymentMethodTokenCardTypeIsNotAccepted = "91517"
         PaymentMethodTokenIsInvalid = "91518"
+        PaymentMethodNonceUnknown = "91565"
         ProcessorAuthorizationCodeCannotBeSet = "91519"
         ProcessorAuthorizationCodeIsInvalid = "81520"
         ProcessorDoesNotSupportCredits = "91546"
