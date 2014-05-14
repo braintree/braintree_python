@@ -22,7 +22,7 @@ class CreditCardGateway(object):
         return self._post("/payment_methods", {"credit_card": params})
 
     def delete(self, credit_card_token):
-        self.config.http().delete("/payment_methods/" + credit_card_token)
+        self.config.http().delete("/payment_methods/credit_card/" + credit_card_token)
         return SuccessfulResult()
 
     def expired(self):
@@ -40,7 +40,7 @@ class CreditCardGateway(object):
         try:
             if credit_card_token == None or credit_card_token.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get("/payment_methods/" + credit_card_token)
+            response = self.config.http().get("/payment_methods/credit_card/" + credit_card_token)
             return CreditCard(self.gateway, response["credit_card"])
         except NotFoundError:
             raise NotFoundError("payment method with token " + credit_card_token + " not found")
@@ -72,7 +72,7 @@ class CreditCardGateway(object):
 
     def update(self, credit_card_token, params={}):
         Resource.verify_keys(params, CreditCard.update_signature())
-        response = self.config.http().put("/payment_methods/" + credit_card_token, {"credit_card": params})
+        response = self.config.http().put("/payment_methods/credit_card/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})
         elif "api_error_response" in response:
