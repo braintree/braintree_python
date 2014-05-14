@@ -166,12 +166,8 @@ class ClientApiHttp(Http):
 
         return self.post(url, params)
 
-    def get_paypal_nonce(self, paypal_params):
+    def get_paypal_nonce(self, params):
         url = "/merchants/%s/client_api/v1/payment_methods/paypal_accounts" % self.config.merchant_id
-        params = {
-            "paypal_account": paypal_params,
-            "options": {"validate": False}
-        }
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
 
