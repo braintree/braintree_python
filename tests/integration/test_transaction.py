@@ -1551,6 +1551,19 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
         return transaction
 
+    def __create_paypal_transaction_to_refund(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({"access_token": "PAYPAL-ACCESS-TOKEN"})
+        self.assertEquals(status_code, 202)
+
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce,
+        }).transaction
+
+        TestHelper.settle_transaction(transaction.id)
+        return transaction
+
     def __create_escrowed_transaction(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1993,3 +2006,76 @@ class TestTransaction(unittest.TestCase):
         void_transaction = void_result.transaction
         self.assertEquals(void_transaction.id, sale_transaction.id)
         self.assertEquals(void_transaction.status, Transaction.Status.Voided)
+
+    def test_paypal_transaction_successful_refund(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        result = Transaction.refund(transaction.id)
+
+        self.assertTrue(result.is_success)
+        refund = result.transaction
+
+        self.assertEquals(Transaction.Type.Credit, refund.type)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), refund.amount)
+        self.assertEquals(transaction.id, refund.refunded_transaction_id)
+
+        self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
+
+    def test_paypal_transaction_successful_partial_refund(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        result = Transaction.refund(transaction.id, Decimal("500.00"))
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
+        self.assertEquals(Decimal("500.00"), result.transaction.amount)
+
+    def test_paypal_transaction_multiple_successful_partial_refunds(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        refund1 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
+        self.assertEquals(Transaction.Type.Credit, refund1.type)
+        self.assertEquals(Decimal("500.00"), refund1.amount)
+
+        refund2 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
+        self.assertEquals(Transaction.Type.Credit, refund2.type)
+        self.assertEquals(Decimal("500.00"), refund2.amount)
+
+        transaction = Transaction.find(transaction.id)
+
+        self.assertEquals(2, len(transaction.refund_ids))
+        self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund1.id))
+        self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
+
+    def test_paypal_transaction_refund_already_refunded_transation_fails(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        Transaction.refund(transaction.id)
+        result = Transaction.refund(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.HasAlreadyBeenRefunded,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_paypal_transaction_refund_returns_an_error_if_unsettled(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        result = Transaction.refund(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotRefundUnlessSettled,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
