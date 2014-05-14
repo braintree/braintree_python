@@ -5,6 +5,7 @@ from braintree.credit_card_gateway import CreditCardGateway
 from braintree.customer_gateway import CustomerGateway
 from braintree.discount_gateway import DiscountGateway
 from braintree.merchant_account_gateway import MerchantAccountGateway
+from braintree.payment_method_gateway import PaymentMethodGateway
 from braintree.plan_gateway import PlanGateway
 from braintree.settlement_batch_summary_gateway import SettlementBatchSummaryGateway
 from braintree.subscription_gateway import SubscriptionGateway
@@ -32,3 +33,4 @@ class BraintreeGateway(object):
         self.verification = CreditCardVerificationGateway(self)
         self.webhook_notification = WebhookNotificationGateway(self)
         self.webhook_testing = WebhookTestingGateway(self)
+        self.payment_method = PaymentMethodGateway(self)

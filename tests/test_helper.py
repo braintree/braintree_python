@@ -128,6 +128,16 @@ class ClientApiHttp(Http):
         self.options = options
         self.http = Http(config)
 
+    @staticmethod
+    def create():
+        config = Configuration.instantiate()
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        return ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
     def get(self, path):
         return self.__http_do("GET", path)
 

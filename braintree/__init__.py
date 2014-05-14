@@ -24,6 +24,8 @@ from braintree.merchant_account.business_details import BusinessDetails
 from braintree.merchant_account.funding_details import FundingDetails
 from braintree.merchant_account.individual_details import IndividualDetails
 from braintree.merchant_account_gateway import MerchantAccountGateway
+from braintree.payment_method import PaymentMethod
+from braintree.paypal_account import PayPalAccount
 from braintree.partner_merchant import PartnerMerchant
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
