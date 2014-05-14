@@ -14,6 +14,7 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.paypal_account import PayPalAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
@@ -458,6 +459,8 @@ class Transaction(Resource):
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
+        if "paypal" in attributes:
+            self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

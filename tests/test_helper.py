@@ -166,6 +166,24 @@ class ClientApiHttp(Http):
 
         return self.post(url, params)
 
+    def get_paypal_nonce(self, paypal_params):
+        url = "/merchants/%s/client_api/v1/payment_methods/paypal_accounts" % self.config.merchant_id
+        params = {
+            "paypal_account": paypal_params,
+            "options": {"validate": False}
+        }
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        status_code, response = self.post(url, params)
+
+        nonce = None
+        if status_code == 202:
+            nonce = json.loads(response)["paypalAccounts"][0]["nonce"]
+
+        return [status_code, nonce]
+
+
     def __headers(self):
         return {
             "Content-type": "application/json",

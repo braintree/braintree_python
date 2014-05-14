@@ -1,6 +1,7 @@
 import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.test.paypal_test_codes import PayPalTestCodes
 from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
@@ -1781,3 +1782,30 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("250.00"), dispute.amount)
         self.assertEquals(Dispute.Status.Won, dispute.status)
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
+
+    def test_creating_paypal_transaction(self):
+        config = Configuration.instantiate()
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, nonce = http.get_paypal_nonce({"consent-code": "consent-code"})
+        self.assertEquals(status_code, 202)
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEquals(transaction.paypal_details.payer_id, "PAYER_ID")
+        self.assertEquals(transaction.paypal_details.payer_first_name, "John")
+        self.assertEquals(transaction.paypal_details.payer_last_name, "Doe")
+        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.sale_id))
