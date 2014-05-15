@@ -1240,3 +1240,24 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction.Type.Sale, transaction.type);
         self.assertEquals(Transaction.Status.Authorized, transaction.status);
 
+    def test_create_with_paypal_payment_method_token(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        payment_method_token = PaymentMethod.create({
+            "customer_id": Customer.create().customer.id,
+            "payment_method_nonce": nonce
+        }).payment_method.token
+
+        result = Subscription.create({
+            "payment_method_token": payment_method_token,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertTrue(result.is_success)
+        subscription = result.subscription
+        self.assertEquals(payment_method_token, subscription.payment_method_token)
