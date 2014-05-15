@@ -1898,7 +1898,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
-        self.assertEquals(error_code, ErrorCodes.PayPalAccount.PaymentMethodNonceUnknown)
+        self.assertEquals(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
 
     def test_creating_paypal_transaction_with_vaulted_token(self):

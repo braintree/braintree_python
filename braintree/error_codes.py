@@ -206,6 +206,7 @@ class ErrorCodes(object):
     class PayPalAccount(object):
         CannotVaultOneTimeUsePayPalAccount = "82902"
         CannotHaveBothAccessTokenAndConsentCode = "82903"
+        TokenIsInUse = "92906"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
