@@ -80,6 +80,35 @@ class TestCustomer(unittest.TestCase):
         found_customer = Customer.find(customer.id)
         self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
 
+    def test_create_with_paypal_future_payments_nonce(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        result = Customer.create({"payment_method_nonce": nonce})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertNotEqual(None, customer.paypal_accounts[0])
+
+    def test_create_with_paypal_one_time_nonce_fails(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "access_token": "access-token",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        result = Customer.create({"payment_method_nonce": nonce})
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
+            ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
+        )
+
     def test_create_with_no_attributes(self):
         result = Customer.create()
         self.assertTrue(result.is_success)
@@ -460,6 +489,43 @@ class TestCustomer(unittest.TestCase):
             result.errors.for_object("customer").on("email")[0].code
         )
 
+    def test_update_with_paypal_future_payments_nonce(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        customer = Customer.create().customer
+
+        result = Customer.update(customer.id, {
+            "payment_method_nonce": nonce
+        })
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertNotEqual(None, customer.paypal_accounts[0])
+
+    def test_update_with_paypal_one_time_nonce_fails(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "access_token": "access-token",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        customer = Customer.create().customer
+
+        result = Customer.update(customer.id, {
+            "payment_method_nonce": nonce
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
+            ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
+        )
+
     def test_create_from_transparent_redirect_with_successful_result(self):
         tr_data = {
             "customer": {
@@ -606,3 +672,4 @@ class TestCustomer(unittest.TestCase):
         result = Customer.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
+
