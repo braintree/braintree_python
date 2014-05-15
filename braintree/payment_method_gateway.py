@@ -2,6 +2,7 @@ import braintree
 from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
+from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.ids_search import IdsSearch
@@ -24,10 +25,7 @@ class PaymentMethodGateway(object):
                 raise NotFoundError()
 
             response = self.config.http().get("/payment_methods/any/" + payment_method_token)
-            if "paypal_account" in response:
-                return PayPalAccount(self.gateway, response["paypal_account"])
-            elif "credit_card" in response:
-                return CreditCard(self.gateway, response["credit_card"]) 
+            return self._parse_payment_method(response)
         except NotFoundError:
             raise NotFoundError("payment method with token " + payment_method_token + " not found")
 
@@ -37,10 +35,17 @@ class PaymentMethodGateway(object):
 
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)
-        if "paypal_account" in response:
-            return SuccessfulResult({"payment_method": PayPalAccount(self.gateway, response["paypal_account"])})
-        elif "credit_card" in response:
-            return SuccessfulResult({"payment_method": CreditCard(self.gateway, response["credit_card"])}) 
-        elif "api_error_response" in response:
+        if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
+        else:
+            payment_method = self._parse_payment_method(response)
+            return SuccessfulResult({"payment_method": payment_method})
 
+    def _parse_payment_method(self, response):
+        if "paypal_account" in response:
+            return PayPalAccount(self.gateway, response["paypal_account"])
+        elif "credit_card" in response:
+            return CreditCard(self.gateway, response["credit_card"])
+        else:
+            name = response.keys()[0]
+            return UnknownPaymentMethod(self.gateway, response[name])
