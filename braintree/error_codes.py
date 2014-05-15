@@ -203,10 +203,23 @@ class ErrorCodes(object):
             MobilePhoneIsInvalid = "82683"
             MobilePhoneIsRequired = "82682"
 
+    class PaymentMethod(object):
+        PaymentMethodParamsAreRequired = "93101"
+        NonceIsInvalid = "93102"
+        NonceIsRequired = "93103"
+        CustomerIdIsRequired = "93104"
+        CustomerIdIsInvalid = "93105"
+
     class PayPalAccount(object):
+        ConsentCodeOrAccessTokenIsRequired = "82901"
         CannotVaultOneTimeUsePayPalAccount = "82902"
         CannotHaveBothAccessTokenAndConsentCode = "82903"
+        PayPalAccountsAreNotAccepted = "82904"
+        CustomerIdIsRequiredForVaulting = "82905"
         TokenIsInUse = "92906"
+        PaymentMethodNonceConsumed = "92907"
+        PaymentMethodNonceUnknown = "92908"
+        PaymentMethodNonceLocked = "92909"
 
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"

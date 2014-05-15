@@ -134,3 +134,13 @@ class TestPayPalAccount(unittest.TestCase):
             ErrorCodes.PayPalAccount.TokenIsInUse,
             result.errors.for_object("paypal_account").on("token")[0].code
         )
+
+        result = PayPalAccount.update(old_token, {
+            "token": payment_method_token,
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.PayPalAccount.TokenIsInUse,
+            result.errors.for_object("paypal_account").on("token")[0].code
+        )

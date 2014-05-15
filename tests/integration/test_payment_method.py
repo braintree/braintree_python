@@ -25,6 +25,26 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, found_account)
         self.assertEquals(found_account.token, created_account.token)
 
+    def test_create_returns_validation_failures(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce
+        })
+
+        self.assertFalse(result.is_success)
+        paypal_error_codes = [
+            error.code for error in result.errors.for_object("paypal_account").on("base")
+        ]
+        self.assertTrue(ErrorCodes.PayPalAccount.ConsentCodeOrAccessTokenIsRequired in paypal_error_codes)
+        customer_error_codes = [
+            error.code for error in result.errors.for_object("paypal_account").on("customer_id")
+        ]
+        self.assertTrue(ErrorCodes.PayPalAccount.CustomerIdIsRequiredForVaulting in customer_error_codes)
+
     def test_create_with_paypal_one_time_nonce_fails(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
@@ -142,3 +162,4 @@ class TestPaymentMethod(unittest.TestCase):
         delete_result = PaymentMethod.delete(result.payment_method.token)
         self.assertTrue(delete_result.is_success)
         self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
+
