@@ -1,4 +1,8 @@
-import httplib
+# Fixes python 3 incompatibility
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
 
 class HttplibStrategy(object):
     def __init__(self, config, environment):
