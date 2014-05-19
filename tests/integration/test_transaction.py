@@ -1814,8 +1814,6 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertEquals(transaction.paypal_details.payer_first_name, "John")
-        self.assertEquals(transaction.paypal_details.payer_last_name, "Doe")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
 
@@ -1864,8 +1862,6 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertEquals(transaction.paypal_details.payer_first_name, "John")
-        self.assertEquals(transaction.paypal_details.payer_last_name, "Doe")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
 
