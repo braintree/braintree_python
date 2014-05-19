@@ -1,7 +1,6 @@
 import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
-from braintree.test.paypal_test_codes import PayPalTestCodes
 from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
