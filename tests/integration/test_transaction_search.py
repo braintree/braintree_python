@@ -1468,7 +1468,7 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.paypal_payer_email == transaction.paypal_details.payer_email,
-            TransactionSearch.paypal_sale_id == transaction.paypal_details.sale_id,
+            TransactionSearch.paypal_authorization_id == transaction.paypal_details.authorization_id,
             TransactionSearch.paypal_payment_id == transaction.paypal_details.payment_id,
         ])
         self.assertEquals(1, collection.maximum_size)
