@@ -1,6 +1,7 @@
 import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.test.nonces import Nonces
 from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
@@ -1551,13 +1552,9 @@ class TestTransaction(unittest.TestCase):
         return transaction
 
     def __create_paypal_transaction_to_refund(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({"access_token": "PAYPAL-ACCESS-TOKEN"})
-        self.assertEquals(status_code, 202)
-
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
         }).transaction
 
         TestHelper.settle_transaction(transaction.id)
@@ -1796,17 +1793,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
 
     def test_creating_paypal_transaction_with_one_time_use_nonce(self):
-        http = ClientApiHttp.create()
-
-        status_code, nonce = http.get_paypal_nonce({
-            "access_token": "PAYPAL-ACCESS-TOKEN",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
         })
 
         self.assertTrue(result.is_success)
@@ -1817,23 +1806,9 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
 
     def test_creating_paypal_transaction_with_one_time_use_nonce_and_store_in_vault(self):
-        config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
-        http = ClientApiHttp(config, {
-            "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifier": "fake_identifier",
-            "shared_customer_identifier_type": "testing"
-        })
-
-        status_code, nonce = http.get_paypal_nonce({
-            "access_token": "PAYPAL-ACCESS-TOKEN",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
             "options": {"store_in_vault": True}
         })
 
@@ -1844,17 +1819,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.paypal_details.token, None)
 
     def test_creating_paypal_transaction_with_future_payment_nonce(self):
-        http = ClientApiHttp.create()
-
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalFuturePayment
         })
 
         self.assertTrue(result.is_success)
@@ -1894,18 +1861,11 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
     def test_creating_paypal_transaction_with_vaulted_token(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer_id = Customer.create().customer.id
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalFuturePayment
         })
 
         self.assertTrue(result.is_success)
@@ -1921,17 +1881,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
 
     def test_creating_paypal_transaction_with_one_time_nonce_and_store_in_vault_fails_gracefully(self):
-        http = ClientApiHttp.create()
-
-        status_code, nonce = http.get_paypal_nonce({
-            "access-token": "access-token",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
             "options": {"store_in_vault": True}
         })
 
@@ -1940,17 +1892,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(None, transaction.paypal_details.token)
 
     def test_creating_paypal_transaction_with_future_payment_nonce_and_store_in_vault(self):
-        http = ClientApiHttp.create()
-
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce,
+            "payment_method_nonce": Nonces.PayPalFuturePayment,
             "options": {"store_in_vault": True}
         })
 
@@ -1962,16 +1906,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(paypal_account.email, transaction.paypal_details.payer_email)
 
     def test_creating_paypal_transaction_and_submitting_for_settlement(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "access_token": "PAYPAL-ACCESS-TOKEN",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
             "options": {"submit_for_settlement": True}
         })
 
@@ -1979,13 +1916,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(result.transaction.status, Transaction.Status.SubmittedForSettlement)
 
     def test_voiding_a_paypal_transaction(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({"access_token": "PAYPAL-ACCESS-TOKEN"})
-        self.assertEquals(status_code, 202)
-
         sale_result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": nonce,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
         })
         self.assertTrue(sale_result.is_success)
         sale_transaction = sale_result.transaction

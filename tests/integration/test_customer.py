@@ -1,5 +1,6 @@
 from tests.test_helper import *
 import braintree.test.venmo_sdk as venmo_sdk
+from braintree.test.nonces import Nonces
 
 class TestCustomer(unittest.TestCase):
     def test_all(self):
@@ -81,14 +82,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
 
     def test_create_with_paypal_future_payments_nonce(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
-        result = Customer.create({"payment_method_nonce": nonce})
+        result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
         self.assertTrue(result.is_success)
 
         customer = result.customer
@@ -96,13 +90,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_create_with_paypal_one_time_nonce_fails(self):
         http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "access_token": "access-token",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
-        result = Customer.create({"payment_method_nonce": nonce})
+        result = Customer.create({"payment_method_nonce": Nonces.PayPalOneTimePayment})
         self.assertFalse(result.is_success)
         self.assertEquals(
             result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
@@ -490,17 +478,10 @@ class TestCustomer(unittest.TestCase):
         )
 
     def test_update_with_paypal_future_payments_nonce(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer = Customer.create().customer
 
         result = Customer.update(customer.id, {
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalFuturePayment
         })
         self.assertTrue(result.is_success)
 
@@ -508,17 +489,9 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(None, customer.paypal_accounts[0])
 
     def test_update_with_paypal_one_time_nonce_fails(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "access_token": "access-token",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer = Customer.create().customer
-
         result = Customer.update(customer.id, {
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalOneTimePayment
         })
         self.assertFalse(result.is_success)
         self.assertEquals(

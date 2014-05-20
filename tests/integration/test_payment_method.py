@@ -1,19 +1,12 @@
 from tests.test_helper import *
+from braintree.test.nonces import Nonces
 
 class TestPaymentMethod(unittest.TestCase):
     def test_create_with_paypal_future_payments_nonce(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer_id = Customer.create().customer.id
-
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalFuturePayment
         })
 
         self.assertTrue(result.is_success)
@@ -46,18 +39,10 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(ErrorCodes.PayPalAccount.CustomerIdIsRequiredForVaulting in customer_error_codes)
 
     def test_create_with_paypal_one_time_nonce_fails(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "access-token": "access-token",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer_id = Customer.create().customer.id
-
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalOneTimePayment
         })
 
         self.assertFalse(result.is_success)
@@ -91,18 +76,10 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEquals(found_credit_card.token, created_credit_card.token)
 
     def test_find_returns_a_paypal_account(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer_id = Customer.create().customer.id
-
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalFuturePayment
         })
         self.assertTrue(result.is_success)
 
@@ -144,18 +121,10 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertRaises(NotFoundError, PaymentMethod.find, result.credit_card.token)
 
     def test_delete_deletes_a_paypal_account(self):
-        http = ClientApiHttp.create()
-        status_code, nonce = http.get_paypal_nonce({
-            "consent-code": "consent-code",
-            "options": {"validate": False}
-        })
-        self.assertEquals(status_code, 202)
-
         customer_id = Customer.create().customer.id
-
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": nonce
+            "payment_method_nonce": Nonces.PayPalFuturePayment
         })
         self.assertTrue(result.is_success)
 
