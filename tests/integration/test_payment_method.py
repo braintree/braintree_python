@@ -75,6 +75,25 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, found_credit_card)
         self.assertEquals(found_credit_card.token, created_credit_card.token)
 
+    def test_create_with_sepa_bank_account_nonce(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": "b2b"})
+        authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
+        client_api =  ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        nonce = client_api.get_sepa_bank_account_nonce({
+            "bic": "DEUTDEFF",
+            "iban": "DE89370400440532013000",
+            "accountHolderName": "Baron Von Holder",
+            "billingAddress": {"region": "Hesse"}
+        })
+
+        self.assertNotEquals(nonce, None)
+
     def test_find_returns_a_paypal_account(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({

@@ -144,6 +144,9 @@ class ClientApiHttp(Http):
     def post(self, path, params = None):
         return self.__http_do("POST", path, params)
 
+    def put(self, path, params = None):
+        return self.__http_do("PUT", path, params)
+
     def __http_do(self, http_verb, path, params=None):
         self.config.use_unsafe_ssl = True
         http_strategy = self.config.http_strategy()
@@ -204,6 +207,25 @@ class ClientApiHttp(Http):
             nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         return [status_code, nonce]
+
+    def get_sepa_bank_account_nonce(self, sepa_bank_account_params):
+        params = {"sepa_mandate": sepa_bank_account_params}
+        url = "/merchants/%s/client_api/v1/sepa_mandates" % self.config.merchant_id
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        status_code, response = self.post(url, params)
+        mandate_reference_number = json.loads(response)["mandateReferenceNumber"]
+
+        accept_url = url + "/%s/accept" %  mandate_reference_number
+
+        status_code, response = self.put(accept_url, params)
+
+        nonce = None
+        if status_code == 200:
+            nonce = json.loads(response)["nonce"]
+
+        return nonce
 
     def __headers(self):
         return {
