@@ -135,6 +135,14 @@ class TestClientToken(unittest.TestCase):
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(len(customer.credit_cards), 1)
 
+    def test_can_pass_merchant_account_id(self):
+        client_token = ClientToken.generate({
+            "merchant_account_id": "my_merchant_account"
+        })
+        merchant_account_id = json.loads(client_token)["merchantAccountId"]
+
+        self.assertEqual(merchant_account_id, "my_merchant_account")
+
     def test_required_data_cannot_be_overridden(self):
         try:
             client_token = ClientToken.generate({
