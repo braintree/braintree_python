@@ -93,6 +93,17 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertNotEquals(nonce, None)
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        found_bank_account = PaymentMethod.find(result.payment_method.token)
+
+        self.assertNotEqual(found_bank_account, None)
+        self.assertEquals(found_bank_account.bic, "DEUTDEFF")
+        self.assertEquals(found_bank_account.__class__, SEPABankAccount)
 
     def test_find_returns_a_paypal_account(self):
         customer_id = Customer.create().customer.id

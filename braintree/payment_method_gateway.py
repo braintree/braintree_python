@@ -2,6 +2,7 @@ import braintree
 from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
+from braintree.sepa_bank_account import SEPABankAccount
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
@@ -46,6 +47,8 @@ class PaymentMethodGateway(object):
             return PayPalAccount(self.gateway, response["paypal_account"])
         elif "credit_card" in response:
             return CreditCard(self.gateway, response["credit_card"])
+        elif "sepa_bank_account" in response:
+            return SEPABankAccount(self.gateway, response["sepa_bank_account"])
         else:
             name = response.keys()[0]
             return UnknownPaymentMethod(self.gateway, response[name])

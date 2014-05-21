@@ -12,3 +12,15 @@ class SEPABankAccount(Resource):
         Business = "business"
         Consumer = "consumer"
 
+    @staticmethod
+    def signature():
+        signature = [
+            "token",
+            "billing_address",
+            "customer_id",
+            "token",
+            "masked_iban",
+            "bic",
+            "account_holder_name"
+        ]
+        return signature
