@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.test.nonces import Nonces
 
 class TestSubscription(unittest.TestCase):
     def setUp(self):
@@ -1240,7 +1241,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction.Type.Sale, transaction.type);
         self.assertEquals(Transaction.Status.Authorized, transaction.status);
 
-    def test_create_with_paypal_payment_method_token(self):
+    def test_create_with_paypal_future_payment_method_token(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
             "consent-code": "consent-code",
@@ -1261,3 +1262,27 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
         subscription = result.subscription
         self.assertEquals(payment_method_token, subscription.payment_method_token)
+
+    def test_create_fails_with_paypal_one_time_payment_method_nonce(self):
+        result = Subscription.create({
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Subscription.PaymentMethodNonceIsInvalid,
+            result.errors.for_object("subscription")[0].code
+        )
+
+    def test_create_fails_with_paypal_future_payment_method_nonce(self):
+        result = Subscription.create({
+            "payment_method_nonce": Nonces.PayPalFuturePayment,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Subscription.PaymentMethodNonceIsInvalid,
+            result.errors.for_object("subscription")[0].code
+        )

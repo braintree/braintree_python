@@ -69,6 +69,11 @@ class ErrorCodes(object):
         TokenIsTooLong = "91720"
         VenmoSDKPaymentMethodCodeCardTypeIsNotAccepted = "91726"
         VerificationNotSupportedOnThisMerchantAccount = "91730"
+        PaymentMethodNonceConsumed = "91731"              
+        PaymentMethodNonceUnknown = "91732"               
+        PaymentMethodNonceLocked = "91733"                
+        PaymentMethodNonceCardTypeIsNotAccepted = "91734" 
+        CannotUpdateCardUsingPaymentMethodNonce = "91735" 
 
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
@@ -226,6 +231,20 @@ class ErrorCodes(object):
         SettlementDateIsInvalid = "82302"
         SettlementDateIsRequired = "82301"
 
+    class SEPAMandate(object):
+        AccountHolderNameIsRequired = "83301" 
+        BICIsRequired = "83302"               
+        IBANIsRequired = "83303"              
+        TypeIsRequired = "93304"              
+        IBANInvalidCharacter = "83305"        
+        BICInvalidCharacter = "83306"         
+        BICLengthIsInvalid = "83307"          
+        BICUnsupportedCountry = "83308"       
+        IBANUnsupportedCountry = "83309"      
+        IBANInvalidFormat = "83310"           
+        BillingAddressConflict = "93311"      
+        BillingAddressIdIsInvalid = "93312"   
+
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
         BillingDayOfMonthIsInvalid = "91914"
@@ -260,6 +279,10 @@ class ErrorCodes(object):
         TrialDurationFormatIsInvalid = "81907"
         TrialDurationIsRequired = "81908"
         TrialDurationUnitIsInvalid = "81909"
+        PaymentMethodNonceCardTypeIsNotAccepted = "91924"     
+        PaymentMethodNonceUnvaultedCardIsNotAccepted = "91927"
+        PaymentMethodNonceIsInvalid = "91925"                 
+        PaymentMethodNonceNotAssociatedWithCustomer = "91926" 
 
         class Modification(object):
             AmountCannotBeBlank = "92003"
@@ -282,6 +305,7 @@ class ErrorCodes(object):
             QuantityCannotBeBlank = "92004"
             QuantityIsInvalid = "92001"
             QuantityMustBeGreaterThanZero = "92010"
+            IdToRemoveIsInvalid = "92025"            
 
     class Transaction(object):
         AmountCannotBeNegative = "81501"
