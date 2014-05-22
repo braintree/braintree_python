@@ -215,7 +215,7 @@ class ClientApiHttp(Http):
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
 
         status_code, response = self.post(url, params)
-        mandate_reference_number = json.loads(response)["mandateReferenceNumber"]
+        mandate_reference_number = json.loads(response)["sepaMandates"][0]["mandateReferenceNumber"]
 
         accept_url = url + "/%s/accept" %  mandate_reference_number
 
@@ -223,7 +223,7 @@ class ClientApiHttp(Http):
 
         nonce = None
         if status_code == 200:
-            nonce = json.loads(response)["nonce"]
+            nonce = json.loads(response)["sepaBankAccounts"][0]["nonce"]
 
         return nonce
 
