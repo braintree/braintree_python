@@ -2002,3 +2002,42 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
+    def test_sepa_bank_account_details(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "altpay_merchant"
+            Configuration.public_key = "altpay_merchant_public_key"
+            Configuration.private_key = "altpay_merchant_private_key"
+            customer_id = Customer.create().customer.id
+            token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": "b2b"})
+            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
+            config = Configuration.instantiate()
+            client_api =  ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing"
+            })
+            nonce = client_api.get_sepa_bank_account_nonce({
+                "locale": "de-DE",
+                "bic": "DEUTDEFF",
+                "iban": "DE89370400440532013000",
+                "accountHolderName": "Baron Von Holder",
+                "billingAddress": {"region": "Hesse"}
+            })
+            result = Transaction.sale({
+                "merchant_account_id": "sepa_ma",
+                "amount": "10.00",
+                "payment_method_nonce": nonce
+            })
+            self.assertTrue(result.is_success)
+            sepa_bank_account_details = result.transaction.sepa_bank_account_details
+            self.assertEquals(sepa_bank_account_details.bic, "DEUTDEFF")
+            self.assertEquals(sepa_bank_account_details.account_holder_name, "Baron Von Holder")
+            self.assertEquals(sepa_bank_account_details.masked_iban[-4:], "3000")
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key

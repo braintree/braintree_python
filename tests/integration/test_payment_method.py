@@ -86,6 +86,7 @@ class TestPaymentMethod(unittest.TestCase):
             "shared_customer_identifier_type": "testing"
         })
         nonce = client_api.get_sepa_bank_account_nonce({
+            "locale": "de-DE",
             "bic": "DEUTDEFF",
             "iban": "DE89370400440532013000",
             "accountHolderName": "Baron Von Holder",
