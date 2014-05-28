@@ -141,7 +141,7 @@ class TestClientToken(unittest.TestCase):
 
         client_token = ClientToken.generate({
             "customer_id": customer_id,
-            "acceptance_location": "Hamburg, Germany",
+            "sepa_mandate_acceptance_location": "Hamburg, Germany",
             "sepa_mandate_type": SEPABankAccount.MandateType.Business
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
