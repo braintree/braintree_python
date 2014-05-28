@@ -78,7 +78,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_create_with_sepa_bank_account_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id
-        token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": "b2b"})
+        token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
         authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
         client_api =  ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,

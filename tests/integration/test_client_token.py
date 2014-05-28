@@ -135,6 +135,18 @@ class TestClientToken(unittest.TestCase):
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(len(customer.credit_cards), 1)
 
+    def test_can_pass_sepa_params(self):
+        result = braintree.Customer.create()
+        customer_id = result.customer.id
+
+        client_token = ClientToken.generate({
+            "customer_id": customer_id,
+            "acceptance_location": "Hamburg, Germany",
+            "sepa_mandate_type": SEPABankAccount.MandateType.Business
+        })
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        self.assertNotEqual(authorization_fingerprint, None)
+
     def test_required_data_cannot_be_overridden(self):
         try:
             client_token = ClientToken.generate({

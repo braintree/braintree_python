@@ -2012,7 +2012,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = "altpay_merchant_public_key"
             Configuration.private_key = "altpay_merchant_private_key"
             customer_id = Customer.create().customer.id
-            token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": "b2b"})
+            token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
             client_api =  ClientApiHttp(config, {
