@@ -1,5 +1,8 @@
-import base64
 import requests
+if sys.version_info[0] == 2:
+    from base64 import encodestring as encodebytes
+else:
+    from base64 import encodebytes
 import braintree
 from braintree import version
 from braintree.util.xml_util import XmlUtil
@@ -84,7 +87,7 @@ class Http(object):
             return requests.delete
 
     def __authorization_header(self):
-        return b"Basic " + base64.encodestring(self.config.public_key.encode('ascii') + b":" + self.config.private_key.encode('ascii')).strip()
+        return b"Basic " + encodebytes(self.config.public_key.encode('ascii') + b":" + self.config.private_key.encode('ascii')).strip()
 
     def __headers(self):
         return {
