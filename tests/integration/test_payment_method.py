@@ -38,6 +38,37 @@ class TestPaymentMethod(unittest.TestCase):
         ]
         self.assertTrue(ErrorCodes.PayPalAccount.CustomerIdIsRequiredForVaulting in customer_error_codes)
 
+    def test_create_and_make_default(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+        })
+        self.assertTrue(credit_card_result.is_success)
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.PayPalFuturePayment,
+            "options": {"make_default": True},
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.payment_method.default)
+
+    def test_create_and_set_token(self):
+        customer_id = Customer.create().customer.id
+        token = str(random.randint(1, 1000000))
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.PayPalFuturePayment,
+            "token": token
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(token, result.payment_method.token)
+
     def test_create_with_paypal_one_time_nonce_fails(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({

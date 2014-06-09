@@ -23,6 +23,8 @@ class PaymentMethod(Resource):
     def signature(type):
         signature = [
             "customer_id",
-            "payment_method_nonce"
+            "payment_method_nonce",
+            "token",
+            {"options": ["make_default"]}
         ]
         return signature
