@@ -1555,6 +1555,9 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {
+                "submit_for_settlement": True
+            }
         }).transaction
 
         TestHelper.settle_transaction(transaction.id)
