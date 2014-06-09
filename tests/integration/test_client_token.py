@@ -22,6 +22,13 @@ class TestClientToken(unittest.TestCase):
         status_code, response = http.get_cards()
         self.assertEqual(status_code, 200)
 
+    def test_allows_client_token_version_to_be_specified(self):
+        config = Configuration.instantiate()
+        client_token = ClientToken.generate({"version": 1})
+        version = json.loads(client_token)["version"]
+
+        self.assertEqual(version, 1)
+
     def test_can_pass_verify_card(self):
         config = Configuration.instantiate()
         result = braintree.Customer.create()
@@ -146,6 +153,14 @@ class TestClientToken(unittest.TestCase):
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         self.assertNotEqual(authorization_fingerprint, None)
+
+    def test_can_pass_merchant_account_id(self):
+        client_token = ClientToken.generate({
+            "merchant_account_id": "my_merchant_account"
+        })
+        merchant_account_id = json.loads(client_token)["merchantAccountId"]
+
+        self.assertEqual(merchant_account_id, "my_merchant_account")
 
     def test_required_data_cannot_be_overridden(self):
         try:

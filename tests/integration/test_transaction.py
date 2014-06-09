@@ -1781,6 +1781,77 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(True, disbursement_details.success)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 
+    def test_sale_with_three_d_secure_token(self):
+        three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+        })
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_token": three_d_secure_token
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_sale_without_three_d_secure_token(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_sale_returns_error_with_none_three_d_secure_token(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_token": None
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureTokenIsInvalid,
+            result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+        )
+
+    def test_sale_returns_error_with_mismatched_3ds_verification_data(self):
+        three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+        })
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_token": three_d_secure_token
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureTransactionDataDoesntMatchVerify,
+            result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+        )
+
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
         dispute = transaction.disputes[0]

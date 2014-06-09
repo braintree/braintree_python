@@ -9,7 +9,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         })
@@ -20,8 +20,8 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("411111", credit_card.bin)
         self.assertEquals("1111", credit_card.last_4)
         self.assertEquals("05", credit_card.expiration_month)
-        self.assertEquals("2009", credit_card.expiration_year)
-        self.assertEquals("05/2009", credit_card.expiration_date)
+        self.assertEquals("2014", credit_card.expiration_year)
+        self.assertEquals("05/2014", credit_card.expiration_date)
         self.assertEquals("John Doe", credit_card.cardholder_name)
         self.assertNotEquals(re.search("\A\w{32}\Z", credit_card.unique_number_identifier), None)
         self.assertFalse(credit_card.venmo_sdk)
@@ -32,7 +32,7 @@ class TestCreditCard(unittest.TestCase):
         card1 = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
@@ -42,7 +42,7 @@ class TestCreditCard(unittest.TestCase):
         card2 = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe",
             "options":
@@ -59,14 +59,14 @@ class TestCreditCard(unittest.TestCase):
             "customer_id": customer.id,
             "number": "4111111111111111",
             "expiration_month": "05",
-            "expiration_year": "2009",
+            "expiration_year": "2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         })
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertEquals("05/2009", credit_card.expiration_date)
+        self.assertEquals("05/2014", credit_card.expiration_date)
 
     def test_create_with_security_params(self):
         customer = Customer.create().customer
@@ -74,7 +74,7 @@ class TestCreditCard(unittest.TestCase):
             "customer_id": customer.id,
             "number": "4111111111111111",
             "expiration_month": "05",
-            "expiration_year": "2009",
+            "expiration_year": "2014",
             "cvv": "100",
             "cardholder_name": "John Doe",
             "device_session_id": "abc123",
@@ -89,7 +89,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "token": token
         })
 
@@ -102,7 +102,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "billing_address": {
                 "street_address": "123 Abc Way",
                 "locality": "Chicago",
@@ -136,7 +136,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "billing_address_id": address.id
         })
 
@@ -150,7 +150,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
         })
         self.assertTrue(result.is_success)
         self.assertEquals(None, result.credit_card.billing_address)
@@ -160,7 +160,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4000111111111115",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "options": {"verify_card": True}
         })
 
@@ -180,7 +180,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4000111111111115",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "options": {
                 "verification_merchant_account_id": TestHelper.non_default_merchant_account_id,
                 "verify_card": True
@@ -207,7 +207,7 @@ class TestCreditCard(unittest.TestCase):
             result = CreditCard.create({
                 "customer_id": customer.id,
                 "number": "4111111111111111",
-                "expiration_date": "05/2009",
+                "expiration_date": "05/2014",
                 "billing_address": {
                     "postal_code": "20000"
                 },
@@ -239,7 +239,7 @@ class TestCreditCard(unittest.TestCase):
             result = CreditCard.create({
                 "customer_id": customer.id,
                 "number": "4111111111111111",
-                "expiration_date": "05/2009",
+                "expiration_date": "05/2014",
                 "cvv": "200",
                 "options": {
                     "verify_card": True
@@ -259,7 +259,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4000111111111115",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "options": {"verify_card": False}
         })
 
@@ -270,13 +270,13 @@ class TestCreditCard(unittest.TestCase):
         CreditCard.create({
             "customer_id": customer.id,
             "number": "4000111111111115",
-            "expiration_date": "05/2009"
+            "expiration_date": "05/2014"
         })
 
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4000111111111115",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "options": {"fail_on_duplicate_payment_method": True}
         })
 
@@ -383,7 +383,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe",
             "options": {
@@ -398,7 +398,7 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe",
             "options": {
@@ -413,7 +413,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
@@ -440,7 +440,7 @@ class TestCreditCard(unittest.TestCase):
         initial_credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "billing_address": {
                 "street_address": "123 Nigeria Ave",
             }
@@ -469,7 +469,7 @@ class TestCreditCard(unittest.TestCase):
         initial_credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "billing_address": {
                 "street_address": "123 Nigeria Ave",
             }
@@ -493,14 +493,14 @@ class TestCreditCard(unittest.TestCase):
         card1 = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
         card2 = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
@@ -522,7 +522,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
@@ -543,7 +543,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
@@ -567,7 +567,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "billing_address": {
                 "street_address": "321 Xyz Way",
                 "locality": "Chicago",
@@ -597,7 +597,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009"
+            "expiration_date": "05/2014"
         }).credit_card
 
         result = CreditCard.update(credit_card.token, {
@@ -612,7 +612,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009"
+            "expiration_date": "05/2014"
         }).credit_card
 
         result = CreditCard.delete(credit_card.token)
@@ -624,7 +624,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009"
+            "expiration_date": "05/2014"
         }).credit_card
 
         CreditCard.delete(credit_card.token)
@@ -639,7 +639,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009"
+            "expiration_date": "05/2014"
         }).credit_card
 
         found_credit_card = CreditCard.find(credit_card.token)
@@ -647,15 +647,15 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("411111", credit_card.bin)
         self.assertEquals("1111", credit_card.last_4)
         self.assertEquals("05", credit_card.expiration_month)
-        self.assertEquals("2009", credit_card.expiration_year)
-        self.assertEquals("05/2009", credit_card.expiration_date)
+        self.assertEquals("2014", credit_card.expiration_year)
+        self.assertEquals("05/2014", credit_card.expiration_date)
 
     def test_find_returns_associated_subsriptions(self):
         customer = Customer.create().customer
         credit_card = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009"
+            "expiration_date": "05/2014"
         }).credit_card
         id = "id_" + str(random.randint(1, 1000000))
         subscription = Subscription.create({
@@ -833,7 +833,7 @@ class TestCreditCard(unittest.TestCase):
         card1 = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
             "cvv": "100",
             "cardholder_name": "John Doe"
         }).credit_card
@@ -934,7 +934,7 @@ class TestCreditCard(unittest.TestCase):
         card2 = CreditCard.create({
             "customer_id": customer.id,
             "number": "4111111111111111",
-            "expiration_date": "05/2009",
+            "expiration_date": "05/2014",
         }).credit_card
 
         self.assertTrue(card1.default)
@@ -1044,7 +1044,7 @@ class TestCreditCard(unittest.TestCase):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",
-                "expiration_date": "05/2009",
+                "expiration_date": "05/2014",
                 "cvv": "100",
                 "cardholder_name": "John Doe"
             })
