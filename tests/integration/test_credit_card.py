@@ -730,7 +730,7 @@ class TestCreditCard(unittest.TestCase):
         try:
             CreditCard.from_nonce(nonce)
             self.assertTrue(False)
-        except Exception, e:
+        except Exception as e:
             self.assertIn("not found", str(e))
 
     def test_from_nonce_with_consumed_nonce(self):
@@ -761,7 +761,7 @@ class TestCreditCard(unittest.TestCase):
         try:
             CreditCard.from_nonce(nonce)
             self.assertTrue(False)
-        except Exception, e:
+        except Exception as e:
             self.assertIn("consumed", str(e))
 
     def test_from_nonce_with_locked_nonce(self):
@@ -792,7 +792,7 @@ class TestCreditCard(unittest.TestCase):
         try:
             CreditCard.from_nonce(nonce)
             self.assertTrue(False)
-        except Exception, e:
+        except Exception as e:
             self.assertIn("locked", str(e))
 
     def test_create_from_transparent_redirect(self):

@@ -92,7 +92,7 @@ class Http(object):
                     self.config.public_key.encode('ascii') + 
                     b":" + 
                     self.config.private_key.encode('ascii')
-                ).replace("\n", "").strip()
+                ).replace(b"\n", b"").strip()
 
     def __headers(self):
         return {

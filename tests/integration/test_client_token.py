@@ -156,5 +156,5 @@ class TestClientToken(unittest.TestCase):
                 "merchant_id": "1234"
             })
             self.fail("Should have raised exception!")
-        except Exception, e:
+        except Exception as e:
             self.assertEqual("'Invalid keys: merchant_id'", str(e))
