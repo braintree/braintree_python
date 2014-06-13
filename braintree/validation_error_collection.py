@@ -19,7 +19,7 @@ class ValidationErrorCollection(object):
 
         result = []
         result.extend(self.errors)
-        for nested_error in list(self.__nested_errors.values()):
+        for nested_error in self.__nested_errors.values():
             result.extend(nested_error.deep_errors)
         return result
 
@@ -56,7 +56,7 @@ class ValidationErrorCollection(object):
         """Returns the number of errors on this object and any nested objects."""
 
         size = len(self.errors)
-        for error in list(self.__nested_errors.values()):
+        for error in self.__nested_errors.values():
             size += error.deep_size
         return size
 
@@ -86,7 +86,7 @@ class ValidationErrorCollection(object):
     @property
     def __nested_errors(self):
         nested_errors = {}
-        for key in list(self.data.keys()):
+        for key in self.data:
             if key == "errors": continue
             nested_errors[key] = ValidationErrorCollection(self.data[key])
         return nested_errors

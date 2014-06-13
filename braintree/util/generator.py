@@ -29,7 +29,7 @@ class Generator(object):
 
     def __generate_dict(self, dictionary):
         xml = ""
-        for key, val in list(dictionary.items()):
+        for key, val in dictionary.items():
             xml += self.__generate_node(key, val)
         return xml
 

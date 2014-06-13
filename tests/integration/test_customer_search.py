@@ -86,7 +86,7 @@ class TestCustomerSearch(unittest.TestCase):
             "credit_card_expiration_date": "05/2010"
         }
 
-        criteria = [getattr(CustomerSearch, search_field) == value for search_field, value in list(search_criteria.items())]
+        criteria = [getattr(CustomerSearch, search_field) == value for search_field, value in search_criteria.items()]
         criteria.append(CustomerSearch.id == customer.id)
 
         collection = Customer.search(criteria)
@@ -94,7 +94,7 @@ class TestCustomerSearch(unittest.TestCase):
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(customer.id, collection.first.id)
 
-        for search_field, value in list(search_criteria.items()):
+        for search_field, value in search_criteria.items():
             collection = Customer.search(
                 CustomerSearch.id == customer.id,
                 getattr(CustomerSearch, search_field) == value

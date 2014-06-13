@@ -188,7 +188,7 @@ class TestTransactionSearch(unittest.TestCase):
             "shipping_street_address": "456 Road"
         }
 
-        for criterion, value in list(search_criteria.items()):
+        for criterion, value in search_criteria.items():
             text_node = getattr(TransactionSearch, criterion)
 
             collection = Transaction.search([
