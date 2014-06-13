@@ -1,5 +1,4 @@
 import cgi
-import sys
 from datetime import datetime
 import braintree
 from braintree.util.crypto import Crypto

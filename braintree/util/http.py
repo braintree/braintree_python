@@ -89,8 +89,8 @@ class Http(object):
 
     def __authorization_header(self):
         return b"Basic " + encodebytes(
-                    self.config.public_key.encode('ascii') + 
-                    b":" + 
+                    self.config.public_key.encode('ascii') +
+                    b":" +
                     self.config.private_key.encode('ascii')
                 ).replace(b"\n", b"").strip()
 
