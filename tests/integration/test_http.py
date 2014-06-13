@@ -10,6 +10,10 @@ class TestHttp(unittest.TestCase):
     else:
         SSLError = requests.models.SSLError
 
+    def get_http(self, environment):
+        config = Configuration(environment, "merchant_id", "public_key", "private_key")
+        return config.http()
+
     def test_successful_connection_sandbox(self):
         http = self.get_http(Environment.Sandbox)
         try:
@@ -28,15 +32,22 @@ class TestHttp(unittest.TestCase):
         else:
             self.assertTrue(False)
 
-    def get_http(self, environment):
-        config = Configuration(environment, "merchant_id", "public_key", "private_key")
-        return config.http()
+    def test_unsafe_ssl_connection(self):
+        Configuration.use_unsafe_ssl = True;
+        environment = Environment(Environment.Sandbox.server, "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
+        http = self.get_http(environment)
+        try:
+            http.get("/")
+        except AuthenticationError:
+            pass
+        finally:
+            Configuration.use_unsafe_ssl = False;
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert(self):
         if platform.system() == "Darwin":
             return
 
-        environment = Environment("www.google.com", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("www.google.com", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -49,7 +60,7 @@ class TestHttp(unittest.TestCase):
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         #ip address of api.braintreegateway.com
-        environment = Environment("204.109.13.121", "443", True, Environment.Production.ssl_certificate)
+        environment = Environment("204.109.13.121", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")

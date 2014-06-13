@@ -1,3 +1,4 @@
+import sys
 import requests
 if sys.version_info[0] == 2:
     from base64 import encodestring as encodebytes
@@ -87,7 +88,11 @@ class Http(object):
             return requests.delete
 
     def __authorization_header(self):
-        return b"Basic " + encodebytes(self.config.public_key.encode('ascii') + b":" + self.config.private_key.encode('ascii')).strip()
+        return b"Basic " + encodebytes(
+                    self.config.public_key.encode('ascii') + 
+                    b":" + 
+                    self.config.private_key.encode('ascii')
+                ).replace("\n", "").strip()
 
     def __headers(self):
         return {

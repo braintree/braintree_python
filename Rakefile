@@ -10,7 +10,7 @@ namespace :test do
 
   desc "run integration tests"
   task :integration do
-    sh "nosetests tests/integration"
+    sh "env nosetests tests/integration"
   end
 end
 

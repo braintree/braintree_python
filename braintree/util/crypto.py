@@ -9,12 +9,20 @@ else:
 
 class Crypto:
     @staticmethod
-    def hmac_hash(secret_key, content):
+    def sha1_hmac_hash(secret_key, content):
         if isinstance(secret_key, text_type):
             secret_key = secret_key.encode('ascii')
         if isinstance(content, text_type):
             content = content.encode('ascii')
         return hmac.new(hashlib.sha1(secret_key).digest(), content, hashlib.sha1).hexdigest()
+
+    @staticmethod
+    def sha256_hmac_hash(secret_key, content):
+        if isinstance(secret_key, text_type):
+            secret_key = secret_key.encode('ascii')
+        if isinstance(content, text_type):
+            content = content.encode('ascii')
+        return hmac.new(hashlib.sha256(secret_key).digest(), content, hashlib.sha256).hexdigest()
 
     @staticmethod
     def secure_compare(left, right):

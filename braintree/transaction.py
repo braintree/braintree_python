@@ -3,6 +3,7 @@ import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.disbursement_detail import DisbursementDetail
+from braintree.dispute import Dispute
 from braintree.discount import Discount
 from braintree.successful_result import SuccessfulResult
 from braintree.status_event import StatusEvent
@@ -36,7 +37,7 @@ class Transaction(Resource):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
@@ -399,8 +400,8 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
-            "device_data", "billing_address_id",
-            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
+            "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -472,6 +473,8 @@ class Transaction(Resource):
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
         if "disbursement_details" in attributes:
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
+        if "disputes" in attributes:
+            self.disputes = [Dispute(dispute) for dispute in self.disputes]
 
     @property
     def refund_id(self):

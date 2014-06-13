@@ -5,6 +5,20 @@
 * Remove httplib strategy and pycurl strategy
 * Add Python 3.3+ support
 
+## 2.29.1
+
+* Make webhook parsing more robust with newlines
+* Add messages to InvalidSignature exceptions
+
+## 2.29.0
+
+* Include Dispute information on Transaction
+* Search for Transactions disputed on a certain date
+
+## 2.28.0
+
+* Disbursement Webhooks
+
 ## 2.27.0
 
 * Fix using instantiated Configuration objects without first calling Configuration.configure

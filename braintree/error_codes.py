@@ -42,6 +42,7 @@ class ErrorCodes(object):
     class CreditCard(object):
         BillingAddressConflict = "91701"
         BillingAddressIdIsInvalid = "91702"
+        CannotUpdateCardUsingPaymentMethodNonce = "91735"
         CardholderNameIsTooLong = "81723"
         CreditCardTypeIsNotAccepted = "81703"
         CreditCardTypeIsNotAcceptedBySubscriptionMerchantAccount = "81718"
@@ -62,6 +63,10 @@ class ErrorCodes(object):
         NumberIsRequired = "81714"
         NumberMustBeTestNumber = "81717"
         PaymentMethodConflict = "81725"
+        PaymentMethodNonceCardTypeIsNotAccepted = "91734"
+        PaymentMethodNonceConsumed = "91731"
+        PaymentMethodNonceLocked = "91733"
+        PaymentMethodNonceUnknown = "91732"
         TokenInvalid = TokenFormatIsInvalid = "91718"
         TokenIsInUse = "91719"
         TokenIsNotAllowed = "91721"
@@ -203,6 +208,18 @@ class ErrorCodes(object):
             MobilePhoneIsInvalid = "82683"
             MobilePhoneIsRequired = "82682"
 
+    class PayPalAccount(object):
+        CannotVaultOneTimeUsePayPalAccount = "82902"
+        CannotHaveBothAccessTokenAndConsentCode = "82903"
+        ConsentCodeOrAccessTokenIsRequired = "82901"
+        CustomerIdIsRequiredForVaulting = "82905"
+        PaymentMethodNonceConsumed = "92907"
+        PaymentMethodNonceLocked = "92909"
+        PaymentMethodNonceUnknown = "92908"
+        PayPalAccountsAreNotAccepted = "82904"
+        PayPalCommunicationError = "92910"
+        TokenIsInUse = "92906"
+
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
         SettlementDateIsInvalid = "82302"
@@ -329,6 +346,8 @@ class ErrorCodes(object):
         TaxAmountCannotBeNegative = "81534"
         TaxAmountFormatIsInvalid = "81535"
         TaxAmountIsTooLarge = "81536"
+        ThreeDSecureTokenIsInvalid = "91568"
+        ThreeDSecureTransactionDataDoesntMatchVerify = "91570"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
         UnsupportedVoiceAuthorization = "91539"

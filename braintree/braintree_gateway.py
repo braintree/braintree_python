@@ -1,5 +1,6 @@
 from braintree.add_on_gateway import AddOnGateway
 from braintree.address_gateway import AddressGateway
+from braintree.client_token_gateway import ClientTokenGateway
 from braintree.credit_card_gateway import CreditCardGateway
 from braintree.customer_gateway import CustomerGateway
 from braintree.discount_gateway import DiscountGateway
@@ -18,6 +19,7 @@ class BraintreeGateway(object):
         self.config = config
         self.add_on = AddOnGateway(self)
         self.address = AddressGateway(self)
+        self.client_token = ClientTokenGateway(self)
         self.credit_card = CreditCardGateway(self)
         self.customer = CustomerGateway(self)
         self.discount = DiscountGateway(self)

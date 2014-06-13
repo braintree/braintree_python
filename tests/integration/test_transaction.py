@@ -1,5 +1,7 @@
+import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
@@ -70,7 +72,7 @@ class TestTransaction(unittest.TestCase):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
@@ -127,7 +129,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("M", transaction.avs_street_address_response_code)
         self.assertEquals("Dan", transaction.customer_details.first_name)
         self.assertEquals("Smith", transaction.customer_details.last_name)
-        self.assertEquals("Braintree Payment Solutions", transaction.customer_details.company)
+        self.assertEquals("Braintree", transaction.customer_details.company)
         self.assertEquals("dan@example.com", transaction.customer_details.email)
         self.assertEquals("419-555-1234", transaction.customer_details.phone)
         self.assertEquals("419-555-1235", transaction.customer_details.fax)
@@ -683,6 +685,34 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.sale({
             "amount": "10.00",
             "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+
+    def test_sale_with_payment_method_nonce(self):
+        config = Configuration.instantiate()
+        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        status_code, response = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            },
+            "share": True
+        })
+        nonce = json.loads(response)["nonce"]
+
+
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": nonce
         })
 
         self.assertTrue(result.is_success)
@@ -1738,5 +1768,87 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("USD", disbursement_details.settlement_currency_iso_code)
         self.assertEquals(Decimal("1"), disbursement_details.settlement_currency_exchange_rate)
         self.assertEquals(False, disbursement_details.funds_held)
+        self.assertEquals(True, disbursement_details.success)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 
+    def test_sale_with_three_d_secure_token(self):
+        three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+        })
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_token": three_d_secure_token
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_sale_without_three_d_secure_token(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_sale_returns_error_with_none_three_d_secure_token(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_token": None
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureTokenIsInvalid,
+            result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+        )
+
+    def test_sale_returns_error_with_mismatched_3ds_verification_data(self):
+        three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+        })
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_token": three_d_secure_token
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureTransactionDataDoesntMatchVerify,
+            result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+        )
+
+    def test_find_exposes_disputes(self):
+        transaction = Transaction.find("disputedtransaction")
+        dispute = transaction.disputes[0]
+
+        self.assertEquals(date(2014, 3, 1), dispute.received_date)
+        self.assertEquals(date(2014, 3, 21), dispute.reply_by_date)
+        self.assertEquals("USD", dispute.currency_iso_code)
+        self.assertEquals(Decimal("250.00"), dispute.amount)
+        self.assertEquals(Dispute.Status.Won, dispute.status)
+        self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
