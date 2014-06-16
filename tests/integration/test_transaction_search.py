@@ -517,6 +517,14 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 0)
         self.assertEqual(Transaction.Status.AuthorizationExpired, collection.first.status)
 
+    def test_advanced_search_allows_new_settlement_statuses(self):
+        try:
+            collection = Transaction.search([
+                TransactionSearch.status.in_list(["settlement_confirmed", "settlement_declined"])
+            ])
+        except AttributeError, error:
+            self.assertTrue(False)
+
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
         try:
             collection = Transaction.search([

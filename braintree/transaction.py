@@ -156,6 +156,8 @@ class Transaction(Resource):
         GatewayRejected        = "gateway_rejected"
         ProcessorDeclined      = "processor_declined"
         Settled                = "settled"
+        SettlementConfirmed    = "settlement_confirmed"
+        SettlementDeclined     = "settlement_declined"
         SettlementFailed       = "settlement_failed"
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"

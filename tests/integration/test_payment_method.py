@@ -121,7 +121,7 @@ class TestPaymentMethod(unittest.TestCase):
             "bic": "DEUTDEFF",
             "iban": "DE89370400440532013000",
             "accountHolderName": "Baron Von Holder",
-            "billingAddress": {"region": "Hesse"}
+            "billingAddress": {"region": "Hesse", "country_name": "Germany"}
         })
 
         self.assertNotEquals(nonce, None)
