@@ -16,6 +16,7 @@ class TestPayPalAccount(unittest.TestCase):
         self.assertNotEqual(None, found_account)
         self.assertEquals(found_account.__class__, PayPalAccount)
         self.assertEquals(found_account.token, result.payment_method.token)
+        self.assertNotEqual(None, found_account.image_url)
 
     def test_find_raises_on_not_found_token(self):
         self.assertRaises(NotFoundError, PayPalAccount.find, "non-existant-token")

@@ -13,6 +13,7 @@ class TestPaymentMethod(unittest.TestCase):
         created_account = result.payment_method
         self.assertEquals(created_account.__class__, PayPalAccount)
         self.assertEquals(created_account.email, "jane.doe@example.com")
+        self.assertNotEquals(created_account.image_url, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
