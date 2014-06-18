@@ -1878,6 +1878,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
 
     def test_creating_paypal_transaction_with_one_time_use_nonce_and_store_in_vault(self):
         result = Transaction.sale({
