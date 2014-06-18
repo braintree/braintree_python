@@ -77,6 +77,14 @@ class TestHelper(object):
         Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settle")
 
     @staticmethod
+    def settlement_confirm_transaction(transaction_id):
+        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settlement_confirm")
+
+    @staticmethod
+    def settlement_decline_transaction(transaction_id):
+        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settlement_decline")
+
+    @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
         form_data = urllib.urlencode(post_params)
         conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
