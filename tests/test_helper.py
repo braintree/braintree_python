@@ -67,7 +67,7 @@ class TestHelper(object):
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
-        Configuration.gateway().testing.make_past_due(subscription, number_of_days_past_due)
+        Configuration.gateway().testing.make_past_due(subscription.id, number_of_days_past_due)
 
     @staticmethod
     def escrow_transaction(transaction_id):
