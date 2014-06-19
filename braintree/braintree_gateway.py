@@ -10,6 +10,7 @@ from braintree.payment_method_gateway import PaymentMethodGateway
 from braintree.plan_gateway import PlanGateway
 from braintree.settlement_batch_summary_gateway import SettlementBatchSummaryGateway
 from braintree.subscription_gateway import SubscriptionGateway
+from braintree.testing_gateway import TestingGateway
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
@@ -36,3 +37,4 @@ class BraintreeGateway(object):
         self.webhook_testing = WebhookTestingGateway(self)
         self.payment_method = PaymentMethodGateway(self)
         self.paypal_account = PayPalAccountGateway(self)
+        self.testing = TestingGateway(self)

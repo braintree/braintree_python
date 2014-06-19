@@ -2116,3 +2116,22 @@ class TestTransaction(unittest.TestCase):
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
+
+    def test_transaction_settlement_errors(self):
+        sale_result = Transaction.sale({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            },
+            "amount": "100.00",
+        })
+        transaction = sale_result.transaction
+
+        settle_result = TestHelper.settle_transaction(transaction.id)
+        self.assertFalse(settle_result.is_success)
+
+        error_codes = [
+            error.code for error in settle_result.errors.for_object("transaction").on("base")
+        ]
+        self.assertTrue(ErrorCodes.Transaction.CannotSimulateTransactionSettlement in error_codes)

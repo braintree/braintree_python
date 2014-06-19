@@ -9,6 +9,7 @@ import json
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
+from braintree.testing_gateway import *
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from nose.tools import raises
@@ -66,23 +67,23 @@ class TestHelper(object):
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
-        Configuration.instantiate().http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription.id, number_of_days_past_due))
+        Configuration.gateway().testing.make_past_due(subscription, number_of_days_past_due)
 
     @staticmethod
     def escrow_transaction(transaction_id):
-        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/escrow")
+        Configuration.gateway().testing.escrow_transaction(transaction_id)
 
     @staticmethod
     def settle_transaction(transaction_id):
-        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settle")
+        return Configuration.gateway().testing.settle_transaction(transaction_id)
 
     @staticmethod
     def settlement_confirm_transaction(transaction_id):
-        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settlement_confirm")
+        return Configuration.gateway().testing.settlement_confirm_transaction(transaction_id)
 
     @staticmethod
     def settlement_decline_transaction(transaction_id):
-        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settlement_decline")
+        return Configuration.gateway().testing.settlement_decline_transaction(transaction_id)
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
@@ -96,10 +97,7 @@ class TestHelper(object):
 
     @staticmethod
     def create_3ds_verification(merchant_account_id, params):
-        response = Configuration.instantiate().http().post("/three_d_secure/create_verification/" + merchant_account_id, {
-            "three_d_secure_verification": params
-        })
-        return response["three_d_secure_verification"]["three_d_secure_token"]
+        return Configuration.gateway().testing.create_3ds_verification(merchant_account_id, params)
 
     @staticmethod
     @contextmanager
