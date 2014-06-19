@@ -2112,6 +2112,7 @@ class TestTransaction(unittest.TestCase):
             self.assertEquals(sepa_bank_account_details.bic, "DEUTDEFF")
             self.assertEquals(sepa_bank_account_details.account_holder_name, "Baron Von Holder")
             self.assertEquals(sepa_bank_account_details.masked_iban[-4:], "3000")
+            self.assertNotEquals(sepa_bank_account_details.image_url, None)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
