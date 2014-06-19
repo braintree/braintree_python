@@ -35,7 +35,31 @@ class CommonHttpTests(object):
         finally:
             Configuration.use_unsafe_ssl = False;
 
+    def test_wrapping_http_exceptions(self):
+        config = Configuration(
+            Environment("localhost", "1", False, None, Environment.Production.ssl_certificate),
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key",
+            http_strategy=self.get_strategy(),
+            wrap_http_exceptions=True
+        )
+
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
+        try:
+            gateway.transaction.find("my_id")
+        except braintree.exceptions.unexpected_error.UnexpectedError:
+            correct_exception = True
+        except Exception as e:
+            correct_exception = False
+
+        self.assertTrue(correct_exception)
+
 class TestPyCurl(CommonHttpTests, unittest.TestCase):
+    def get_strategy(self):
+        return braintree.util.http_strategy.pycurl_strategy.PycurlStrategy
+
     def get_http(self, environment):
         config = Configuration(environment, "merchant_id", "public_key", "private_key")
         config._http_strategy = braintree.util.http_strategy.pycurl_strategy.PycurlStrategy(config, config.environment)
@@ -71,6 +95,28 @@ class TestPyCurl(CommonHttpTests, unittest.TestCase):
         else:
             self.fail("Expected to receive an SSL error but no exception was raised")
 
+    def test_timeouts(self):
+        config = Configuration(
+            Environment.Development,
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key",
+            http_strategy=self.get_strategy(),
+            wrap_http_exceptions=True,
+            timeout=1
+        )
+
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
+        try:
+            config.http().get("/test/slow")
+        except braintree.exceptions.unexpected_error.UnexpectedError:
+            correct_exception = True
+        except Exception as e:
+            correct_exception = False
+
+        self.assertTrue(correct_exception)
+
 class TestRequests(CommonHttpTests, unittest.TestCase):
     if LooseVersion(requests.__version__) >= LooseVersion('1.0.0'):
         SSLError = requests.exceptions.SSLError
@@ -81,6 +127,9 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
         config = Configuration(environment, "merchant_id", "public_key", "private_key")
         config._http_strategy = braintree.util.http_strategy.requests_strategy.RequestsStrategy(config, config.environment)
         return config.http()
+
+    def get_strategy(self):
+        return braintree.util.http_strategy.requests_strategy.RequestsStrategy
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert(self):
         if platform.system() == "Darwin":
@@ -107,3 +156,51 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
             pass
         else:
             self.fail("Expected to receive an SSL error but no exception was raised")
+
+    def test_timeouts(self):
+        config = Configuration(
+            Environment.Development,
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key",
+            http_strategy=self.get_strategy(),
+            wrap_http_exceptions=True,
+            timeout=0.001
+        )
+
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
+        try:
+            gateway.transaction.find("my_id")
+        except braintree.exceptions.http.timeout_error.TimeoutError:
+            correct_exception = True
+        except Exception as e:
+            correct_exception = False
+
+        self.assertTrue(correct_exception)
+
+class TestRequests(unittest.TestCase):
+    def get_strategy(self):
+        return braintree.util.http_strategy.httplib_strategy.HttplibStrategy
+
+    def test_timeouts(self):
+        config = Configuration(
+            Environment.Development,
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key",
+            http_strategy=self.get_strategy(),
+            wrap_http_exceptions=True,
+            timeout=0.001
+        )
+
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
+        try:
+            gateway.transaction.find("my_id")
+        except braintree.exceptions.http.timeout_error.TimeoutError:
+            correct_exception = True
+        except Exception as e:
+            correct_exception = False
+
+        self.assertTrue(correct_exception)
