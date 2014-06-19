@@ -132,6 +132,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
+        self.assertNotEqual(result.payment_method.image_url, None)
         found_bank_account = PaymentMethod.find(result.payment_method.token)
 
         self.assertNotEqual(found_bank_account, None)
