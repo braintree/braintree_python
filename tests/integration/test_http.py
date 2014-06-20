@@ -178,29 +178,3 @@ class TestRequests(CommonHttpTests, unittest.TestCase):
             correct_exception = False
 
         self.assertTrue(correct_exception)
-
-class TestRequests(unittest.TestCase):
-    def get_strategy(self):
-        return braintree.util.http_strategy.httplib_strategy.HttplibStrategy
-
-    def test_timeouts(self):
-        config = Configuration(
-            Environment.Development,
-            "integration_merchant_id",
-            "integration_public_key",
-            "integration_private_key",
-            http_strategy=self.get_strategy(),
-            wrap_http_exceptions=True,
-            timeout=0.001
-        )
-
-        gateway = braintree.braintree_gateway.BraintreeGateway(config)
-
-        try:
-            gateway.transaction.find("my_id")
-        except braintree.exceptions.http.timeout_error.TimeoutError:
-            correct_exception = True
-        except Exception as e:
-            correct_exception = False
-
-        self.assertTrue(correct_exception)
