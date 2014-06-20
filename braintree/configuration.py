@@ -15,21 +15,25 @@ class Configuration(object):
         )
     """
     @staticmethod
-    def configure(environment, merchant_id, public_key, private_key, http_strategy=None):
+    def configure(environment, merchant_id, public_key, private_key, **kwargs):
         Configuration.environment = environment
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
-        Configuration.default_http_strategy = http_strategy
+        Configuration.default_http_strategy = kwargs.get("http_strategy", None)
+        Configuration.timeout = kwargs.get("timeout", 60)
+        Configuration.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
 
     @staticmethod
-    def for_partner(environment, partner_id, public_key, private_key, http_strategy=None):
+    def for_partner(environment, partner_id, public_key, private_key, **kwargs):
         return Configuration(
             environment=environment,
             merchant_id=partner_id,
             public_key=public_key,
             private_key=private_key,
-            http_strategy=http_strategy
+            http_strategy=kwargs.get("http_strategy", None),
+            timeout=kwargs.get("timeout", 60),
+            wrap_http_exceptions=kwargs.get("wrap_http_exceptions", False)
         )
 
     @staticmethod
@@ -43,18 +47,24 @@ class Configuration(object):
             merchant_id=Configuration.merchant_id,
             public_key=Configuration.public_key,
             private_key=Configuration.private_key,
-            http_strategy=Configuration.default_http_strategy
+            http_strategy=Configuration.default_http_strategy,
+            timeout=Configuration.timeout,
+            wrap_http_exceptions=Configuration.wrap_http_exceptions
         )
 
     @staticmethod
     def api_version():
         return "3"
 
-    def __init__(self, environment, merchant_id, public_key, private_key, http_strategy=None):
+    def __init__(self, environment, merchant_id, public_key, private_key, **kwargs):
         self.environment = environment
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
+        self.timeout = kwargs.get("timeout", 60)
+        self.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
+
+        http_strategy = kwargs.get("http_strategy", None)
 
         if http_strategy:
             self._http_strategy = http_strategy(self, self.environment)

@@ -32,16 +32,25 @@ class TestHttp(unittest.TestCase):
         else:
             self.assertTrue(False)
 
-    def test_unsafe_ssl_connection(self):
-        Configuration.use_unsafe_ssl = True;
-        environment = Environment(Environment.Sandbox.server, "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
-        http = self.get_http(environment)
+    def test_wrapping_http_exceptions(self):
+        config = Configuration(
+            Environment("localhost", "1", False, None, Environment.Production.ssl_certificate),
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key",
+            wrap_http_exceptions=True
+        )
+
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
         try:
-            http.get("/")
-        except AuthenticationError:
-            pass
-        finally:
-            Configuration.use_unsafe_ssl = False;
+            gateway.transaction.find("my_id")
+        except braintree.exceptions.unexpected_error.UnexpectedError:
+            correct_exception = True
+        except Exception as e:
+            correct_exception = False
+
+        self.assertTrue(correct_exception)
 
     def test_unsuccessful_connection_to_good_ssl_server_with_wrong_cert(self):
         if platform.system() == "Darwin":
@@ -68,3 +77,24 @@ class TestHttp(unittest.TestCase):
             pass
         else:
             self.fail("Expected to receive an SSL error but no exception was raised")
+
+    def test_timeouts(self):
+        config = Configuration(
+            Environment.Development,
+            "integration_merchant_id",
+            "integration_public_key",
+            "integration_private_key",
+            wrap_http_exceptions=True,
+            timeout=0.001
+        )
+
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
+        try:
+            gateway.transaction.find("my_id")
+        except braintree.exceptions.http.timeout_error.TimeoutError:
+            correct_exception = True
+        except Exception as e:
+            correct_exception = False
+
+        self.assertTrue(correct_exception)

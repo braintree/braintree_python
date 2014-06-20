@@ -14,6 +14,10 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
+from braintree.exceptions.unexpected_error import UnexpectedError
+from braintree.exceptions.http.connection_error import ConnectionError
+from braintree.exceptions.http.invalid_response_error import InvalidResponseError
+from braintree.exceptions.http.timeout_error import TimeoutError
 
 class Http(object):
     @staticmethod
@@ -57,7 +61,14 @@ class Http(object):
         http_strategy = self.config.http_strategy()
         request_body = XmlUtil.xml_from_dict(params) if params else ''
         full_path = self.config.base_merchant_path() + path
-        status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
+
+        try:
+            status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
+        except Exception as e:
+            if self.config.wrap_http_exceptions:
+                http_strategy.handle_exception(e)
+            else:
+                raise e
 
         if Http.is_error_status(status):
             Http.raise_exception_from_status(status)
@@ -72,10 +83,21 @@ class Http(object):
             self.environment.base_url + path,
             headers=headers,
             data=request_body,
-            verify=self.environment.ssl_certificate
+            verify=self.environment.ssl_certificate,
+            timeout=self.config.timeout
         )
 
         return [response.status_code, response.text]
+
+    def handle_exception(self, exception):
+        if isinstance(exception, requests.exceptions.ConnectionError):
+            raise ConnectionError(exception)
+        elif isinstance(exception, requests.exceptions.HTTPError):
+            raise InvalidResponseError(exception)
+        elif isinstance(exception, requests.exceptions.Timeout):
+            raise TimeoutError(exception)
+        else:
+            raise UnexpectedError(exception)
 
     def __request_function(self, method):
         if method == "GET":
