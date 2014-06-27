@@ -4,12 +4,27 @@ The Braintree library provides integration access to the Braintree Gateway.
 
 ## Dependencies
 
-* [requests](http://docs.python-requests.org/en/latest/) or [PycURL](http://pycurl.sourceforge.net/)
+* Python 2.6, 2.7, 3.3, or 3.4
+* [requests](http://docs.python-requests.org/en/latest/)
 
-_Note:_ Although discouraged, the dependency on PycURL / requests can be bypassed during development or for deployment on servers where they are impossible to use via:
+## Upgrading from 2.x.x to 3.x.x
 
-    # Allow unsafe SSL, removes dependency on PycURL in dev environments
-    braintree.Configuration.use_unsafe_ssl = True
+On Python 2.6 or 2.7 with default settings / requests:
+
+No changes are required to upgrade to version 3.
+
+On Python 2.6 or 2.7 with pycurl, httplib, or use_unsafe_ssl = True:
+
+Install requests and test that you are able to connect to the Sandbox
+environment with version 3 and without specifying an HTTP strategy.
+The use_unsafe_ssl parameter will be ignored.
+
+On Python 2.5:
+
+Python 2.5 isn't supported by version 3 of the library.
+Most code that runs on 2.5 will work unmodified on Python 2.6.
+After making sure your code works on Python 2.6, follow the
+instructions above for upgrading from pycurl / httplib to requests.
 
 ## Documentation
 
