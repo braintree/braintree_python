@@ -523,7 +523,7 @@ class TestSubscription(unittest.TestCase):
         try:
             Subscription.find("bad_token")
             self.assertTrue(False)
-        except Exception, e:
+        except Exception as e:
             self.assertEquals("subscription with id bad_token not found", str(e))
 
     def test_update_creates_a_prorated_transaction_when_merchant_is_set_to_prorate(self):

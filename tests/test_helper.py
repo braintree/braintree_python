@@ -1,9 +1,14 @@
-import httplib
 import os
 import random
 import re
 import unittest
-import urllib
+import sys
+if sys.version_info[0] == 2:
+    from urllib import urlencode, quote_plus
+    from httplib import HTTPConnection
+else:
+    from urllib.parse import urlencode, quote_plus
+    from http.client import HTTPConnection
 import warnings
 import json
 from braintree import *
@@ -13,6 +18,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from nose.tools import raises
 from random import randint
+from contextlib import contextmanager
 
 Configuration.configure(
     Environment.Development,
@@ -30,6 +36,7 @@ class TestHelper(object):
     default_merchant_account_id = "sandbox_credit_card"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
     non_default_sub_merchant_account_id = "sandbox_sub_merchant_account"
+    three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",
          "id": "integration_plan_with_add_ons_and_discounts",
@@ -76,13 +83,38 @@ class TestHelper(object):
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
-        form_data = urllib.urlencode(post_params)
-        conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
+        form_data = urlencode(post_params)
+        conn = HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
         response = conn.getresponse()
         query_string = response.getheader("location").split("?", 1)[1]
         conn.close()
         return query_string
+
+    @staticmethod
+    def create_3ds_verification(merchant_account_id, params):
+        response = Configuration.instantiate().http().post("/three_d_secure/create_verification/" + merchant_account_id, {
+            "three_d_secure_verification": params
+        })
+        return response["three_d_secure_verification"]["three_d_secure_token"]
+
+    @staticmethod
+    @contextmanager
+    def other_merchant(merchant_id, public_key, private_key):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        Configuration.merchant_id = merchant_id
+        Configuration.public_key = public_key
+        Configuration.private_key = private_key
+
+        try:
+            yield
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
 
     @staticmethod
     def includes(collection, expected):
@@ -135,7 +167,6 @@ class ClientApiHttp(Http):
         return self.__http_do("POST", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        self.config.use_unsafe_ssl = True
         http_strategy = self.config.http_strategy()
         request_body = json.dumps(params) if params else None
         return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
@@ -144,7 +175,7 @@ class ClientApiHttp(Http):
         self.options['authorization_fingerprint'] = authorization_fingerprint
 
     def get_cards(self):
-        encoded_fingerprint = urllib.quote_plus(self.options["authorization_fingerprint"])
+        encoded_fingerprint = quote_plus(self.options["authorization_fingerprint"])
         url = "/merchants/%s/client_api/nonces.json" % self.config.merchant_id
         url += "?authorizationFingerprint=%s" % encoded_fingerprint
         url += "&sharedCustomerIdentifier=%s" % self.options["shared_customer_identifier"]

@@ -1,5 +1,4 @@
 import braintree
-import urllib
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
@@ -401,8 +400,8 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
-            "device_data", "billing_address_id", "payment_method_nonce",
-            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
+            "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -443,7 +442,7 @@ class Transaction(Resource):
         ]
 
     def __init__(self, gateway, attributes):
-        if "refund_id" in attributes.keys():
+        if "refund_id" in attributes:
             self._refund_id = attributes["refund_id"]
             del(attributes["refund_id"])
         else:

@@ -24,6 +24,6 @@ class ClientToken(object):
     @staticmethod
     def generate_signature():
         return [
-            "customer_id", "proxy_merchant_id",
+            "version", "customer_id", "proxy_merchant_id", "merchant_account_id",
             {"options": ["make_default", "verify_card", "fail_on_duplicate_payment_method"]}
         ]

@@ -9,7 +9,7 @@ class TestClientToken(unittest.TestCase):
                     "options": {option: True}
                 })
                 self.assertTrue(False, "Should have raised an exception")
-            except InvalidSignatureError, e:
+            except InvalidSignatureError as e:
                 self.assertTrue(str(e).find(option))
 
     def test_generate_delegates_client_token_generation_to_gateway(self):

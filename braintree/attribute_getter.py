@@ -1,7 +1,7 @@
 class AttributeGetter(object):
     def __init__(self, attributes={}):
         self._setattrs = []
-        for key, val in attributes.iteritems():
+        for key, val in attributes.items():
             setattr(self, key, val)
             self._setattrs.append(key)
 
