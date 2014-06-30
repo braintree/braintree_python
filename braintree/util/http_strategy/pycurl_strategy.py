@@ -1,5 +1,6 @@
 import httplib
 import StringIO
+from braintree.exceptions.unexpected_error import UnexpectedError
 
 try:
     import pycurl
@@ -10,6 +11,10 @@ class PycurlStrategy(object):
     def __init__(self, config, environment):
         self.config = config
         self.environment = environment
+        self.exception_to_wrap = Exception
+
+    def handle_exception(self, exception):
+        raise UnexpectedError(exception.message)
 
     def http_do(self, http_verb, path, headers, request_body):
         curl = pycurl.Curl()
@@ -24,6 +29,7 @@ class PycurlStrategy(object):
         curl.setopt(pycurl.WRITEFUNCTION, response.write)
         curl.setopt(pycurl.FOLLOWLOCATION, 1)
         curl.setopt(pycurl.HTTPHEADER, self._format_headers(headers))
+        curl.setopt(pycurl.TIMEOUT, self.config.timeout)
         self._set_request_method_and_body(curl, http_verb, request_body)
 
         curl.perform()

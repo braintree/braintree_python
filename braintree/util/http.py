@@ -52,7 +52,14 @@ class Http(object):
         http_strategy = self.config.http_strategy()
         request_body = XmlUtil.xml_from_dict(params) if params else ''
         full_path = self.config.base_merchant_path() + path
-        status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
+
+        try:
+            status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
+        except Exception as e:
+            if self.config.wrap_http_exceptions:
+                http_strategy.handle_exception(e)
+            else:
+                raise e
 
         if Http.is_error_status(status):
             Http.raise_exception_from_status(status)
