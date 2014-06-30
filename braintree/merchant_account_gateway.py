@@ -42,7 +42,7 @@ class MerchantAccountGateway(object):
 
     @staticmethod
     def _detect_signature(attributes):
-        if attributes.has_key('applicant_details'):
+        if 'applicant_details' in attributes:
             # Warn deprecated
             return MerchantAccountGateway._create_deprecated_signature()
         else:

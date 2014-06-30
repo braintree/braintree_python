@@ -1,9 +1,17 @@
 from xml.dom import minidom
 from datetime import datetime
 import re
+import sys
+
+if sys.version_info[0] == 2:
+    binary_type = str
+else:
+    binary_type = bytes
 
 class Parser(object):
     def __init__(self, xml):
+        if isinstance(xml, binary_type):
+            xml = xml.decode('utf-8')
         self.doc = minidom.parseString("><".join(re.split(">\s+<", xml)).strip())
 
     def parse(self):

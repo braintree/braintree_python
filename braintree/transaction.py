@@ -1,5 +1,4 @@
 import braintree
-import urllib
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
@@ -447,7 +446,7 @@ class Transaction(Resource):
         ]
 
     def __init__(self, gateway, attributes):
-        if "refund_id" in attributes.keys():
+        if "refund_id" in attributes:
             self._refund_id = attributes["refund_id"]
             del(attributes["refund_id"])
         else:

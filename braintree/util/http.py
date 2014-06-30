@@ -1,4 +1,9 @@
-import base64
+import sys
+import requests
+if sys.version_info[0] == 2:
+    from base64 import encodestring as encodebytes
+else:
+    from base64 import encodebytes
 import braintree
 from braintree import version
 from braintree.util.xml_util import XmlUtil
@@ -9,6 +14,10 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
+from braintree.exceptions.unexpected_error import UnexpectedError
+from braintree.exceptions.http.connection_error import ConnectionError
+from braintree.exceptions.http.invalid_response_error import InvalidResponseError
+from braintree.exceptions.http.timeout_error import TimeoutError
 
 class Http(object):
     @staticmethod
@@ -32,9 +41,9 @@ class Http(object):
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 
-    def __init__(self, config):
+    def __init__(self, config, environment=None):
         self.config = config
-        self.environment = self.config.environment
+        self.environment = environment or self.config.environment
 
     def post(self, path, params={}):
         return self.__http_do("POST", path, params)
@@ -69,8 +78,43 @@ class Http(object):
             else:
                 return XmlUtil.dict_from_xml(response_body)
 
+    def http_do(self, http_verb, path, headers, request_body):
+        response = self.__request_function(http_verb)(
+            self.environment.base_url + path,
+            headers=headers,
+            data=request_body,
+            verify=self.environment.ssl_certificate,
+            timeout=self.config.timeout
+        )
+
+        return [response.status_code, response.text]
+
+    def handle_exception(self, exception):
+        if isinstance(exception, requests.exceptions.ConnectionError):
+            raise ConnectionError(exception)
+        elif isinstance(exception, requests.exceptions.HTTPError):
+            raise InvalidResponseError(exception)
+        elif isinstance(exception, requests.exceptions.Timeout):
+            raise TimeoutError(exception)
+        else:
+            raise UnexpectedError(exception)
+
+    def __request_function(self, method):
+        if method == "GET":
+            return requests.get
+        elif method == "POST":
+            return requests.post
+        elif method == "PUT":
+            return requests.put
+        elif method == "DELETE":
+            return requests.delete
+
     def __authorization_header(self):
-        return "Basic " + base64.encodestring(self.config.public_key + ":" + self.config.private_key).replace("\n", "").strip()
+        return b"Basic " + encodebytes(
+                    self.config.public_key.encode('ascii') +
+                    b":" +
+                    self.config.private_key.encode('ascii')
+                ).replace(b"\n", b"").strip()
 
     def __headers(self):
         return {

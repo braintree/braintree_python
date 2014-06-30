@@ -1,9 +1,14 @@
-import httplib
 import os
 import random
 import re
 import unittest
-import urllib
+import sys
+if sys.version_info[0] == 2:
+    from urllib import urlencode, quote_plus
+    from httplib import HTTPConnection
+else:
+    from urllib.parse import urlencode, quote_plus
+    from http.client import HTTPConnection
 import warnings
 import json
 from braintree import *
@@ -87,8 +92,8 @@ class TestHelper(object):
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
-        form_data = urllib.urlencode(post_params)
-        conn = httplib.HTTPConnection(Configuration.environment.server_and_port)
+        form_data = urlencode(post_params)
+        conn = HTTPConnection(Configuration.environment.server_and_port)
         conn.request("POST", url, form_data, TestHelper.__headers())
         response = conn.getresponse()
         query_string = response.getheader("location").split("?", 1)[1]
@@ -181,7 +186,6 @@ class ClientApiHttp(Http):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
-        self.config.use_unsafe_ssl = True
         http_strategy = self.config.http_strategy()
         request_body = json.dumps(params) if params else None
         return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
@@ -190,7 +194,7 @@ class ClientApiHttp(Http):
         self.options['authorization_fingerprint'] = authorization_fingerprint
 
     def get_cards(self):
-        encoded_fingerprint = urllib.quote_plus(self.options["authorization_fingerprint"])
+        encoded_fingerprint = quote_plus(self.options["authorization_fingerprint"])
         url = "/merchants/%s/client_api/nonces.json" % self.config.merchant_id
         url += "?authorizationFingerprint=%s" % encoded_fingerprint
         url += "&sharedCustomerIdentifier=%s" % self.options["shared_customer_identifier"]

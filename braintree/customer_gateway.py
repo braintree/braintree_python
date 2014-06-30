@@ -73,7 +73,7 @@ class CustomerGateway(object):
         criteria = {}
         for term in query:
             if criteria.get(term.name):
-                criteria[term.name] = dict(criteria[term.name].items() + term.to_param().items())
+                criteria[term.name] = dict(list(criteria[term.name].items()) + list(term.to_param().items()))
             else:
                 criteria[term.name] = term.to_param()
         return criteria

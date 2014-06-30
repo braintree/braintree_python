@@ -13,7 +13,7 @@ class TestSetup(unittest.TestCase):
         for dirname, dirnames, filenames in os.walk('braintree'):
             for subdirname in dirnames:
                 package_from_directory = re.sub('/', '.', os.path.join(dirname, subdirname))
-                if package_from_directory not in directories_that_dont_have_packages:
+                if package_from_directory not in directories_that_dont_have_packages and subdirname != '__pycache__':
                     packages_from_directories.append(package_from_directory)
 
         mismatch_message = "List of packages in setup.py doesn't match subdirectories of 'braintree' - " \

@@ -86,7 +86,7 @@ class ValidationErrorCollection(object):
     @property
     def __nested_errors(self):
         nested_errors = {}
-        for key in self.data.keys():
+        for key in self.data:
             if key == "errors": continue
             nested_errors[key] = ValidationErrorCollection(self.data[key])
         return nested_errors

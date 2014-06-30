@@ -215,7 +215,7 @@ class Subscription(Resource):
         ]
 
     def __init__(self, gateway, attributes):
-        if "next_bill_amount" in attributes.keys():
+        if "next_bill_amount" in attributes:
             self._next_bill_amount = Decimal(attributes["next_bill_amount"])
             del(attributes["next_bill_amount"])
         Resource.__init__(self, gateway, attributes)

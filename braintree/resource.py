@@ -21,7 +21,7 @@ class Resource(AttributeGetter):
             return [ "%s[%s]" % (parent, params) ]
         else:
             keys = []
-            for key, val in params.iteritems():
+            for key, val in params.items():
                 full_key = "%s[%s]" % (parent, key) if parent else key
                 if isinstance(val, dict):
                     keys += Resource.__flattened_params_keys(val, full_key)
@@ -37,7 +37,7 @@ class Resource(AttributeGetter):
         flat_sig = []
         for item in signature:
             if isinstance(item, dict):
-                for key, val in item.iteritems():
+                for key, val in item.items():
                     full_key = parent + "[" + key + "]" if parent else key
                     flat_sig += Resource.__flattened_signature(val, full_key)
             else:
@@ -47,7 +47,7 @@ class Resource(AttributeGetter):
 
     @staticmethod
     def __remove_wildcard_keys(allowed_keys, invalid_keys):
-        wildcard_keys = [re.escape(key).replace("\\[\\_\\_any\\_key\\_\\_\\]", "\\[[\w-]+\\]") for key in allowed_keys if re.search("\\[__any_key__\\]", key)]
+        wildcard_keys = [re.sub("(?<=[^\\\\])_", "\\_", re.escape(key)).replace("\\[\\_\\_any\\_key\\_\\_\\]", "\\[[\w-]+\\]") for key in allowed_keys if re.search("\\[__any_key__\\]", key)]
         new_keys = []
         for key in invalid_keys:
             if len([match for match in wildcard_keys if re.match("\A" + match + "\Z", key)]) == 0:
