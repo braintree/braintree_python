@@ -694,7 +694,8 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        parsed_client_token = TestHelper.generate_decoded_client_token()
+        authorization_fingerprint = json.loads(parsed_client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -2114,7 +2115,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = "altpay_merchant_public_key"
             Configuration.private_key = "altpay_merchant_private_key"
             customer_id = Customer.create().customer.id
-            token = ClientToken.generate({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
+            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
             client_api =  ClientApiHttp(config, {

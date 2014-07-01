@@ -50,7 +50,8 @@ class TestSubscription(unittest.TestCase):
     def test_create_returns_successful_result_with_payment_method_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id
-        authorization_fingerprint = json.loads(ClientToken.generate({"customer_id": customer_id}))["authorizationFingerprint"]
+        parsed_client_token = TestHelper.generate_decoded_client_token({"customer_id": customer_id})
+        authorization_fingerprint = json.loads(parsed_client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -650,7 +651,8 @@ class TestSubscription(unittest.TestCase):
     def test_update_with_payment_method_nonce(self):
         config = Configuration.instantiate()
         customer_id = self.credit_card.customer_id
-        authorization_fingerprint = json.loads(ClientToken.generate({"customer_id": customer_id}))["authorizationFingerprint"]
+        parsed_client_token = TestHelper.generate_decoded_client_token({"customer_id": customer_id})
+        authorization_fingerprint = json.loads(parsed_client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",

@@ -20,6 +20,7 @@ from decimal import Decimal
 from nose.tools import raises
 from random import randint
 from contextlib import contextmanager
+from base64 import b64decode
 
 Configuration.configure(
     Environment.Development,
@@ -160,6 +161,15 @@ class TestHelper(object):
             "Content-type": "application/x-www-form-urlencoded",
         }
 
+    @staticmethod
+    def generate_decoded_client_token(params=None):
+        client_token = None
+        if params:
+            client_token = ClientToken.generate(params)
+        else:
+            client_token = ClientToken.generate()
+        return b64decode(client_token)
+
 class ClientApiHttp(Http):
     def __init__(self, config, options):
         self.config = config
@@ -169,7 +179,8 @@ class ClientApiHttp(Http):
     @staticmethod
     def create():
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        client_token = TestHelper.generate_decoded_client_token()
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         return ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
