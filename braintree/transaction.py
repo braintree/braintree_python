@@ -483,6 +483,8 @@ class Transaction(Resource):
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
         if "disputes" in attributes:
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
+        if "payment_instrument_type" in attributes:
+            self.payment_instrument_type = attributes["payment_instrument_type"]
 
     @property
     def refund_id(self):

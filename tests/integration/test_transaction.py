@@ -1136,6 +1136,22 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_credit_card_payment_instrument_type_is_credit_card(self):
+        result = Transaction.credit({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(
+            PaymentInstrumentType.CreditCard,
+            transaction.payment_instrument_type
+        )
+
     def test_service_fee_not_allowed_with_credits(self):
         result = Transaction.credit({
             "amount": TransactionAmounts.Authorize,
@@ -1880,6 +1896,17 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
 
+    def test_paypal_transaction_payment_instrument_type(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+        self.assertEquals(PaymentInstrumentType.PayPalAccount, transaction.payment_instrument_type)
+
     def test_creating_paypal_transaction_with_one_time_use_nonce_and_store_in_vault(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -2113,6 +2140,7 @@ class TestTransaction(unittest.TestCase):
             self.assertEquals(sepa_bank_account_details.account_holder_name, "Baron Von Holder")
             self.assertEquals(sepa_bank_account_details.masked_iban[-4:], "3000")
             self.assertNotEquals(sepa_bank_account_details.image_url, None)
+            self.assertEquals(PaymentInstrumentType.SEPABankAccount, result.transaction.payment_instrument_type)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
