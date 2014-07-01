@@ -50,16 +50,16 @@ instructions above for upgrading from pycurl / httplib to requests.
     })
 
     if result.is_success:
-        print "success!: " + result.transaction.id
+        print("success!: " + result.transaction.id)
     elif result.transaction:
-        print "Error processing transaction:"
-        print "  code: " + result.transaction.processor_response_code
-        print "  text: " + result.transaction.processor_response_text
+        print("Error processing transaction:")
+        print("  code: " + result.transaction.processor_response_code)
+        print("  text: " + result.transaction.processor_response_text)
     else:
         for error in result.errors.deep_errors:
-            print "attribute: " + error.attribute
-            print "  code: " + error.code
-            print "  message: " + error.message
+            print("attribute: " + error.attribute)
+            print("  code: " + error.code)
+            print("  message: " + error.message)
 
 ## Testing
 

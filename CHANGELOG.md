@@ -1,4 +1,4 @@
-## 3.0.0-beta
+## 3.0.0
 
 * Drop Python 2.5 support
 * Remove use_unsafe_ssl option
