@@ -50,5 +50,5 @@ class PaymentMethodGateway(object):
         elif "sepa_bank_account" in response:
             return SEPABankAccount(self.gateway, response["sepa_bank_account"])
         else:
-            name = response.keys()[0]
+            name = list(response)[0]
             return UnknownPaymentMethod(self.gateway, response[name])
