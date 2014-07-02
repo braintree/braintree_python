@@ -168,7 +168,9 @@ class TestHelper(object):
             client_token = ClientToken.generate(params)
         else:
             client_token = ClientToken.generate()
-        return b64decode(client_token)
+
+        decoded_client_token = b64decode(client_token).decode()
+        return decoded_client_token
 
 class ClientApiHttp(Http):
     def __init__(self, config, options):
