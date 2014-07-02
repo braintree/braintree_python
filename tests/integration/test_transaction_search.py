@@ -522,7 +522,7 @@ class TestTransactionSearch(unittest.TestCase):
             collection = Transaction.search([
                 TransactionSearch.status.in_list(["settlement_confirmed", "settlement_declined"])
             ])
-        except AttributeError, error:
+        except AttributeError as error:
             self.assertTrue(False)
 
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
