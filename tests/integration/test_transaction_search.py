@@ -1508,7 +1508,7 @@ class TestTransactionSearch(unittest.TestCase):
                 "billingAddress": {"region": "Hesse", "country_name": "Germany"}
             })
             result = Transaction.sale({
-                "merchant_account_id": "sepa_ma",
+                "merchant_account_id": "fake_sepa_ma",
                 "amount": "10.00",
                 "payment_method_nonce": nonce
             })
