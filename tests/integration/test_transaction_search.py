@@ -1518,7 +1518,7 @@ class TestTransactionSearch(unittest.TestCase):
             ])
             self.assertTrue(collection.maximum_size >= 1)
             ids = [transaction.id for transaction in collection.items]
-            self.assertIn(transaction.id, ids)
+            self.assertIn(result.transaction.id, ids)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
