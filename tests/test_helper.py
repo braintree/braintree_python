@@ -14,11 +14,13 @@ import json
 from braintree import *
 from braintree.exceptions import *
 from braintree.util import *
+from braintree.testing_gateway import *
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from nose.tools import raises
 from random import randint
 from contextlib import contextmanager
+from base64 import b64decode
 
 Configuration.configure(
     Environment.Development,
@@ -71,15 +73,23 @@ class TestHelper(object):
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
-        Configuration.instantiate().http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription.id, number_of_days_past_due))
+        Configuration.gateway().testing.make_past_due(subscription.id, number_of_days_past_due)
 
     @staticmethod
     def escrow_transaction(transaction_id):
-        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/escrow")
+        Configuration.gateway().testing.escrow_transaction(transaction_id)
 
     @staticmethod
     def settle_transaction(transaction_id):
-        Configuration.instantiate().http().put("/transactions/" + transaction_id + "/settle")
+        return Configuration.gateway().testing.settle_transaction(transaction_id)
+
+    @staticmethod
+    def settlement_confirm_transaction(transaction_id):
+        return Configuration.gateway().testing.settlement_confirm_transaction(transaction_id)
+
+    @staticmethod
+    def settlement_decline_transaction(transaction_id):
+        return Configuration.gateway().testing.settlement_decline_transaction(transaction_id)
 
     @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
@@ -93,10 +103,7 @@ class TestHelper(object):
 
     @staticmethod
     def create_3ds_verification(merchant_account_id, params):
-        response = Configuration.instantiate().http().post("/three_d_secure/create_verification/" + merchant_account_id, {
-            "three_d_secure_verification": params
-        })
-        return response["three_d_secure_verification"]["three_d_secure_token"]
+        return Configuration.gateway().testing.create_3ds_verification(merchant_account_id, params)
 
     @staticmethod
     @contextmanager
@@ -154,17 +161,42 @@ class TestHelper(object):
             "Content-type": "application/x-www-form-urlencoded",
         }
 
+    @staticmethod
+    def generate_decoded_client_token(params=None):
+        client_token = None
+        if params:
+            client_token = ClientToken.generate(params)
+        else:
+            client_token = ClientToken.generate()
+
+        decoded_client_token = b64decode(client_token).decode()
+        return decoded_client_token
+
 class ClientApiHttp(Http):
     def __init__(self, config, options):
         self.config = config
         self.options = options
         self.http = Http(config)
 
+    @staticmethod
+    def create():
+        config = Configuration.instantiate()
+        client_token = TestHelper.generate_decoded_client_token()
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        return ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
     def get(self, path):
         return self.__http_do("GET", path)
 
     def post(self, path, params = None):
         return self.__http_do("POST", path, params)
+
+    def put(self, path, params = None):
+        return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
         http_strategy = self.config.http_strategy()
@@ -196,6 +228,54 @@ class ClientApiHttp(Http):
             params['sharedCustomerIdentifierType'] = self.options['shared_customer_identifier_type']
 
         return self.post(url, params)
+
+    def get_paypal_nonce(self, paypal_params):
+        url = "/merchants/%s/client_api/v1/payment_methods/paypal_accounts" % self.config.merchant_id
+        params = {"paypal_account": paypal_params}
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        status_code, response = self.post(url, params)
+
+        nonce = None
+        if status_code == 202:
+            nonce = json.loads(response)["paypalAccounts"][0]["nonce"]
+
+        return [status_code, nonce]
+
+
+    def get_credit_card_nonce(self, credit_card_params):
+        url = "/merchants/%s/client_api/v1/payment_methods/credit_cards" % self.config.merchant_id
+        params = {"credit_card": credit_card_params}
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        status_code, response = self.post(url, params)
+
+        nonce = None
+        if status_code == 202:
+            nonce = json.loads(response)["creditCards"][0]["nonce"]
+
+        return [status_code, nonce]
+
+    def get_sepa_bank_account_nonce(self, sepa_bank_account_params):
+        params = {"sepa_mandate": sepa_bank_account_params}
+        url = "/merchants/%s/client_api/v1/sepa_mandates" % self.config.merchant_id
+        if 'authorization_fingerprint' in self.options:
+            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
+
+        status_code, response = self.post(url, params)
+        mandate_reference_number = json.loads(response)["sepaMandates"][0]["mandateReferenceNumber"]
+
+        accept_url = url + "/%s/accept" %  mandate_reference_number
+
+        status_code, response = self.put(accept_url, params)
+
+        nonce = None
+        if status_code == 200:
+            nonce = json.loads(response)["sepaBankAccounts"][0]["nonce"]
+
+        return nonce
 
     def __headers(self):
         return {

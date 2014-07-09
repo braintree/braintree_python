@@ -39,6 +39,23 @@ class ErrorCodes(object):
         StreetAddressIsTooLong = "81812"
         TooManyAddressesPerCustomer = "91818"
 
+    class AuthorizationFingerprint(object):
+        MissingFingerprint = "93201"
+        InvalidFormat = "93202"
+        SignatureRevoked = "93203"
+        InvalidCreatedAt = "93204"
+        InvalidPublicKey = "93205"
+        InvalidSignature = "93206"
+        OptionsNotAllowedWithoutCustomer = "93207"
+
+    class ClientToken(object):
+        MakeDefaultRequiresCustomerId = "92801"
+        VerifyCardRequiresCustomerId = "92802"
+        FailOnDuplicatePaymentMethodRequiresCustomerId = "92803"
+        CustomerDoesNotExist = "92804"
+        ProxyMerchantDoesNotExist = "92805"
+        UnsupportedVersion = "92806"
+
     class CreditCard(object):
         BillingAddressConflict = "91701"
         BillingAddressIdIsInvalid = "91702"
@@ -50,6 +67,7 @@ class ErrorCodes(object):
         CustomerIdIsRequired = "91704"
         CvvIsInvalid = "81707"
         CvvIsRequired = "81706"
+        CvvVerificationFailed = "81736"
         DuplicateCardExists = "81724"
         ExpirationDateConflict = "91708"
         ExpirationDateIsInvalid = "81710"
@@ -67,6 +85,7 @@ class ErrorCodes(object):
         PaymentMethodNonceConsumed = "91731"
         PaymentMethodNonceLocked = "91733"
         PaymentMethodNonceUnknown = "91732"
+        PostalCodeVerificationFailed = "81737"
         TokenInvalid = TokenFormatIsInvalid = "91718"
         TokenIsInUse = "91719"
         TokenIsNotAllowed = "91721"
@@ -74,6 +93,11 @@ class ErrorCodes(object):
         TokenIsTooLong = "91720"
         VenmoSDKPaymentMethodCodeCardTypeIsNotAccepted = "91726"
         VerificationNotSupportedOnThisMerchantAccount = "91730"
+        PaymentMethodNonceConsumed = "91731"
+        PaymentMethodNonceUnknown = "91732"
+        PaymentMethodNonceLocked = "91733"
+        PaymentMethodNonceCardTypeIsNotAccepted = "91734"
+        CannotUpdateCardUsingPaymentMethodNonce = "91735"
 
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
@@ -208,10 +232,44 @@ class ErrorCodes(object):
             MobilePhoneIsInvalid = "82683"
             MobilePhoneIsRequired = "82682"
 
+    class PaymentMethod(object):
+        CannotForwardPaymentMethodType = "93106"
+        PaymentMethodParamsAreRequired = "93101"
+        NonceIsInvalid = "93102"
+        NonceIsRequired = "93103"
+        CustomerIdIsRequired = "93104"
+        CustomerIdIsInvalid = "93105"
+
+    class PayPalAccount(object):
+        CannotVaultOneTimeUsePayPalAccount = "82902"
+        CannotHaveBothAccessTokenAndConsentCode = "82903"
+        ConsentCodeOrAccessTokenIsRequired = "82901"
+        CustomerIdIsRequiredForVaulting = "82905"
+        PaymentMethodNonceConsumed = "92907"
+        PaymentMethodNonceLocked = "92909"
+        PaymentMethodNonceUnknown = "92908"
+        PayPalAccountsAreNotAccepted = "82904"
+        PayPalCommunicationError = "92910"
+        TokenIsInUse = "92906"
+
     class SettlementBatchSummary(object):
         CustomFieldIsInvalid = "82303"
         SettlementDateIsInvalid = "82302"
         SettlementDateIsRequired = "82301"
+
+    class SEPAMandate(object):
+        AccountHolderNameIsRequired = "83301"
+        BICIsRequired = "83302"
+        IBANIsRequired = "83303"
+        TypeIsRequired = "93304"
+        IBANInvalidCharacter = "83305"
+        BICInvalidCharacter = "83306"
+        BICLengthIsInvalid = "83307"
+        BICUnsupportedCountry = "83308"
+        IBANUnsupportedCountry = "83309"
+        IBANInvalidFormat = "83310"
+        BillingAddressConflict = "93311"
+        BillingAddressIdIsInvalid = "93312"
 
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
@@ -247,6 +305,10 @@ class ErrorCodes(object):
         TrialDurationFormatIsInvalid = "81907"
         TrialDurationIsRequired = "81908"
         TrialDurationUnitIsInvalid = "81909"
+        PaymentMethodNonceCardTypeIsNotAccepted = "91924"
+        PaymentMethodNonceUnvaultedCardIsNotAccepted = "91927"
+        PaymentMethodNonceIsInvalid = "91925"
+        PaymentMethodNonceNotAssociatedWithCustomer = "91926"
 
         class Modification(object):
             AmountCannotBeBlank = "92003"
@@ -269,6 +331,7 @@ class ErrorCodes(object):
             QuantityCannotBeBlank = "92004"
             QuantityIsInvalid = "92001"
             QuantityMustBeGreaterThanZero = "92010"
+            IdToRemoveIsInvalid = "92025"
 
     class Transaction(object):
         AmountCannotBeNegative = "81501"
@@ -280,16 +343,19 @@ class ErrorCodes(object):
         CannotBeVoided = "91504"
         CannotCancelRelease = "91562"
         CannotCloneCredit = "91543"
+        CannotCloneTransactionWithPayPalAccount = "91573"
         CannotCloneTransactionWithVaultCreditCard = "91540"
         CannotCloneUnsuccessfulTransaction = "91542"
         CannotCloneVoiceAuthorizations = "91541"
         CannotHoldInEscrow = "91560"
         CannotPartiallyRefundEscrowedTransaction = "91563"
         CannotRefundCredit = "91505"
+        CannotRefundSettlingTransaction = "91574"
         CannotRefundUnlessSettled = "91506"
         CannotRefundWithPendingMerchantAccount = "91559"
         CannotRefundWithSuspendedMerchantAccount = "91538"
         CannotReleaseFromEscrow = "91561"
+        CannotSimulateTransactionSettlement = "91575"
         CannotSubmitForSettlement = "91507"
         ChannelIsTooLong = "91550"
         ChannelIsTooLong = "91550"
@@ -307,12 +373,18 @@ class ErrorCodes(object):
         MerchantAccountIsSuspended = "91514"
         MerchantAccountNameIsInvalid = "91513" # Deprecated
         OrderIdIsTooLong = "91501"
+        PaymentInstrumentNotSupportedByMerchantAccount = "91577"
         PaymentMethodConflict = "91515"
         PaymentMethodConflictWithVenmoSDK = "91549"
         PaymentMethodDoesNotBelongToCustomer = "91516"
         PaymentMethodDoesNotBelongToSubscription = "91527"
+        PaymentMethodNonceConsumed = "91564"
+        PaymentMethodNonceLocked = "91566"
+        PaymentMethodNonceCardTypeIsNotAccepted = "91567"
         PaymentMethodTokenCardTypeIsNotAccepted = "91517"
         PaymentMethodTokenIsInvalid = "91518"
+        PaymentMethodNonceUnknown = "91565"
+        PayPalNotEnabled = "91576"
         ProcessorAuthorizationCodeCannotBeSet = "91519"
         ProcessorAuthorizationCodeIsInvalid = "81520"
         ProcessorDoesNotSupportCredits = "91546"
@@ -336,6 +408,7 @@ class ErrorCodes(object):
         TaxAmountIsTooLarge = "81536"
         ThreeDSecureTokenIsInvalid = "91568"
         ThreeDSecureTransactionDataDoesntMatchVerify = "91570"
+        ThreeDSecureAuthenticationFailed = "81571"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
         UnsupportedVoiceAuthorization = "91539"
@@ -343,4 +416,5 @@ class ErrorCodes(object):
         class Options(object):
             VaultIsDisabled = "91525"
             SubmitForSettlementIsRequiredForCloning = "91544"
+            UseBillingForShippingDisabled = "91572"
 

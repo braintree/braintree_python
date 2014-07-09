@@ -49,3 +49,14 @@ class TestCustomer(unittest.TestCase):
             self.assertTrue(False)
         except NotFoundError as e:
             self.assertTrue(True)
+
+    def test_initialize_sets_paypal_accounts(self):
+        customer = Customer("gateway", {
+            "paypal_accounts": [
+                {"token": "token1"},
+                {"token": "token2"}
+            ]
+        })
+
+        self.assertEquals(customer.paypal_accounts[0].token, "token1")
+        self.assertEquals(customer.paypal_accounts[1].token, "token2")

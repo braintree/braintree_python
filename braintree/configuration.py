@@ -54,7 +54,7 @@ class Configuration(object):
 
     @staticmethod
     def api_version():
-        return "3"
+        return "4"
 
     def __init__(self, environment, merchant_id, public_key, private_key, **kwargs):
         self.environment = environment

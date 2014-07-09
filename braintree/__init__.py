@@ -24,6 +24,10 @@ from braintree.merchant_account.business_details import BusinessDetails
 from braintree.merchant_account.funding_details import FundingDetails
 from braintree.merchant_account.individual_details import IndividualDetails
 from braintree.merchant_account_gateway import MerchantAccountGateway
+from braintree.payment_method import PaymentMethod
+from braintree.unknown_payment_method import UnknownPaymentMethod
+from braintree.payment_instrument_type import PaymentInstrumentType
+from braintree.paypal_account import PayPalAccount
 from braintree.partner_merchant import PartnerMerchant
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
@@ -33,6 +37,7 @@ from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.subscription import Subscription
 from braintree.subscription_gateway import SubscriptionGateway
 from braintree.status_event import StatusEvent
+from braintree.testing_gateway import TestingGateway
 from braintree.transaction import Transaction
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_search import TransactionSearch
@@ -49,3 +54,4 @@ from braintree.webhook_notification import WebhookNotification
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing import WebhookTesting
 from braintree.webhook_testing_gateway import WebhookTestingGateway
+from braintree.sepa_bank_account import SEPABankAccount

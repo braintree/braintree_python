@@ -353,7 +353,7 @@ class TestCreditCard(unittest.TestCase):
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        authorization_fingerprint = json.loads(TestHelper.generate_decoded_client_token())["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -681,7 +681,7 @@ class TestCreditCard(unittest.TestCase):
         config = Configuration.instantiate()
         customer = Customer.create().customer
 
-        client_token = ClientToken.generate({
+        client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer.id,
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
@@ -708,7 +708,7 @@ class TestCreditCard(unittest.TestCase):
     def test_from_nonce_with_unlocked_nonce_pointing_to_shared_card(self):
         config = Configuration.instantiate()
 
-        client_token = ClientToken.generate()
+        client_token = TestHelper.generate_decoded_client_token()
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
@@ -737,7 +737,7 @@ class TestCreditCard(unittest.TestCase):
         config = Configuration.instantiate()
         customer = Customer.create().customer
 
-        client_token = ClientToken.generate({
+        client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer.id,
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
@@ -767,7 +767,7 @@ class TestCreditCard(unittest.TestCase):
     def test_from_nonce_with_locked_nonce(self):
         config = Configuration.instantiate()
 
-        client_token = ClientToken.generate()
+        client_token = TestHelper.generate_decoded_client_token()
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,

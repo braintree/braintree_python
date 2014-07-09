@@ -7,3 +7,4 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
+from braintree.exceptions.test_operation_performed_in_production_error import TestOperationPerformedInProductionError

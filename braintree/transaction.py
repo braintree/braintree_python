@@ -13,6 +13,8 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.paypal_account import PayPalAccount
+from braintree.sepa_bank_account import SEPABankAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
@@ -153,6 +155,8 @@ class Transaction(Resource):
         GatewayRejected        = "gateway_rejected"
         ProcessorDeclined      = "processor_declined"
         Settled                = "settled"
+        SettlementConfirmed    = "settlement_confirmed"
+        SettlementDeclined     = "settlement_declined"
         SettlementFailed       = "settlement_failed"
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
@@ -457,6 +461,10 @@ class Transaction(Resource):
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
+        if "paypal" in attributes:
+            self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
+        if "sepa_bank_account" in attributes:
+            self.sepa_bank_account_details = SEPABankAccount(gateway, attributes.pop("sepa_bank_account"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:
@@ -475,6 +483,8 @@ class Transaction(Resource):
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
         if "disputes" in attributes:
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
+        if "payment_instrument_type" in attributes:
+            self.payment_instrument_type = attributes["payment_instrument_type"]
 
     @property
     def refund_id(self):

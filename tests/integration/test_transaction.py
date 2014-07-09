@@ -1,6 +1,7 @@
 import json
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.test.nonces import Nonces
 from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
@@ -693,7 +694,8 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        parsed_client_token = TestHelper.generate_decoded_client_token()
+        authorization_fingerprint = json.loads(parsed_client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -1135,6 +1137,22 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_credit_card_payment_instrument_type_is_credit_card(self):
+        result = Transaction.credit({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(
+            PaymentInstrumentType.CreditCard,
+            transaction.payment_instrument_type
+        )
+
     def test_service_fee_not_allowed_with_credits(self):
         result = Transaction.credit({
             "amount": TransactionAmounts.Authorize,
@@ -1550,6 +1568,18 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
         return transaction
 
+    def __create_paypal_transaction_to_refund(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        TestHelper.settle_transaction(transaction.id)
+        return transaction
+
     def __create_escrowed_transaction(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1852,3 +1882,286 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("250.00"), dispute.amount)
         self.assertEquals(Dispute.Status.Won, dispute.status)
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
+
+    def test_creating_paypal_transaction_with_one_time_use_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+
+    def test_paypal_transaction_payment_instrument_type(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+        self.assertEquals(PaymentInstrumentType.PayPalAccount, transaction.payment_instrument_type)
+
+    def test_creating_paypal_transaction_with_one_time_use_nonce_and_store_in_vault(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"store_in_vault": True}
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEquals(transaction.paypal_details.token, None)
+
+    def test_creating_paypal_transaction_with_future_payment_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalFuturePayment
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+
+    def test_validation_failure_on_invalid_paypal_nonce(self):
+        http = ClientApiHttp.create()
+
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "access-token": "access-token",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertFalse(result.is_success)
+        error_code = result.errors.for_object("transaction").for_object("paypal_account").on("base")[0].code
+        self.assertEquals(error_code, ErrorCodes.PayPalAccount.CannotHaveBothAccessTokenAndConsentCode)
+
+    def test_validation_failure_on_non_existant_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": "doesnt-exist"
+        })
+
+        self.assertFalse(result.is_success)
+        error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
+        self.assertEquals(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
+
+    def test_creating_paypal_transaction_with_vaulted_token(self):
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.PayPalFuturePayment
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction_result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": result.payment_method.token
+        })
+
+        self.assertTrue(transaction_result.is_success)
+        transaction = transaction_result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+
+    def test_creating_paypal_transaction_with_one_time_nonce_and_store_in_vault_fails_gracefully(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"store_in_vault": True}
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(None, transaction.paypal_details.token)
+
+    def test_creating_paypal_transaction_with_future_payment_nonce_and_store_in_vault(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalFuturePayment,
+            "options": {"store_in_vault": True}
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertNotEqual(None, transaction.paypal_details.token)
+        paypal_account = PaymentMethod.find(transaction.paypal_details.token)
+        self.assertEquals(paypal_account.email, transaction.paypal_details.payer_email)
+
+    def test_creating_paypal_transaction_and_submitting_for_settlement(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True}
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(result.transaction.status, Transaction.Status.SubmittedForSettlement)
+
+    def test_voiding_a_paypal_transaction(self):
+        sale_result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+        })
+        self.assertTrue(sale_result.is_success)
+        sale_transaction = sale_result.transaction
+
+        void_result = Transaction.void(sale_transaction.id)
+        self.assertTrue(void_result.is_success)
+
+        void_transaction = void_result.transaction
+        self.assertEquals(void_transaction.id, sale_transaction.id)
+        self.assertEquals(void_transaction.status, Transaction.Status.Voided)
+
+    def test_paypal_transaction_successful_refund(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        result = Transaction.refund(transaction.id)
+
+        self.assertTrue(result.is_success)
+        refund = result.transaction
+
+        self.assertEquals(Transaction.Type.Credit, refund.type)
+        self.assertEquals(Decimal(TransactionAmounts.Authorize), refund.amount)
+        self.assertEquals(transaction.id, refund.refunded_transaction_id)
+
+        self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
+
+    def test_paypal_transaction_successful_partial_refund(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        result = Transaction.refund(transaction.id, Decimal("500.00"))
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
+        self.assertEquals(Decimal("500.00"), result.transaction.amount)
+
+    def test_paypal_transaction_multiple_successful_partial_refunds(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        refund1 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
+        self.assertEquals(Transaction.Type.Credit, refund1.type)
+        self.assertEquals(Decimal("500.00"), refund1.amount)
+
+        refund2 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
+        self.assertEquals(Transaction.Type.Credit, refund2.type)
+        self.assertEquals(Decimal("500.00"), refund2.amount)
+
+        transaction = Transaction.find(transaction.id)
+
+        self.assertEquals(2, len(transaction.refund_ids))
+        self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund1.id))
+        self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
+
+    def test_paypal_transaction_refund_already_refunded_transation_fails(self):
+        transaction = self.__create_paypal_transaction_to_refund()
+
+        Transaction.refund(transaction.id)
+        result = Transaction.refund(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.HasAlreadyBeenRefunded,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_paypal_transaction_refund_returns_an_error_if_unsettled(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        result = Transaction.refund(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotRefundUnlessSettled,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_sepa_bank_account_details(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "altpay_merchant"
+            Configuration.public_key = "altpay_merchant_public_key"
+            Configuration.private_key = "altpay_merchant_private_key"
+            customer_id = Customer.create().customer.id
+            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
+            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
+            config = Configuration.instantiate()
+            client_api =  ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing"
+            })
+            nonce = client_api.get_sepa_bank_account_nonce({
+                "locale": "de-DE",
+                "bic": "DEUTDEFF",
+                "iban": "DE89370400440532013000",
+                "accountHolderName": "Baron Von Holder",
+                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
+            })
+            result = Transaction.sale({
+                "merchant_account_id": "fake_sepa_ma",
+                "amount": "10.00",
+                "payment_method_nonce": nonce
+            })
+            self.assertTrue(result.is_success)
+            sepa_bank_account_details = result.transaction.sepa_bank_account_details
+            self.assertEquals(sepa_bank_account_details.bic, "DEUTDEFF")
+            self.assertEquals(sepa_bank_account_details.account_holder_name, "Baron Von Holder")
+            self.assertEquals(sepa_bank_account_details.masked_iban[-4:], "3000")
+            self.assertNotEquals(sepa_bank_account_details.image_url, None)
+            self.assertEquals(PaymentInstrumentType.SEPABankAccount, result.transaction.payment_instrument_type)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
+    def test_transaction_settlement_errors(self):
+        sale_result = Transaction.sale({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            },
+            "amount": "100.00",
+        })
+        transaction = sale_result.transaction
+
+        settle_result = TestHelper.settle_transaction(transaction.id)
+        self.assertFalse(settle_result.is_success)
+
+        error_codes = [
+            error.code for error in settle_result.errors.for_object("transaction").on("base")
+        ]
+        self.assertTrue(ErrorCodes.Transaction.CannotSimulateTransactionSettlement in error_codes)

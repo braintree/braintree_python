@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.test.nonces import Nonces
 
 class TestSubscription(unittest.TestCase):
     def setUp(self):
@@ -49,7 +50,8 @@ class TestSubscription(unittest.TestCase):
     def test_create_returns_successful_result_with_payment_method_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id
-        authorization_fingerprint = json.loads(ClientToken.generate({"customer_id": customer_id}))["authorizationFingerprint"]
+        parsed_client_token = TestHelper.generate_decoded_client_token({"customer_id": customer_id})
+        authorization_fingerprint = json.loads(parsed_client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -649,7 +651,8 @@ class TestSubscription(unittest.TestCase):
     def test_update_with_payment_method_nonce(self):
         config = Configuration.instantiate()
         customer_id = self.credit_card.customer_id
-        authorization_fingerprint = json.loads(ClientToken.generate({"customer_id": customer_id}))["authorizationFingerprint"]
+        parsed_client_token = TestHelper.generate_decoded_client_token({"customer_id": customer_id})
+        authorization_fingerprint = json.loads(parsed_client_token)["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -1240,3 +1243,48 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(Transaction.Type.Sale, transaction.type);
         self.assertEquals(Transaction.Status.Authorized, transaction.status);
 
+    def test_create_with_paypal_future_payment_method_token(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        payment_method_token = PaymentMethod.create({
+            "customer_id": Customer.create().customer.id,
+            "payment_method_nonce": nonce
+        }).payment_method.token
+
+        result = Subscription.create({
+            "payment_method_token": payment_method_token,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertTrue(result.is_success)
+        subscription = result.subscription
+        self.assertEquals(payment_method_token, subscription.payment_method_token)
+
+    def test_create_fails_with_paypal_one_time_payment_method_nonce(self):
+        result = Subscription.create({
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Subscription.PaymentMethodNonceIsInvalid,
+            result.errors.for_object("subscription")[0].code
+        )
+
+    def test_create_fails_with_paypal_future_payment_method_nonce(self):
+        result = Subscription.create({
+            "payment_method_nonce": Nonces.PayPalFuturePayment,
+            "plan_id": TestHelper.trialless_plan["id"]
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Subscription.PaymentMethodNonceIsInvalid,
+            result.errors.for_object("subscription")[0].code
+        )

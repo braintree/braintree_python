@@ -517,6 +517,14 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 0)
         self.assertEqual(Transaction.Status.AuthorizationExpired, collection.first.status)
 
+    def test_advanced_search_allows_new_settlement_statuses(self):
+        try:
+            collection = Transaction.search([
+                TransactionSearch.status.in_list(["settlement_confirmed", "settlement_declined"])
+            ])
+        except AttributeError as error:
+            self.assertTrue(False)
+
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
         try:
             collection = Transaction.search([
@@ -1452,6 +1460,70 @@ class TestTransactionSearch(unittest.TestCase):
 
         transaction_ids = [transaction.id for transaction in collection.items]
         self.assertEquals(collection.maximum_size, len(TestHelper.unique(transaction_ids)))
+
+    def test_advanced_search_can_search_on_paypal_fields(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "access_token": "PAYPAL-ACCESS-TOKEN",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.paypal_payer_email == transaction.paypal_details.payer_email,
+            TransactionSearch.paypal_authorization_id == transaction.paypal_details.authorization_id,
+            TransactionSearch.paypal_payment_id == transaction.paypal_details.payment_id,
+        ])
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(transaction.id, collection.first.id)
+
+    def test_advanced_search_can_search_on_sepa_iban(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "altpay_merchant"
+            Configuration.public_key = "altpay_merchant_public_key"
+            Configuration.private_key = "altpay_merchant_private_key"
+            customer_id = Customer.create().customer.id
+            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
+            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
+            config = Configuration.instantiate()
+            client_api =  ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing"
+            })
+            nonce = client_api.get_sepa_bank_account_nonce({
+                "locale": "de-DE",
+                "bic": "DEUTDEFF",
+                "iban": "DE89370400440532013000",
+                "accountHolderName": "Baron Von Holder",
+                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
+            })
+            result = Transaction.sale({
+                "merchant_account_id": "fake_sepa_ma",
+                "amount": "10.00",
+                "payment_method_nonce": nonce
+            })
+
+            collection = Transaction.search([
+                TransactionSearch.sepa_bank_account_iban == "DE89370400440532013000"
+            ])
+            self.assertTrue(collection.maximum_size >= 1)
+            ids = [transaction.id for transaction in collection.items]
+            self.assertIn(result.transaction.id, ids)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
 
     @raises(DownForMaintenanceError)
     def test_search_handles_a_search_timeout(self):

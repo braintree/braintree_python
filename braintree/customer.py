@@ -4,6 +4,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.credit_card import CreditCard
+from braintree.paypal_account import PayPalAccount
 from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.ids_search import IdsSearch
@@ -169,7 +170,7 @@ class Customer(Resource):
     @staticmethod
     def create_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id",
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce",
             {"credit_card": CreditCard.create_signature()},
             {"custom_fields": ["__any_key__"]}
         ]
@@ -177,7 +178,7 @@ class Customer(Resource):
     @staticmethod
     def update_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id",
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce",
             {"credit_card": CreditCard.signature("update_via_customer")},
             {"custom_fields": ["__any_key__"]}
         ]
@@ -188,3 +189,6 @@ class Customer(Resource):
             self.credit_cards = [CreditCard(gateway, credit_card) for credit_card in self.credit_cards]
         if "addresses" in attributes:
             self.addresses = [Address(gateway, address) for address in self.addresses]
+
+        if "paypal_accounts" in attributes:
+            self.paypal_accounts  = [PayPalAccount(gateway, paypal_account) for paypal_account in self.paypal_accounts]
