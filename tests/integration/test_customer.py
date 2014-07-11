@@ -1,5 +1,6 @@
 from tests.test_helper import *
 import braintree.test.venmo_sdk as venmo_sdk
+from braintree.test.nonces import Nonces
 
 class TestCustomer(unittest.TestCase):
     def test_all(self):
@@ -79,6 +80,22 @@ class TestCustomer(unittest.TestCase):
 
         found_customer = Customer.find(customer.id)
         self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
+
+    def test_create_with_paypal_future_payments_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertNotEqual(None, customer.paypal_accounts[0])
+
+    def test_create_with_paypal_one_time_nonce_fails(self):
+        http = ClientApiHttp.create()
+        result = Customer.create({"payment_method_nonce": Nonces.PayPalOneTimePayment})
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
+            ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
+        )
 
     def test_create_with_no_attributes(self):
         result = Customer.create()
@@ -283,7 +300,7 @@ class TestCustomer(unittest.TestCase):
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
-        authorization_fingerprint = json.loads(ClientToken.generate())["authorizationFingerprint"]
+        authorization_fingerprint = json.loads(TestHelper.generate_decoded_client_token())["authorizationFingerprint"]
         http = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
@@ -335,7 +352,7 @@ class TestCustomer(unittest.TestCase):
         try:
             Customer.find("badid")
             self.assertTrue(False)
-        except NotFoundError, e:
+        except NotFoundError as e:
             self.assertEquals("customer with id badid not found", str(e))
 
     def test_update_with_valid_options(self):
@@ -458,6 +475,28 @@ class TestCustomer(unittest.TestCase):
         self.assertEquals(
             ErrorCodes.Customer.EmailIsInvalid,
             result.errors.for_object("customer").on("email")[0].code
+        )
+
+    def test_update_with_paypal_future_payments_nonce(self):
+        customer = Customer.create().customer
+
+        result = Customer.update(customer.id, {
+            "payment_method_nonce": Nonces.PayPalFuturePayment
+        })
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertNotEqual(None, customer.paypal_accounts[0])
+
+    def test_update_with_paypal_one_time_nonce_fails(self):
+        customer = Customer.create().customer
+        result = Customer.update(customer.id, {
+            "payment_method_nonce": Nonces.PayPalOneTimePayment
+        })
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
+            ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
         )
 
     def test_create_from_transparent_redirect_with_successful_result(self):
@@ -606,3 +645,4 @@ class TestCustomer(unittest.TestCase):
         result = Customer.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
+

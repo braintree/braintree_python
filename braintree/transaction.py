@@ -1,5 +1,4 @@
 import braintree
-import urllib
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
@@ -14,6 +13,8 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.paypal_account import PayPalAccount
+from braintree.sepa_bank_account import SEPABankAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
@@ -38,7 +39,7 @@ class Transaction(Resource):
             "customer": {
                 "first_name": "Dan",
                 "last_name": "Smith",
-                "company": "Braintree Payment Solutions",
+                "company": "Braintree",
                 "email": "dan@example.com",
                 "phone": "419-555-1234",
                 "fax": "419-555-1235",
@@ -154,6 +155,8 @@ class Transaction(Resource):
         GatewayRejected        = "gateway_rejected"
         ProcessorDeclined      = "processor_declined"
         Settled                = "settled"
+        SettlementConfirmed    = "settlement_confirmed"
+        SettlementDeclined     = "settlement_declined"
         SettlementFailed       = "settlement_failed"
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
@@ -401,8 +404,8 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
-            "device_data", "billing_address_id", "payment_method_nonce",
-            "tax_amount", "tax_exempt", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
+            "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
@@ -443,7 +446,7 @@ class Transaction(Resource):
         ]
 
     def __init__(self, gateway, attributes):
-        if "refund_id" in attributes.keys():
+        if "refund_id" in attributes:
             self._refund_id = attributes["refund_id"]
             del(attributes["refund_id"])
         else:
@@ -458,6 +461,10 @@ class Transaction(Resource):
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
+        if "paypal" in attributes:
+            self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
+        if "sepa_bank_account" in attributes:
+            self.sepa_bank_account_details = SEPABankAccount(gateway, attributes.pop("sepa_bank_account"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:
@@ -476,6 +483,8 @@ class Transaction(Resource):
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
         if "disputes" in attributes:
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
+        if "payment_instrument_type" in attributes:
+            self.payment_instrument_type = attributes["payment_instrument_type"]
 
     @property
     def refund_id(self):

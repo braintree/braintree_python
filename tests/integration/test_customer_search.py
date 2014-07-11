@@ -132,3 +132,20 @@ class TestCustomerSearch(unittest.TestCase):
 
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(customer.id, collection.first.id)
+
+    def test_search_on_paypal_account_email(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEquals(status_code, 202)
+
+        customer = Customer.create({"payment_method_nonce": nonce}).customer
+
+        collection = Customer.search(
+            CustomerSearch.paypal_account_email == "jane.doe@example.com",
+            CustomerSearch.id == customer.id
+        )
+        self.assertEquals(1, collection.maximum_size)
+        self.assertEquals(customer.id, collection.first.id)

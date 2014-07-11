@@ -24,3 +24,4 @@ class CustomerSearch:
       payment_method_token_with_duplicates = Search.IsNodeBuilder("payment_method_token_with_duplicates")
       phone                                = Search.TextNodeBuilder("phone")
       website                              = Search.TextNodeBuilder("website")
+      paypal_account_email                 = Search.TextNodeBuilder("paypal_account_email")

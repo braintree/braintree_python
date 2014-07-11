@@ -1,6 +1,5 @@
 import cgi
 from datetime import datetime
-import urllib
 import braintree
 from braintree.util.crypto import Crypto
 from braintree.error_result import ErrorResult
@@ -70,7 +69,7 @@ class TransparentRedirectGateway(object):
 
     def __flatten_dictionary(self, params, parent=None):
         data = {}
-        for key, val in params.iteritems():
+        for key, val in params.items():
             full_key = parent + "[" + key + "]" if parent else key
             if isinstance(val, dict):
                 data.update(self.__flatten_dictionary(val, full_key))

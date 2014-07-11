@@ -5,12 +5,14 @@ import urllib
 import datetime
 import braintree
 from braintree.util import Http
+from base64 import b64decode
 
 class TestClientToken(unittest.TestCase):
 
+
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
-        client_token = ClientToken.generate()
+        client_token = TestHelper.generate_decoded_client_token()
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
 
         http = ClientApiHttp(config, {
@@ -22,12 +24,27 @@ class TestClientToken(unittest.TestCase):
         status_code, response = http.get_cards()
         self.assertEqual(status_code, 200)
 
+    def test_allows_client_token_version_to_be_specified(self):
+        config = Configuration.instantiate()
+        client_token = ClientToken.generate({"version": 1})
+
+        version = json.loads(client_token)["version"]
+
+        self.assertEqual(version, 1)
+
+    def test_client_token_version_defaults_to_two(self):
+        config = Configuration.instantiate()
+        client_token = TestHelper.generate_decoded_client_token()
+        version = json.loads(client_token)["version"]
+
+        self.assertEqual(version, "2")
+
     def test_can_pass_verify_card(self):
         config = Configuration.instantiate()
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        client_token = ClientToken.generate({
+        client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer_id,
             "options": {
                 "verify_card": True
@@ -54,7 +71,7 @@ class TestClientToken(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        client_token = ClientToken.generate({
+        client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer_id,
             "options": {
                 "make_default": True
@@ -96,7 +113,7 @@ class TestClientToken(unittest.TestCase):
         result = braintree.Customer.create()
         customer_id = result.customer.id
 
-        client_token = ClientToken.generate({
+        client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer_id,
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
@@ -115,7 +132,7 @@ class TestClientToken(unittest.TestCase):
         })
         self.assertEqual(status_code, 201)
 
-        client_token = ClientToken.generate({
+        client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer_id,
             "options": {
                 "fail_on_duplicate_payment_method": True
@@ -135,11 +152,31 @@ class TestClientToken(unittest.TestCase):
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(len(customer.credit_cards), 1)
 
+    def test_can_pass_sepa_params(self):
+        result = braintree.Customer.create()
+        customer_id = result.customer.id
+
+        client_token = TestHelper.generate_decoded_client_token({
+            "customer_id": customer_id,
+            "sepa_mandate_acceptance_location": "Hamburg, Germany",
+            "sepa_mandate_type": SEPABankAccount.MandateType.Business
+        })
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        self.assertNotEqual(authorization_fingerprint, None)
+
+    def test_can_pass_merchant_account_id(self):
+        client_token = TestHelper.generate_decoded_client_token({
+            "merchant_account_id": "my_merchant_account"
+        })
+        merchant_account_id = json.loads(client_token)["merchantAccountId"]
+
+        self.assertEqual(merchant_account_id, "my_merchant_account")
+
     def test_required_data_cannot_be_overridden(self):
         try:
-            client_token = ClientToken.generate({
+            client_token = TestHelper.generate_decoded_client_token({
                 "merchant_id": "1234"
             })
             self.fail("Should have raised exception!")
-        except Exception, e:
+        except Exception as e:
             self.assertEqual("'Invalid keys: merchant_id'", str(e))

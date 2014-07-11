@@ -16,13 +16,14 @@ class WebhookTestingGateway(object):
 
     def __sample_xml(self, kind, id):
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-        return """
+        sample_xml = """
             <notification>
                 <timestamp type="datetime">%s</timestamp>
                 <kind>%s</kind>
                 <subject>%s</subject>
             </notification>
         """ % (timestamp, kind, self.__subject_sample_xml(kind, id))
+        return sample_xml.encode('utf-8')
 
     def __subject_sample_xml(self, kind, id):
         if kind == WebhookNotification.Kind.SubMerchantAccountApproved:
@@ -212,25 +213,25 @@ class WebhookTestingGateway(object):
 
     def __partner_merchant_connected_sample_xml(self):
         return """
-            <partner_merchant>
-                <partner_merchant_id>abc123</partner_merchant_id>
-                <public_key>public_key</public_key>
-                <private_key>private_key</private_key>
-                <merchant_public_id>public_id</merchant_public_id>
-                <client_side_encryption_key>cse_key</client_side_encryption_key>
-            </partner_merchant>
+            <partner-merchant>
+                <partner-merchant-id>abc123</partner-merchant-id>
+                <public-key>public_key</public-key>
+                <private-key>private_key</private-key>
+                <merchant-public-id>public_id</merchant-public-id>
+                <client-side-encryption-key>cse_key</client-side-encryption-key>
+            </partner-merchant>
             """
 
     def __partner_merchant_disconnected_sample_xml(self):
         return """
-            <partner_merchant>
-                <partner_merchant_id>abc123</partner_merchant_id>
-            </partner_merchant>
+            <partner-merchant>
+                <partner-merchant-id>abc123</partner-merchant-id>
+            </partner-merchant>
             """
 
     def __partner_merchant_declined_sample_xml(self):
         return """
-            <partner_merchant>
-                <partner_merchant_id>abc123</partner_merchant_id>
-            </partner_merchant>
+            <partner-merchant>
+                <partner-merchant-id>abc123</partner-merchant-id>
+            </partner-merchant>
             """

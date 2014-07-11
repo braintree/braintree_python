@@ -1,3 +1,19 @@
+## 3.1.1
+
+* Add support for v.zero SDKs
+
+## 3.0.0
+
+* Drop Python 2.5 support
+* Remove use_unsafe_ssl option
+* Remove httplib strategy and pycurl strategy
+* Add Python 3.3+ support
+
+## 2.29.1
+
+* Make webhook parsing more robust with newlines
+* Add messages to InvalidSignature exceptions
+
 ## 2.29.0
 
 * Include Dispute information on Transaction

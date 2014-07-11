@@ -53,4 +53,4 @@ class TestTransparentRedirect(unittest.TestCase):
 
     def test_api_version(self):
         data = TransparentRedirect.tr_data({"key": "val"}, "http://example.com/path?foo=bar")
-        self.assertTrue("api_version=3" in data)
+        self.assertTrue("api_version=4" in data)

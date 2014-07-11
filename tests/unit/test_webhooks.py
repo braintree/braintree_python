@@ -39,8 +39,8 @@ class TestWebhooks(unittest.TestCase):
 
         try:
             gateway.webhook_notification.parse(signature, payload)
-        except InvalidSignatureError, e:
-            self.assertEquals("no matching public key", e.message)
+        except InvalidSignatureError as e:
+            self.assertEquals("no matching public key", str(e))
         else:
             self.assertFalse("raises exception")
 
@@ -51,9 +51,9 @@ class TestWebhooks(unittest.TestCase):
         )
 
         try:
-            WebhookNotification.parse(signature, "badstuff" + payload)
-        except InvalidSignatureError, e:
-            self.assertEquals("signature does not match payload - one has been modified", e.message)
+            WebhookNotification.parse(signature, b"badstuff" + payload)
+        except InvalidSignatureError as e:
+            self.assertEquals("signature does not match payload - one has been modified", str(e))
         else:
             self.assertFalse("raises exception")
 
@@ -65,8 +65,8 @@ class TestWebhooks(unittest.TestCase):
 
         try:
             WebhookNotification.parse(signature, "~* invalid! *~")
-        except InvalidSignatureError, e:
-            self.assertEquals("payload contains illegal characters", e.message)
+        except InvalidSignatureError as e:
+            self.assertEquals("payload contains illegal characters", str(e))
         else:
             self.assertFalse("raises exception")
 
@@ -78,8 +78,8 @@ class TestWebhooks(unittest.TestCase):
 
         try:
             WebhookNotification.parse(signature, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+=/\n")
-        except InvalidSignatureError, e:
-            self.assertNotEquals("payload contains illegal characters", e.message)
+        except InvalidSignatureError as e:
+            self.assertNotEquals("payload contains illegal characters", str(e))
 
     def test_parse_retries_payload_with_a_newline(self):
         signature, payload = WebhookTesting.sample_notification(

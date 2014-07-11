@@ -34,7 +34,7 @@ class ResourceCollection(object):
                 yield item
 
     def __batch_ids(self):
-        for i in xrange(0, len(self.__ids), self.__page_size):
+        for i in range(0, len(self.__ids), self.__page_size):
                 yield self.__ids[i:i+self.__page_size]
 
 

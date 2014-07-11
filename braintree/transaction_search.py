@@ -28,6 +28,7 @@ class TransactionSearch:
     order_id                     = Search.TextNodeBuilder("order_id")
     payment_method_token         = Search.TextNodeBuilder("payment_method_token")
     processor_authorization_code = Search.TextNodeBuilder("processor_authorization_code")
+    sepa_bank_account_iban       = Search.TextNodeBuilder("sepa_bank_account_iban")
     settlement_batch_id          = Search.TextNodeBuilder("settlement_batch_id")
     shipping_company             = Search.TextNodeBuilder("shipping_company")
     shipping_country_name        = Search.TextNodeBuilder("shipping_country_name")
@@ -38,6 +39,9 @@ class TransactionSearch:
     shipping_postal_code         = Search.TextNodeBuilder("shipping_postal_code")
     shipping_region              = Search.TextNodeBuilder("shipping_region")
     shipping_street_address      = Search.TextNodeBuilder("shipping_street_address")
+    paypal_payer_email           = Search.TextNodeBuilder("paypal_payer_email")
+    paypal_payment_id            = Search.TextNodeBuilder("paypal_payment_id")
+    paypal_authorization_id      = Search.TextNodeBuilder("paypal_authorization_id")
 
     credit_card_expiration_date  = Search.EqualityNodeBuilder("credit_card_expiration_date")
     credit_card_number           = Search.PartialMatchNodeBuilder("credit_card_number")
