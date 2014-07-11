@@ -1,3 +1,7 @@
+## 3.1.1
+
+* Add support for v.zero SDKs
+
 ## 3.0.0
 
 * Drop Python 2.5 support
