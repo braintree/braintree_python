@@ -367,7 +367,7 @@ class TestCreditCard(unittest.TestCase):
             },
             "share": True
         })
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
         customer = Customer.create().customer
 
         result = CreditCard.create({
@@ -699,7 +699,7 @@ class TestCreditCard(unittest.TestCase):
             }
         })
         self.assertEqual(status_code, 201)
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         card = CreditCard.from_nonce(nonce)
         customer = Customer.find(customer.id)
@@ -725,7 +725,7 @@ class TestCreditCard(unittest.TestCase):
             "share": True
         })
         self.assertEqual(status_code, 201)
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         try:
             CreditCard.from_nonce(nonce)
@@ -755,7 +755,7 @@ class TestCreditCard(unittest.TestCase):
             }
         })
         self.assertEqual(status_code, 201)
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         CreditCard.from_nonce(nonce)
         try:
@@ -787,7 +787,7 @@ class TestCreditCard(unittest.TestCase):
 
         status_code, response = http.get_cards()
         self.assertEqual(status_code, 200)
-        nonce = json.loads(response)["creditCards"][0]["nonce"]
+        nonce = json.loads(response)["paymentMethods"][0]["nonce"]
 
         try:
             CreditCard.from_nonce(nonce)

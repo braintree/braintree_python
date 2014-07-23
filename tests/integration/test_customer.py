@@ -314,7 +314,7 @@ class TestCustomer(unittest.TestCase):
             },
             "share": True
         })
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         result = Customer.create({
             "credit_card": {
