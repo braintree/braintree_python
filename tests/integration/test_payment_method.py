@@ -195,3 +195,112 @@ class TestPaymentMethod(unittest.TestCase):
         delete_result = PaymentMethod.delete(result.payment_method.token)
         self.assertTrue(delete_result.is_success)
         self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
+
+    def test_forward(self):
+        try:
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "forward_payment_method_merchant_id",
+                "forward_payment_method_public_key",
+                "forward_payment_method_private_key"
+            )
+            customer = Customer.create().customer
+            credit_card_result = CreditCard.create({
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2025"
+            })
+            self.assertTrue(credit_card_result.is_success)
+            source_merchant_card = credit_card_result.credit_card
+
+            forward_result = CreditCard.forward(
+                source_merchant_card.token,
+                "integration_merchant_id"
+            )
+            self.assertTrue(forward_result.is_success)
+
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "integration_merchant_id",
+                "integration_public_key",
+                "integration_private_key"
+            )
+            customer = Customer.create().customer
+            credit_card_result = CreditCard.create({
+                "customer_id": customer.id,
+                "payment_method_nonce": forward_result.nonce
+            })
+            self.assertTrue(credit_card_result.is_success)
+            receiving_merchant_card = credit_card_result.credit_card
+            self.assertEqual(source_merchant_card.bin, receiving_merchant_card.bin)
+            self.assertEqual(source_merchant_card.last_4, receiving_merchant_card.last_4)
+            self.assertEqual(source_merchant_card.expiration_month, receiving_merchant_card.expiration_month)
+            self.assertEqual(source_merchant_card.expiration_year, receiving_merchant_card.expiration_year)
+        finally:
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "integration_merchant_id",
+                "integration_public_key",
+                "integration_private_key"
+            )
+
+    def test_forward_invalid_token_raises_exception(self):
+        try:
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "forward_payment_method_merchant_id",
+                "forward_payment_method_public_key",
+                "forward_payment_method_private_key"
+            )
+            try:
+                forward_result = CreditCard.forward(
+                    "invalid",
+                    "integration_merchant_id"
+                )
+                self.assertTrue(False)
+            except NotFoundError as e:
+                self.assertTrue(True)
+            except:
+                self.assertTrue(False)
+        finally:
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "integration_merchant_id",
+                "integration_public_key",
+                "integration_private_key"
+            )
+
+    def test_forward_invalid_receiving_merchant_raises_exception(self):
+        try:
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "forward_payment_method_merchant_id",
+                "forward_payment_method_public_key",
+                "forward_payment_method_private_key"
+            )
+            customer = Customer.create().customer
+            credit_card_result = CreditCard.create({
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2025"
+            })
+            self.assertTrue(credit_card_result.is_success)
+            source_merchant_card = credit_card_result.credit_card
+
+            try:
+                forward_result = CreditCard.forward(
+                    source_merchant_card.token,
+                    "invalid_merchant_id"
+                )
+                self.assertTrue(False)
+            except NotFoundError as e:
+                self.assertTrue(True)
+            except:
+                self.assertTrue(False)
+        finally:
+            braintree.Configuration.configure(
+                braintree.Environment.Development,
+                "integration_merchant_id",
+                "integration_public_key",
+                "integration_private_key"
+            )
