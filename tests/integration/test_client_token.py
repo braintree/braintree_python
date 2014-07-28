@@ -7,9 +7,18 @@ import braintree
 from braintree.util import Http
 from base64 import b64decode
 
+class TestClientTokenGenerate(unittest.TestCase):
+    def test_allows_client_token_version_to_be_specified(self):
+        client_token = ClientToken.generate({"version": 1})
+        version = json.loads(client_token)["version"]
+        self.assertEqual(version, 1)
+
+    def test_error_in_generate_raises_value_error(self):
+        self.assertRaises(ValueError, ClientToken.generate, {
+            "customer_id": "i_am_not_a_real_customer"
+        })
+
 class TestClientToken(unittest.TestCase):
-
-
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
         client_token = TestHelper.generate_decoded_client_token()
@@ -24,16 +33,7 @@ class TestClientToken(unittest.TestCase):
         status_code, response = http.get_cards()
         self.assertEqual(status_code, 200)
 
-    def test_allows_client_token_version_to_be_specified(self):
-        config = Configuration.instantiate()
-        client_token = ClientToken.generate({"version": 1})
-
-        version = json.loads(client_token)["version"]
-
-        self.assertEqual(version, 1)
-
     def test_client_token_version_defaults_to_two(self):
-        config = Configuration.instantiate()
         client_token = TestHelper.generate_decoded_client_token()
         version = json.loads(client_token)["version"]
 

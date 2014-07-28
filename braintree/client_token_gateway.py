@@ -19,4 +19,4 @@ class ClientTokenGateway(object):
         if "client_token" in response:
             return response["client_token"]["value"]
         else:
-            raise exceptions.ValueError(response["api_error_response"]["message"])
+            raise ValueError(response["api_error_response"]["message"])
