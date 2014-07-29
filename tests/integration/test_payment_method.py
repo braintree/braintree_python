@@ -248,16 +248,7 @@ class CreditCardForwardingTest(unittest.TestCase):
         self.assertEqual(source_merchant_card.expiration_year, receiving_merchant_card.expiration_year)
 
     def test_forward_invalid_token_raises_exception(self):
-        try:
-            forward_result = CreditCard.forward(
-                "invalid",
-                "integration_merchant_id"
-            )
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertTrue(True)
-        except:
-            self.assertTrue(False)
+        self.assertRaises(NotFoundError, CreditCard.forward, "invalid", "integration_merchant_id")
 
     def test_forward_invalid_receiving_merchant_raises_exception(self):
         customer = Customer.create().customer
@@ -269,13 +260,4 @@ class CreditCardForwardingTest(unittest.TestCase):
         self.assertTrue(credit_card_result.is_success)
         source_merchant_card = credit_card_result.credit_card
 
-        try:
-            forward_result = CreditCard.forward(
-                source_merchant_card.token,
-                "invalid_merchant_id"
-            )
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertTrue(True)
-        except:
-            self.assertTrue(False)
+        self.assertRaises(NotFoundError, CreditCard.forward, source_merchant_card.token, "invalid_merchant_id")
