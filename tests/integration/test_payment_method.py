@@ -332,6 +332,26 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(found_credit_card == None)
         self.assertTrue(found_credit_card.billing_address.street_address == "456 Xyz Way")
 
+    def test_create_does_not_return_an_error_if_credit_card_options_are_present_for_paypal_nonce(self):
+        customer_id = Customer.create().customer.id
+        original_token = "paypal-account-" + str(int(time.time()))
+        nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code",
+            "token": original_token
+        })
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "options": {
+                "verify_card": "true",
+                "fail_on_duplicate_payment_method": "true",
+                "verification_merchant_account_id": "not_a_real_merchant_account_id"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
     def test_create_for_paypal_ignores_passed_billing_address_id(self):
         nonce = Nonces.nonce_for_paypal_account({
             "consent_code": "consent-code"
