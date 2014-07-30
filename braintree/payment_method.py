@@ -32,7 +32,13 @@ class PaymentMethod(Resource):
             "token",
             "billing_address_id",
             {"billing_address": Address.create_signature()},
-            {"options": ["make_default"]}
+            {"options": [
+                "make_default",
+                "verify_card",
+                "fail_on_duplicate_payment_method",
+                "verification_merchant_account_id",
+                ]
+            }
         ]
         return signature
 

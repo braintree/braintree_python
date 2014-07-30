@@ -142,6 +142,74 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEquals(found_bank_account.bic, "DEUTDEFF")
         self.assertEquals(found_bank_account.__class__, SEPABankAccount)
 
+    def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+                    "authorization_fingerprint": authorization_fingerprint,
+                    "shared_customer_identifier": "fake_identifier",
+                    "shared_customer_identifier_type": "testing"
+                })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4000111111111115",
+            "expirationMonth": "11",
+            "expirationYear": "2099"
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "options": {
+                "verify_card": "true",
+                "verification_merchant_account_id": TestHelper.non_default_merchant_account_id
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertTrue(result.credit_card_verification.status == Transaction.Status.ProcessorDeclined)
+        self.assertTrue(result.credit_card_verification.processor_response_code == "2000")
+        self.assertTrue(result.credit_card_verification.processor_response_text == "Do Not Honor")
+        self.assertTrue(result.credit_card_verification.merchant_account_id == TestHelper.non_default_merchant_account_id)
+
+    def test_create_respects_fail_one_duplicate_payment_method_when_included_outside_of_the_nonce(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        self.assertTrue(credit_card_result.is_success)
+
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+                    "authorization_fingerprint": authorization_fingerprint,
+                    "shared_customer_identifier": "fake_identifier",
+                    "shared_customer_identifier_type": "testing"
+                })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "options": {
+                "fail_on_duplicate_payment_method": "true"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertTrue(result.errors.deep_errors[0].code == "81724")
+
+
     def test_create_allows_passing_billing_address_id_outside_the_nonce(self):
         customer_id = Customer.create().customer.id
         http = ClientApiHttp.create()
