@@ -1,4 +1,7 @@
+import time
+from random import randint
 from tests.test_helper import *
+from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 
 class TestPaymentMethod(unittest.TestCase):
@@ -195,6 +198,306 @@ class TestPaymentMethod(unittest.TestCase):
         delete_result = PaymentMethod.delete(result.payment_method.token)
         self.assertTrue(delete_result.is_success)
         self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
+
+    def test_update_credit_cards_updates_the_credit_card(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Original Holder",
+            "customer_id": customer_id,
+            "cvv": "123",
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "cardholder_name": "New Holder",
+            "cvv": "456",
+            "number": CreditCardNumbers.MasterCard,
+            "expiration_date": "06/2013"
+        })
+        self.assertTrue(update_result.is_success)
+        self.assertTrue(update_result.payment_method.token == credit_card_result.credit_card.token)
+        updated_credit_card = update_result.payment_method
+        self.assertTrue(updated_credit_card.bin == CreditCardNumbers.MasterCard[:6])
+        self.assertTrue(updated_credit_card.last_4 == CreditCardNumbers.MasterCard[-4:])
+        self.assertTrue(updated_credit_card.expiration_date == "06/2013")
+
+    def test_update_creates_a_new_billing_address_by_default(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012",
+            "billing_address": {
+                "street_address": "123 Nigeria Ave"
+            }
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "billing_address": {
+                "region": "IL"
+            }
+        })
+        self.assertTrue(update_result.is_success)
+        updated_credit_card = update_result.payment_method
+        self.assertTrue(updated_credit_card.billing_address.region == "IL")
+        self.assertTrue(updated_credit_card.billing_address.street_address == None)
+        self.assertFalse(updated_credit_card.billing_address.id == credit_card_result.credit_card.billing_address.id)
+
+    def test_update_updates_the_billing_address_if_option_is_specified(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012",
+            "billing_address": {
+                "street_address": "123 Nigeria Ave"
+            }
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "billing_address": {
+                "region": "IL",
+                "options": {
+                    "update_existing": "true"
+                }
+            }
+        })
+        self.assertTrue(update_result.is_success)
+        updated_credit_card = update_result.payment_method
+        self.assertTrue(updated_credit_card.billing_address.region == "IL")
+        self.assertTrue(updated_credit_card.billing_address.street_address == "123 Nigeria Ave")
+        self.assertTrue(updated_credit_card.billing_address.id == credit_card_result.credit_card.billing_address.id)
+
+    def test_update_updates_the_country_via_codes(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012",
+            "billing_address": {
+                "street_address": "123 Nigeria Ave"
+            }
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "billing_address": {
+                "country_name": "American Samoa",
+                "country_code_alpha2": "AS",
+                "country_code_alpha3": "ASM",
+                "country_code_numeric": "016",
+                "options": {
+                    "update_existing": "true"
+                }
+            }
+        })
+        self.assertTrue(update_result.is_success)
+        updated_credit_card = update_result.payment_method
+        self.assertTrue(updated_credit_card.billing_address.country_name == "American Samoa")
+        self.assertTrue(updated_credit_card.billing_address.country_code_alpha2 == "AS")
+        self.assertTrue(updated_credit_card.billing_address.country_code_alpha3 == "ASM")
+        self.assertTrue(updated_credit_card.billing_address.country_code_numeric == "016")
+
+    def test_update_can_pass_expiration_month_and_expiration_year(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "number": CreditCardNumbers.MasterCard,
+            "expiration_month": "07",
+            "expiration_year": "2011"
+        })
+        self.assertTrue(update_result.is_success)
+        self.assertTrue(update_result.payment_method.token == credit_card_result.credit_card.token)
+        updated_credit_card = update_result.payment_method
+        self.assertTrue(updated_credit_card.expiration_month == "07")
+        self.assertTrue(updated_credit_card.expiration_year == "2011")
+        self.assertTrue(updated_credit_card.expiration_date == "07/2011")
+
+    def test_update_verifies_the_update_if_options_verify_card_is_true(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Original Holder",
+            "customer_id": customer_id,
+            "cvv": "123",
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "cardholder_name": "New Holder",
+            "cvv": "456",
+            "number": CreditCardNumbers.FailsSandboxVerification.MasterCard,
+            "expiration_date": "06/2013",
+            "options": {
+                "verify_card": "true"
+            }
+        })
+        self.assertFalse(update_result.is_success)
+        self.assertTrue(update_result.credit_card_verification.status == CreditCardVerification.Status.ProcessorDeclined)
+        self.assertTrue(update_result.credit_card_verification.gateway_rejection_reason == None)
+
+    def test_update_can_update_the_billing_address(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Original Holder",
+            "customer_id": customer_id,
+            "cvv": "123",
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012",
+            "billing_address": {
+                "first_name": "Old First Name",
+                "last_name": "Old Last Name",
+                "company": "Old Company",
+                "street_address": "123 Old St",
+                "extended_address": "Apt Old",
+                "locality": "Old City",
+                "region": "Old State",
+                "postal_code": "12345",
+                "country_name": "Canada"
+            }
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "options": { "verify_card": "false" },
+            "billing_address": {
+                "first_name": "New First Name",
+                "last_name": "New Last Name",
+                "company": "New Company",
+                "street_address": "123 New St",
+                "extended_address": "Apt New",
+                "locality": "New City",
+                "region": "New State",
+                "postal_code": "56789",
+                "country_name": "United States of America"
+            }
+        })
+        self.assertTrue(update_result.is_success)
+        address = update_result.payment_method.billing_address
+        self.assertTrue(address.first_name == "New First Name")
+        self.assertTrue(address.last_name == "New Last Name")
+        self.assertTrue(address.company == "New Company")
+        self.assertTrue(address.street_address == "123 New St")
+        self.assertTrue(address.extended_address == "Apt New")
+        self.assertTrue(address.locality == "New City")
+        self.assertTrue(address.region == "New State")
+        self.assertTrue(address.postal_code == "56789")
+        self.assertTrue(address.country_name == "United States of America")
+
+    def test_update_returns_an_error_response_if_invalid(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Original Holder",
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "cardholder_name": "New Holder",
+            "number": "invalid",
+            "expiration_date": "05/2014",
+        })
+        self.assertFalse(update_result.is_success)
+        self.assertTrue(update_result.errors.for_object("credit_card").on("number")[0].message == "Credit card number must be 12-19 digits.")
+
+    def test_update_can_update_the_default(self):
+        customer_id = Customer.create().customer.id
+        card1 = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2009"
+        }).credit_card
+        card2 = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2009"
+        }).credit_card
+
+        self.assertTrue(card1.default == True)
+        self.assertTrue(card2.default == False)
+
+        update_result = PaymentMethod.update(card2.token, {
+            "options": { "make_default": True }
+        })
+
+        self.assertTrue(CreditCard.find(card1.token).default == False)
+        self.assertTrue(CreditCard.find(card2.token).default == True)
+
+    def test_update_updates_a_paypal_accounts_token(self):
+        customer_id = Customer.create().customer.id
+        original_token = "paypal-account-" + str(int(time.time()))
+        nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code",
+            "token": original_token
+        })
+        original_result = PaymentMethod.create({
+             "payment_method_nonce": nonce,
+             "customer_id": customer_id
+        })
+
+        updated_token = "UPDATED_TOKEN-" + str(randint(0,100000000))
+        updated_result = PaymentMethod.update(
+            original_token,
+            {"token": updated_token}
+        )
+
+        updated_paypal_account = PayPalAccount.find(updated_token)
+        self.assertTrue(updated_paypal_account.email == original_result.payment_method.email)
+        self.assertRaises(NotFoundError, PaymentMethod.find, original_token)
+
+    def test_update_can_make_a_paypal_account_the_default_payment_method(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2009",
+            "options": {"make_default": "true"}
+        })
+        self.assertTrue(credit_card_result.is_success)
+
+        nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code"
+        })
+        original_token = PaymentMethod.create({
+             "payment_method_nonce": nonce,
+             "customer_id": customer_id
+        }).payment_method.token
+
+        updated_result = PaymentMethod.update(
+            original_token,
+            {"options": {"make_default": "true"}}
+        )
+
+        updated_paypal_account = PayPalAccount.find(original_token)
+        self.assertTrue(updated_paypal_account.default == True)
+
+    def test_update_updates_a_paypal_accounts_token(self):
+        customer_id = Customer.create().customer.id
+        first_token = "paypal-account-" + str(randint(0,100000000))
+        second_token = "paypal-account-" + str(randint(0,100000000))
+
+        first_nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code",
+            "token": first_token
+        })
+        first_result = PaymentMethod.create({
+             "payment_method_nonce": first_nonce,
+             "customer_id": customer_id
+        })
+
+        second_nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code",
+            "token": second_token
+        })
+        second_result = PaymentMethod.create({
+             "payment_method_nonce": second_nonce,
+             "customer_id": customer_id
+        })
+
+        updated_result = PaymentMethod.update(
+            first_token,
+            {"token": second_token}
+        )
+
+        self.assertTrue(updated_result.is_success == False)
+        self.assertTrue(updated_result.errors.deep_errors[0].code == "92906")
 
 class CreditCardForwardingTest(unittest.TestCase):
     def setUp(self):

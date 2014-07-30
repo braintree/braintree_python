@@ -12,6 +12,14 @@ class CreditCardNumbers(object):
         No  = "4111111111310101"
         Unknown = "4111111111112101"
 
+    Maestro = "6304000000000000" # :nodoc:
+    MasterCard = "5555555555554444"
+    MasterCardInternational = "5105105105105100" # :nodoc:
+
+    Visa = "4012888888881881"
+    VisaInternational = "4009348888881881" # :nodoc:
+    VisaPrepaid = "4500600000000061"
+
     class FailsSandboxVerification(object):
         AmEx       = "378734493671000"
         Discover   = "6011000990139424"
