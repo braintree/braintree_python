@@ -253,7 +253,7 @@ class ClientApiHttp(Http):
         status_code, response = self.post(url, params)
 
         nonce = None
-        if status_code == 202:
+        if status_code in [201, 202]:
             nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         return [status_code, nonce]

@@ -175,6 +175,95 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(found_credit_card.billing_address.first_name == "Bobby")
         self.assertTrue(found_credit_card.billing_address.last_name == "Tables")
 
+    def test_create_allows_passing_billing_address_outside_the_nonce(self):
+        customer_id = Customer.create().customer.id
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4111111111111111",
+            "expirationMonth": "12",
+            "expirationYear": "2020",
+            "options": {"validate": "false"}
+        })
+        self.assertTrue(status_code == 202)
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "billing_address": {
+                "street_address": "123 Abc Way"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(type(result.payment_method) is CreditCard)
+        token = result.payment_method.token
+
+        found_credit_card = CreditCard.find(token)
+        self.assertFalse(found_credit_card == None)
+        self.assertTrue(found_credit_card.billing_address.street_address == "123 Abc Way")
+
+    def test_create_overrides_the_billing_address_in_the_nonce(self):
+        customer_id = Customer.create().customer.id
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4111111111111111",
+            "expirationMonth": "12",
+            "expirationYear": "2020",
+            "options": {"validate": "false"},
+            "billing_address": {
+                "street_address": "456 Xyz Way"
+            }
+        })
+        self.assertTrue(status_code == 202)
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "billing_address": {
+                "street_address": "123 Abc Way"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(type(result.payment_method) is CreditCard)
+        token = result.payment_method.token
+
+        found_credit_card = CreditCard.find(token)
+        self.assertFalse(found_credit_card == None)
+        self.assertTrue(found_credit_card.billing_address.street_address == "123 Abc Way")
+
+    def test_create_does_not_override_the_billing_address_for_a_valuted_credit_card(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token({"customer_id": customer_id}))
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {"authorization_fingerprint": authorization_fingerprint})
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4111111111111111",
+            "expirationMonth": "12",
+            "expirationYear": "2020",
+            "billing_address": {
+                "street_address": "456 Xyz Way"
+            }
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "billing_address": {
+                "street_address": "123 Abc Way"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(type(result.payment_method) is CreditCard)
+        token = result.payment_method.token
+
+        found_credit_card = CreditCard.find(token)
+        self.assertFalse(found_credit_card == None)
+        self.assertTrue(found_credit_card.billing_address.street_address == "456 Xyz Way")
+
     def test_create_for_paypal_ignores_passed_billing_address_id(self):
         nonce = Nonces.nonce_for_paypal_account({
             "consent_code": "consent-code"
@@ -184,6 +273,27 @@ class TestPaymentMethod(unittest.TestCase):
             "payment_method_nonce": nonce,
             "customer_id": customer_id,
             "billing_address_id": "address_id"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(type(result.payment_method) is PayPalAccount)
+        self.assertFalse(result.payment_method.image_url == None)
+        token = result.payment_method.token
+
+        found_paypal_account = PayPalAccount.find(token)
+        self.assertFalse(found_paypal_account == None)
+
+    def test_create_for_paypal_ignores_passed_billing_address_params(self):
+        nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "PAYPAL_CONSENT_CODE"
+        })
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "billing_address": {
+                "street_address": "123 Abc Way"
+            }
         })
 
         self.assertTrue(result.is_success)

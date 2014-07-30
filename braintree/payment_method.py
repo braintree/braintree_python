@@ -31,6 +31,7 @@ class PaymentMethod(Resource):
             "payment_method_nonce",
             "token",
             "billing_address_id",
+            {"billing_address": Address.create_signature()},
             {"options": ["make_default"]}
         ]
         return signature
