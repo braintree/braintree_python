@@ -30,6 +30,7 @@ class PaymentMethod(Resource):
             "customer_id",
             "payment_method_nonce",
             "token",
+            "billing_address_id",
             {"options": ["make_default"]}
         ]
         return signature

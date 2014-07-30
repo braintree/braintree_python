@@ -142,6 +142,58 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEquals(found_bank_account.bic, "DEUTDEFF")
         self.assertEquals(found_bank_account.__class__, SEPABankAccount)
 
+    def test_create_allows_passing_billing_address_id_outside_the_nonce(self):
+        customer_id = Customer.create().customer.id
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4111111111111111",
+            "expirationMonth": "12",
+            "expirationYear": "2020",
+            "options": {"validate": "false"}
+        })
+        self.assertTrue(status_code == 202)
+
+        address_result = Address.create({
+            "customer_id": customer_id,
+            "first_name": "Bobby",
+            "last_name": "Tables"
+        })
+        self.assertTrue(address_result.is_success)
+
+        payment_method_result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "billing_address_id": address_result.address.id
+        })
+
+        self.assertTrue(payment_method_result.is_success)
+        self.assertTrue(type(payment_method_result.payment_method) is CreditCard)
+        token = payment_method_result.payment_method.token
+
+        found_credit_card = CreditCard.find(token)
+        self.assertFalse(found_credit_card == None)
+        self.assertTrue(found_credit_card.billing_address.first_name == "Bobby")
+        self.assertTrue(found_credit_card.billing_address.last_name == "Tables")
+
+    def test_create_for_paypal_ignores_passed_billing_address_id(self):
+        nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code"
+        })
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "billing_address_id": "address_id"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(type(result.payment_method) is PayPalAccount)
+        self.assertFalse(result.payment_method.image_url == None)
+        token = result.payment_method.token
+
+        found_paypal_account = PayPalAccount.find(token)
+        self.assertFalse(found_paypal_account == None)
+
     def test_find_returns_a_paypal_account(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
