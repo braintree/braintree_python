@@ -32,6 +32,36 @@ class TestPayPalAccount(unittest.TestCase):
 
         self.assertRaises(NotFoundError, PayPalAccount.find, credit_card.token)
 
+    def test_find_returns_subscriptions_associated_with_a_paypal_account(self):
+        customer_id = Customer.create().customer.id
+        payment_method_token = "paypal-account-" + str(int(time.time()))
+
+        nonce = Nonces.nonce_for_paypal_account({
+            "consent_code": "consent-code",
+            "token": payment_method_token
+        })
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id
+        })
+        self.assertTrue(result.is_success)
+
+        token = result.payment_method.token
+
+        subscription1 = Subscription.create({
+            "payment_method_token": token,
+            "plan_id": TestHelper.trialless_plan["id"]
+        }).subscription
+
+        subscription2 = Subscription.create({
+            "payment_method_token": token,
+            "plan_id": TestHelper.trialless_plan["id"]
+        }).subscription
+
+        paypal_account = PayPalAccount.find(result.payment_method.token)
+        self.assertTrue(subscription1.id in [s.id for s in paypal_account.subscriptions])
+        self.assertTrue(subscription2.id in [s.id for s in paypal_account.subscriptions])
+
     def test_delete_deletes_paypal_account(self):
         result = PaymentMethod.create({
             "customer_id": Customer.create().customer.id,
