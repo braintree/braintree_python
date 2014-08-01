@@ -1667,7 +1667,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
 
-    def test_descriptors_accepts_name_and_phone(self):
+    def test_descriptors_accepts_name_phone_and_url(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -1676,7 +1676,8 @@ class TestTransaction(unittest.TestCase):
             },
             "descriptor": {
                 "name": "123*123456789012345678",
-                "phone": "3334445555"
+                "phone": "3334445555",
+                "url": "ebay.com"
             }
         })
 
@@ -1684,6 +1685,7 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals("123*123456789012345678", transaction.descriptor.name)
         self.assertEquals("3334445555", transaction.descriptor.phone)
+        self.assertEquals("ebay.com", transaction.descriptor.url)
 
     def test_descriptors_has_validation_errors_if_format_is_invalid(self):
         result = Transaction.sale({
@@ -1694,7 +1696,8 @@ class TestTransaction(unittest.TestCase):
             },
             "descriptor": {
                 "name": "badcompanyname12*badproduct12",
-                "phone": "%bad4445555"
+                "phone": "%bad4445555",
+                "url": "12345678901234"
             }
         })
         self.assertFalse(result.is_success)
@@ -1706,6 +1709,10 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(
             ErrorCodes.Descriptor.PhoneFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Descriptor.UrlFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("url")[0].code
         )
 
     def test_clone_transaction(self):

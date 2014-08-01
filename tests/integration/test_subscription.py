@@ -470,13 +470,14 @@ class TestSubscription(unittest.TestCase):
             result.errors.for_object("subscription").for_object("add_ons").for_object("update").for_index(1).on("quantity")[0].code
         )
 
-    def test_descriptors_accepts_name_and_phone(self):
+    def test_descriptors_accepts_name_phone_and_url(self):
         result = Subscription.create({
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trialless_plan["id"],
             "descriptor": {
                 "name": "123*123456789012345678",
-                "phone": "3334445555"
+                "phone": "3334445555",
+                "url": "ebay.com"
             }
         })
 
@@ -488,6 +489,7 @@ class TestSubscription(unittest.TestCase):
         transaction = subscription.transactions[0]
         self.assertEquals("123*123456789012345678", transaction.descriptor.name)
         self.assertEquals("3334445555", transaction.descriptor.phone)
+        self.assertEquals("ebay.com", transaction.descriptor.url)
 
     def test_descriptors_has_validation_errors_if_format_is_invalid(self):
         result = Transaction.sale({
