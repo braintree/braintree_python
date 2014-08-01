@@ -176,6 +176,21 @@ class CreditCard(Resource):
         return Configuration.gateway().credit_card.find(credit_card_token)
 
     @staticmethod
+    def forward(credit_card_token, receiving_merchant_id):
+        """
+        Create a nonce for a credit card in your Braintree vault that can be used by another Braintree merchant.
+
+        A credit card token and a receiving merchant ID are required:
+
+            result = braintree.CreditCard.forward(
+                credit_card.token,
+                "another_merchant_public_id"
+            })
+        """
+
+        return Configuration.gateway().credit_card.forward(credit_card_token, receiving_merchant_id)
+
+    @staticmethod
     def from_nonce(nonce):
         """
         Convert a payment method nonce into a CreditCard. This does not return

@@ -42,6 +42,12 @@ class WebhookTestingGateway(object):
             return self.__disbursement_exception_sample_xml(id)
         elif kind == WebhookNotification.Kind.Disbursement:
             return self.__disbursement_sample_xml(id)
+        elif kind == WebhookNotification.Kind.DisputeOpened:
+            return self.__dispute_opened_sample_xml(id)
+        elif kind == WebhookNotification.Kind.DisputeLost:
+            return self.__dispute_lost_sample_xml(id)
+        elif kind == WebhookNotification.Kind.DisputeWon:
+            return self.__dispute_won_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
 
@@ -104,6 +110,57 @@ class WebhookTestingGateway(object):
               <follow-up-action nil="true"/>
             </disbursement>
         """ % id
+
+    def __dispute_opened_sample_xml(self, id):
+        return """
+            <dispute>
+              <amount>250.00</amount>
+              <currency-iso-code>USD</currency-iso-code>
+              <received-date type="date">2014-03-01</received-date>
+              <reply-by-date type="date">2014-03-21</reply-by-date>
+              <status>open</status>
+              <reason>fraud</reason>
+              <id>%s</id>
+              <transaction>
+                <id>%s</id>
+                <amount>250.00</amount>
+              </transaction>
+            </dispute>
+        """ % (id, id)
+
+    def __dispute_lost_sample_xml(self, id):
+        return """
+            <dispute>
+              <amount>250.00</amount>
+              <currency-iso-code>USD</currency-iso-code>
+              <received-date type="date">2014-03-01</received-date>
+              <reply-by-date type="date">2014-03-21</reply-by-date>
+              <status>lost</status>
+              <reason>fraud</reason>
+              <id>%s</id>
+              <transaction>
+                <id>%s</id>
+                <amount>250.00</amount>
+              </transaction>
+            </dispute>
+        """ % (id, id)
+
+    def __dispute_won_sample_xml(self, id):
+        return """
+            <dispute>
+              <amount>250.00</amount>
+              <currency-iso-code>USD</currency-iso-code>
+              <received-date type="date">2014-03-01</received-date>
+              <reply-by-date type="date">2014-03-21</reply-by-date>
+              <status>won</status>
+              <reason>fraud</reason>
+              <id>%s</id>
+              <transaction>
+                <id>%s</id>
+                <amount>250.00</amount>
+              </transaction>
+            </dispute>
+        """ % (id, id)
 
     def __subscription_sample_xml(self, id):
         return """

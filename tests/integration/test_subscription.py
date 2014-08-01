@@ -65,7 +65,7 @@ class TestSubscription(unittest.TestCase):
             },
             "share": True
         })
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         result = Subscription.create({
             "payment_method_nonce": nonce,
@@ -666,7 +666,7 @@ class TestSubscription(unittest.TestCase):
             },
             "share": True
         })
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         result = Subscription.update(self.updateable_subscription.id, {
             "payment_method_nonce": nonce

@@ -1,3 +1,10 @@
+## 3.2.0
+
+* Support credit card options and billing address in PaymentMethod.create
+* Add PaymentMethod.update
+* Add associated subscriptions to PayPalAccount
+* Test refactoring and cleanup
+
 ## 3.1.1
 
 * Add support for v.zero SDKs

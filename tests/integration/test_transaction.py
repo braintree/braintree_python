@@ -709,7 +709,7 @@ class TestTransaction(unittest.TestCase):
             },
             "share": True
         })
-        nonce = json.loads(response)["nonce"]
+        nonce = json.loads(response)["creditCards"][0]["nonce"]
 
 
         result = Transaction.sale({
@@ -1882,6 +1882,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("250.00"), dispute.amount)
         self.assertEquals(Dispute.Status.Won, dispute.status)
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
+        self.assertEquals("disputedtransaction", dispute.transaction_details.id)
+        self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
 
     def test_creating_paypal_transaction_with_one_time_use_nonce(self):
         result = Transaction.sale({

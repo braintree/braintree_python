@@ -208,7 +208,7 @@ class ClientApiHttp(Http):
 
     def get_cards(self):
         encoded_fingerprint = quote_plus(self.options["authorization_fingerprint"])
-        url = "/merchants/%s/client_api/nonces.json" % self.config.merchant_id
+        url = "/merchants/%s/client_api/v1/payment_methods.json" % self.config.merchant_id
         url += "?authorizationFingerprint=%s" % encoded_fingerprint
         url += "&sharedCustomerIdentifier=%s" % self.options["shared_customer_identifier"]
         url += "&sharedCustomerIdentifierType=%s" % self.options["shared_customer_identifier_type"]
@@ -216,7 +216,7 @@ class ClientApiHttp(Http):
         return self.get(url)
 
     def add_card(self, params):
-        url = "/merchants/%s/client_api/nonces.json" % self.config.merchant_id
+        url = "/merchants/%s/client_api/v1/payment_methods/credit_cards.json" % self.config.merchant_id
 
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
@@ -253,7 +253,7 @@ class ClientApiHttp(Http):
         status_code, response = self.post(url, params)
 
         nonce = None
-        if status_code == 202:
+        if status_code in [201, 202]:
             nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         return [status_code, nonce]

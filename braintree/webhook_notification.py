@@ -5,6 +5,7 @@ from braintree.merchant_account import MerchantAccount
 from braintree.transaction import Transaction
 from braintree.partner_merchant import PartnerMerchant
 from braintree.disbursement import Disbursement
+from braintree.dispute import Dispute
 from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 
@@ -25,6 +26,9 @@ class WebhookNotification(Resource):
         TransactionDisbursed = "transaction_disbursed"
         DisbursementException = "disbursement_exception"
         Disbursement = "disbursement"
+        DisputeOpened = "dispute_opened"
+        DisputeLost = "dispute_lost"
+        DisputeWon = "dispute_won"
 
     @staticmethod
     def parse(signature, payload):
@@ -52,6 +56,8 @@ class WebhookNotification(Resource):
             self.partner_merchant = PartnerMerchant(gateway, node_wrapper['partner_merchant'])
         elif "disbursement" in node_wrapper:
             self.disbursement = Disbursement(gateway, node_wrapper['disbursement'])
+        elif "dispute" in node_wrapper:
+            self.dispute = Dispute(node_wrapper['dispute'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])
