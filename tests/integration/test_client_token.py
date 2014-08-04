@@ -37,7 +37,7 @@ class TestClientToken(unittest.TestCase):
         client_token = TestHelper.generate_decoded_client_token()
         version = json.loads(client_token)["version"]
 
-        self.assertEqual(version, "2")
+        self.assertEqual(version, 2)
 
     def test_can_pass_verify_card(self):
         config = Configuration.instantiate()
