@@ -1,4 +1,4 @@
-## 3.2.0
+## 3.3.0
 
 * Add Descriptor url support
 * Fix client token version type
