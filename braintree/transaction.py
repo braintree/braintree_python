@@ -442,7 +442,7 @@ class Transaction(Resource):
                 ]
             },
             {"custom_fields": ["__any_key__"]},
-            {"descriptor": ["name", "phone"]}
+            {"descriptor": ["name", "phone", "url"]}
         ]
 
     def __init__(self, gateway, attributes):

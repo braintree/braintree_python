@@ -131,6 +131,7 @@ class ErrorCodes(object):
         InternationalPhoneFormatIsInvalid = "92205"
         NameFormatIsInvalid = "92201"
         PhoneFormatIsInvalid = "92202"
+        UrlFormatIsInvalid = "92206"
 
     class MerchantAccount(object):
         IdFormatIsInvalid = "82603"
