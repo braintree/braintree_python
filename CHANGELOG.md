@@ -1,5 +1,10 @@
 ## 3.2.0
 
+* Add Descriptor url support
+* Fix client token version type
+
+## 3.2.0
+
 * Support credit card options and billing address in PaymentMethod.create
 * Add PaymentMethod.update
 * Add associated subscriptions to PayPalAccount
