@@ -1907,6 +1907,27 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
+    def test_creating_paypal_transaction_with_payee_email_and_bn_code(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {
+                "payee_email": "payee@example.com",
+                "bn_code": "BN12345"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertEquals(transaction.paypal_details.payee_email, "payee@example.com")
+        self.assertEquals(transaction.paypal_details.bn_code, "BN12345")
+
     def test_paypal_transaction_payment_instrument_type(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

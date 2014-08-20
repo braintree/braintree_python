@@ -442,7 +442,8 @@ class Transaction(Resource):
                 ]
             },
             {"custom_fields": ["__any_key__"]},
-            {"descriptor": ["name", "phone", "url"]}
+            {"descriptor": ["name", "phone", "url"]},
+            {"paypal_account": ["payee_email", "bn_code"]}
         ]
 
     def __init__(self, gateway, attributes):
