@@ -145,10 +145,9 @@ class TestHelper(object):
         return False
 
     @staticmethod
-    def now_in_eastern():
-        now  = datetime.utcnow()
-        offset  = timedelta(hours=5)
-        return (now - offset).strftime("%Y-%m-%d")
+    def now_minus_offset(offset):
+        now = datetime.utcnow()
+        return (now - timedelta(hours=offset)).strftime("%Y-%m-%d")
 
     @staticmethod
     def unique(list):
