@@ -350,7 +350,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(payment_method_result.is_success)
-        self.assertTrue(type(payment_method_result.payment_method) is CreditCard)
+        self.assertTrue(isinstance(payment_method_result.payment_method, CreditCard))
         token = payment_method_result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
@@ -378,7 +378,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(type(result.payment_method) is CreditCard)
+        self.assertTrue(isinstance(result.payment_method, CreditCard))
         token = result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
@@ -408,7 +408,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(type(result.payment_method) is CreditCard)
+        self.assertTrue(isinstance(result.payment_method, CreditCard))
         token = result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
@@ -440,7 +440,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(type(result.payment_method) is CreditCard)
+        self.assertTrue(isinstance(result.payment_method, CreditCard))
         token = result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
@@ -479,7 +479,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(type(result.payment_method) is PayPalAccount)
+        self.assertTrue(isinstance(result.payment_method, PayPalAccount))
         self.assertFalse(result.payment_method.image_url == None)
         token = result.payment_method.token
 
@@ -500,7 +500,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(type(result.payment_method) is PayPalAccount)
+        self.assertTrue(isinstance(result.payment_method, PayPalAccount))
         self.assertFalse(result.payment_method.image_url == None)
         token = result.payment_method.token
 
