@@ -26,7 +26,7 @@ class Crypto:
 
     @staticmethod
     def secure_compare(left, right):
-        if left == None or right == None:
+        if left is None or right is None:
             return False
 
         left_bytes = [ord(char) for char in left]
