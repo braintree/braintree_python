@@ -354,7 +354,7 @@ class TestPaymentMethod(unittest.TestCase):
         token = payment_method_result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
-        self.assertFalse(found_credit_card == None)
+        self.assertFalse(found_credit_card is None)
         self.assertTrue(found_credit_card.billing_address.first_name == "Bobby")
         self.assertTrue(found_credit_card.billing_address.last_name == "Tables")
 
@@ -382,7 +382,7 @@ class TestPaymentMethod(unittest.TestCase):
         token = result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
-        self.assertFalse(found_credit_card == None)
+        self.assertFalse(found_credit_card is None)
         self.assertTrue(found_credit_card.billing_address.street_address == "123 Abc Way")
 
     def test_create_overrides_the_billing_address_in_the_nonce(self):
@@ -412,7 +412,7 @@ class TestPaymentMethod(unittest.TestCase):
         token = result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
-        self.assertFalse(found_credit_card == None)
+        self.assertFalse(found_credit_card is None)
         self.assertTrue(found_credit_card.billing_address.street_address == "123 Abc Way")
 
     def test_create_does_not_override_the_billing_address_for_a_valuted_credit_card(self):
@@ -444,7 +444,7 @@ class TestPaymentMethod(unittest.TestCase):
         token = result.payment_method.token
 
         found_credit_card = CreditCard.find(token)
-        self.assertFalse(found_credit_card == None)
+        self.assertFalse(found_credit_card is None)
         self.assertTrue(found_credit_card.billing_address.street_address == "456 Xyz Way")
 
     def test_create_does_not_return_an_error_if_credit_card_options_are_present_for_paypal_nonce(self):
@@ -480,11 +480,11 @@ class TestPaymentMethod(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertTrue(isinstance(result.payment_method, PayPalAccount))
-        self.assertFalse(result.payment_method.image_url == None)
+        self.assertFalse(result.payment_method.image_url is None)
         token = result.payment_method.token
 
         found_paypal_account = PayPalAccount.find(token)
-        self.assertFalse(found_paypal_account == None)
+        self.assertFalse(found_paypal_account is None)
 
     def test_create_for_paypal_ignores_passed_billing_address_params(self):
         nonce = TestHelper.nonce_for_paypal_account({
@@ -501,11 +501,11 @@ class TestPaymentMethod(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertTrue(isinstance(result.payment_method, PayPalAccount))
-        self.assertFalse(result.payment_method.image_url == None)
+        self.assertFalse(result.payment_method.image_url is None)
         token = result.payment_method.token
 
         found_paypal_account = PayPalAccount.find(token)
-        self.assertFalse(found_paypal_account == None)
+        self.assertFalse(found_paypal_account is None)
 
     def test_find_returns_an_abstract_payment_method(self):
         customer_id = Customer.create().customer.id
@@ -631,7 +631,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(update_result.is_success)
         updated_credit_card = update_result.payment_method
         self.assertTrue(updated_credit_card.billing_address.region == "IL")
-        self.assertTrue(updated_credit_card.billing_address.street_address == None)
+        self.assertTrue(updated_credit_card.billing_address.street_address is None)
         self.assertFalse(updated_credit_card.billing_address.id == credit_card_result.credit_card.billing_address.id)
 
     def test_update_updates_the_billing_address_if_option_is_specified(self):
@@ -725,7 +725,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
         self.assertFalse(update_result.is_success)
         self.assertTrue(update_result.credit_card_verification.status == CreditCardVerification.Status.ProcessorDeclined)
-        self.assertTrue(update_result.credit_card_verification.gateway_rejection_reason == None)
+        self.assertTrue(update_result.credit_card_verification.gateway_rejection_reason is None)
 
     def test_update_can_update_the_billing_address(self):
         customer_id = Customer.create().customer.id
