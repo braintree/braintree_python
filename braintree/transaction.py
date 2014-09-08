@@ -158,6 +158,7 @@ class Transaction(Resource):
         SettlementConfirmed    = "settlement_confirmed"
         SettlementDeclined     = "settlement_declined"
         SettlementFailed       = "settlement_failed"
+        SettlementPending      = "settlement_pending"
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"

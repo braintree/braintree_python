@@ -2197,3 +2197,55 @@ class TestTransaction(unittest.TestCase):
             error.code for error in settle_result.errors.for_object("transaction").on("base")
         ]
         self.assertTrue(ErrorCodes.Transaction.CannotSimulateTransactionSettlement in error_codes)
+
+    def test_transaction_returns_settlement_declined_response(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "altpay_merchant"
+            Configuration.public_key = "altpay_merchant_public_key"
+            Configuration.private_key = "altpay_merchant_private_key"
+            collection = Transaction.search([
+                TransactionSearch.status == Transaction.Status.SettlementDeclined,
+                TransactionSearch.paypal_payer_email == "jane.doe@example.com"
+            ])
+
+            self.assertEquals(1, collection.maximum_size)
+
+            transaction = collection.first
+            self.assertTrue("4001", transaction.processor_settlement_response_code)
+            self.assertTrue("Settlement Declined", transaction.processor_settlement_response_text)
+            self.assertTrue(Transaction.Status.SettlementDeclined, transaction.status)
+
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
+
+    def test_transaction_returns_settlement_pending_response(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "altpay_merchant"
+            Configuration.public_key = "altpay_merchant_public_key"
+            Configuration.private_key = "altpay_merchant_private_key"
+            collection = Transaction.search([
+                TransactionSearch.status == Transaction.Status.SettlementPending,
+                TransactionSearch.paypal_payer_email == "jane.doe@example.com"
+            ])
+
+            self.assertEquals(1, collection.maximum_size)
+
+            transaction = collection.first
+            self.assertTrue("4002", transaction.processor_settlement_response_code)
+            self.assertTrue("Settlement Pending", transaction.processor_settlement_response_text)
+            self.assertTrue(Transaction.Status.SettlementPending, transaction.status)
+
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
