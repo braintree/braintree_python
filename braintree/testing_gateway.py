@@ -29,6 +29,10 @@ class TestingGateway(object):
         self.__check_environment()
         return self.__create_result(self.config.http().put("/transactions/" + transaction_id + "/settlement_decline"))
 
+    def settlement_pending_transaction(self, transaction_id):
+        self.__check_environment()
+        return self.__create_result(self.config.http().put("/transactions/" + transaction_id + "/settlement_pending"))
+
     def create_3ds_verification(self, merchant_account_id, params):
         self.__check_environment()
         response = self.config.http().post("/three_d_secure/create_verification/" + merchant_account_id, {

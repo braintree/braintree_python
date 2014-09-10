@@ -92,6 +92,10 @@ class TestHelper(object):
         return Configuration.gateway().testing.settlement_decline_transaction(transaction_id)
 
     @staticmethod
+    def settlement_pending_transaction(transaction_id):
+        return Configuration.gateway().testing.settlement_pending_transaction(transaction_id)
+
+    @staticmethod
     def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
         form_data = urlencode(post_params)
         conn = HTTPConnection(Configuration.environment.server_and_port)
