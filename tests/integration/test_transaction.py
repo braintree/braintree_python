@@ -1905,6 +1905,26 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+
+    def test_creating_paypal_transaction_with_payee_email(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {
+                "payee_email": "payee@example.com"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertEquals(transaction.paypal_details.payee_email, "payee@example.com")
 
     def test_paypal_transaction_payment_instrument_type(self):
         result = Transaction.sale({
@@ -1929,6 +1949,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertEquals(transaction.paypal_details.token, None)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_creating_paypal_transaction_with_future_payment_nonce(self):
         result = Transaction.sale({
@@ -1942,6 +1963,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_validation_failure_on_invalid_paypal_nonce(self):
         http = ClientApiHttp.create()
@@ -1962,7 +1984,7 @@ class TestTransaction(unittest.TestCase):
         error_code = result.errors.for_object("transaction").for_object("paypal_account").on("base")[0].code
         self.assertEquals(error_code, ErrorCodes.PayPalAccount.CannotHaveBothAccessTokenAndConsentCode)
 
-    def test_validation_failure_on_non_existant_nonce(self):
+    def test_validation_failure_on_non_existent_nonce(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "payment_method_nonce": "doesnt-exist"
@@ -1991,6 +2013,7 @@ class TestTransaction(unittest.TestCase):
         transaction = transaction_result.transaction
 
         self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_creating_paypal_transaction_with_one_time_nonce_and_store_in_vault_fails_gracefully(self):
         result = Transaction.sale({
@@ -2174,3 +2197,33 @@ class TestTransaction(unittest.TestCase):
             error.code for error in settle_result.errors.for_object("transaction").on("base")
         ]
         self.assertTrue(ErrorCodes.Transaction.CannotSimulateTransactionSettlement in error_codes)
+
+    def test_transaction_returns_settlement_declined_response(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True}
+        })
+        self.assertTrue(result.is_success)
+        TestHelper.settlement_decline_transaction(result.transaction.id)
+
+        transaction = Transaction.find(result.transaction.id)
+
+        self.assertTrue("4001", transaction.processor_settlement_response_code)
+        self.assertTrue("Settlement Declined", transaction.processor_settlement_response_text)
+        self.assertTrue(Transaction.Status.SettlementDeclined, transaction.status)
+
+    def test_transaction_returns_settlement_pending_response(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True}
+        })
+        self.assertTrue(result.is_success)
+        TestHelper.settlement_pending_transaction(result.transaction.id)
+
+        transaction = Transaction.find(result.transaction.id)
+
+        self.assertTrue("4002", transaction.processor_settlement_response_code)
+        self.assertTrue("Settlement Pending", transaction.processor_settlement_response_text)
+        self.assertTrue(Transaction.Status.SettlementPending, transaction.status)
