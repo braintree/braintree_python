@@ -101,13 +101,12 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
         """
-        ApplicationIncomplete = "application_incomplete"
-        Avs                   = "avs"
-        AvsAndCvv             = "avs_and_cvv"
-        Cvv                   = "cvv"
-        Duplicate             = "duplicate"
-        Fraud                 = "fraud"
-        Unrecognized          = "unrecognized"
+        Avs          = "avs"
+        AvsAndCvv    = "avs_and_cvv"
+        Cvv          = "cvv"
+        Duplicate    = "duplicate"
+        Fraud        = "fraud"
+        Unrecognized = "unrecognized"
 
     class Source(object):
         Api          = "api"

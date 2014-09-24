@@ -504,19 +504,6 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
-    def test_sale_with_gateway_rejected_with_application_incomplete(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.ApplicationIncomplete,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2017",
-                "cvv": "200"
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(Transaction.GatewayRejectionReason.ApplicationIncomplete, result.transaction.gateway_rejection_reason)
-
     def test_sale_with_service_fee(self):
         result = Transaction.sale({
             "amount": "10.00",
