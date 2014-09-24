@@ -159,6 +159,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("MX", transaction.shipping_details.country_code_alpha2)
         self.assertEquals("MEX", transaction.shipping_details.country_code_alpha3)
         self.assertEquals("484", transaction.shipping_details.country_code_numeric)
+        self.assertEquals(None, transaction.additional_processor_response)
 
     def test_sale_with_vault_customer_and_credit_card_data(self):
         customer = Customer.create({
