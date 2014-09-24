@@ -403,6 +403,7 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertEquals(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEquals("2000 : Do Not Honor", transaction.additional_processor_response);
 
     def test_sale_with_gateway_rejected_with_avs(self):
         old_merchant_id = Configuration.merchant_id
