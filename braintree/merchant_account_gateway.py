@@ -108,6 +108,7 @@ class MerchantAccountGateway(object):
                 'destination',
                 'email',
                 'mobile_phone',
+                'descriptor',
                 ]
             },
             'tos_accepted',
@@ -149,6 +150,7 @@ class MerchantAccountGateway(object):
                 'destination',
                 'email',
                 'mobile_phone',
+                'descriptor',
                 ]
             },
             'master_merchant_account_id',

@@ -30,6 +30,7 @@ class TestMerchantAccount(unittest.TestCase):
             "funding": {
                 "account_number_last_4": "8798",
                 "routing_number": "071000013",
+                "descriptor": "Joes Bloggs MI",
             }
         }
 
@@ -53,3 +54,4 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEquals(merchant_account.business_details.tax_id, "123456789")
         self.assertEquals(merchant_account.funding_details.account_number_last_4, "8798")
         self.assertEquals(merchant_account.funding_details.routing_number, "071000013")
+        self.assertEquals(merchant_account.funding_details.descriptor, "Joes Bloggs MI")
