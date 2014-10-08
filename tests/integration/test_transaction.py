@@ -723,6 +723,15 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual("411111", transaction.credit_card_details.bin)
 
+    def test_sale_with_fake_apple_pay_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": "fake-apple-pay-visa-nonce"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

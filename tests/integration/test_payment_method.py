@@ -142,6 +142,38 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEquals(found_bank_account.bic, "DEUTDEFF")
         self.assertEquals(found_bank_account.__class__, SEPABankAccount)
 
+    def test_create_with_fake_apple_pay_nonce(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
+        authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
+        client_api =  ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+        nonce = client_api.get_sepa_bank_account_nonce({
+            "locale": "de-DE",
+            "bic": "DEUTDEFF",
+            "iban": "DE89370400440532013000",
+            "accountHolderName": "Baron Von Holder",
+            "billingAddress": {"region": "Hesse", "country_name": "Germany"}
+        })
+
+        self.assertNotEquals(nonce, None)
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.payment_method.image_url, None)
+        found_bank_account = PaymentMethod.find(result.payment_method.token)
+
+        self.assertNotEqual(found_bank_account, None)
+        self.assertEquals(found_bank_account.bic, "DEUTDEFF")
+        self.assertEquals(found_bank_account.__class__, SEPABankAccount)
+
     def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id
