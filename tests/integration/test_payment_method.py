@@ -346,7 +346,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_create_does_not_return_an_error_if_credit_card_options_are_present_for_paypal_nonce(self):
         customer_id = Customer.create().customer.id
         original_token = "paypal-account-" + str(int(time.time()))
-        nonce = Nonces.nonce_for_paypal_account({
+        nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",
             "token": original_token
         })
@@ -364,7 +364,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(result.is_success)
 
     def test_create_for_paypal_ignores_passed_billing_address_id(self):
-        nonce = Nonces.nonce_for_paypal_account({
+        nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code"
         })
         customer_id = Customer.create().customer.id
@@ -383,7 +383,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(found_paypal_account == None)
 
     def test_create_for_paypal_ignores_passed_billing_address_params(self):
-        nonce = Nonces.nonce_for_paypal_account({
+        nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "PAYPAL_CONSENT_CODE"
         })
         customer_id = Customer.create().customer.id
@@ -684,7 +684,7 @@ class TestPaymentMethod(unittest.TestCase):
     def test_update_updates_a_paypal_accounts_token(self):
         customer_id = Customer.create().customer.id
         original_token = "paypal-account-" + str(int(time.time()))
-        nonce = Nonces.nonce_for_paypal_account({
+        nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",
             "token": original_token
         })
@@ -713,7 +713,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
         self.assertTrue(credit_card_result.is_success)
 
-        nonce = Nonces.nonce_for_paypal_account({
+        nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code"
         })
         original_token = PaymentMethod.create({
@@ -734,7 +734,7 @@ class TestPaymentMethod(unittest.TestCase):
         first_token = "paypal-account-" + str(randint(0,100000000))
         second_token = "paypal-account-" + str(randint(0,100000000))
 
-        first_nonce = Nonces.nonce_for_paypal_account({
+        first_nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",
             "token": first_token
         })
@@ -743,7 +743,7 @@ class TestPaymentMethod(unittest.TestCase):
              "customer_id": customer_id
         })
 
-        second_nonce = Nonces.nonce_for_paypal_account({
+        second_nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",
             "token": second_token
         })

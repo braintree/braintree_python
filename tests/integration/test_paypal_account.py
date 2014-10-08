@@ -36,7 +36,7 @@ class TestPayPalAccount(unittest.TestCase):
         customer_id = Customer.create().customer.id
         payment_method_token = "paypal-account-" + str(int(time.time()))
 
-        nonce = Nonces.nonce_for_paypal_account({
+        nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",
             "token": payment_method_token
         })
