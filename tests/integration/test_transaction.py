@@ -1588,7 +1588,6 @@ class TestTransaction(unittest.TestCase):
             }
         }).transaction
 
-        TestHelper.settle_transaction(transaction.id)
         return transaction
 
     def __create_escrowed_transaction(self):
@@ -2079,7 +2078,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(result.transaction.status, Transaction.Status.SubmittedForSettlement)
+        self.assertEquals(result.transaction.status, Transaction.Status.Settling)
 
     def test_voiding_a_paypal_transaction(self):
         sale_result = Transaction.sale({
