@@ -731,6 +731,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
+        self.assertEqual(transaction.amount, 10.00)
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
