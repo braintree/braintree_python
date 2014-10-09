@@ -53,7 +53,8 @@ class TestMerchantAccount(unittest.TestCase):
         "funding": {
             "routing_number": "122100024",
             "account_number": "43759348798",
-            "destination": MerchantAccount.FundingDestination.Bank
+            "destination": MerchantAccount.FundingDestination.Bank,
+            "descriptor": "Joes Bloggs KY",
         },
         "tos_accepted": True,
         "master_merchant_account_id": "sandbox_master_merchant_account"
@@ -151,7 +152,8 @@ class TestMerchantAccount(unittest.TestCase):
                 "account_number": "666666789",
                 "destination": MerchantAccount.FundingDestination.Email,
                 "email": "check@this.com",
-                "mobile_phone": "9998887777"
+                "mobile_phone": "9998887777",
+                "descriptor": "Joes Bloggs MI",
             }
         }
 
@@ -181,6 +183,7 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEquals(result.merchant_account.funding_details.destination, MerchantAccount.FundingDestination.Email)
         self.assertEquals(result.merchant_account.funding_details.email, "check@this.com")
         self.assertEquals(result.merchant_account.funding_details.mobile_phone, "9998887777")
+        self.assertEquals(result.merchant_account.funding_details.descriptor, "Joes Bloggs MI")
 
     def test_update_does_not_require_all_fields(self):
         result = MerchantAccount.update("sandbox_sub_merchant_account", { "individual": { "first_name": "Jose" } })

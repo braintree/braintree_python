@@ -1,4 +1,5 @@
 import braintree
+from braintree.apple_pay_card import ApplePayCard
 from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
@@ -70,6 +71,8 @@ class PaymentMethodGateway(object):
             return CreditCard(self.gateway, response["credit_card"])
         elif "sepa_bank_account" in response:
             return SEPABankAccount(self.gateway, response["sepa_bank_account"])
+        elif "apple_pay_card" in response:
+            return ApplePayCard(self.gateway, response["apple_pay_card"])
         else:
             name = list(response)[0]
             return UnknownPaymentMethod(self.gateway, response[name])

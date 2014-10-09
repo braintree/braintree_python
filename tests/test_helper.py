@@ -175,6 +175,16 @@ class TestHelper(object):
         decoded_client_token = b64decode(client_token).decode()
         return decoded_client_token
 
+    @staticmethod
+    def nonce_for_paypal_account(paypal_account_details):
+        client_token =json.loads(TestHelper.generate_decoded_client_token())
+        client = ClientApiHttp(Configuration.instantiate(), {
+            "authorization_fingerprint": client_token["authorizationFingerprint"]
+        })
+
+        status_code, nonce = client.get_paypal_nonce(paypal_account_details)
+        return nonce
+
 class ClientApiHttp(Http):
     def __init__(self, config, options):
         self.config = config

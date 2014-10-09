@@ -159,6 +159,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("MX", transaction.shipping_details.country_code_alpha2)
         self.assertEquals("MEX", transaction.shipping_details.country_code_alpha3)
         self.assertEquals("484", transaction.shipping_details.country_code_numeric)
+        self.assertEquals(None, transaction.additional_processor_response)
 
     def test_sale_with_vault_customer_and_credit_card_data(self):
         customer = Customer.create({
@@ -721,6 +722,21 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual("411111", transaction.credit_card_details.bin)
+
+    def test_sale_with_fake_apple_pay_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.ApplePayAmEx
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        apple_pay_details = result.transaction.apple_pay_details
+        self.assertNotEqual(None, apple_pay_details)
+        self.assertEqual(ApplePayCard.CardType.AmEx, apple_pay_details.card_type)
+        self.assertTrue(apple_pay_details.expiration_month > 0)
+        self.assertTrue(apple_pay_details.expiration_year > 0)
+        self.assertNotEqual(None, apple_pay_details.cardholder_name)
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
@@ -1578,7 +1594,6 @@ class TestTransaction(unittest.TestCase):
             }
         }).transaction
 
-        TestHelper.settle_transaction(transaction.id)
         return transaction
 
     def __create_escrowed_transaction(self):
@@ -2069,7 +2084,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(result.transaction.status, Transaction.Status.SubmittedForSettlement)
+        self.assertEquals(result.transaction.status, Transaction.Status.Settling)
 
     def test_voiding_a_paypal_transaction(self):
         sale_result = Transaction.sale({
