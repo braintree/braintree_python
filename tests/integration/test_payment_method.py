@@ -146,12 +146,18 @@ class TestPaymentMethod(unittest.TestCase):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": "fake-apple-pay-amex-nonce"
+            "payment_method_nonce": Nonces.ApplePayMasterCard 
         })
 
         self.assertTrue(result.is_success)
-        self.assertNotEqual(result.payment_method, None)
-        self.assertNotEqual(result.payment_method.token, None)
+        apple_pay_card = result.payment_method
+        self.assertIsInstance(apple_pay_card, ApplePayCard)
+        self.assertNotEqual(apple_pay_card.token, None)
+        self.assertEqual(ApplePayCard.CardType.MasterCard, apple_pay_card.card_type)
+        self.assertTrue(apple_pay_card.default)
+        self.assertIn("apple_pay", apple_pay_card.image_url)
+        self.assertTrue(apple_pay_card.expiration_month > 0)
+        self.assertTrue(apple_pay_card.expiration_year > 0)
 
     def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
         config = Configuration.instantiate()

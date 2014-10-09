@@ -726,12 +726,17 @@ class TestTransaction(unittest.TestCase):
     def test_sale_with_fake_apple_pay_nonce(self):
         result = Transaction.sale({
             "amount": "10.00",
-            "payment_method_nonce": "fake-apple-pay-visa-nonce"
+            "payment_method_nonce": Nonces.ApplePayAmEx
         })
 
         self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertEqual(transaction.amount, 10.00)
+        self.assertEqual(result.transaction.amount, 10.00)
+        apple_pay_details = result.transaction.apple_pay_details
+        self.assertNotEqual(None, apple_pay_details)
+        self.assertEqual(ApplePayCard.CardType.AmEx, apple_pay_details.card_type)
+        self.assertTrue(apple_pay_details.expiration_month > 0)
+        self.assertTrue(apple_pay_details.expiration_year > 0)
+        self.assertNotEqual(None, apple_pay_details.cardholder_name)
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
