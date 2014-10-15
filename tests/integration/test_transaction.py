@@ -734,8 +734,8 @@ class TestTransaction(unittest.TestCase):
         apple_pay_details = result.transaction.apple_pay_details
         self.assertNotEqual(None, apple_pay_details)
         self.assertEqual(ApplePayCard.CardType.AmEx, apple_pay_details.card_type)
-        self.assertTrue(apple_pay_details.expiration_month > 0)
-        self.assertTrue(apple_pay_details.expiration_year > 0)
+        self.assertTrue(int(apple_pay_details.expiration_month) > 0)
+        self.assertTrue(int(apple_pay_details.expiration_year) > 0)
         self.assertNotEqual(None, apple_pay_details.cardholder_name)
 
     def test_validation_error_on_invalid_custom_fields(self):
