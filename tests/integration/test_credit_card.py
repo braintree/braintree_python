@@ -764,37 +764,6 @@ class TestCreditCard(unittest.TestCase):
         except Exception as e:
             self.assertIn("consumed", str(e))
 
-    def test_from_nonce_with_locked_nonce(self):
-        config = Configuration.instantiate()
-
-        client_token = TestHelper.generate_decoded_client_token()
-        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
-        http = ClientApiHttp(config, {
-            "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifier": "fake_identifier",
-            "shared_customer_identifier_type": "testing"
-        })
-
-        status_code, response = http.add_card({
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_month": "11",
-                "expiration_year": "2099",
-            },
-            "share": True
-        })
-        self.assertEqual(status_code, 201)
-
-        status_code, response = http.get_cards()
-        self.assertEqual(status_code, 200)
-        nonce = json.loads(response)["paymentMethods"][0]["nonce"]
-
-        try:
-            CreditCard.from_nonce(nonce)
-            self.assertTrue(False)
-        except Exception as e:
-            self.assertIn("locked", str(e))
-
     def test_create_from_transparent_redirect(self):
         customer = Customer.create().customer
         tr_data = {
