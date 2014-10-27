@@ -3,6 +3,7 @@ from braintree.util.http import Http
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
+from braintree.apple_pay_card import ApplePayCard
 from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
 from braintree.address import Address
@@ -192,3 +193,6 @@ class Customer(Resource):
 
         if "paypal_accounts" in attributes:
             self.paypal_accounts  = [PayPalAccount(gateway, paypal_account) for paypal_account in self.paypal_accounts]
+
+        if "apple_pay_cards" in attributes:
+            self.apple_pay_cards  = [ApplePayCard(gateway, apple_pay_card) for apple_pay_card in self.apple_pay_cards]
