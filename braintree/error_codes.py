@@ -439,21 +439,3 @@ class ErrorCodes(object):
             SubmitForSettlementIsRequiredForCloning = "91544"
             UseBillingForShippingDisabled = "91572"
 
-        class Industry(object):
-            IndustryTypeIsInvalid = "93401" 
-
-            class Lodging(object):
-                EmptyData = "93402"
-                FolioNumberIsInvalid = "93403"
-                CheckInDateIsInvalid = "93404"
-                CheckOutDateIsInvalid = "93405"
-                CheckOutDateMustFollowCheckInDate = "93406"
-                UnknownDataField = "93407"
-            class TravelCruise(object):
-                EmptyData = "93408"
-                UnknownDataField = "93409"
-                TravelPackageIsInvalid = "93410"
-                DepartureDateIsInvalid = "93411"
-                LodgingCheckInDateIsInvalid = "93412"
-                LodgingCheckOutDateIsInvalid = "93413"
-
