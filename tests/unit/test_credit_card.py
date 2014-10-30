@@ -60,7 +60,7 @@ class TestCreditCard(unittest.TestCase):
                     "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session", "fail_on_duplicate_payment_method"]},
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method"]},
             "customer_id"
         ]
         self.assertEquals(expected, CreditCard.create_signature())
@@ -76,7 +76,7 @@ class TestCreditCard(unittest.TestCase):
                     {"options": ["update_existing"]}
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session"]}
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session"]}
         ]
         self.assertEquals(expected, CreditCard.update_signature())
 

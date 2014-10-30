@@ -175,6 +175,26 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals("I", verification.avs_street_address_response_code)
         self.assertEquals(TestHelper.default_merchant_account_id, verification.merchant_account_id)
 
+    def test_create_with_card_verification_with_overridden_amount(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True, "verification_amount": "1.02"}
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
+        self.assertEquals("2000", verification.processor_response_code)
+        self.assertEquals("Do Not Honor", verification.processor_response_text)
+        self.assertEquals("I", verification.cvv_response_code)
+        self.assertEquals(None, verification.avs_error_response_code)
+        self.assertEquals("I", verification.avs_postal_code_response_code)
+        self.assertEquals("I", verification.avs_street_address_response_code)
+        self.assertEquals(TestHelper.default_merchant_account_id, verification.merchant_account_id)
+
     def test_create_with_card_verification_and_non_default_merchant_account(self):
         customer = Customer.create().customer
         result = CreditCard.create({
