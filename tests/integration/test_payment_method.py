@@ -159,6 +159,18 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(int(apple_pay_card.expiration_month) > 0)
         self.assertTrue(int(apple_pay_card.expiration_year) > 0)
 
+    def test_create_with_abstract_payment_method_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.AbstractTransactable
+        })
+
+        self.assertTrue(result.is_success)
+        payment_method = result.payment_method
+        self.assertNotEqual(None, payment_method)
+        self.assertNotEqual(None, payment_method.token)
+
     def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id
@@ -408,6 +420,18 @@ class TestPaymentMethod(unittest.TestCase):
 
         found_paypal_account = PayPalAccount.find(token)
         self.assertFalse(found_paypal_account == None)
+
+    def test_find_returns_an_abstract_payment_method(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.AbstractTransactable
+        })
+        self.assertTrue(result.is_success)
+
+        found_payment_method = PaymentMethod.find(result.payment_method.token)
+        self.assertNotEqual(None, found_payment_method)
+        self.assertEqual(result.payment_method.token, found_payment_method.token)
 
     def test_find_returns_a_paypal_account(self):
         customer_id = Customer.create().customer.id
