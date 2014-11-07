@@ -731,6 +731,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
         apple_pay_details = result.transaction.apple_pay_details
         self.assertNotEqual(None, apple_pay_details)
         self.assertEqual(ApplePayCard.CardType.AmEx, apple_pay_details.card_type)
