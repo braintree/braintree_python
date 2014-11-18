@@ -456,7 +456,7 @@ class Transaction(Resource):
                     "industry_type",
                     {
                         "data": [
-                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name"
+                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate"
                             ]
                         }
                     ]

@@ -1697,7 +1697,8 @@ class TestTransaction(unittest.TestCase):
                 "data": {
                     "folio_number": "aaa",
                     "check_in_date": "2014-07-07",
-                    "check_out_date": "2014-08-08"
+                    "check_out_date": "2014-08-08",
+                    "room_rate": "239.00",
                 }
             }
         })
@@ -1717,7 +1718,8 @@ class TestTransaction(unittest.TestCase):
                 "data": {
                     "folio_number": "aaa",
                     "check_in_date": "2014-07-07",
-                    "check_out_date": "2014-06-06"
+                    "check_out_date": "2014-06-06",
+                    "room_rate": "asdfsdf",
                 }
             }
         })
