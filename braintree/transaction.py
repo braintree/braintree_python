@@ -176,6 +176,10 @@ class Transaction(Resource):
         Credit = "credit"
         Sale = "sale"
 
+    class IndustryType(object):
+        Lodging = "lodging"
+        TravelAndCruise = "travel_cruise"
+
     @staticmethod
     def clone_transaction(transaction_id, params):
         return Configuration.gateway().transaction.clone_transaction(transaction_id, params)
@@ -446,8 +450,18 @@ class Transaction(Resource):
             },
             {"custom_fields": ["__any_key__"]},
             {"descriptor": ["name", "phone", "url"]},
-            {"paypal_account": ["payee_email"]}
-        ]
+            {"paypal_account": ["payee_email"]},
+            {"industry":
+                [
+                    "industry_type",
+                    {
+                        "data": [
+                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name"
+                            ]
+                        }
+                    ]
+                }
+            ]
 
     def __init__(self, gateway, attributes):
         if "refund_id" in attributes:
