@@ -506,8 +506,11 @@ class Transaction(Resource):
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
         if "payment_instrument_type" in attributes:
             self.payment_instrument_type = attributes["payment_instrument_type"]
+
         if "risk_data" in attributes:
             self.risk_data = RiskData(attributes["risk_data"])
+        else:
+            self.risk_data = None
 
     @property
     def refund_id(self):

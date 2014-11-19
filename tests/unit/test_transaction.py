@@ -58,14 +58,31 @@ class TestTransaction(unittest.TestCase):
             }
         }
 
-        tran = Transaction(None, attributes)
+        transaction = Transaction(None, attributes)
 
-        self.assertEquals(tran.disbursement_details.settlement_amount, Decimal('27.00'))
-        self.assertEquals(tran.disbursement_details.settlement_currency_iso_code, 'USD')
-        self.assertEquals(tran.disbursement_details.settlement_currency_exchange_rate, Decimal('1'))
-        self.assertEquals(tran.disbursement_details.disbursement_date, date(2013, 4, 10))
-        self.assertEquals(tran.disbursement_details.funds_held, False)
-        self.assertEquals(tran.is_disbursed, True)
+        self.assertEquals(transaction.disbursement_details.settlement_amount, Decimal('27.00'))
+        self.assertEquals(transaction.disbursement_details.settlement_currency_iso_code, 'USD')
+        self.assertEquals(transaction.disbursement_details.settlement_currency_exchange_rate, Decimal('1'))
+        self.assertEquals(transaction.disbursement_details.disbursement_date, date(2013, 4, 10))
+        self.assertEquals(transaction.disbursement_details.funds_held, False)
+        self.assertEquals(transaction.is_disbursed, True)
+
+    def test_transaction_handles_nil_risk_data(self):
+        attributes = {
+            'amount': '27.00',
+            'tax_amount': '1.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'order_id': '106601',
+            'channel': '101',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+        }
+
+        transaction = Transaction(None, attributes)
+
+        self.assertEquals(transaction.risk_data, None)
 
     def test_is_disbursed_false(self):
         attributes = {
@@ -87,6 +104,6 @@ class TestTransaction(unittest.TestCase):
             }
         }
 
-        tran = Transaction(None, attributes)
+        transaction = Transaction(None, attributes)
 
-        self.assertEquals(tran.is_disbursed, False)
+        self.assertEquals(transaction.is_disbursed, False)

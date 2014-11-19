@@ -27,8 +27,11 @@ class CreditCardVerification(AttributeGetter):
             self.processor_response_code = None
         if "processor_response_text" not in attributes:
             self.processor_response_text = None
+
         if "risk_data" in attributes:
             self.risk_data = RiskData(attributes["risk_data"])
+        else:
+            self.risk_data = None
 
     @staticmethod
     def find(verification_id):
