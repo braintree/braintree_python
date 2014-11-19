@@ -155,6 +155,37 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEquals(None, result.credit_card.billing_address)
 
+
+    def test_create_with_card_verification_returns_risk_data(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertIsInstance(verification.risk_data, RiskData)
+        self.assertEquals(verification.risk_data.id, None)
+        self.assertEquals(verification.risk_data.decision, "Not Evaluated")
+
+    def test_successful_create_with_card_verification_returns_risk_data(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        self.assertTrue(result.is_success)
+        verification = result.credit_card.verification
+        self.assertIsInstance(verification.risk_data, RiskData)
+        self.assertEquals(verification.risk_data.id, None)
+        self.assertEquals(verification.risk_data.decision, "Not Evaluated")
+
     def test_create_with_card_verification(self):
         customer = Customer.create().customer
         result = CreditCard.create({

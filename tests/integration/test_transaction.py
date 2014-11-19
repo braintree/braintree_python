@@ -6,6 +6,22 @@ from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
+
+    def test_sale_returns_risk_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsInstance(transaction.risk_data, RiskData)
+        self.assertEquals(transaction.risk_data.id, None)
+        self.assertEquals(transaction.risk_data.decision, "Not Evaluated")
+
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

@@ -21,6 +21,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
+from braintree.risk_data import RiskData
 
 class Transaction(Resource):
     """
@@ -505,6 +506,8 @@ class Transaction(Resource):
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
         if "payment_instrument_type" in attributes:
             self.payment_instrument_type = attributes["payment_instrument_type"]
+        if "risk_data" in attributes:
+            self.risk_data = RiskData(attributes["risk_data"])
 
     @property
     def refund_id(self):
