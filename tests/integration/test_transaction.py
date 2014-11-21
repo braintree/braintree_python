@@ -6,6 +6,22 @@ from braintree.dispute import Dispute
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
+
+    def test_sale_returns_risk_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsInstance(transaction.risk_data, RiskData)
+        self.assertEquals(transaction.risk_data.id, None)
+        self.assertEquals(transaction.risk_data.decision, "Not Evaluated")
+
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -731,11 +747,12 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
         apple_pay_details = result.transaction.apple_pay_details
         self.assertNotEqual(None, apple_pay_details)
         self.assertEqual(ApplePayCard.CardType.AmEx, apple_pay_details.card_type)
-        self.assertTrue(apple_pay_details.expiration_month > 0)
-        self.assertTrue(apple_pay_details.expiration_year > 0)
+        self.assertTrue(int(apple_pay_details.expiration_month) > 0)
+        self.assertTrue(int(apple_pay_details.expiration_year) > 0)
         self.assertNotEqual(None, apple_pay_details.cardholder_name)
 
     def test_validation_error_on_invalid_custom_fields(self):
@@ -1682,6 +1699,99 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(2, discounts[0].quantity)
         self.assertEquals(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
+
+
+    def test_transactions_accept_lodging_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "industry": {
+                "industry_type": Transaction.IndustryType.Lodging,
+                "data": {
+                    "folio_number": "aaa",
+                    "check_in_date": "2014-07-07",
+                    "check_out_date": "2014-08-08",
+                    "room_rate": "239.00",
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+    def test_transactions_return_validation_errors_on_lodging_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "industry": {
+                "industry_type": Transaction.IndustryType.Lodging,
+                "data": {
+                    "folio_number": "aaa",
+                    "check_in_date": "2014-07-07",
+                    "check_out_date": "2014-06-06",
+                    "room_rate": "asdfsdf",
+                }
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.Industry.Lodging.CheckOutDateMustFollowCheckInDate,
+            result.errors.for_object("transaction").for_object("industry").on("check_out_date")[0].code
+        )
+
+    def test_transactions_accept_travel_cruise_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndCruise,
+                "data": {
+                    "travel_package": "flight",
+                    "departure_date": "2014-07-07",
+                    "lodging_check_in_date": "2014-07-07",
+                    "lodging_check_out_date": "2014-09-07",
+                    "lodging_name": "Royal Caribbean"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+ 
+    def test_transactions_return_validation_errors_on_travel_cruise_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndCruise,
+                "data": {
+                    "travel_package": "roadtrip",
+                    "departure_date": "2014-07-07",
+                    "lodging_check_in_date": "2014-07-07",
+                    "lodging_check_out_date": "2014-09-07",
+                    "lodging_name": "Royal Caribbean"
+                }
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.Industry.TravelCruise.TravelPackageIsInvalid,
+            result.errors.for_object("transaction").for_object("industry").on("travel_package")[0].code
+        )
 
     def test_descriptors_accepts_name_phone_and_url(self):
         result = Transaction.sale({

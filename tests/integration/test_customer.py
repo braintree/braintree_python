@@ -81,6 +81,13 @@ class TestCustomer(unittest.TestCase):
         found_customer = Customer.find(customer.id)
         self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
 
+    def test_create_with_apple_pay_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.ApplePayVisa})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertNotEqual(None, customer.apple_pay_cards[0])
+
     def test_create_with_paypal_future_payments_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
         self.assertTrue(result.is_success)

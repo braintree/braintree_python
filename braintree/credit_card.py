@@ -4,6 +4,7 @@ from braintree.resource import Resource
 from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.transparent_redirect import TransparentRedirect
+from braintree.credit_card_verification import CreditCardVerification
 
 class CreditCard(Resource):
     """
@@ -215,7 +216,7 @@ class CreditCard(Resource):
             "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
             "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
         ]
-        options = ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session"]
+        options = ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session"]
 
         signature = [
             "billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
@@ -280,6 +281,11 @@ class CreditCard(Resource):
 
         if "subscriptions" in attributes:
             self.subscriptions = [braintree.subscription.Subscription(gateway, subscription) for subscription in self.subscriptions]
+
+        if "verifications" in attributes:
+            sorted_verifications = sorted(attributes["verifications"], key=lambda verification: verification["created_at"], reverse=True)
+            if len(sorted_verifications) > 0:
+                self.verification = CreditCardVerification(gateway, sorted_verifications[0])
 
     @property
     def expiration_date(self):

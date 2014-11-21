@@ -12,7 +12,7 @@ class WebhookTestingGateway(object):
         payload = base64.encodestring(self.__sample_xml(kind, id))
         hmac_payload = Crypto.sha1_hmac_hash(self.gateway.config.private_key, payload)
         signature = "%s|%s" % (self.gateway.config.public_key, hmac_payload)
-        return signature, payload
+        return {'bt_signature': signature, 'bt_payload': payload}
 
     def __sample_xml(self, kind, id):
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")

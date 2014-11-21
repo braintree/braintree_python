@@ -155,6 +155,37 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEquals(None, result.credit_card.billing_address)
 
+
+    def test_create_with_card_verification_returns_risk_data(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertIsInstance(verification.risk_data, RiskData)
+        self.assertEquals(verification.risk_data.id, None)
+        self.assertEquals(verification.risk_data.decision, "Not Evaluated")
+
+    def test_successful_create_with_card_verification_returns_risk_data(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        self.assertTrue(result.is_success)
+        verification = result.credit_card.verification
+        self.assertIsInstance(verification.risk_data, RiskData)
+        self.assertEquals(verification.risk_data.id, None)
+        self.assertEquals(verification.risk_data.decision, "Not Evaluated")
+
     def test_create_with_card_verification(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -162,6 +193,26 @@ class TestCreditCard(unittest.TestCase):
             "number": "4000111111111115",
             "expiration_date": "05/2014",
             "options": {"verify_card": True}
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
+        self.assertEquals("2000", verification.processor_response_code)
+        self.assertEquals("Do Not Honor", verification.processor_response_text)
+        self.assertEquals("I", verification.cvv_response_code)
+        self.assertEquals(None, verification.avs_error_response_code)
+        self.assertEquals("I", verification.avs_postal_code_response_code)
+        self.assertEquals("I", verification.avs_street_address_response_code)
+        self.assertEquals(TestHelper.default_merchant_account_id, verification.merchant_account_id)
+
+    def test_create_with_card_verification_with_overridden_amount(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True, "verification_amount": "1.02"}
         })
 
         self.assertFalse(result.is_success)
@@ -763,37 +814,6 @@ class TestCreditCard(unittest.TestCase):
             self.assertTrue(False)
         except Exception as e:
             self.assertIn("consumed", str(e))
-
-    def test_from_nonce_with_locked_nonce(self):
-        config = Configuration.instantiate()
-
-        client_token = TestHelper.generate_decoded_client_token()
-        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
-        http = ClientApiHttp(config, {
-            "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifier": "fake_identifier",
-            "shared_customer_identifier_type": "testing"
-        })
-
-        status_code, response = http.add_card({
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_month": "11",
-                "expiration_year": "2099",
-            },
-            "share": True
-        })
-        self.assertEqual(status_code, 201)
-
-        status_code, response = http.get_cards()
-        self.assertEqual(status_code, 200)
-        nonce = json.loads(response)["paymentMethods"][0]["nonce"]
-
-        try:
-            CreditCard.from_nonce(nonce)
-            self.assertTrue(False)
-        except Exception as e:
-            self.assertIn("locked", str(e))
 
     def test_create_from_transparent_redirect(self):
         customer = Customer.create().customer

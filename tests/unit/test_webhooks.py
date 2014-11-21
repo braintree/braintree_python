@@ -3,12 +3,12 @@ from braintree.dispute import Dispute
 
 class TestWebhooks(unittest.TestCase):
     def test_sample_notification_builds_a_parsable_notification(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.SubscriptionWentPastDue, notification.kind)
         self.assertEquals("my_id", notification.subscription.id)
@@ -16,15 +16,15 @@ class TestWebhooks(unittest.TestCase):
 
     @raises(InvalidSignatureError)
     def test_completely_invalid_signature(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
-        WebhookNotification.parse("bad_stuff", payload)
+        WebhookNotification.parse("bad_stuff", sample_notification['bt_payload'])
 
     def test_parse_raises_when_public_key_is_wrong(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
@@ -38,56 +38,56 @@ class TestWebhooks(unittest.TestCase):
         gateway = BraintreeGateway(config)
 
         try:
-            gateway.webhook_notification.parse(signature, payload)
+            gateway.webhook_notification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
         except InvalidSignatureError as e:
             self.assertEquals("no matching public key", str(e))
         else:
             self.assertFalse("raises exception")
 
     def test_invalid_signature_when_payload_modified(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
         try:
-            WebhookNotification.parse(signature, b"badstuff" + payload)
+            WebhookNotification.parse(sample_notification['bt_signature'], b"badstuff" + sample_notification['bt_payload'])
         except InvalidSignatureError as e:
             self.assertEquals("signature does not match payload - one has been modified", str(e))
         else:
             self.assertFalse("raises exception")
 
     def test_invalid_signature_when_contains_invalid_characters(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
         try:
-            WebhookNotification.parse(signature, "~* invalid! *~")
+            WebhookNotification.parse(sample_notification['bt_signature'], "~* invalid! *~")
         except InvalidSignatureError as e:
             self.assertEquals("payload contains illegal characters", str(e))
         else:
             self.assertFalse("raises exception")
 
     def test_parse_allows_all_valid_characters(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
         try:
-            WebhookNotification.parse(signature, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+=/\n")
+            WebhookNotification.parse(sample_notification['bt_signature'], "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+=/\n")
         except InvalidSignatureError as e:
             self.assertNotEquals("payload contains illegal characters", str(e))
 
     def test_parse_retries_payload_with_a_newline(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload.rstrip())
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'].rstrip())
 
         self.assertEquals(WebhookNotification.Kind.SubscriptionWentPastDue, notification.kind)
         self.assertEquals("my_id", notification.subscription.id)
@@ -98,12 +98,12 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals("integration_public_key|c9f15b74b0d98635cd182c51e2703cffa83388c3", response)
 
     def test_builds_notification_for_approved_sub_merchant_account(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubMerchantAccountApproved,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.SubMerchantAccountApproved, notification.kind)
         self.assertEquals("my_id", notification.merchant_account.id)
@@ -112,12 +112,12 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(MerchantAccount.Status.Active, notification.merchant_account.master_merchant_account.status)
 
     def test_builds_notification_for_declined_sub_merchant_account(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubMerchantAccountDeclined,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.SubMerchantAccountDeclined, notification.kind)
         self.assertEquals("my_id", notification.merchant_account.id)
@@ -128,12 +128,12 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(ErrorCodes.MerchantAccount.DeclinedOFAC, notification.errors.for_object("merchant_account").on("base")[0].code)
 
     def test_builds_notification_for_disbursed_transactions(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.TransactionDisbursed,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.TransactionDisbursed, notification.kind)
         self.assertEquals("my_id", notification.transaction.id)
@@ -141,12 +141,12 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
 
     def test_builds_notification_for_disbursements(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.Disbursement,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.Disbursement, notification.kind)
         self.assertEquals("my_id", notification.disbursement.id)
@@ -156,12 +156,12 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(date(2014, 2, 9), notification.disbursement.disbursement_date)
 
     def test_builds_notification_for_disbursement_exceptions(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisbursementException,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.DisbursementException, notification.kind)
         self.assertEquals("my_id", notification.disbursement.id)
@@ -171,48 +171,48 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(date(2014, 2, 9), notification.disbursement.disbursement_date)
 
     def test_builds_notification_for_dispute_opened(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeOpened,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.DisputeOpened, notification.kind)
         self.assertEquals("my_id", notification.dispute.id)
         self.assertEquals(Dispute.Status.Open, notification.dispute.status)
 
     def test_builds_notification_for_dispute_lost(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeLost,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.DisputeLost, notification.kind)
         self.assertEquals("my_id", notification.dispute.id)
         self.assertEquals(Dispute.Status.Lost, notification.dispute.status)
 
     def test_builds_notification_for_dispute_won(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeWon,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.DisputeWon, notification.kind)
         self.assertEquals("my_id", notification.dispute.id)
         self.assertEquals(Dispute.Status.Won, notification.dispute.status)
 
     def test_builds_notification_for_partner_merchant_connected(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.PartnerMerchantConnected,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.PartnerMerchantConnected, notification.kind)
         self.assertEquals("abc123", notification.partner_merchant.partner_merchant_id)
@@ -223,24 +223,24 @@ class TestWebhooks(unittest.TestCase):
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     def test_builds_notification_for_partner_merchant_disconnected(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.PartnerMerchantDisconnected,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.PartnerMerchantDisconnected, notification.kind)
         self.assertEquals("abc123", notification.partner_merchant.partner_merchant_id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     def test_builds_notification_for_partner_merchant_declined(self):
-        signature, payload = WebhookTesting.sample_notification(
+        sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.PartnerMerchantDeclined,
             "my_id"
         )
 
-        notification = WebhookNotification.parse(signature, payload)
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.PartnerMerchantDeclined, notification.kind)
         self.assertEquals("abc123", notification.partner_merchant.partner_merchant_id)

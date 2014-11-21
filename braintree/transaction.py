@@ -21,6 +21,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
+from braintree.risk_data import RiskData
 
 class Transaction(Resource):
     """
@@ -175,6 +176,10 @@ class Transaction(Resource):
 
         Credit = "credit"
         Sale = "sale"
+
+    class IndustryType(object):
+        Lodging = "lodging"
+        TravelAndCruise = "travel_cruise"
 
     @staticmethod
     def clone_transaction(transaction_id, params):
@@ -446,8 +451,18 @@ class Transaction(Resource):
             },
             {"custom_fields": ["__any_key__"]},
             {"descriptor": ["name", "phone", "url"]},
-            {"paypal_account": ["payee_email"]}
-        ]
+            {"paypal_account": ["payee_email"]},
+            {"industry":
+                [
+                    "industry_type",
+                    {
+                        "data": [
+                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate"
+                            ]
+                        }
+                    ]
+                }
+            ]
 
     def __init__(self, gateway, attributes):
         if "refund_id" in attributes:
@@ -491,6 +506,11 @@ class Transaction(Resource):
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
         if "payment_instrument_type" in attributes:
             self.payment_instrument_type = attributes["payment_instrument_type"]
+
+        if "risk_data" in attributes:
+            self.risk_data = RiskData(attributes["risk_data"])
+        else:
+            self.risk_data = None
 
     @property
     def refund_id(self):

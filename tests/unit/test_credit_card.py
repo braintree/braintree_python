@@ -1,4 +1,5 @@
 from tests.test_helper import *
+import datetime
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCreditCard(unittest.TestCase):
@@ -60,7 +61,7 @@ class TestCreditCard(unittest.TestCase):
                     "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session", "fail_on_duplicate_payment_method"]},
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method"]},
             "customer_id"
         ]
         self.assertEquals(expected, CreditCard.create_signature())
@@ -76,7 +77,7 @@ class TestCreditCard(unittest.TestCase):
                     {"options": ["update_existing"]}
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "venmo_sdk_session"]}
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session"]}
         ]
         self.assertEquals(expected, CreditCard.update_signature())
 
@@ -87,3 +88,8 @@ class TestCreditCard(unittest.TestCase):
         except NotFoundError as e:
             self.assertTrue(True)
 
+    def test_multiple_verifications_sort(self):
+        verification1 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 20), "id":123}
+        verification2 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 21), "id":456}
+        credit_card = CreditCard(Configuration.gateway(), {"verifications": [verification1, verification2]})
+        self.assertEquals(credit_card.verification.id, 456)

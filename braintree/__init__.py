@@ -33,6 +33,7 @@ from braintree.partner_merchant import PartnerMerchant
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
 from braintree.resource_collection import ResourceCollection
+from braintree.risk_data import RiskData
 from braintree.search import Search
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.subscription import Subscription
