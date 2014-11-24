@@ -446,7 +446,12 @@ class Transaction(Resource):
                     "store_shipping_address_in_vault",
                     "submit_for_settlement",
                     "venmo_sdk_session",
-                    "payee_email"
+                    "payee_email",
+                    {
+                        "paypal": [
+                            "payee_email"
+                        ]
+                    }
                 ]
             },
             {"custom_fields": ["__any_key__"]},
