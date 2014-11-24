@@ -449,7 +449,8 @@ class Transaction(Resource):
                     "payee_email",
                     {
                         "paypal": [
-                            "payee_email"
+                            "payee_email",
+                            "custom_field"
                         ]
                     }
                 ]
