@@ -2018,6 +2018,17 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("disputedtransaction", dispute.transaction_details.id)
         self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
 
+    def test_find_exposes_retrievals(self):
+        transaction = Transaction.find("retrievaltransaction")
+        dispute = transaction.disputes[0]
+
+        self.assertEquals("USD", dispute.currency_iso_code)
+        self.assertEquals(Decimal("1000.00"), dispute.amount)
+        self.assertEquals(Dispute.Status.Open, dispute.status)
+        self.assertEquals(Dispute.Reason.Retrieval, dispute.reason)
+        self.assertEquals("retrievaltransaction", dispute.transaction_details.id)
+        self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
+
     def test_creating_paypal_transaction_with_one_time_use_nonce(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
