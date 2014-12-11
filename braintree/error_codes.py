@@ -295,9 +295,6 @@ class ErrorCodes(object):
         SettlementDateIsRequired = "82301"
 
     class SEPAMandate(object):
-        AccountHolderNameIsRequired = "83301"
-        BICIsRequired = "83302"
-        IBANIsRequired = "83303"
         TypeIsRequired = "93304"
         IBANInvalidCharacter = "83305"
         BICInvalidCharacter = "83306"
@@ -308,6 +305,11 @@ class ErrorCodes(object):
         BillingAddressConflict = "93311"
         BillingAddressIdIsInvalid = "93312"
         TypeIsInvalid = "93313"
+
+    class SEPABankAccount(object):
+        BICIsRequired = "83302"
+        IBANIsRequired = "83303"
+        AccountHolderNameIsRequired = "83301"
 
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
