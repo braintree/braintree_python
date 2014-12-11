@@ -1,7 +1,7 @@
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 
-class TestCreditCard(unittest.TestCase):
+class TestCreditCardVerfication(unittest.TestCase):
     def test_find_with_verification_id(self):
         customer = Customer.create({
             "credit_card": {

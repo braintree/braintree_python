@@ -28,6 +28,7 @@ class Dispute(AttributeGetter):
         * braintree.Dispute.Reason.NotRecognized
         * braintree.Dispute.Reason.ProductNotReceived
         * braintree.Dispute.Reason.ProductUnsatisfactory
+        * braintree.Dispute.Reason.Retrieval
         * braintree.Dispute.Reason.TransactionAmountDiffers
         """
         CancelledRecurringTransaction = "cancelled_recurring_transaction"
@@ -39,6 +40,7 @@ class Dispute(AttributeGetter):
         NotRecognized                 = "not_recognized"
         ProductNotReceived            = "product_not_received"
         ProductUnsatisfactory         = "product_unsatisfactory"
+        Retrieval                     = "retrieval"
         TransactionAmountDiffers      = "transaction_amount_differs"
 
 

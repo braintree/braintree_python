@@ -58,6 +58,10 @@ class ErrorCodes(object):
         MerchantKeysAlreadyConfigured = "93515"
         MerchantKeysNotConfigured = "93516"
         CertificateInvalid = "93517"
+        CertificateMismatch = "93519"
+        InvalidToken = "83520"
+        PrivateKeyMismatch = "93521"
+        KeyMismatchStoringCertificate = "93522"
 
     class AuthorizationFingerprint(object):
         MissingFingerprint = "93201"
@@ -75,6 +79,7 @@ class ErrorCodes(object):
         CustomerDoesNotExist = "92804"
         ProxyMerchantDoesNotExist = "92805"
         UnsupportedVersion = "92806"
+        MerchantAccountDoesNotExist = "92807"
 
     class CreditCard(object):
         BillingAddressConflict = "91701"
@@ -117,12 +122,16 @@ class ErrorCodes(object):
         PaymentMethodNonceUnknown = "91732"
         PaymentMethodNonceLocked = "91733"
         PaymentMethodNonceCardTypeIsNotAccepted = "91734"
+        PaymentMethodIsNotACreditCard = "91738"
         CannotUpdateCardUsingPaymentMethodNonce = "91735"
 
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
-            VerificationMerchantAccountIdIsInvalid = "91728"
             UpdateExistingTokenNotAllowed = "91729"
+            VerificationMerchantAccountIdIsInvalid = "91728"
+            VerificationAmountCannotBeNegative = "91739"
+            VerificationAmountFormatIsInvalid = "91740"
+            VerificationAmountNotSupportedByProcessor = "91741"
 
 
     class Customer(object):
@@ -260,6 +269,13 @@ class ErrorCodes(object):
         NonceIsRequired = "93103"
         CustomerIdIsRequired = "93104"
         CustomerIdIsInvalid = "93105"
+        PaymentMethodNonceConsumed = "93107"
+        PaymentMethodNonceUnknown = "93108"
+        PaymentMethodNonceLocked = "93109"
+        AuthExpired = "92911"
+        CannotHaveFundingSourceWithoutAccessToken = "92912"
+        InvalidFundingSourceSelection = "92913"
+        CannotUpdatePayPalAccountUsingPaymentMethodNonce = "92914"
 
     class PayPalAccount(object):
         CannotVaultOneTimeUsePayPalAccount = "82902"
@@ -279,9 +295,6 @@ class ErrorCodes(object):
         SettlementDateIsRequired = "82301"
 
     class SEPAMandate(object):
-        AccountHolderNameIsRequired = "83301"
-        BICIsRequired = "83302"
-        IBANIsRequired = "83303"
         TypeIsRequired = "93304"
         IBANInvalidCharacter = "83305"
         BICInvalidCharacter = "83306"
@@ -291,6 +304,12 @@ class ErrorCodes(object):
         IBANInvalidFormat = "83310"
         BillingAddressConflict = "93311"
         BillingAddressIdIsInvalid = "93312"
+        TypeIsInvalid = "93313"
+
+    class SEPABankAccount(object):
+        BICIsRequired = "83302"
+        IBANIsRequired = "83303"
+        AccountHolderNameIsRequired = "83301"
 
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
@@ -406,6 +425,7 @@ class ErrorCodes(object):
         PaymentMethodTokenIsInvalid = "91518"
         PaymentMethodNonceUnknown = "91565"
         PayPalNotEnabled = "91576"
+        PayPalAuthExpired = "91579"
         ProcessorAuthorizationCodeCannotBeSet = "91519"
         ProcessorAuthorizationCodeIsInvalid = "81520"
         ProcessorDoesNotSupportCredits = "91546"
@@ -418,8 +438,10 @@ class ErrorCodes(object):
         ServiceFeeAmountIsTooLarge = "91556"
         ServiceFeeAmountNotAllowedOnMasterMerchantAccount = "91557"
         ServiceFeeIsNotAllowedOnCredits = "91552"
+        ServiceFeeNotAcceptedForPayPal = "91578"
         SettlementAmountIsLessThanServiceFeeAmount = "91551"
         SettlementAmountIsTooLarge = "91522"
+        ShippingAddressDoesntMatchCustomer = "91581"
         SubMerchantAccountRequiresServiceFeeAmount = "91553"
         SubscriptionDoesNotBelongToCustomer = "91529"
         SubscriptionIdIsInvalid = "91528"
@@ -438,6 +460,9 @@ class ErrorCodes(object):
             VaultIsDisabled = "91525"
             SubmitForSettlementIsRequiredForCloning = "91544"
             UseBillingForShippingDisabled = "91572"
+
+            class PayPal(object):
+                CustomFieldTooLong = "91580"
 
         class Industry(object):
             IndustryTypeIsInvalid = "93401" 
