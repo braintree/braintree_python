@@ -7,6 +7,7 @@ from braintree.descriptor import Descriptor
 from braintree.discount import Discount
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
+from braintree.subscription_status_event import SubscriptionStatusEvent
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult
 from braintree.transaction import Transaction
@@ -44,6 +45,12 @@ class Subscription(Resource):
 
         Day = "day"
         Month = "month"
+
+    class Source(object):
+        Api          = "api"
+        ControlPanel = "control_panel"
+        Recurring    = "recurring"
+        Unrecognized = "unrecognized"
 
     class Status(object):
         """
@@ -231,6 +238,8 @@ class Subscription(Resource):
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
         if "discounts" in attributes:
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
+        if "status_history" in attributes:
+            self.status_history = [SubscriptionStatusEvent(gateway, status_event) for status_event in self.status_history]
         if "transactions" in attributes:
             self.transactions = [Transaction(gateway, transaction) for transaction in self.transactions]
 
