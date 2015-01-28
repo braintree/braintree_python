@@ -28,7 +28,7 @@ instructions above for upgrading from pycurl / httplib to requests.
 
 ## Documentation
 
- * [Official documentation](https://www.braintreepayments.com/docs/python)
+ * [Official documentation](https://developers.braintreepayments.com/python/sdk/server/overview)
 
 ## Quick Start Example
 
