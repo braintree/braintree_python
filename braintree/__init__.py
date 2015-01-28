@@ -26,6 +26,7 @@ from braintree.merchant_account.funding_details import FundingDetails
 from braintree.merchant_account.individual_details import IndividualDetails
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.payment_method import PaymentMethod
+from braintree.payment_method_nonce import PaymentMethodNonce
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.paypal_account import PayPalAccount
