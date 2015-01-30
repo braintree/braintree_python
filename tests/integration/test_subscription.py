@@ -50,6 +50,11 @@ class TestSubscription(unittest.TestCase):
         self.assertEquals(0, subscription.failure_count)
         self.assertEquals(self.credit_card.token, subscription.payment_method_token)
 
+        self.assertEquals(Subscription.Status.Active, subscription.status_history[0].status)
+        self.assertEquals(Decimal("12.34"), subscription.status_history[0].price)
+        self.assertEquals(Decimal("0.00"), subscription.status_history[0].balance)
+        self.assertEquals(Subscription.Source.Api, subscription.status_history[0].subscription_source)
+
     def test_create_returns_successful_result_with_payment_method_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id

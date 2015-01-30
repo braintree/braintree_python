@@ -3,6 +3,7 @@ import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
+from braintree.coinbase_account import CoinbaseAccount
 from braintree.disbursement_detail import DisbursementDetail
 from braintree.dispute import Dispute
 from braintree.discount import Discount
@@ -492,6 +493,8 @@ class Transaction(Resource):
             self.sepa_bank_account_details = SEPABankAccount(gateway, attributes.pop("sepa_bank_account"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
+        if "coinbase_account" in attributes:
+            self.coinbase_details = CoinbaseAccount(gateway, attributes.pop("coinbase_account"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

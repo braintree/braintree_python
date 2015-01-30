@@ -1,3 +1,10 @@
+## 3.9.0
+* Support Coinbase accounts
+* Surface Apple Pay payment instrument name in responses
+* Expose subscription status events
+* Support SEPA bank accounts for customer
+* Improve documentation
+
 ## 3.8.0
 * Add error code constants
 * Allow PayPal parameters to be sent in options.paypal

@@ -7,3 +7,4 @@ class Nonces(object):
     ApplePayMasterCard = "fake-apple-pay-mastercard-nonce"
     ApplePayAmEx = "fake-apple-pay-amex-nonce"
     AbstractTransactable = "fake-abstract-transactable-nonce"
+    Coinbase = "fake-coinbase-nonce"

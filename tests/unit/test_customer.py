@@ -60,3 +60,14 @@ class TestCustomer(unittest.TestCase):
 
         self.assertEquals(customer.paypal_accounts[0].token, "token1")
         self.assertEquals(customer.paypal_accounts[1].token, "token2")
+
+    def test_initialize_sets_sepa_bank_accounts(self):
+        customer = Customer("gateway", {
+            "sepa_bank_accounts": [
+                {"token": "token1"},
+                {"token": "token2"}
+            ]
+        })
+
+        self.assertEquals(customer.sepa_bank_accounts[0].token, "token1")
+        self.assertEquals(customer.sepa_bank_accounts[1].token, "token2")

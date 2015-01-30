@@ -154,6 +154,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertIsInstance(apple_pay_card, ApplePayCard)
         self.assertNotEqual(apple_pay_card.token, None)
         self.assertEqual(ApplePayCard.CardType.MasterCard, apple_pay_card.card_type)
+        self.assertEqual("MasterCard 0017", apple_pay_card.payment_instrument_name)
         self.assertTrue(apple_pay_card.default)
         self.assertIn("apple_pay", apple_pay_card.image_url)
         self.assertTrue(int(apple_pay_card.expiration_month) > 0)

@@ -38,6 +38,7 @@ from braintree.search import Search
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.subscription import Subscription
 from braintree.subscription_gateway import SubscriptionGateway
+from braintree.subscription_status_event import SubscriptionStatusEvent
 from braintree.status_event import StatusEvent
 from braintree.testing_gateway import TestingGateway
 from braintree.transaction import Transaction

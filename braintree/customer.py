@@ -6,6 +6,8 @@ from braintree.resource import Resource
 from braintree.apple_pay_card import ApplePayCard
 from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
+from braintree.sepa_bank_account import SEPABankAccount
+from braintree.coinbase_account import CoinbaseAccount
 from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.ids_search import IdsSearch
@@ -196,3 +198,9 @@ class Customer(Resource):
 
         if "apple_pay_cards" in attributes:
             self.apple_pay_cards  = [ApplePayCard(gateway, apple_pay_card) for apple_pay_card in self.apple_pay_cards]
+
+        if "sepa_bank_accounts" in attributes:
+            self.sepa_bank_accounts = [SEPABankAccount(gateway, sepa_bank_account) for sepa_bank_account in self.sepa_bank_accounts]
+
+        if "coinbase_accounts" in attributes:
+            self.coinbase_accounts = [CoinbaseAccount(gateway, coinbase_account) for coinbase_account in self.coinbase_accounts]
