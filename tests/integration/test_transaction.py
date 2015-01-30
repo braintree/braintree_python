@@ -1935,6 +1935,25 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(True, disbursement_details.success)
         self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
 
+    def test_sale_with_three_d_secure_option(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "three_d_secure": {
+                    "required": True
+                }
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(Transaction.Status.GatewayRejected, result.transaction.status)
+        self.assertEquals(Transaction.GatewayRejectionReason.ThreeDSecure, result.transaction.gateway_rejection_reason)
+
     def test_sale_with_three_d_secure_token(self):
         three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
             "number": "4111111111111111",
