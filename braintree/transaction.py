@@ -103,12 +103,15 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.AvsAndCvv
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
+        * braintree.Transaction.GatewayRejectionReason.Fraud
+        * braintree.Transaction.GatewayRejectionReason.ThreeDSecure
         """
         Avs          = "avs"
         AvsAndCvv    = "avs_and_cvv"
         Cvv          = "cvv"
         Duplicate    = "duplicate"
         Fraud        = "fraud"
+        ThreeDSecure = "three_d_secure"
         Unrecognized = "unrecognized"
 
     class Source(object):
@@ -452,8 +455,11 @@ class Transaction(Resource):
                         "paypal": [
                             "payee_email",
                             "custom_field"
-                        ]
-                    }
+                        ],
+                        "three_d_secure": [
+                            "required"
+                        ],
+                    },
                 ]
             },
             {"custom_fields": ["__any_key__"]},
