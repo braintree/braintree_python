@@ -31,7 +31,7 @@ class Subscription(Resource):
             "trial_period": True
         })
 
-    For more information on Subscriptions, see https://www.braintreepayments.com/docs/python/subscriptions/overview
+    For more information on Subscriptions, see https://developers.braintreepayments.com/python/reference/request/subscription/create
 
     """
 
