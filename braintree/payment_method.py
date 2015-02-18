@@ -27,16 +27,24 @@ class PaymentMethod(Resource):
     @staticmethod
     def signature(type):
         signature = [
+            "billing_address_id",
+            "cardholder_name",
             "customer_id",
+            "cvv",
+            "device_data",
+            "device_session_id",
+            "expiration_date",
+            "expiration_month",
+            "expiration_year",
+            "number",
             "payment_method_nonce",
             "token",
-            "billing_address_id",
             {"billing_address": Address.create_signature()},
             {"options": [
-                "make_default",
-                "verify_card",
                 "fail_on_duplicate_payment_method",
+                "make_default",
                 "verification_merchant_account_id",
+                "verify_card",
                 ]
             }
         ]

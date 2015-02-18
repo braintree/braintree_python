@@ -35,3 +35,65 @@ class TestPaymentMethodGateway(unittest.TestCase):
         self.assertEquals(unknown_payment_method.__class__, UnknownPaymentMethod)
         self.assertEquals(unknown_payment_method.token, "1234")
         self.assertTrue(unknown_payment_method.default)
+
+    def test_create_signature(self):
+        actual_signature = PaymentMethod.signature("create")
+
+        expected_signature = [
+            "billing_address_id",
+            "cardholder_name",
+            "customer_id",
+            "cvv",
+            "device_data",
+            "device_session_id",
+            "expiration_date",
+            "expiration_month",
+            "expiration_year",
+            "number",
+            "payment_method_nonce",
+            "token",
+            {
+                "billing_address": Address.create_signature()},
+            {
+                "options": [
+                    "fail_on_duplicate_payment_method",
+                    "make_default",
+                    "verification_merchant_account_id",
+                    "verify_card",
+                ]
+            }
+        ]
+
+        self.assertItemsEqual(expected_signature, actual_signature)
+
+    def test_update_signature(self):
+        actual_signature = PaymentMethod.update_signature()
+
+        expected_signature = [
+            "billing_address_id",
+            "cardholder_name",
+            "cvv",
+            "device_session_id",
+            "expiration_date",
+            "expiration_month",
+            "expiration_year",
+            "number",
+            "token",
+            "venmo_sdk_payment_method_code",
+            "device_data",
+            "fraud_merchant_id",
+            "payment_method_nonce",
+            {
+                "options": [
+                    "make_default",
+                    "verify_card",
+                    "verification_merchant_account_id",
+                    "venmo_sdk_session"
+                ]
+            },
+            {
+                "billing_address" : Address.update_signature() + [{"options": ["update_existing"]}]
+            }
+        ]
+
+        self.assertItemsEqual(expected_signature, actual_signature)
