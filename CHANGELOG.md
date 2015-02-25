@@ -1,3 +1,6 @@
+## 3.11.0
+* Accept additional params in PaymentMethod.create()
+
 ## 3.10.0
 * Add 3D Secure transaction fields
 * Add ability to create nonce from vaulted payment methods

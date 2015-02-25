@@ -2326,6 +2326,19 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund1.id))
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
 
+    def test_paypal_transaction_returns_required_fields(self):
+        transaction = Transaction.find("settledtransaction")
+
+        self.assertNotEquals(None, transaction.paypal_details.debug_id)
+        self.assertNotEquals(None, transaction.paypal_details.payer_email)
+        self.assertNotEquals(None, transaction.paypal_details.authorization_id)
+        self.assertNotEquals(None, transaction.paypal_details.payer_id)
+        self.assertNotEquals(None, transaction.paypal_details.payer_first_name)
+        self.assertNotEquals(None, transaction.paypal_details.payer_last_name)
+        self.assertNotEquals(None, transaction.paypal_details.seller_protection_status)
+        self.assertNotEquals(None, transaction.paypal_details.capture_id)
+        self.assertNotEquals(None, transaction.paypal_details.refund_id)
+
     def test_paypal_transaction_refund_already_refunded_transation_fails(self):
         transaction = self.__create_paypal_transaction_to_refund()
 
