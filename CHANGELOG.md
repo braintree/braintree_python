@@ -1,3 +1,6 @@
+## 3.11.1
+* Fix test failures in Python 3.3+
+
 ## 3.11.0
 * Accept additional params in PaymentMethod.create()
 
