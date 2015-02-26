@@ -64,7 +64,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             }
         ]
 
-        self.assertItemsEqual(expected_signature, actual_signature)
+        self.assertEqual(expected_signature, actual_signature)
 
     def test_update_signature(self):
         actual_signature = PaymentMethod.update_signature()
@@ -96,4 +96,4 @@ class TestPaymentMethodGateway(unittest.TestCase):
             }
         ]
 
-        self.assertItemsEqual(expected_signature, actual_signature)
+        self.assertEqual(expected_signature, actual_signature)
