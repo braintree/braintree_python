@@ -4,3 +4,4 @@ class PaymentInstrumentType():
     SEPABankAccount = "sepa_bank_account"
     CreditCard = "credit_card"
     ApplePayCard = "apple_pay_card"
+    CoinbaseAccount = "coinbase_account"
