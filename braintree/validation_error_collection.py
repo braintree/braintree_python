@@ -37,7 +37,7 @@ class ValidationErrorCollection(object):
 
         """
 
-        return self.__get_nested_errrors(nested_key)
+        return self.__get_nested_errors(nested_key)
 
     def on(self, attribute):
         """
@@ -71,7 +71,7 @@ class ValidationErrorCollection(object):
         """Returns the number of errors on this object, without counting nested errors."""
         return len(self.errors)
 
-    def __get_nested_errrors(self, nested_key):
+    def __get_nested_errors(self, nested_key):
         if nested_key in self.__nested_errors:
             return self.__nested_errors[nested_key]
         else:
