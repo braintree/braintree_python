@@ -38,7 +38,6 @@ class TestSettlementBatchSummary(unittest.TestCase):
             count = int(visa_records['count'])
 
             succesfully_match_amount_settled = float(visa_records['amount_settled']) == float(TransactionAmounts.Authorize) * count
-
             if succesfully_match_amount_settled: break
 
         self.assertTrue(count >= 1)

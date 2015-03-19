@@ -1492,7 +1492,7 @@ class TestTransactionSearch(unittest.TestCase):
             Configuration.public_key = "altpay_merchant_public_key"
             Configuration.private_key = "altpay_merchant_private_key"
             customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
+            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
             client_api =  ClientApiHttp(config, {
@@ -1500,13 +1500,16 @@ class TestTransactionSearch(unittest.TestCase):
                 "shared_customer_identifier": "fake_identifier",
                 "shared_customer_identifier_type": "testing"
             })
-            nonce = client_api.get_sepa_bank_account_nonce({
+            nonce = client_api.get_europe_bank_account_nonce({
                 "locale": "de-DE",
                 "bic": "DEUTDEFF",
                 "iban": "DE89370400440532013000",
                 "accountHolderName": "Baron Von Holder",
                 "billingAddress": {"region": "Hesse", "country_name": "Germany"}
             })
+
+            print "nonce: " + nonce
+
             result = Transaction.sale({
                 "merchant_account_id": "fake_sepa_ma",
                 "amount": "10.00",
@@ -1514,7 +1517,7 @@ class TestTransactionSearch(unittest.TestCase):
             })
 
             collection = Transaction.search([
-                TransactionSearch.sepa_bank_account_iban == "DE89370400440532013000"
+                TransactionSearch.europe_bank_account_iban == "DE89370400440532013000"
             ])
             self.assertTrue(collection.maximum_size >= 1)
             ids = [transaction.id for transaction in collection.items]

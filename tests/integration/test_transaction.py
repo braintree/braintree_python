@@ -2371,7 +2371,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
-    def test_sepa_bank_account_details(self):
+    def test_europe_bank_account_details(self):
         old_merchant_id = Configuration.merchant_id
         old_public_key = Configuration.public_key
         old_private_key = Configuration.private_key
@@ -2381,7 +2381,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = "altpay_merchant_public_key"
             Configuration.private_key = "altpay_merchant_private_key"
             customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": SEPABankAccount.MandateType.Business})
+            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
             client_api =  ClientApiHttp(config, {
@@ -2389,7 +2389,7 @@ class TestTransaction(unittest.TestCase):
                 "shared_customer_identifier": "fake_identifier",
                 "shared_customer_identifier_type": "testing"
             })
-            nonce = client_api.get_sepa_bank_account_nonce({
+            nonce = client_api.get_europe_bank_account_nonce({
                 "locale": "de-DE",
                 "bic": "DEUTDEFF",
                 "iban": "DE89370400440532013000",
@@ -2402,12 +2402,12 @@ class TestTransaction(unittest.TestCase):
                 "payment_method_nonce": nonce
             })
             self.assertTrue(result.is_success)
-            sepa_bank_account_details = result.transaction.sepa_bank_account_details
-            self.assertEquals(sepa_bank_account_details.bic, "DEUTDEFF")
-            self.assertEquals(sepa_bank_account_details.account_holder_name, "Baron Von Holder")
-            self.assertEquals(sepa_bank_account_details.masked_iban[-4:], "3000")
-            self.assertNotEquals(sepa_bank_account_details.image_url, None)
-            self.assertEquals(PaymentInstrumentType.SEPABankAccount, result.transaction.payment_instrument_type)
+            europe_bank_account_details = result.transaction.europe_bank_account_details
+            self.assertEquals(europe_bank_account_details.bic, "DEUTDEFF")
+            self.assertEquals(europe_bank_account_details.account_holder_name, "Baron Von Holder")
+            self.assertEquals(europe_bank_account_details.masked_iban[-4:], "3000")
+            self.assertNotEquals(europe_bank_account_details.image_url, None)
+            self.assertEquals(PaymentInstrumentType.EuropeBankAccount, result.transaction.payment_instrument_type)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key

@@ -271,22 +271,19 @@ class ClientApiHttp(Http):
 
         return [status_code, nonce]
 
-    def get_sepa_bank_account_nonce(self, sepa_bank_account_params):
-        params = {"sepa_mandate": sepa_bank_account_params}
+    def get_europe_bank_account_nonce(self, europe_bank_account_params):
+        params = {"sepa_mandate": europe_bank_account_params}
         url = "/merchants/%s/client_api/v1/sepa_mandates" % self.config.merchant_id
         if 'authorization_fingerprint' in self.options:
             params['authorizationFingerprint'] = self.options['authorization_fingerprint']
 
         status_code, response = self.post(url, params)
-        mandate_reference_number = json.loads(response)["sepaMandates"][0]["mandateReferenceNumber"]
-
-        accept_url = url + "/%s/accept" %  mandate_reference_number
-
-        status_code, response = self.put(accept_url, params)
-
+        json_body = json.loads(response)
+        mandate_reference_number = json_body["sepaMandates"][0]["mandateReferenceNumber"]
         nonce = None
-        if status_code == 200:
-            nonce = json.loads(response)["sepaBankAccounts"][0]["nonce"]
+
+        if status_code == 201:
+            nonce = json_body["europeBankAccounts"][0]["nonce"]
 
         return nonce
 
