@@ -279,7 +279,7 @@ class ClientApiHttp(Http):
 
         status_code, response = self.post(url, params)
         json_body = json.loads(response)
-        mandate_reference_number = json_body["sepaMandates"][0]["mandateReferenceNumber"]
+        mandate_reference_number = json_body["europeBankAccounts"][0]["sepaMandates"][0]["mandateReferenceNumber"]
         nonce = None
 
         if status_code == 201:
