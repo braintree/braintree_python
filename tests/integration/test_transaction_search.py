@@ -1508,8 +1508,6 @@ class TestTransactionSearch(unittest.TestCase):
                 "billingAddress": {"region": "Hesse", "country_name": "Germany"}
             })
 
-            print "nonce: " + nonce
-
             result = Transaction.sale({
                 "merchant_account_id": "fake_sepa_ma",
                 "amount": "10.00",
