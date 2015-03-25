@@ -306,7 +306,7 @@ class ErrorCodes(object):
         BillingAddressIdIsInvalid = "93312"
         TypeIsInvalid = "93313"
 
-    class SEPABankAccount(object):
+    class EuropeBankAccount(object):
         BICIsRequired = "83302"
         IBANIsRequired = "83303"
         AccountHolderNameIsRequired = "83301"

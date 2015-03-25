@@ -16,7 +16,7 @@ from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
 from braintree.paypal_account import PayPalAccount
-from braintree.sepa_bank_account import SEPABankAccount
+from braintree.europe_bank_account import EuropeBankAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
 from braintree.transparent_redirect import TransparentRedirect
@@ -495,8 +495,8 @@ class Transaction(Resource):
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
         if "paypal" in attributes:
             self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
-        if "sepa_bank_account" in attributes:
-            self.sepa_bank_account_details = SEPABankAccount(gateway, attributes.pop("sepa_bank_account"))
+        if "europe_bank_account" in attributes:
+            self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
         if "coinbase_account" in attributes:

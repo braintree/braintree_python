@@ -159,7 +159,7 @@ class TestClientToken(unittest.TestCase):
         client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer_id,
             "sepa_mandate_acceptance_location": "Hamburg, Germany",
-            "sepa_mandate_type": SEPABankAccount.MandateType.Business
+            "sepa_mandate_type": EuropeBankAccount.MandateType.Business
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         self.assertNotEqual(authorization_fingerprint, None)

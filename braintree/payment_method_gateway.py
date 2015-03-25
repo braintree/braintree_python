@@ -3,7 +3,7 @@ from braintree.apple_pay_card import ApplePayCard
 from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
-from braintree.sepa_bank_account import SEPABankAccount
+from braintree.europe_bank_account import EuropeBankAccount
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
@@ -70,8 +70,8 @@ class PaymentMethodGateway(object):
             return PayPalAccount(self.gateway, response["paypal_account"])
         elif "credit_card" in response:
             return CreditCard(self.gateway, response["credit_card"])
-        elif "sepa_bank_account" in response:
-            return SEPABankAccount(self.gateway, response["sepa_bank_account"])
+        elif "europe_bank_account" in response:
+            return EuropeBankAccount(self.gateway, response["europe_bank_account"])
         elif "apple_pay_card" in response:
             return ApplePayCard(self.gateway, response["apple_pay_card"])
         elif "coinbase_account" in response:

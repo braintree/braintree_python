@@ -28,7 +28,7 @@ class TransactionSearch:
     order_id                     = Search.TextNodeBuilder("order_id")
     payment_method_token         = Search.TextNodeBuilder("payment_method_token")
     processor_authorization_code = Search.TextNodeBuilder("processor_authorization_code")
-    sepa_bank_account_iban       = Search.TextNodeBuilder("sepa_bank_account_iban")
+    europe_bank_account_iban       = Search.TextNodeBuilder("europe_bank_account_iban")
     settlement_batch_id          = Search.TextNodeBuilder("settlement_batch_id")
     shipping_company             = Search.TextNodeBuilder("shipping_company")
     shipping_country_name        = Search.TextNodeBuilder("shipping_country_name")
