@@ -1,3 +1,6 @@
+## 3.12.0
+* Add support for new SEPA workflow
+
 ## 3.11.1
 * Fix test failures in Python 3.3+
 
