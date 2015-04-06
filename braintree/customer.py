@@ -188,19 +188,27 @@ class Customer(Resource):
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
+        self.payment_methods = []
+
         if "credit_cards" in attributes:
             self.credit_cards = [CreditCard(gateway, credit_card) for credit_card in self.credit_cards]
+            [self.payment_methods.append(credit_card) for credit_card in self.credit_cards]
         if "addresses" in attributes:
             self.addresses = [Address(gateway, address) for address in self.addresses]
 
         if "paypal_accounts" in attributes:
             self.paypal_accounts  = [PayPalAccount(gateway, paypal_account) for paypal_account in self.paypal_accounts]
+            [self.payment_methods.append(paypal_account) for paypal_account in self.paypal_accounts]
 
         if "apple_pay_cards" in attributes:
             self.apple_pay_cards  = [ApplePayCard(gateway, apple_pay_card) for apple_pay_card in self.apple_pay_cards]
+            [self.payment_methods.append(apple_pay_card) for apple_pay_card in self.apple_pay_cards]
 
         if "europe_bank_accounts" in attributes:
             self.europe_bank_accounts = [EuropeBankAccount(gateway, europe_bank_account) for europe_bank_account in self.europe_bank_accounts]
+            [self.payment_methods.append(europe_bank_account) for europe_bank_account in self.europe_bank_accounts]
 
         if "coinbase_accounts" in attributes:
             self.coinbase_accounts = [CoinbaseAccount(gateway, coinbase_account) for coinbase_account in self.coinbase_accounts]
+            [self.payment_methods.append(coinbase_account) for coinbase_account in self.coinbase_accounts]
+
