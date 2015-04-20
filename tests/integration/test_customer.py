@@ -664,5 +664,5 @@ class TestCustomer(unittest.TestCase):
 
         payment_method_tokens = map(lambda payment_method: payment_method.token, customer.payment_methods)
 
-        self.assertItemsEqual(sorted(payment_method_tokens), ["apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
+        self.assertEqual(sorted(payment_method_tokens), ["apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
 
