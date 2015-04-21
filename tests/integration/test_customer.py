@@ -653,3 +653,16 @@ class TestCustomer(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
 
+    def test_customer_payment_methods(self):
+        customer = Customer("gateway", {
+            "credit_cards": [ {"token": "credit_card"} ],
+            "paypal_accounts": [ {"token": "paypal_account"} ],
+            "apple_pay_cards": [ {"token": "apple_pay_card"} ],
+            "europe_bank_accounts": [ {"token": "europe_bank_account"} ],
+            "coinbase_accounts": [ {"token": "coinbase_account"} ]
+            })
+
+        payment_method_tokens = map(lambda payment_method: payment_method.token, customer.payment_methods)
+
+        self.assertEqual(sorted(payment_method_tokens), ["apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
+

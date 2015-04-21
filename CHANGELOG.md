@@ -1,3 +1,8 @@
+## 3.13.0
+* Add attribute to customer
+* Add coinbase constant
+* Add European test nonce
+
 ## 3.12.0
 * Add support for new SEPA workflow
 
