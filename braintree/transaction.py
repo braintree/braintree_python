@@ -23,6 +23,7 @@ from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
+from braintree.three_d_secure_info import ThreeDSecureInfo
 
 class Transaction(Resource):
     """
@@ -526,6 +527,10 @@ class Transaction(Resource):
             self.risk_data = RiskData(attributes["risk_data"])
         else:
             self.risk_data = None
+        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] == None:
+            self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
+        else:
+            self.three_d_secure_info = None
 
     @property
     def refund_id(self):
