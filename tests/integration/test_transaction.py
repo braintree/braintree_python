@@ -2039,7 +2039,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
 
     def test_find_exposes_three_d_secure_info(self):
-        transaction = Transaction.find("three-d-secured-transaction")
+        transaction = Transaction.find("threedsecuredtransaction")
         three_d_secure_info = transaction.three_d_secure_info
 
         self.assertEquals("Y", three_d_secure_info.enrolled)

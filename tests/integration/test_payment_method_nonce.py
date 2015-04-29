@@ -19,11 +19,11 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertRaises(NotFoundError, PaymentMethodNonce.create, "not-a-token")
 
     def test_find_nonce_shows_details(self):
-        nonce = PaymentMethodNonce.find("three-d-secured-nonce")
+        nonce = PaymentMethodNonce.find("threedsecurednonce")
         three_d_secure_info = nonce.three_d_secure_info
 
         self.assertEquals("CreditCard", nonce.type)
-        self.assertEquals("three-d-secured-nonce", nonce.nonce)
+        self.assertEquals("threedsecurednonce", nonce.nonce)
         self.assertEquals("Y", three_d_secure_info.enrolled)
         self.assertEquals("authenticate_successful", three_d_secure_info.status)
         self.assertEquals("xidvalue", three_d_secure_info.xid)
