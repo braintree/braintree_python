@@ -17,3 +17,33 @@ class TestPaymentMethodNonce(unittest.TestCase):
 
     def test_create_raises_not_found_when_404(self):
         self.assertRaises(NotFoundError, PaymentMethodNonce.create, "not-a-token")
+
+    def test_find_nonce_shows_details(self):
+        nonce = PaymentMethodNonce.find("three-d-secured-nonce")
+        three_d_secure_info = nonce.three_d_secure_info
+
+        self.assertEquals("CreditCard", nonce.type)
+        self.assertEquals("three-d-secured-nonce", nonce.nonce)
+        self.assertEquals("Y", three_d_secure_info.enrolled)
+        self.assertEquals("authenticate_successful", three_d_secure_info.status)
+        self.assertEquals("xidvalue", three_d_secure_info.xid)
+        self.assertEquals("somebase64value", three_d_secure_info.cavv)
+        self.assertEquals(True, three_d_secure_info.liability_shifted)
+        self.assertEquals(True, three_d_secure_info.liability_shift_possible)
+
+    def test_exposes_null_3ds_info_if_none_exists(self):
+        http = ClientApiHttp.create()
+
+        _, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "access-token": "access-token",
+            "options": {"validate": False}
+        })
+
+        found_nonce = PaymentMethodNonce.find(nonce)
+
+        self.assertEquals(nonce, found_nonce.nonce)
+        self.assertEquals(None, found_nonce.three_d_secure_info)
+
+    def test_find_raises_not_found_when_404(self):
+        self.assertRaises(NotFoundError, PaymentMethodNonce.find, "not-a-nonce")
