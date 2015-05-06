@@ -26,8 +26,6 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEquals("threedsecurednonce", nonce.nonce)
         self.assertEquals("Y", three_d_secure_info.enrolled)
         self.assertEquals("authenticate_successful", three_d_secure_info.status)
-        self.assertEquals("xidvalue", three_d_secure_info.xid)
-        self.assertEquals("somebase64value", three_d_secure_info.cavv)
         self.assertEquals(True, three_d_secure_info.liability_shifted)
         self.assertEquals(True, three_d_secure_info.liability_shift_possible)
 
