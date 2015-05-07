@@ -4,6 +4,6 @@ class ServerError(BraintreeError):
     """
     Raised when the gateway raises an error.  Please contant support at support@getbraintree.com.
 
-    See https://developers.braintreepayments.com/python/reference/general/error-handling/exceptions#server-error
+    See https://developers.braintreepayments.com/ios+python/reference/general/exceptions#server-error
     """
     pass

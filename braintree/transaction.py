@@ -76,7 +76,7 @@ class Transaction(Resource):
         print(result.transaction.amount)
         print(result.transaction.order_id)
 
-    For more information on Transactions, see https://developers.braintreepayments.com/python/reference/request/transaction/sale
+    For more information on Transactions, see https://developers.braintreepayments.com/ios+python/reference/request/transaction/sale
 
     """
 
