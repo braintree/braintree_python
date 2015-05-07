@@ -59,7 +59,7 @@ class Customer(Resource):
         print(result.customer.id)
         print(result.customer.first_name)
 
-    For more information on Customers, see https://developers.braintreepayments.com/python/reference/request/customer/create
+    For more information on Customers, see https://developers.braintreepayments.com/ios+python/reference/request/customer/create
 
     """
 

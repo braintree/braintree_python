@@ -2038,6 +2038,21 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("disputedtransaction", dispute.transaction_details.id)
         self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
 
+    def test_find_exposes_three_d_secure_info(self):
+        transaction = Transaction.find("threedsecuredtransaction")
+        three_d_secure_info = transaction.three_d_secure_info
+
+        self.assertEquals("Y", three_d_secure_info.enrolled)
+        self.assertEquals("authenticate_successful", three_d_secure_info.status)
+        self.assertEquals(True, three_d_secure_info.liability_shifted)
+        self.assertEquals(True, three_d_secure_info.liability_shift_possible)
+
+    def test_find_exposes_none_for_null_three_d_secure_info(self):
+        transaction = Transaction.find("settledtransaction")
+        three_d_secure_info = transaction.three_d_secure_info
+
+        self.assertEquals(None, three_d_secure_info)
+
     def test_find_exposes_retrievals(self):
         transaction = Transaction.find("retrievaltransaction")
         dispute = transaction.disputes[0]

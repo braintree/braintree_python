@@ -1,3 +1,6 @@
+## 3.14.0
+* Add 3DS server side fields
+
 ## 3.13.0
 * Add attribute to customer
 * Add coinbase constant
