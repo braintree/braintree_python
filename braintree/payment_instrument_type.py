@@ -5,3 +5,4 @@ class PaymentInstrumentType():
     CreditCard = "credit_card"
     CoinbaseAccount = "coinbase_account"
     ApplePayCard = "apple_pay_card"
+    CoinbaseAccount = "coinbase_account"
