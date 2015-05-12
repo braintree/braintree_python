@@ -4,6 +4,7 @@ from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
 from braintree.coinbase_account import CoinbaseAccount
+from braintree.android_pay_card import AndroidPayCard
 from braintree.disbursement_detail import DisbursementDetail
 from braintree.dispute import Dispute
 from braintree.discount import Discount
@@ -24,6 +25,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.payment_instrument_type import PaymentInstrumentType
 
 class Transaction(Resource):
     """
@@ -502,6 +504,8 @@ class Transaction(Resource):
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
         if "coinbase_account" in attributes:
             self.coinbase_details = CoinbaseAccount(gateway, attributes.pop("coinbase_account"))
+        if "android_pay_card" in attributes:
+            self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

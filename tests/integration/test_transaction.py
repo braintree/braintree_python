@@ -756,6 +756,21 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(int(apple_pay_details.expiration_year) > 0)
         self.assertNotEqual(None, apple_pay_details.cardholder_name)
 
+    def test_sale_with_fake_android_pay_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.AndroidPayCard
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.AndroidPayCard)
+        android_pay_card_details = result.transaction.android_pay_card_details
+        self.assertNotEqual(None, android_pay_card_details)
+        self.assertEqual(CreditCard.CardType.Discover, android_pay_card_details.card_type)
+        self.assertTrue(int(android_pay_card_details.expiration_month) > 0)
+        self.assertTrue(int(android_pay_card_details.expiration_year) > 0)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
