@@ -94,8 +94,16 @@ class TestWebhooks(unittest.TestCase):
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     def test_verify_returns_a_correct_challenge_response(self):
-        response = WebhookNotification.verify("verification_token")
-        self.assertEquals("integration_public_key|c9f15b74b0d98635cd182c51e2703cffa83388c3", response)
+        response = WebhookNotification.verify("20f9f8ed05f77439fe955c977e4c8a53")
+        self.assertEquals("integration_public_key|d9b899556c966b3f06945ec21311865d35df3ce4", response)
+
+    def test_verify_raises_when_challenge_is_invalid(self):
+        try:
+            WebhookNotification.verify("goodbye cruel world")
+        except InvalidChallengeError as e:
+            self.assertEquals("challenge contains non-hex characters", str(e))
+        else:
+            self.assertFalse("raises exception")
 
     def test_builds_notification_for_approved_sub_merchant_account(self):
         sample_notification = WebhookTesting.sample_notification(
