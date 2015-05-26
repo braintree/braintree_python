@@ -99,7 +99,7 @@ class TestWebhooks(unittest.TestCase):
 
     def test_verify_raises_when_challenge_is_invalid(self):
         try:
-            WebhookNotification.verify("goodbye cruel world")
+            WebhookNotification.verify("bad challenge")
         except InvalidChallengeError as e:
             self.assertEquals("challenge contains non-hex characters", str(e))
         else:
