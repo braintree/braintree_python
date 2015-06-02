@@ -1,3 +1,6 @@
+## 3.15.0
+* Validate webhook challenge payload
+
 ## 3.14.0
 * Add 3DS server side fields
 
