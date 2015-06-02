@@ -2,6 +2,7 @@ import re
 import base64
 import sys
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
+from braintree.exceptions.invalid_challenge_error import InvalidChallengeError
 from braintree.util.crypto import Crypto
 from braintree.util.xml_util import XmlUtil
 from braintree.webhook_notification import WebhookNotification
@@ -26,6 +27,8 @@ class WebhookNotificationGateway(object):
         return WebhookNotification(self.gateway, attributes['notification'])
 
     def verify(self, challenge):
+        if not re.match("^[a-f0-9]{20,32}$", challenge):
+            raise InvalidChallengeError("challenge contains non-hex characters")
         digest = Crypto.sha1_hmac_hash(self.config.private_key, challenge)
         return "%s|%s" % (self.config.public_key, digest)
 

@@ -27,21 +27,14 @@ class TestSettlementBatchSummary(unittest.TestCase):
             "options": {"submit_for_settlement": True}
         })
 
-        TestHelper.settle_transaction(result.transaction.id)
+        result = TestHelper.settle_transaction(result.transaction.id)
+        settlement_date = result.transaction.settlement_batch_id.split('_')[0]
 
-        succesfully_match_amount_settled = False
-        for offset in self.possible_gateway_time_zone_offsets:
-            result = SettlementBatchSummary.generate(TestHelper.now_minus_offset(offset))
-            self.assertTrue(result.is_success)
-
-            visa_records = [row for row in result.settlement_batch_summary.records if row['card_type'] == 'Visa'][0]
-            count = int(visa_records['count'])
-
-            succesfully_match_amount_settled = float(visa_records['amount_settled']) == float(TransactionAmounts.Authorize) * count
-            if succesfully_match_amount_settled: break
-
-        self.assertTrue(count >= 1)
-        self.assertTrue(succesfully_match_amount_settled)
+        result = SettlementBatchSummary.generate(settlement_date)
+        self.assertTrue(result.is_success)
+        visa_records = [row for row in result.settlement_batch_summary.records if row['card_type'] == 'Visa'][0]
+        count = int(visa_records['count'])
+        self.assertEquals(float(visa_records['amount_settled']), float(TransactionAmounts.Authorize) * count)
 
     def test_generate_can_be_grouped_by_a_custom_field(self):
         result = Transaction.sale({
@@ -57,12 +50,9 @@ class TestSettlementBatchSummary(unittest.TestCase):
             }
         })
 
-        TestHelper.settle_transaction(result.transaction.id)
+        result = TestHelper.settle_transaction(result.transaction.id)
+        settlement_date = result.transaction.settlement_batch_id.split('_')[0]
 
-        for offset in self.possible_gateway_time_zone_offsets:
-            result = SettlementBatchSummary.generate(TestHelper.now_minus_offset(offset), 'store_me')
-            self.assertTrue(result.is_success)
-
-            if len(result.settlement_batch_summary.records) > 0: break
-
+        result = SettlementBatchSummary.generate(settlement_date, 'store_me')
+        self.assertTrue(result.is_success)
         self.assertTrue('store_me' in result.settlement_batch_summary.records[0])
