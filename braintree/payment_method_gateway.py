@@ -5,6 +5,7 @@ from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.coinbase_account import CoinbaseAccount
+from braintree.android_pay_card import AndroidPayCard
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
@@ -74,6 +75,8 @@ class PaymentMethodGateway(object):
             return EuropeBankAccount(self.gateway, response["europe_bank_account"])
         elif "apple_pay_card" in response:
             return ApplePayCard(self.gateway, response["apple_pay_card"])
+        elif "android_pay_card" in response:
+            return AndroidPayCard(self.gateway, response["android_pay_card"])
         elif "coinbase_account" in response:
             return CoinbaseAccount(self.gateway, response["coinbase_account"])
         else:

@@ -88,6 +88,13 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertNotEqual(None, customer.apple_pay_cards[0])
 
+    def test_create_with_android_pay_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCard})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
+
     def test_create_with_paypal_future_payments_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
         self.assertTrue(result.is_success)
@@ -658,11 +665,12 @@ class TestCustomer(unittest.TestCase):
             "credit_cards": [ {"token": "credit_card"} ],
             "paypal_accounts": [ {"token": "paypal_account"} ],
             "apple_pay_cards": [ {"token": "apple_pay_card"} ],
+            "android_pay_cards": [ {"token": "android_pay_card"} ],
             "europe_bank_accounts": [ {"token": "europe_bank_account"} ],
             "coinbase_accounts": [ {"token": "coinbase_account"} ]
             })
 
         payment_method_tokens = map(lambda payment_method: payment_method.token, customer.payment_methods)
 
-        self.assertEqual(sorted(payment_method_tokens), ["apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
+        self.assertEqual(sorted(payment_method_tokens), ["android_pay_card", "apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
 

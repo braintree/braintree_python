@@ -1,3 +1,6 @@
+## 3.16.0
+* Add support for Android Pay
+
 ## 3.15.0
 * Validate webhook challenge payload
 
