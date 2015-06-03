@@ -185,7 +185,8 @@ class TestTransactionSearch(unittest.TestCase):
             "shipping_locality": "Braintree",
             "shipping_postal_code": "54321",
             "shipping_region": "MA",
-            "shipping_street_address": "456 Road"
+            "shipping_street_address": "456 Road",
+            "user": "integration_user_public_id"
         }
 
         for criterion, value in search_criteria.items():

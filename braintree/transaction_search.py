@@ -45,7 +45,8 @@ class TransactionSearch:
 
     credit_card_expiration_date  = Search.EqualityNodeBuilder("credit_card_expiration_date")
     credit_card_number           = Search.PartialMatchNodeBuilder("credit_card_number")
-
+    
+    user                         = Search.MultipleValueNodeBuilder("user")
     ids                          = Search.MultipleValueNodeBuilder("ids")
     merchant_account_id          = Search.MultipleValueNodeBuilder("merchant_account_id")
 
