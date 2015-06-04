@@ -187,7 +187,8 @@ class TestTransactionSearch(unittest.TestCase):
             "shipping_postal_code": "54321",
             "shipping_region": "MA",
             "shipping_street_address": "456 Road",
-            "user": "integration_user_public_id"
+            "user": "integration_user_public_id",
+            "credit_card_unique_identifier": transaction.credit_card["unique_number_identifier"]
         }
 
         for criterion, value in search_criteria.items():

@@ -42,6 +42,7 @@ class TransactionSearch:
     paypal_payer_email           = Search.TextNodeBuilder("paypal_payer_email")
     paypal_payment_id            = Search.TextNodeBuilder("paypal_payment_id")
     paypal_authorization_id      = Search.TextNodeBuilder("paypal_authorization_id")
+    credit_card_unique_identifier = Search.TextNodeBuilder("credit_card_unique_identifier")
 
     credit_card_expiration_date  = Search.EqualityNodeBuilder("credit_card_expiration_date")
     credit_card_number           = Search.PartialMatchNodeBuilder("credit_card_number")
