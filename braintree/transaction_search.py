@@ -49,11 +49,13 @@ class TransactionSearch:
     user                         = Search.MultipleValueNodeBuilder("user")
     ids                          = Search.MultipleValueNodeBuilder("ids")
     merchant_account_id          = Search.MultipleValueNodeBuilder("merchant_account_id")
+    payment_instrument_type      = Search.MultipleValueNodeBuilder("payment_instrument_type")
 
     created_using = Search.MultipleValueNodeBuilder(
         "created_using",
         Constants.get_all_constant_values_from_class(Transaction.CreatedUsing)
     )
+
 
     credit_card_card_type = Search.MultipleValueNodeBuilder(
         "credit_card_card_type",
