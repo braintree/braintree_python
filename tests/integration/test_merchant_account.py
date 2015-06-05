@@ -1,4 +1,3 @@
-import copy
 from tests.test_helper import *
 
 class TestMerchantAccount(unittest.TestCase):
@@ -102,26 +101,22 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEquals(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")[0].code)
 
     def test_create_funding_destination_accepts_a_bank(self):
-        params = copy.deepcopy(self.VALID_APPLICATION_PARAMS)
+        params = self.VALID_APPLICATION_PARAMS.copy()
         params['funding']['destination'] = MerchantAccount.FundingDestination.Bank
         result = MerchantAccount.create(params)
         self.assertTrue(result.is_success)
 
     def test_create_funding_destination_accepts_an_email(self):
-        params = copy.deepcopy(self.VALID_APPLICATION_PARAMS)
+        params = self.VALID_APPLICATION_PARAMS.copy()
         params['funding']['destination'] = MerchantAccount.FundingDestination.Email
         params['funding']['email'] = "junkman@hotmail.com"
-        del params['funding']['account_number']
-        del params['funding']['routing_number']
         result = MerchantAccount.create(params)
         self.assertTrue(result.is_success)
 
     def test_create_funding_destination_accepts_a_mobile_phone(self):
-        params = copy.deepcopy(self.VALID_APPLICATION_PARAMS)
+        params = self.VALID_APPLICATION_PARAMS.copy()
         params['funding']['destination'] = MerchantAccount.FundingDestination.MobilePhone
         params['funding']['mobile_phone'] = "1112223333"
-        del params['funding']['account_number']
-        del params['funding']['routing_number']
         result = MerchantAccount.create(params)
         self.assertTrue(result.is_success)
 
