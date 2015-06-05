@@ -38,6 +38,13 @@ class TestTransaction(unittest.TestCase):
         except NotFoundError as e:
             self.assertTrue(True)
 
+    def test_finding_none_raises_not_found_exception(self):
+        try:
+            Transaction.find(None)
+            self.assertTrue(False)
+        except NotFoundError as e:
+            self.assertTrue(True)
+
     def test_constructor_includes_disbursement_information(self):
         attributes = {
             'amount': '27.00',

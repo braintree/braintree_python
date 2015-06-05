@@ -24,7 +24,7 @@ class MerchantAccountGateway(object):
             response = self.config.http().get("/merchant_accounts/" + merchant_account_id)
             return MerchantAccount(self.gateway, response["merchant_account"])
         except NotFoundError:
-            raise NotFoundError("merchant account with id " + merchant_account_id + " not found")
+            raise NotFoundError("merchant account with id " + repr(merchant_account_id) + " not found")
 
     def _post(self, url, params={}):
         response = self.config.http().post(url, params)

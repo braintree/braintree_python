@@ -16,7 +16,7 @@ class CreditCardVerificationGateway(object):
             response = self.config.http().get("/verifications/" + verification_id)
             return CreditCardVerification(self.gateway, response["verification"])
         except NotFoundError:
-            raise NotFoundError("Verification with id " + verification_id + " not found")
+            raise NotFoundError("Verification with id " + repr(verification_id) + " not found")
 
     def __criteria(self, query):
         criteria = {}

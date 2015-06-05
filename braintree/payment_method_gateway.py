@@ -31,7 +31,7 @@ class PaymentMethodGateway(object):
             response = self.config.http().get("/payment_methods/any/" + payment_method_token)
             return self._parse_payment_method(response)
         except NotFoundError:
-            raise NotFoundError("payment method with token " + payment_method_token + " not found")
+            raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
     def update(self, payment_method_token, params):
         Resource.verify_keys(params, PaymentMethod.update_signature())
@@ -44,7 +44,7 @@ class PaymentMethodGateway(object):
                 {"payment_method": params}
             )
         except NotFoundError:
-            raise NotFoundError("payment method with token " + payment_method_token + " not found")
+            raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
     def delete(self, payment_method_token):
         self.config.http().delete("/payment_methods/any/" + payment_method_token)

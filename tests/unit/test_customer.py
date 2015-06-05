@@ -50,6 +50,13 @@ class TestCustomer(unittest.TestCase):
         except NotFoundError as e:
             self.assertTrue(True)
 
+    def test_finding_none_raises_not_found_exception(self):
+        try:
+            Customer.find(None)
+            self.assertTrue(False)
+        except NotFoundError as e:
+            self.assertTrue(True)
+
     def test_initialize_sets_paypal_accounts(self):
         customer = Customer("gateway", {
             "paypal_accounts": [

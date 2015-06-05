@@ -35,7 +35,7 @@ class AddressGateway(object):
             response = self.config.http().get("/customers/" + customer_id + "/addresses/" + address_id)
             return Address(self.gateway, response["address"])
         except NotFoundError:
-            raise NotFoundError("address for customer " + customer_id + " with id " + address_id + " not found")
+            raise NotFoundError("address for customer " + repr(customer_id) + " with id " + repr(address_id) + " not found")
 
     def update(self, customer_id, address_id, params={}):
         Resource.verify_keys(params, Address.update_signature())

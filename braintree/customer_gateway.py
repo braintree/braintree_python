@@ -36,7 +36,7 @@ class CustomerGateway(object):
             response = self.config.http().get("/customers/" + customer_id)
             return Customer(self.gateway, response["customer"])
         except NotFoundError:
-            raise NotFoundError("customer with id " + customer_id + " not found")
+            raise NotFoundError("customer with id " + repr(customer_id) + " not found")
 
     def search(self, *query):
         if isinstance(query[0], list):

@@ -1261,7 +1261,7 @@ class TestTransaction(unittest.TestCase):
             Transaction.find("notreal")
             self.assertTrue(False)
         except NotFoundError as e:
-            self.assertEquals("transaction with id notreal not found", str(e))
+            self.assertEquals("transaction with id 'notreal' not found", str(e))
 
     def test_void_with_successful_result(self):
         transaction = Transaction.sale({

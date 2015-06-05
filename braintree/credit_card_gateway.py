@@ -43,7 +43,7 @@ class CreditCardGateway(object):
             response = self.config.http().get("/payment_methods/credit_card/" + credit_card_token)
             return CreditCard(self.gateway, response["credit_card"])
         except NotFoundError:
-            raise NotFoundError("payment method with token " + credit_card_token + " not found")
+            raise NotFoundError("payment method with token " + repr(credit_card_token) + " not found")
 
     def forward(self, credit_card_token, receiving_merchant_id):
         forwardParams = {

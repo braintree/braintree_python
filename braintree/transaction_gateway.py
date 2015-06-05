@@ -39,7 +39,7 @@ class TransactionGateway(object):
             response = self.config.http().get("/transactions/" + transaction_id)
             return Transaction(self.gateway, response["transaction"])
         except NotFoundError:
-            raise NotFoundError("transaction with id " + transaction_id + " not found")
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
 
     def hold_in_escrow(self, transaction_id):
         """
