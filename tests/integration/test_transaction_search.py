@@ -1,5 +1,4 @@
 from tests.test_helper import *
-from braintree.test.nonces import Nonces
 
 class TestTransactionSearch(unittest.TestCase):
     def test_advanced_search_no_results(self):

@@ -57,7 +57,6 @@ class TransactionSearch:
         Constants.get_all_constant_values_from_class(Transaction.CreatedUsing)
     )
 
-
     credit_card_card_type = Search.MultipleValueNodeBuilder(
         "credit_card_card_type",
         Constants.get_all_constant_values_from_class(CreditCard.CardType)

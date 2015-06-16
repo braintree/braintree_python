@@ -21,6 +21,7 @@ from nose.tools import raises
 from random import randint
 from contextlib import contextmanager
 from base64 import b64decode
+from braintree.test.nonces import Nonces
 
 Configuration.configure(
     Environment.Development,
