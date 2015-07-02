@@ -186,6 +186,16 @@ class TestHelper(object):
         status_code, nonce = client.get_paypal_nonce(paypal_account_details)
         return nonce
 
+    @staticmethod
+    def create_grant(gateway, params):
+        config = gateway.config
+        response = config.http().post("/oauth_testing/grants", {
+            "grant": params
+        })
+
+        return response["grant"]["code"]
+
+
 class ClientApiHttp(Http):
     def __init__(self, config, options):
         self.config = config
