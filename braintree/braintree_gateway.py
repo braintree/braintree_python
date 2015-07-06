@@ -25,7 +25,13 @@ class BraintreeGateway(object):
         if type(config) == Configuration:
             self.config = config
         else:
-            self.config = Configuration(kwargs.get("environment"), None, kwargs.get("client_id"), kwargs.get("client_secret"))
+            self.config = Configuration(
+                kwargs.get("environment"),
+                None,
+                client_id=kwargs.get("client_id"),
+                client_secret=kwargs.get("client_secret"),
+                access_token=kwargs.get("access_token")
+            )
         self.add_on = AddOnGateway(self)
         self.address = AddressGateway(self)
         self.client_token = ClientTokenGateway(self)

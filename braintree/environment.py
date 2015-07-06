@@ -11,7 +11,8 @@ class Environment(object):
         braintree.Environment.Production
     """
 
-    def __init__(self, server, port, auth_url, is_ssl, ssl_certificate):
+    def __init__(self, name, server, port, auth_url, is_ssl, ssl_certificate):
+        self.__name__ = name
         self.__server = server
         self.__port = port
         self.is_ssl = is_ssl
@@ -46,7 +47,10 @@ class Environment(object):
     def braintree_root():
         return os.path.dirname(inspect.getfile(Environment))
 
-Environment.Development = Environment("localhost", os.getenv("GATEWAY_PORT") or "3000", "http://auth.venmo.dev:9292", False, None)
-Environment.QA = Environment("gateway.qa.braintreepayments.com", "443", "http://auth.qa.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
-Environment.Sandbox = Environment("api.sandbox.braintreegateway.com", "443", "https://auth.sandbox.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
-Environment.Production = Environment("api.braintreegateway.com", "443", "https://auth.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
+    def __str__(self):
+        return self.__name__
+
+Environment.Development = Environment("development", "localhost", os.getenv("GATEWAY_PORT") or "3000", "http://auth.venmo.dev:9292", False, None)
+Environment.QA = Environment("qa", "gateway.qa.braintreepayments.com", "443", "http://auth.qa.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
+Environment.Sandbox = Environment("sandbox", "api.sandbox.braintreegateway.com", "443", "https://auth.sandbox.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
+Environment.Production = Environment("production", "api.braintreegateway.com", "443", "https://auth.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")

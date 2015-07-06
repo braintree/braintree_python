@@ -7,6 +7,7 @@ from braintree.apple_pay_card import ApplePayCard
 from braintree.braintree_gateway import BraintreeGateway
 from braintree.client_token import ClientToken
 from braintree.configuration import Configuration
+from braintree.credentials_parser import CredentialsParser
 from braintree.credit_card import CreditCard
 from braintree.credit_card_gateway import CreditCardGateway
 from braintree.credit_card_verification import CreditCardVerification

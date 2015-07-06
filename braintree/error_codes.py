@@ -283,6 +283,13 @@ class ErrorCodes(object):
             MobilePhoneIsInvalid = "82683"
             MobilePhoneIsRequired = "82682"
 
+    class OAuth(object):
+        InvalidGrant = "93801"
+        InvalidCredentials = "93802"
+        InvalidScope = "93803"
+        InvalidRequest = "93804"
+        UnsupportedGrantType = "93805"
+
     class PaymentMethod(object):
         CannotForwardPaymentMethodType = "93106"
         PaymentMethodParamsAreRequired = "93101"

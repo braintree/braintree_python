@@ -109,11 +109,20 @@ class Http(object):
             return requests.delete
 
     def __authorization_header(self):
-        return b"Basic " + encodebytes(
-                    self.config.public_key.encode('ascii') +
-                    b":" +
-                    self.config.private_key.encode('ascii')
-                ).replace(b"\n", b"").strip()
+        if self.config.has_client_credentials():
+            return b"Basic " + encodebytes(
+                        self.config.client_id.encode('ascii') +
+                        b":" +
+                        self.config.client_secret.encode('ascii')
+                    ).replace(b"\n", b"").strip()
+        elif self.config.has_access_token():
+            return b"Bearer " + encodebytes(self.config.access_token.encode('ascii'))
+        else:
+            return b"Basic " + encodebytes(
+                        self.config.public_key.encode('ascii') +
+                        b":" +
+                        self.config.private_key.encode('ascii')
+                    ).replace(b"\n", b"").strip()
 
     def __headers(self):
         return {

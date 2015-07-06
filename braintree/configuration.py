@@ -1,6 +1,8 @@
 import os
 import sys
 import braintree
+from braintree.exceptions.configuration_error import ConfigurationError
+from braintree.credentials_parser import CredentialsParser
 
 class Configuration(object):
     """
@@ -25,12 +27,12 @@ class Configuration(object):
         Configuration.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
 
     @staticmethod
-    def for_partner(environment, partner_id, public_key, private_key, **kwargs):
+    def for_partner(environment, partner_id, client_id, client_secret, **kwargs):
         return Configuration(
             environment=environment,
             merchant_id=partner_id,
-            public_key=public_key,
-            private_key=private_key,
+            client_id=client_id,
+            client_secret=client_secret,
             http_strategy=kwargs.get("http_strategy", None),
             timeout=kwargs.get("timeout", 60),
             wrap_http_exceptions=kwargs.get("wrap_http_exceptions", False)
@@ -56,11 +58,23 @@ class Configuration(object):
     def api_version():
         return "4"
 
-    def __init__(self, environment, merchant_id, public_key, private_key, **kwargs):
-        self.environment = environment
+    def __init__(self, environment, merchant_id, public_key=None, private_key=None,
+            client_id=None, client_secret=None, access_token=None, **kwargs):
+        parser = CredentialsParser(client_id=client_id, client_secret=client_secret, access_token=access_token)
+        if parser.access_token is not None:
+            parser.parse_access_token()
+            self.environment = parser.environment
+        elif (parser.client_id is not None and parser.client_secret is not None):
+            parser.parse_client_credentials()
+            self.environment = parser.environment
+        else:
+            self.environment = environment
         self.merchant_id = merchant_id
         self.public_key = public_key
         self.private_key = private_key
+        self.client_id = parser.client_id
+        self.client_secret = parser.client_secret
+        self.access_token = parser.access_token
         self.timeout = kwargs.get("timeout", 60)
         self.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
 
@@ -82,3 +96,13 @@ class Configuration(object):
 
     def http_strategy(self):
         return self._http_strategy
+
+    def has_client_credentials(self):
+        return self.client_secret is not None and self.client_id is not None
+
+    def assert_has_client_credentials(self):
+        if not self.has_client_credentials():
+            raise ConfigurationError("client_id and client_secret are required")
+
+    def has_access_token(self):
+        return self.access_token is not None
