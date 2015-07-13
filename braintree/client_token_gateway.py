@@ -14,7 +14,7 @@ class ClientTokenGateway(object):
             Resource.verify_keys(params, ClientToken.generate_signature())
             params = {'client_token': params}
 
-        response = self.config.http().post("/client_token", params)
+        response = self.config.http().post(self.config.base_merchant_path() + "/client_token", params)
 
         if "client_token" in response:
             return response["client_token"]["value"]

@@ -181,7 +181,7 @@ class ErrorCodes(object):
         EmailFormatIsInvalid = "93602"
         EmailIsRequired = "83601"
         InconsistentCountry = "93612"
-
+        PaymentMethodsAreInvalid = "93613"
 
     class MerchantAccount(object):
         IdFormatIsInvalid = "82603"

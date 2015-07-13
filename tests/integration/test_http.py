@@ -11,7 +11,7 @@ class TestHttp(unittest.TestCase):
         SSLError = requests.models.SSLError
 
     def get_http(self, environment):
-        config = Configuration(environment, "merchant_id", "public_key", "private_key")
+        config = Configuration(environment, "merchant_id", public_key="public_key", private_key="private_key")
         return config.http()
 
     def test_successful_connection_sandbox(self):
@@ -34,10 +34,10 @@ class TestHttp(unittest.TestCase):
 
     def test_wrapping_http_exceptions(self):
         config = Configuration(
-            Environment("localhost", "1", False, None, Environment.Production.ssl_certificate),
+            Environment("test", "localhost", "1", False, None, Environment.Production.ssl_certificate),
             "integration_merchant_id",
-            "integration_public_key",
-            "integration_private_key",
+            public_key="integration_public_key",
+            private_key="integration_private_key",
             wrap_http_exceptions=True
         )
 
@@ -56,7 +56,7 @@ class TestHttp(unittest.TestCase):
         if platform.system() == "Darwin":
             return
 
-        environment = Environment("www.google.com", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
+        environment = Environment("test", "www.google.com", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -69,7 +69,7 @@ class TestHttp(unittest.TestCase):
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
         #ip address of api.braintreegateway.com
-        environment = Environment("204.109.13.121", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
+        environment = Environment("test", "204.109.13.121", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
@@ -82,8 +82,8 @@ class TestHttp(unittest.TestCase):
         config = Configuration(
             Environment.Development,
             "integration_merchant_id",
-            "integration_public_key",
-            "integration_private_key",
+            public_key="integration_public_key",
+            private_key="integration_private_key",
             wrap_http_exceptions=True,
             timeout=0.001
         )

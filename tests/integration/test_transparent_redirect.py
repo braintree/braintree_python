@@ -16,7 +16,7 @@ class TestTransparentRedirect(unittest.TestCase):
             "credit_card[expiration_date]": "05/2012",
         }
 
-        query_string = TestHelper.simulate_tr_form_post(post_params, Configuration.instantiate().base_merchant_url() + "/test/maintenance")
+        query_string = TestHelper.simulate_tr_form_post(post_params, Configuration.instantiate().base_merchant_path() + "/test/maintenance")
         CreditCard.confirm_transparent_redirect(query_string)
 
     @raises(AuthenticationError)

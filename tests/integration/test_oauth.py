@@ -148,3 +148,26 @@ class TestOAuthGateway(unittest.TestCase):
 
         self.assertEqual(params["user[country]"], ["USA"])
         self.assertEqual(params["business[name]"], ["14 Ladders"])
+        self.assertEqual(params["payment_methods[]"], ["credit_card", "paypal"])
+
+    def test_connect_url_limits_payment_methods(self):
+        gateway = BraintreeGateway(
+            client_id = "client_id$development$integration_client_id",
+            client_secret = "client_secret$development$integration_client_secret",
+            environment = Environment.Development
+        )
+
+        connect_url = gateway.oauth.connect_url({
+             "merchant_id": "integration_merchant_id",
+             "redirect_uri": "http://bar.example.com",
+             "scope": "read_write",
+             "state": "baz_state",
+            "payment_methods": ["credit_card"]
+        })
+        query_string = urlparse.urlparse(connect_url)[4]
+        params = urlparse.parse_qs(query_string)
+
+        self.assertEqual(params["merchant_id"], ["integration_merchant_id"])
+        self.assertEqual(params["client_id"], ["client_id$development$integration_client_id"])
+        self.assertEqual(params["redirect_uri"], ["http://bar.example.com"])
+        self.assertEqual(params["payment_methods[]"], ["credit_card"])

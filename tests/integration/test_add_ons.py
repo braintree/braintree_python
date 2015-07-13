@@ -13,7 +13,7 @@ class TestAddOn(unittest.TestCase):
             "number_of_billing_cycles": 1
         }
 
-        Configuration.instantiate().http().post("/modifications/create_modification_for_tests", {"modification": attributes})
+        Configuration.instantiate().http().post(Configuration.instantiate().base_merchant_path() + "/modifications/create_modification_for_tests", {"modification": attributes})
 
         add_ons = AddOn.all()
 

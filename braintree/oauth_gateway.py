@@ -41,7 +41,6 @@ class OAuthGateway(object):
                 accumulator += [(key, value)]
             return accumulator
 
-        print params.items()
         params = reduce(clean_values, params.items(), [])
         query = params + user_params + business_params
         query_string = "&".join(map(lambda (k, v): quote_plus(k) + "=" + quote_plus(v), query))

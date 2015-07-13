@@ -22,6 +22,7 @@ from braintree.error_codes import ErrorCodes
 from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.environment import Environment
+from braintree.merchant import Merchant
 from braintree.merchant_account import MerchantAccount
 from braintree.merchant_account.business_details import BusinessDetails
 from braintree.merchant_account.funding_details import FundingDetails

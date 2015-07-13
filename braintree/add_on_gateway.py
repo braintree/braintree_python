@@ -8,6 +8,6 @@ class AddOnGateway(object):
         self.config = gateway.config
 
     def all(self):
-        response = self.config.http().get("/add_ons/")
+        response = self.config.http().get(self.config.base_merchant_path() + "/add_ons/")
         add_ons = {"add_on": response["add_ons"]}
         return [AddOn(self.gateway, item) for item in ResourceCollection._extract_as_array(add_ons, "add_on")]

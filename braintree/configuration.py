@@ -27,12 +27,12 @@ class Configuration(object):
         Configuration.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
 
     @staticmethod
-    def for_partner(environment, partner_id, client_id, client_secret, **kwargs):
+    def for_partner(environment, partner_id, public_key, private_key, **kwargs):
         return Configuration(
             environment=environment,
             merchant_id=partner_id,
-            client_id=client_id,
-            client_secret=client_secret,
+            public_key=public_key,
+            private_key=private_key,
             http_strategy=kwargs.get("http_strategy", None),
             timeout=kwargs.get("timeout", 60),
             wrap_http_exceptions=kwargs.get("wrap_http_exceptions", False)
@@ -40,7 +40,7 @@ class Configuration(object):
 
     @staticmethod
     def gateway():
-        return braintree.braintree_gateway.BraintreeGateway(Configuration.instantiate())
+        return braintree.braintree_gateway.BraintreeGateway(config=Configuration.instantiate())
 
     @staticmethod
     def instantiate():
@@ -59,17 +59,23 @@ class Configuration(object):
         return "4"
 
     def __init__(self, environment, merchant_id, public_key=None, private_key=None,
-            client_id=None, client_secret=None, access_token=None, **kwargs):
+            client_id=None, client_secret=None, access_token=None, *args, **kwargs):
+        if len(args) == 2:
+            public_key, private_key = args
+
         parser = CredentialsParser(client_id=client_id, client_secret=client_secret, access_token=access_token)
         if parser.access_token is not None:
             parser.parse_access_token()
             self.environment = parser.environment
+            self.merchant_id = parser.merchant_id
         elif (parser.client_id is not None and parser.client_secret is not None):
             parser.parse_client_credentials()
             self.environment = parser.environment
+            self.merchant_id = merchant_id
         else:
             self.environment = environment
-        self.merchant_id = merchant_id
+            self.merchant_id = merchant_id
+
         self.public_key = public_key
         self.private_key = private_key
         self.client_id = parser.client_id
@@ -88,8 +94,8 @@ class Configuration(object):
     def base_merchant_path(self):
         return "/merchants/" + self.merchant_id
 
-    def base_merchant_url(self):
-        return self.environment.protocol + self.environment.server_and_port + self.base_merchant_path()
+    def base_url(self):
+        return self.environment.protocol + self.environment.server_and_port
 
     def http(self):
         return braintree.util.http.Http(self)

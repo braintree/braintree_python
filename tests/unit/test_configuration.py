@@ -39,10 +39,10 @@ class TestConfiguration(unittest.TestCase):
 
     def test_configuration_construction_for_partner(self):
         config = Configuration.for_partner(
-            environment=braintree.Environment.Sandbox,
-            partner_id='my_partner_id',
-            public_key='public_key',
-            private_key='private_key'
+            braintree.Environment.Sandbox,
+            'my_partner_id',
+            'public_key',
+            'private_key'
         )
         self.assertEqual(config.merchant_id, 'my_partner_id')
         self.assertEqual(config.public_key, 'public_key')

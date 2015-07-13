@@ -61,8 +61,10 @@ class Http(object):
         http_strategy = self.config.http_strategy()
         request_body = XmlUtil.xml_from_dict(params) if params else ''
 
+        full_path = path if path.startswith(self.config.base_url()) else (self.config.base_url() + path)
+
         try:
-            status, response_body = http_strategy.http_do(http_verb, path, self.__headers(), request_body)
+            status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
         except Exception as e:
             if self.config.wrap_http_exceptions:
                 http_strategy.handle_exception(e)
@@ -79,7 +81,7 @@ class Http(object):
 
     def http_do(self, http_verb, path, headers, request_body):
         response = self.__request_function(http_verb)(
-            self.environment.base_url + path,
+            path if path.startswith(self.config.base_url()) else self.config.base_url() + path,
             headers=headers,
             data=request_body,
             verify=self.environment.ssl_certificate,

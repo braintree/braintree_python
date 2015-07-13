@@ -18,7 +18,7 @@ class TransactionGateway(object):
         return self._post("/transactions/" + transaction_id + "/clone", {"transaction-clone": params})
 
     def cancel_release(self, transaction_id):
-        response = self.config.http().put("/transactions/" + transaction_id + "/cancel_release", {})
+        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/cancel_release", {})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
@@ -36,7 +36,7 @@ class TransactionGateway(object):
         try:
             if transaction_id == None or transaction_id.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get("/transactions/" + transaction_id)
+            response = self.config.http().get(self.config.base_merchant_path() + "/transactions/" + transaction_id)
             return Transaction(self.gateway, response["transaction"])
         except NotFoundError:
             raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
@@ -48,7 +48,7 @@ class TransactionGateway(object):
             result = braintree.Transaction.hold_in_escrow("my_transaction_id")
         """
 
-        response = self.config.http().put("/transactions/" + transaction_id + "/hold_in_escrow", {})
+        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/hold_in_escrow", {})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
@@ -61,7 +61,7 @@ class TransactionGateway(object):
             result = braintree.Transaction.refund("my_transaction_id")
         """
 
-        response = self.config.http().post("/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
+        response = self.config.http().post(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/refund", {"transaction": {"amount": amount}})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
@@ -71,21 +71,21 @@ class TransactionGateway(object):
         if isinstance(query[0], list):
             query = query[0]
 
-        response = self.config.http().post("/transactions/advanced_search_ids", {"search": self.__criteria(query)})
+        response = self.config.http().post(self.config.base_merchant_path() + "/transactions/advanced_search_ids", {"search": self.__criteria(query)})
         if "search_results" in response:
             return ResourceCollection(query, response, self.__fetch)
         else:
             raise DownForMaintenanceError("search timeout")
 
     def release_from_escrow(self, transaction_id):
-        response = self.config.http().put("/transactions/" + transaction_id + "/release_from_escrow", {})
+        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/release_from_escrow", {})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def submit_for_settlement(self, transaction_id, amount=None):
-        response = self.config.http().put("/transactions/" + transaction_id + "/submit_for_settlement",
+        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/submit_for_settlement",
                 {"transaction": {"amount": amount}})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
@@ -109,10 +109,10 @@ class TransactionGateway(object):
         return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
 
     def transparent_redirect_create_url(self):
-        return self.config.base_merchant_url() + "/transactions/all/create_via_transparent_redirect_request"
+        return self.config.base_url() + self.config.base_merchant_path() + "/transactions/all/create_via_transparent_redirect_request"
 
     def void(self, transaction_id):
-        response = self.config.http().put("/transactions/" + transaction_id + "/void")
+        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/void")
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
@@ -121,7 +121,7 @@ class TransactionGateway(object):
     def __fetch(self, query, ids):
         criteria = self.__criteria(query)
         criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
-        response = self.config.http().post("/transactions/advanced_search", {"search": criteria})
+        response = self.config.http().post(self.config.base_merchant_path() + "/transactions/advanced_search", {"search": criteria})
         return [Transaction(self.gateway, item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
 
     def __criteria(self, query):
@@ -134,7 +134,7 @@ class TransactionGateway(object):
         return criteria
 
     def _post(self, url, params={}):
-        response = self.config.http().post(url, params)
+        response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
