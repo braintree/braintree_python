@@ -1618,7 +1618,7 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
         return transaction
 
-    def __create_paypal_transaction_to_refund(self):
+    def __create_paypal_transaction(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "payment_method_nonce": Nonces.PayPalOneTimePayment,
@@ -2317,7 +2317,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(void_transaction.status, Transaction.Status.Voided)
 
     def test_paypal_transaction_successful_refund(self):
-        transaction = self.__create_paypal_transaction_to_refund()
+        transaction = self.__create_paypal_transaction()
 
         result = Transaction.refund(transaction.id)
 
@@ -2331,7 +2331,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
 
     def test_paypal_transaction_successful_partial_refund(self):
-        transaction = self.__create_paypal_transaction_to_refund()
+        transaction = self.__create_paypal_transaction()
 
         result = Transaction.refund(transaction.id, Decimal("500.00"))
 
@@ -2340,7 +2340,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Decimal("500.00"), result.transaction.amount)
 
     def test_paypal_transaction_multiple_successful_partial_refunds(self):
-        transaction = self.__create_paypal_transaction_to_refund()
+        transaction = self.__create_paypal_transaction()
 
         refund1 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
         self.assertEquals(Transaction.Type.Credit, refund1.type)
@@ -2357,7 +2357,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
 
     def test_paypal_transaction_returns_required_fields(self):
-        transaction = Transaction.find("settledtransaction")
+        transaction = self.__create_paypal_transaction()
 
         self.assertNotEquals(None, transaction.paypal_details.debug_id)
         self.assertNotEquals(None, transaction.paypal_details.payer_email)
@@ -2367,10 +2367,12 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEquals(None, transaction.paypal_details.payer_last_name)
         self.assertNotEquals(None, transaction.paypal_details.seller_protection_status)
         self.assertNotEquals(None, transaction.paypal_details.capture_id)
-        self.assertNotEquals(None, transaction.paypal_details.refund_id)
+        #self.assertNotEquals(None, transaction.paypal_details.refund_id)
+        self.assertNotEquals(None, transaction.paypal_details.transaction_fee_amount)
+        self.assertNotEquals(None, transaction.paypal_details.transaction_fee_currency_iso_code)
 
     def test_paypal_transaction_refund_already_refunded_transation_fails(self):
-        transaction = self.__create_paypal_transaction_to_refund()
+        transaction = self.__create_paypal_transaction()
 
         Transaction.refund(transaction.id)
         result = Transaction.refund(transaction.id)
