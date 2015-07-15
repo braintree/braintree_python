@@ -12,37 +12,37 @@ class TestCustomer(unittest.TestCase):
 
     def test_create(self):
         result = Customer.create({
-            "first_name": "Bill",
-            "last_name": "Gates",
-            "company": "Microsoft",
-            "email": "bill@microsoft.com",
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
             "phone": "312.555.1234",
             "fax": "614.555.5678",
-            "website": "www.microsoft.com"
+            "website": "www.email.com"
         })
 
         self.assertTrue(result.is_success)
         customer = result.customer
 
-        self.assertEqual("Bill", customer.first_name)
-        self.assertEqual("Gates", customer.last_name)
-        self.assertEqual("Microsoft", customer.company)
-        self.assertEqual("bill@microsoft.com", customer.email)
+        self.assertEqual("Joe", customer.first_name)
+        self.assertEqual("Brown", customer.last_name)
+        self.assertEqual("Fake Company", customer.company)
+        self.assertEqual("joe@email.com", customer.email)
         self.assertEqual("312.555.1234", customer.phone)
         self.assertEqual("614.555.5678", customer.fax)
-        self.assertEqual("www.microsoft.com", customer.website)
+        self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
     def test_create_with_device_session_id_and_fraud_merchant_id(self):
         result = Customer.create({
-            "first_name": "Bill",
-            "last_name": "Gates",
-            "company": "Microsoft",
-            "email": "bill@microsoft.com",
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
             "phone": "312.555.1234",
             "fax": "614.555.5678",
-            "website": "www.microsoft.com",
+            "website": "www.email.com",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2010",
@@ -76,36 +76,36 @@ class TestCustomer(unittest.TestCase):
         )
 
         result = Customer.create({
-            "first_name": "Bill",
-            "last_name": "Gates"
+            "first_name": "Joe",
+            "last_name": "Brown"
         })
 
         self.assertTrue(result.is_success)
         customer = result.customer
 
-        self.assertEqual("Bill", customer.first_name)
+        self.assertEqual("Joe", customer.first_name)
 
     def test_create_with_unicode(self):
         result = Customer.create({
-            "first_name": u"Bill<&>",
+            "first_name": u"Joe<&>",
             "last_name": u"G\u1F00t\u1F18s",
-            "company": "Microsoft",
-            "email": "bill@microsoft.com",
+            "company": "Fake Company",
+            "email": "joe@email.com",
             "phone": "312.555.1234",
             "fax": "614.555.5678",
-            "website": "www.microsoft.com"
+            "website": "www.email.com"
         })
 
         self.assertTrue(result.is_success)
         customer = result.customer
 
-        self.assertEqual(u"Bill<&>", customer.first_name)
+        self.assertEqual(u"Joe<&>", customer.first_name)
         self.assertEqual(u"G\u1f00t\u1F18s", customer.last_name)
-        self.assertEqual("Microsoft", customer.company)
-        self.assertEqual("bill@microsoft.com", customer.email)
+        self.assertEqual("Fake Company", customer.company)
+        self.assertEqual("joe@email.com", customer.email)
         self.assertEqual("312.555.1234", customer.phone)
         self.assertEqual("614.555.5678", customer.fax)
-        self.assertEqual("www.microsoft.com", customer.website)
+        self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
@@ -402,42 +402,42 @@ class TestCustomer(unittest.TestCase):
 
     def test_update_with_valid_options(self):
         customer = Customer.create({
-            "first_name": "Steve",
-            "last_name": "Jobs",
-            "company": "Apple",
-            "email": "steve@apple.com",
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
             "phone": "312.555.5555",
             "fax": "614.555.5555",
-            "website": "www.apple.com"
+            "website": "www.email.com"
         }).customer
 
         result = Customer.update(customer.id, {
-            "first_name": "Bill",
-            "last_name": "Gates",
-            "company": "Microsoft",
-            "email": "bill@microsoft.com",
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
             "phone": "312.555.1234",
             "fax": "614.555.5678",
-            "website": "www.microsoft.com"
+            "website": "www.email.com"
         })
 
         self.assertTrue(result.is_success)
         customer = result.customer
 
-        self.assertEqual("Bill", customer.first_name)
-        self.assertEqual("Gates", customer.last_name)
-        self.assertEqual("Microsoft", customer.company)
-        self.assertEqual("bill@microsoft.com", customer.email)
+        self.assertEqual("Joe", customer.first_name)
+        self.assertEqual("Brown", customer.last_name)
+        self.assertEqual("Fake Company", customer.company)
+        self.assertEqual("joe@email.com", customer.email)
         self.assertEqual("312.555.1234", customer.phone)
         self.assertEqual("614.555.5678", customer.fax)
-        self.assertEqual("www.microsoft.com", customer.website)
+        self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
 
     def test_update_with_nested_values(self):
         customer = Customer.create({
-            "first_name": "Steve",
-            "last_name": "Jobs",
+            "first_name": "Joe",
+            "last_name": "Brown",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "10/10",
@@ -450,8 +450,8 @@ class TestCustomer(unittest.TestCase):
         address = credit_card.billing_address
 
         updated_customer = Customer.update(customer.id, {
-            "first_name": "Bill",
-            "last_name": "Gates",
+            "first_name": "Joe",
+            "last_name": "Brown",
             "credit_card": {
                 "expiration_date": "12/12",
                 "options": {
@@ -472,8 +472,8 @@ class TestCustomer(unittest.TestCase):
         updated_credit_card = CreditCard.find(credit_card.token)
         updated_address = Address.find(customer.id, address.id)
 
-        self.assertEqual("Bill", updated_customer.first_name)
-        self.assertEqual("Gates", updated_customer.last_name)
+        self.assertEqual("Joe", updated_customer.first_name)
+        self.assertEqual("Brown", updated_customer.last_name)
         self.assertEqual("12/2012", updated_credit_card.expiration_date)
         self.assertEqual("44444", updated_address.postal_code)
         self.assertEqual("US", updated_address.country_code_alpha2)
@@ -503,17 +503,17 @@ class TestCustomer(unittest.TestCase):
 
     def test_update_with_invalid_options(self):
         customer = Customer.create({
-            "first_name": "Steve",
-            "last_name": "Jobs",
-            "company": "Apple",
-            "email": "steve@apple.com",
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
             "phone": "312.555.5555",
             "fax": "614.555.5555",
-            "website": "www.apple.com"
+            "website": "www.email.com"
         }).customer
 
         result = Customer.update(customer.id, {
-            "email": "@microsoft.com",
+            "email": "@email.com",
         })
 
         self.assertFalse(result.is_success)
@@ -624,8 +624,8 @@ class TestCustomer(unittest.TestCase):
 
     def test_update_with_nested_values_via_transparent_redirect(self):
         customer = Customer.create({
-            "first_name": "Steve",
-            "last_name": "Jobs",
+            "first_name": "Joe",
+            "last_name": "Brown",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "10/10",
@@ -640,8 +640,8 @@ class TestCustomer(unittest.TestCase):
         tr_data = {
             "customer_id": customer.id,
             "customer": {
-                "first_name": "Bill",
-                "last_name": "Gates",
+                "first_name": "Joe",
+                "last_name": "Brown",
                 "credit_card": {
                     "expiration_date": "12/12",
                     "options": {
@@ -665,8 +665,8 @@ class TestCustomer(unittest.TestCase):
         updated_credit_card = CreditCard.find(credit_card.token)
         updated_address = Address.find(customer.id, address.id)
 
-        self.assertEqual("Bill", updated_customer.first_name)
-        self.assertEqual("Gates", updated_customer.last_name)
+        self.assertEqual("Joe", updated_customer.first_name)
+        self.assertEqual("Brown", updated_customer.last_name)
         self.assertEqual("12/2012", updated_credit_card.expiration_date)
         self.assertEqual("44444", updated_address.postal_code)
 
