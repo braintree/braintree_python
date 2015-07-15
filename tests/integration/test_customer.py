@@ -75,7 +75,7 @@ class TestCustomer(unittest.TestCase):
             environment = Environment.Development
         )
 
-        result = Customer.create({
+        result = gateway.customer.create({
             "first_name": "Joe",
             "last_name": "Brown"
         })
