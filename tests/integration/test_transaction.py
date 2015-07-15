@@ -422,6 +422,39 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.ProcessorDeclined, transaction.status)
         self.assertEquals("2000 : Do Not Honor", transaction.additional_processor_response);
 
+    def test_sale_with_gateway_rejected_with_incomplete_application(self):
+        gateway = BraintreeGateway(
+            client_id = "client_id$development$integration_client_id",
+            client_secret = "client_secret$development$integration_client_secret",
+            environment = Environment.Development
+        )
+
+        result = gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token = result.credentials.access_token,
+            environment = Environment.Development
+        )
+
+        result = gateway.transaction.sale({
+            "amount": "4000.00",
+            "billing": {
+                "street_address": "200 Fake Street"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.GatewayRejectionReason.ApplicationIncomplete, transaction.gateway_rejection_reason)
+
     def test_sale_with_gateway_rejected_with_avs(self):
         old_merchant_id = Configuration.merchant_id
         old_public_key = Configuration.public_key

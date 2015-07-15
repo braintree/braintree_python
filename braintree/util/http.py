@@ -118,7 +118,7 @@ class Http(object):
                         self.config.client_secret.encode('ascii')
                     ).replace(b"\n", b"").strip()
         elif self.config.has_access_token():
-            return b"Bearer " + encodebytes(self.config.access_token.encode('ascii'))
+            return b"Bearer " + self.config.access_token.encode('ascii')
         else:
             return b"Basic " + encodebytes(
                         self.config.public_key.encode('ascii') +
