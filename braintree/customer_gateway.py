@@ -14,7 +14,7 @@ class CustomerGateway(object):
         self.config = gateway.config
 
     def all(self):
-        response = self.config.http().post("/customers/advanced_search_ids")
+        response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search_ids")
         return ResourceCollection({}, response, self.__fetch)
 
     def confirm_transparent_redirect(self, query_string):
@@ -26,23 +26,23 @@ class CustomerGateway(object):
         return self._post("/customers", {"customer": params})
 
     def delete(self, customer_id):
-        self.config.http().delete("/customers/" + customer_id)
+        self.config.http().delete(self.config.base_merchant_path() + "/customers/" + customer_id)
         return SuccessfulResult()
 
     def find(self, customer_id):
         try:
             if customer_id == None or customer_id.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get("/customers/" + customer_id)
+            response = self.config.http().get(self.config.base_merchant_path() + "/customers/" + customer_id)
             return Customer(self.gateway, response["customer"])
         except NotFoundError:
-            raise NotFoundError("customer with id " + customer_id + " not found")
+            raise NotFoundError("customer with id " + repr(customer_id) + " not found")
 
     def search(self, *query):
         if isinstance(query[0], list):
             query = query[0]
 
-        response = self.config.http().post("/customers/advanced_search_ids", {"search": self.__criteria(query)})
+        response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search_ids", {"search": self.__criteria(query)})
         return ResourceCollection(query, response, self.__fetch)
 
     def tr_data_for_create(self, tr_data, redirect_url):
@@ -56,14 +56,14 @@ class CustomerGateway(object):
         return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
 
     def transparent_redirect_create_url(self):
-        return self.config.base_merchant_url() + "/customers/all/create_via_transparent_redirect_request"
+        return self.config.base_url() + self.config.base_merchant_path() + "/customers/all/create_via_transparent_redirect_request"
 
     def transparent_redirect_update_url(self):
-        return self.config.base_merchant_url() + "/customers/all/update_via_transparent_redirect_request"
+        return self.config.base_url() + self.config.base_merchant_path() + "/customers/all/update_via_transparent_redirect_request"
 
     def update(self, customer_id, params={}):
         Resource.verify_keys(params, Customer.update_signature())
-        response = self.config.http().put("/customers/" + customer_id, {"customer": params})
+        response = self.config.http().put(self.config.base_merchant_path() + "/customers/" + customer_id, {"customer": params})
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})
         elif "api_error_response" in response:
@@ -81,11 +81,11 @@ class CustomerGateway(object):
     def __fetch(self, query, ids):
         criteria = self.__criteria(query)
         criteria["ids"] = braintree.customer_search.CustomerSearch.ids.in_list(ids).to_param()
-        response = self.config.http().post("/customers/advanced_search", {"search": criteria})
+        response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search", {"search": criteria})
         return [Customer(self.gateway, item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
 
     def _post(self, url, params={}):
-        response = self.config.http().post(url, params)
+        response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})
         elif "api_error_response" in response:

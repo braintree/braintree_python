@@ -181,7 +181,7 @@ class ErrorCodes(object):
         EmailFormatIsInvalid = "93602"
         EmailIsRequired = "83601"
         InconsistentCountry = "93612"
-
+        PaymentMethodsAreInvalid = "93613"
 
     class MerchantAccount(object):
         IdFormatIsInvalid = "82603"
@@ -282,6 +282,13 @@ class ErrorCodes(object):
             EmailAddressIsRequired = "82680"
             MobilePhoneIsInvalid = "82683"
             MobilePhoneIsRequired = "82682"
+
+    class OAuth(object):
+        InvalidGrant = "93801"
+        InvalidCredentials = "93802"
+        InvalidScope = "93803"
+        InvalidRequest = "93804"
+        UnsupportedGrantType = "93805"
 
     class PaymentMethod(object):
         CannotForwardPaymentMethodType = "93106"

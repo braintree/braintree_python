@@ -14,7 +14,7 @@ class SubscriptionGateway(object):
         self.config = gateway.config
 
     def cancel(self, subscription_id):
-        response = self.config.http().put("/subscriptions/" + subscription_id + "/cancel")
+        response = self.config.http().put(self.config.base_merchant_path() + "/subscriptions/" + subscription_id + "/cancel")
         if "subscription" in response:
             return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
@@ -22,7 +22,7 @@ class SubscriptionGateway(object):
 
     def create(self, params={}):
         Resource.verify_keys(params, Subscription.create_signature())
-        response = self.config.http().post("/subscriptions", {"subscription": params})
+        response = self.config.http().post(self.config.base_merchant_path() + "/subscriptions", {"subscription": params})
         if "subscription" in response:
             return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
@@ -32,13 +32,13 @@ class SubscriptionGateway(object):
         try:
             if subscription_id == None or subscription_id.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get("/subscriptions/" + subscription_id)
+            response = self.config.http().get(self.config.base_merchant_path() + "/subscriptions/" + subscription_id)
             return Subscription(self.gateway, response["subscription"])
         except NotFoundError:
             raise NotFoundError("subscription with id " + subscription_id + " not found")
 
     def retry_charge(self, subscription_id, amount=None):
-        response = self.config.http().post("/transactions", {"transaction": {
+        response = self.config.http().post(self.config.base_merchant_path() + "/transactions", {"transaction": {
             "amount": amount,
             "subscription_id": subscription_id,
             "type": Transaction.Type.Sale
@@ -52,12 +52,12 @@ class SubscriptionGateway(object):
         if isinstance(query[0], list):
             query = query[0]
 
-        response = self.config.http().post("/subscriptions/advanced_search_ids", {"search": self.__criteria(query)})
+        response = self.config.http().post(self.config.base_merchant_path() + "/subscriptions/advanced_search_ids", {"search": self.__criteria(query)})
         return ResourceCollection(query, response, self.__fetch)
 
     def update(self, subscription_id, params={}):
         Resource.verify_keys(params, Subscription.update_signature())
-        response = self.config.http().put("/subscriptions/" + subscription_id, {"subscription": params})
+        response = self.config.http().put(self.config.base_merchant_path() + "/subscriptions/" + subscription_id, {"subscription": params})
         if "subscription" in response:
             return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
@@ -75,6 +75,6 @@ class SubscriptionGateway(object):
     def __fetch(self, query, ids):
         criteria = self.__criteria(query)
         criteria["ids"] = braintree.subscription_search.SubscriptionSearch.ids.in_list(ids).to_param()
-        response = self.config.http().post("/subscriptions/advanced_search", {"search": criteria})
+        response = self.config.http().post(self.config.base_merchant_path() + "/subscriptions/advanced_search", {"search": criteria})
         return [Subscription(self.gateway, item) for item in ResourceCollection._extract_as_array(response["subscriptions"], "subscription")]
 

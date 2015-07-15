@@ -31,7 +31,7 @@ class TestPlan(unittest.TestCase):
             "price": "1.00",
         }
 
-        Configuration.instantiate().http().post("/plans/create_plan_for_tests", {"plan": attributes})
+        Configuration.instantiate().http().post(Configuration.instantiate().base_merchant_path() + "/plans/create_plan_for_tests", {"plan": attributes})
 
         add_on_attributes = {
             "amount": "100.00",
@@ -43,7 +43,7 @@ class TestPlan(unittest.TestCase):
             "number_of_billing_cycles": 1
         }
 
-        Configuration.instantiate().http().post("/modifications/create_modification_for_tests", {"modification": add_on_attributes})
+        Configuration.instantiate().http().post(Configuration.instantiate().base_merchant_path() + "/modifications/create_modification_for_tests", {"modification": add_on_attributes})
         discount_attributes = {
             "amount": "100.00",
             "description": "some description",
@@ -54,7 +54,7 @@ class TestPlan(unittest.TestCase):
             "number_of_billing_cycles": 1
         }
 
-        Configuration.instantiate().http().post("/modifications/create_modification_for_tests", {"modification": discount_attributes})
+        Configuration.instantiate().http().post(Configuration.instantiate().base_merchant_path() + "/modifications/create_modification_for_tests", {"modification": discount_attributes})
 
         plans = Plan.all()
 

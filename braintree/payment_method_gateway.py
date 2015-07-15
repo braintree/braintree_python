@@ -28,10 +28,10 @@ class PaymentMethodGateway(object):
             if payment_method_token == None or payment_method_token.strip() == "":
                 raise NotFoundError()
 
-            response = self.config.http().get("/payment_methods/any/" + payment_method_token)
+            response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
             return self._parse_payment_method(response)
         except NotFoundError:
-            raise NotFoundError("payment method with token " + payment_method_token + " not found")
+            raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
     def update(self, payment_method_token, params):
         Resource.verify_keys(params, PaymentMethod.update_signature())
@@ -44,14 +44,14 @@ class PaymentMethodGateway(object):
                 {"payment_method": params}
             )
         except NotFoundError:
-            raise NotFoundError("payment method with token " + payment_method_token + " not found")
+            raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
     def delete(self, payment_method_token):
-        self.config.http().delete("/payment_methods/any/" + payment_method_token)
+        self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
         return SuccessfulResult()
 
     def _post(self, url, params={}):
-        response = self.config.http().post(url, params)
+        response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
         else:
@@ -59,7 +59,7 @@ class PaymentMethodGateway(object):
             return SuccessfulResult({"payment_method": payment_method})
 
     def _put(self, url, params={}):
-        response = self.config.http().put(url, params)
+        response = self.config.http().put(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
         else:

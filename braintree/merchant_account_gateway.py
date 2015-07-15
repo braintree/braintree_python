@@ -21,20 +21,20 @@ class MerchantAccountGateway(object):
         try:
             if merchant_account_id == None or merchant_account_id.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get("/merchant_accounts/" + merchant_account_id)
+            response = self.config.http().get(self.config.base_merchant_path() + "/merchant_accounts/" + merchant_account_id)
             return MerchantAccount(self.gateway, response["merchant_account"])
         except NotFoundError:
-            raise NotFoundError("merchant account with id " + merchant_account_id + " not found")
+            raise NotFoundError("merchant account with id " + repr(merchant_account_id) + " not found")
 
     def _post(self, url, params={}):
-        response = self.config.http().post(url, params)
+        response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "merchant_account" in response:
             return SuccessfulResult({"merchant_account": MerchantAccount(self.gateway, response["merchant_account"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def _put(self, url, params={}):
-        response = self.config.http().put(url, params)
+        response = self.config.http().put(self.config.base_merchant_path() + url, params)
         if "merchant_account" in response:
             return SuccessfulResult({"merchant_account": MerchantAccount(self.gateway, response["merchant_account"])})
         elif "api_error_response" in response:

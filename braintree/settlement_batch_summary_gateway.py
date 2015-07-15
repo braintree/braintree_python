@@ -15,7 +15,7 @@ class SettlementBatchSummaryGateway(object):
         if group_by_custom_field:
             criteria["group_by_custom_field"] = group_by_custom_field
 
-        response = self.config.http().post('/settlement_batch_summary', {"settlement_batch_summary": criteria})
+        response = self.config.http().post(self.config.base_merchant_path() + '/settlement_batch_summary', {"settlement_batch_summary": criteria})
         if "settlement_batch_summary" in response:
             return SuccessfulResult({"settlement_batch_summary": SettlementBatchSummary(self.gateway, response["settlement_batch_summary"])})
         elif "api_error_response" in response:

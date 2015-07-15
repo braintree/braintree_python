@@ -11,31 +11,31 @@ class TestingGateway(object):
 
     def make_past_due(self, subscription_id, number_of_days_past_due=1):
         self.__check_environment()
-        self.config.http().put("/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription_id, number_of_days_past_due))
+        self.config.http().put(self.config.base_merchant_path() + "/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription_id, number_of_days_past_due))
 
     def escrow_transaction(self, transaction_id):
         self.__check_environment()
-        self.config.http().put("/transactions/" + transaction_id + "/escrow")
+        self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/escrow")
 
     def settle_transaction(self, transaction_id):
         self.__check_environment()
-        return self.__create_result(self.config.http().put("/transactions/" + transaction_id + "/settle"))
+        return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settle"))
 
     def settlement_confirm_transaction(self, transaction_id):
         self.__check_environment()
-        return self.__create_result(self.config.http().put("/transactions/" + transaction_id + "/settlement_confirm"))
+        return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settlement_confirm"))
 
     def settlement_decline_transaction(self, transaction_id):
         self.__check_environment()
-        return self.__create_result(self.config.http().put("/transactions/" + transaction_id + "/settlement_decline"))
+        return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settlement_decline"))
 
     def settlement_pending_transaction(self, transaction_id):
         self.__check_environment()
-        return self.__create_result(self.config.http().put("/transactions/" + transaction_id + "/settlement_pending"))
+        return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settlement_pending"))
 
     def create_3ds_verification(self, merchant_account_id, params):
         self.__check_environment()
-        response = self.config.http().post("/three_d_secure/create_verification/" + merchant_account_id, {
+        response = self.config.http().post(self.config.base_merchant_path() + "/three_d_secure/create_verification/" + merchant_account_id, {
             "three_d_secure_verification": params
         })
         return response["three_d_secure_verification"]["three_d_secure_token"]

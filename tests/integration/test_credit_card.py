@@ -726,7 +726,7 @@ class TestCreditCard(unittest.TestCase):
             CreditCard.find("bad_token")
             self.assertTrue(False)
         except Exception as e:
-            self.assertEquals("payment method with token bad_token not found", str(e))
+            self.assertEquals("payment method with token 'bad_token' not found", str(e))
 
     def test_from_nonce_with_unlocked_nonce(self):
         config = Configuration.instantiate()

@@ -4,6 +4,6 @@ class DownForMaintenanceError(BraintreeError):
     """
     Raised when the gateway is down for maintenance.
 
-    See https://developers.braintreepayments.com/ios+python/reference/general/exceptions#down-for-maintenance-error
+    See https://developers.braintreepayments.com/ios+python/reference/general/exceptions#down-for-maintenance
     """
     pass

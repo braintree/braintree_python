@@ -18,29 +18,29 @@ class AddressGateway(object):
         if not re.search("\A[0-9A-Za-z_-]+\Z", params["customer_id"]):
             raise KeyError("customer_id contains invalid characters")
 
-        response = self.config.http().post("/customers/" + params.pop("customer_id") + "/addresses", {"address": params})
+        response = self.config.http().post(self.config.base_merchant_path() + "/customers/" + params.pop("customer_id") + "/addresses", {"address": params})
         if "address" in response:
             return SuccessfulResult({"address": Address(self.gateway, response["address"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def delete(self, customer_id, address_id):
-        self.config.http().delete("/customers/" + customer_id + "/addresses/" + address_id)
+        self.config.http().delete(self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
 
     def find(self, customer_id, address_id):
         try:
             if customer_id == None or customer_id.strip() == "" or address_id == None or address_id.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get("/customers/" + customer_id + "/addresses/" + address_id)
+            response = self.config.http().get(self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id)
             return Address(self.gateway, response["address"])
         except NotFoundError:
-            raise NotFoundError("address for customer " + customer_id + " with id " + address_id + " not found")
+            raise NotFoundError("address for customer " + repr(customer_id) + " with id " + repr(address_id) + " not found")
 
     def update(self, customer_id, address_id, params={}):
         Resource.verify_keys(params, Address.update_signature())
         response = self.config.http().put(
-            "/customers/" + customer_id + "/addresses/" + address_id,
+            self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id,
             {"address": params}
         )
         if "address" in response:

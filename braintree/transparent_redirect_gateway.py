@@ -46,7 +46,7 @@ class TransparentRedirectGateway(object):
         """
         Returns the url for POSTing Transparent Redirect HTML forms
         """
-        return self.config.base_merchant_url() + "/transparent_redirect_requests"
+        return self.config.base_url() + self.config.base_merchant_path() + "/transparent_redirect_requests"
 
     def _parse_and_validate_query_string(self, query_string):
         query_params = cgi.parse_qs(query_string)

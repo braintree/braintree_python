@@ -88,6 +88,13 @@ class TestCreditCard(unittest.TestCase):
         except NotFoundError as e:
             self.assertTrue(True)
 
+    def test_finding_none_raises_not_found_exception(self):
+        try:
+            CreditCard.find(None)
+            self.assertTrue(False)
+        except NotFoundError as e:
+            self.assertTrue(True)
+
     def test_multiple_verifications_sort(self):
         verification1 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 20), "id":123}
         verification2 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 21), "id":456}

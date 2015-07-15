@@ -14,7 +14,7 @@ class PaymentMethodNonceGateway(object):
 
     def create(self, payment_method_token):
         try:
-            response = self.config.http().post("/payment_methods/" + payment_method_token + "/nonces")
+            response = self.config.http().post(self.config.base_merchant_path() + "/payment_methods/" + payment_method_token + "/nonces")
             if "api_error_response" in response:
                 return ErrorResult(self.gateway, response["api_error_response"])
             else:
@@ -25,7 +25,7 @@ class PaymentMethodNonceGateway(object):
 
     def find(self, payment_method_nonce):
         try:
-            response = self.config.http().get("/payment_method_nonces/" + payment_method_nonce)
+            response = self.config.http().get(self.config.base_merchant_path() + "/payment_method_nonces/" + payment_method_nonce)
             return self._parse_payment_method_nonce(response)
         except NotFoundError:
             raise NotFoundError("payment method nonce with id " + payment_method_nonce + " not found")

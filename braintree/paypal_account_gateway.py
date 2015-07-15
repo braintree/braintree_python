@@ -15,19 +15,19 @@ class PayPalAccountGateway(object):
             if paypal_account_token == None or paypal_account_token.strip() == "":
                 raise NotFoundError()
 
-            response = self.config.http().get("/payment_methods/paypal_account/" + paypal_account_token)
+            response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/paypal_account/" + paypal_account_token)
             if "paypal_account" in response:
                 return PayPalAccount(self.gateway, response["paypal_account"])
         except NotFoundError:
-            raise NotFoundError("paypal account with token " + paypal_account_token + " not found")
+            raise NotFoundError("paypal account with token " + repr(paypal_account_token) + " not found")
 
     def delete(self, paypal_account_token):
-        self.config.http().delete("/payment_methods/paypal_account/" + paypal_account_token)
+        self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/paypal_account/" + paypal_account_token)
         return SuccessfulResult()
 
     def update(self, paypal_account_token, params={}):
         Resource.verify_keys(params, PayPalAccount.signature())
-        response = self.config.http().put("/payment_methods/paypal_account/" + paypal_account_token, {"paypal_account": params})
+        response = self.config.http().put(self.config.base_merchant_path() + "/payment_methods/paypal_account/" + paypal_account_token, {"paypal_account": params})
         if "paypal_account" in response:
             return SuccessfulResult({"paypal_account": PayPalAccount(self.gateway, response["paypal_account"])})
         elif "api_error_response" in response:

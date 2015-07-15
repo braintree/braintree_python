@@ -185,7 +185,9 @@ class TestTransactionSearch(unittest.TestCase):
             "shipping_locality": "Braintree",
             "shipping_postal_code": "54321",
             "shipping_region": "MA",
-            "shipping_street_address": "456 Road"
+            "shipping_street_address": "456 Road",
+            "user": "integration_user_public_id",
+            "credit_card_unique_identifier": transaction.credit_card["unique_number_identifier"]
         }
 
         for criterion, value in search_criteria.items():
@@ -221,6 +223,97 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction.id, collection.first.id)
+
+    def test_advanced_search_with_payment_instrument_type_is_credit_card(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2012",
+                "cardholder_name": "Tom Smith",
+            },
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.payment_instrument_type == "CreditCardDetail" 
+        )
+
+        self.assertEquals(transaction.payment_instrument_type, PaymentInstrumentType.CreditCard)
+        self.assertEquals(transaction.id, collection.first.id)
+    
+    def test_advanced_search_with_payment_instrument_type_is_paypal(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.payment_instrument_type == "PayPalDetail" 
+        )
+
+        self.assertEquals(transaction.payment_instrument_type, PaymentInstrumentType.PayPalAccount)
+        self.assertEquals(transaction.id, collection.first.id)
+    
+    def test_advanced_search_with_payment_instrument_type_is_apple_pay(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.ApplePayVisa
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.payment_instrument_type == "ApplePayDetail" 
+        )
+
+        self.assertEquals(transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
+        self.assertEquals(transaction.id, collection.first.id)
+    
+    def test_advanced_search_with_payment_instrument_type_is_europe(self):
+        old_merchant_id = Configuration.merchant_id
+        old_public_key = Configuration.public_key
+        old_private_key = Configuration.private_key
+
+        try:
+            Configuration.merchant_id = "altpay_merchant"
+            Configuration.public_key = "altpay_merchant_public_key"
+            Configuration.private_key = "altpay_merchant_private_key"
+            customer_id = Customer.create().customer.id
+            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
+            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
+            config = Configuration.instantiate()
+            client_api =  ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing"
+            })
+
+            nonce = client_api.get_europe_bank_account_nonce({
+                "locale": "de-DE",
+                "bic": "DEUTDEFF",
+                "iban": "DE89370400440532013000",
+                "accountHolderName": "Baron Von Holder",
+                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
+            })
+
+            transaction = Transaction.sale({
+                "merchant_account_id": "fake_sepa_ma",
+                "amount": "10.00",
+                "payment_method_nonce": nonce
+            }).transaction
+
+            collection = Transaction.search(
+                TransactionSearch.id == transaction.id,
+                TransactionSearch.payment_instrument_type == "EuropeBankAccountDetail" 
+            )
+
+            self.assertEquals(transaction.payment_instrument_type, PaymentInstrumentType.EuropeBankAccount)
+            self.assertEquals(transaction.id, collection.first.id)
+        finally:
+            Configuration.merchant_id = old_merchant_id
+            Configuration.public_key = old_public_key
+            Configuration.private_key = old_private_key
 
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
