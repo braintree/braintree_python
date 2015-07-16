@@ -1,6 +1,5 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
-import urlparse
 
 class TestMerchantGateway(unittest.TestCase):
     def test_create_merchant(self):
