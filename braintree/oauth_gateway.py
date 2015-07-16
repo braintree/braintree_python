@@ -3,7 +3,12 @@ from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.oauth_credentials import OAuthCredentials
-from urllib import quote_plus
+import sys
+if sys.version_info[0] == 2:
+    from urllib import quote_plus
+else:
+    from urllib.parse import quote_plus
+    from functools import reduce
 
 class OAuthGateway(object):
     def __init__(self, gateway):
@@ -34,7 +39,8 @@ class OAuthGateway(object):
         user_params = self._sub_query(params, "user")
         business_params = self._sub_query(params, "business")
 
-        def clean_values(accumulator, (key, value)):
+        def clean_values(accumulator, kv_pair):
+            key, value = kv_pair
             if isinstance(value, list):
                 accumulator += map(lambda v: (key + "[]", v), value)
             else:
@@ -43,7 +49,7 @@ class OAuthGateway(object):
 
         params = reduce(clean_values, params.items(), [])
         query = params + user_params + business_params
-        query_string = "&".join(map(lambda (k, v): quote_plus(k) + "=" + quote_plus(v), query))
+        query_string = "&".join(map(lambda kv_pair: quote_plus(kv_pair[0]) + "=" + quote_plus(kv_pair[1]), query))
         return self._sign_url(self.config.environment.base_url + "/oauth/connect?" + query_string)
 
     def _sub_query(self, params, root):
@@ -51,7 +57,7 @@ class OAuthGateway(object):
             sub_query = params.pop(root)
         else:
             sub_query = {}
-        query = map(lambda (k,v): (root + "[" + k + "]",str(v)), sub_query.items())
+        query = map(lambda kv_pair: (root + "[" + kv_pair[0] + "]", str(kv_pair[1])), sub_query.items())
         return query
 
     def _sign_url(self, url):
