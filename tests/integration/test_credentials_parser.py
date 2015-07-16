@@ -1,6 +1,5 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
-import urlparse
 from braintree.credentials_parser import CredentialsParser
 
 class TestCredentialsParser(unittest.TestCase):
@@ -24,7 +23,7 @@ class TestCredentialsParser(unittest.TestCase):
             parser.parse_client_credentials()
 
         config_error = error.exception
-        self.assertIn("Mismatched credential environments", config_error.message)
+        self.assertIn("Mismatched credential environments", str(config_error))
 
     def test_error_on_missing_client_id(self):
         with self.assertRaises(ConfigurationError) as error:
@@ -35,7 +34,7 @@ class TestCredentialsParser(unittest.TestCase):
             parser.parse_client_credentials()
 
         config_error = error.exception
-        self.assertIn("Missing client_id", config_error.message)
+        self.assertIn("Missing client_id", str(config_error))
 
     def test_error_on_missing_client_secret(self):
         with self.assertRaises(ConfigurationError) as error:
@@ -46,7 +45,7 @@ class TestCredentialsParser(unittest.TestCase):
             parser.parse_client_credentials()
 
         config_error = error.exception
-        self.assertIn("Missing client_secret", config_error.message)
+        self.assertIn("Missing client_secret", str(config_error))
 
     def test_error_on_invalid_client_id(self):
         with self.assertRaises(ConfigurationError) as error:
@@ -57,7 +56,7 @@ class TestCredentialsParser(unittest.TestCase):
             parser.parse_client_credentials()
 
         config_error = error.exception
-        self.assertIn("Value passed for client_id is not a client_id", config_error.message)
+        self.assertIn("Value passed for client_id is not a client_id", str(config_error))
 
     def test_error_on_invalid_client_secret(self):
         with self.assertRaises(ConfigurationError) as error:
@@ -68,7 +67,7 @@ class TestCredentialsParser(unittest.TestCase):
             parser.parse_client_credentials()
 
         config_error = error.exception
-        self.assertIn("Value passed for client_secret is not a client_secret", config_error.message)
+        self.assertIn("Value passed for client_secret is not a client_secret", str(config_error))
 
     def test_parses_access_token(self):
         parser = CredentialsParser(

@@ -67,6 +67,10 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    def sale(self, params):
+        params.update({"type": "sale"})
+        return self.create(params)
+
     def search(self, *query):
         if isinstance(query[0], list):
             query = query[0]

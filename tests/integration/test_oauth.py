@@ -1,6 +1,10 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
-import urlparse
+import sys
+if sys.version_info[0] == 2:
+    import urlparse
+else:
+    import urllib.parse as urlparse
 
 class TestOAuthGateway(unittest.TestCase):
     def test_create_token_from_code(self):
@@ -60,7 +64,7 @@ class TestOAuthGateway(unittest.TestCase):
             })
 
         config_error = error.exception
-        self.assertIn("client_id and client_secret are required", config_error.message)
+        self.assertIn("client_id and client_secret are required", str(config_error))
 
     def test_create_token_from_refresh_token(self):
         gateway = BraintreeGateway(

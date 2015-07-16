@@ -1,3 +1,7 @@
+## 3.18.0
+* Fix oauth authentication
+* Fix python 3 syntax
+
 ## 3.17.0
 * Add oauth support
 

@@ -42,14 +42,14 @@ class OAuthGateway(object):
         def clean_values(accumulator, kv_pair):
             key, value = kv_pair
             if isinstance(value, list):
-                accumulator += map(lambda v: (key + "[]", v), value)
+                accumulator += [(key + "[]", v) for v in value]
             else:
                 accumulator += [(key, value)]
             return accumulator
 
         params = reduce(clean_values, params.items(), [])
         query = params + user_params + business_params
-        query_string = "&".join(map(lambda kv_pair: quote_plus(kv_pair[0]) + "=" + quote_plus(kv_pair[1]), query))
+        query_string = "&".join(quote_plus(key) + "=" + quote_plus(value) for key, value in query)
         return self._sign_url(self.config.environment.base_url + "/oauth/connect?" + query_string)
 
     def _sub_query(self, params, root):
@@ -57,7 +57,7 @@ class OAuthGateway(object):
             sub_query = params.pop(root)
         else:
             sub_query = {}
-        query = map(lambda kv_pair: (root + "[" + kv_pair[0] + "]", str(kv_pair[1])), sub_query.items())
+        query = [(root + "[" + key + "]", str(value)) for key, value in sub_query.items()]
         return query
 
     def _sign_url(self, url):
