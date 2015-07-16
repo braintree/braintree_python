@@ -49,7 +49,7 @@ class OAuthGateway(object):
 
         params = reduce(clean_values, params.items(), [])
         query = params + user_params + business_params
-        query_string = "&".join(map(lambda k, v: quote_plus(k) + "=" + quote_plus(v), query))
+        query_string = "&".join(map(lambda kv_pair: quote_plus(kv_pair[0]) + "=" + quote_plus(kv_pair[1]), query))
         return self._sign_url(self.config.environment.base_url + "/oauth/connect?" + query_string)
 
     def _sub_query(self, params, root):
@@ -57,7 +57,7 @@ class OAuthGateway(object):
             sub_query = params.pop(root)
         else:
             sub_query = {}
-        query = map(lambda k, v: (root + "[" + k + "]",str(v)), sub_query.items())
+        query = map(lambda kv_pair: (root + "[" + kv_pair[0] + "]", str(kv_pair[1])), sub_query.items())
         return query
 
     def _sign_url(self, url):
