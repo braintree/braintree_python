@@ -458,7 +458,8 @@ class Transaction(Resource):
                     {
                         "paypal": [
                             "payee_email",
-                            "custom_field"
+                            "custom_field",
+                            "description"
                         ],
                         "three_d_secure": [
                             "required"
