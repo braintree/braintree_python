@@ -26,3 +26,7 @@ class TestResourceCollection(unittest.TestCase):
 
         self.assertEquals(5, len(new_items))
 
+    def test_iterate_using_iterator_protocol(self):
+        collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
+        for test_elem, coll_elem in zip(self.TestResource.items, collection):
+            self.assertEqual(test_elem, coll_elem)

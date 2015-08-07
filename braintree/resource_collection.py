@@ -1,9 +1,9 @@
 class ResourceCollection(object):
     """
-    A class representing results from a search.  Iterate over the results by calling items::
+    A class representing results from a search. Supports the iterator protocol::
 
         results = braintree.Transaction.search("411111")
-        for transaction in results.items:
+        for transaction in results:
             print transaction.id
     """
 
@@ -32,6 +32,9 @@ class ResourceCollection(object):
         for batch in self.__batch_ids():
             for item in self.__method(self.__query, batch):
                 yield item
+
+    def __iter__(self):
+        return self.items
 
     def __batch_ids(self):
         for i in range(0, len(self.__ids), self.__page_size):
