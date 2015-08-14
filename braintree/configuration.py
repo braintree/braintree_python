@@ -58,7 +58,7 @@ class Configuration(object):
     def api_version():
         return "4"
 
-    def __init__(self, environment, merchant_id, public_key=None, private_key=None,
+    def __init__(self, environment=None, merchant_id=None, public_key=None, private_key=None,
             client_id=None, client_secret=None, access_token=None, *args, **kwargs):
         if len(args) == 2:
             public_key, private_key = args
