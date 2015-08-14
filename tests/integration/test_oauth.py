@@ -7,19 +7,19 @@ else:
     import urllib.parse as urlparse
 
 class TestOAuthGateway(unittest.TestCase):
-    def test_create_token_from_code(self):
-        gateway = BraintreeGateway(
+    def setUp(self):
+        self.gateway = BraintreeGateway(
             client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
+            client_secret = "client_secret$development$integration_client_secret"
         )
 
-        code = TestHelper.create_grant(gateway, {
+    def test_create_token_from_code(self):
+        code = TestHelper.create_grant(self.gateway, {
             "merchant_public_id": "integration_merchant_id",
             "scope": "read_write"
         })
 
-        result = gateway.oauth.create_token_from_code({
+        result = self.gateway.oauth.create_token_from_code({
             "code": code
         })
 
@@ -33,13 +33,7 @@ class TestOAuthGateway(unittest.TestCase):
 
 
     def test_create_token_from_code_with_bad_parameters(self):
-        gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
-        )
-
-        result = gateway.oauth.create_token_from_code({
+        result = self.gateway.oauth.create_token_from_code({
             "code": "bad_code",
             "scope": "read_write"
         })
@@ -54,7 +48,6 @@ class TestOAuthGateway(unittest.TestCase):
     def test_create_token_from_code_returns_helpful_error_with_bad_credentials(self):
         gateway = BraintreeGateway(
             access_token = "access_token$development$integration_merchant_id$fb27c79dd",
-            environment = Environment.Development
         )
 
         with self.assertRaises(ConfigurationError) as error:
@@ -67,23 +60,17 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertIn("client_id and client_secret are required", str(config_error))
 
     def test_create_token_from_refresh_token(self):
-        gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
-        )
-
-        code = TestHelper.create_grant(gateway, {
+        code = TestHelper.create_grant(self.gateway, {
             "merchant_public_id": "integration_merchant_id",
             "scope": "read_write"
         })
 
-        refresh_token = gateway.oauth.create_token_from_code({
+        refresh_token = self.gateway.oauth.create_token_from_code({
             "code": code,
             "scope": "read_write"
         }).credentials.refresh_token
 
-        result = gateway.oauth.create_token_from_refresh_token({
+        result = self.gateway.oauth.create_token_from_refresh_token({
             "refresh_token": refresh_token
         })
 
@@ -96,13 +83,7 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEquals("bearer", credentials.token_type)
 
     def test_connect_url(self):
-        gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
-        )
-
-        connect_url = gateway.oauth.connect_url({
+        connect_url = self.gateway.oauth.connect_url({
              "merchant_id": "integration_merchant_id",
              "redirect_uri": "http://bar.example.com",
              "scope": "read_write",
@@ -155,13 +136,7 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEqual(params["payment_methods[]"], ["credit_card", "paypal"])
 
     def test_connect_url_limits_payment_methods(self):
-        gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
-        )
-
-        connect_url = gateway.oauth.connect_url({
+        connect_url = self.gateway.oauth.connect_url({
              "merchant_id": "integration_merchant_id",
              "redirect_uri": "http://bar.example.com",
              "scope": "read_write",
