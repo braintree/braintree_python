@@ -61,3 +61,9 @@ class TestConfiguration(unittest.TestCase):
             self.assertTrue(isinstance(strategy, FakeStrategy))
         finally:
             Configuration.default_http_strategy = old_http_strategy
+
+    def test_configuring_with_partial_client_credentials(self):
+        with self.assertRaises(ConfigurationError) as error:
+            Configuration(None, None, client_id='client_id$development$integration_client_id')
+
+        self.assertIn("Missing client_secret when constructing BraintreeGateway", str(error.exception))

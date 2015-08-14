@@ -68,7 +68,7 @@ class Configuration(object):
             parser.parse_access_token()
             self.environment = parser.environment
             self.merchant_id = parser.merchant_id
-        elif (parser.client_id is not None and parser.client_secret is not None):
+        elif (parser.client_id is not None or parser.client_secret is not None):
             parser.parse_client_credentials()
             self.environment = parser.environment
             self.merchant_id = merchant_id
