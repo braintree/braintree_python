@@ -135,6 +135,9 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEqual(params["business[name]"], ["14 Ladders"])
         self.assertEqual(params["payment_methods[]"], ["credit_card", "paypal"])
 
+        self.assertEqual(len(params["signature"][0]), 64)
+        self.assertEqual(params["algorithm"], ["SHA256"])
+
     def test_connect_url_limits_payment_methods(self):
         connect_url = self.gateway.oauth.connect_url({
              "merchant_id": "integration_merchant_id",
@@ -150,3 +153,9 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEqual(params["client_id"], ["client_id$development$integration_client_id"])
         self.assertEqual(params["redirect_uri"], ["http://bar.example.com"])
         self.assertEqual(params["payment_methods[]"], ["credit_card"])
+
+    def test_compute_signature(self):
+        url = "http://localhost:3000/oauth/connect?business%5Bname%5D=We+Like+Spaces&client_id=client_id%24development%24integration_client_id"
+
+        signature = self.gateway.oauth._compute_signature(url)
+        self.assertEqual(signature, "a36bcf10dd982e2e47e0d6a2cb930aea47ade73f954b7d59c58dae6167894d41")

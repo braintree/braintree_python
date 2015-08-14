@@ -3,6 +3,8 @@ from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.oauth_credentials import OAuthCredentials
+from braintree.util import Crypto
+
 import sys
 if sys.version_info[0] == 2:
     from urllib import quote_plus
@@ -50,7 +52,9 @@ class OAuthGateway(object):
         params = reduce(clean_values, params.items(), [])
         query = params + user_params + business_params
         query_string = "&".join(quote_plus(key) + "=" + quote_plus(value) for key, value in query)
-        return self._sign_url(self.config.environment.base_url + "/oauth/connect?" + query_string)
+        url = self.config.environment.base_url + "/oauth/connect?" + query_string
+        signature = self._compute_signature(url)
+        return url + "&signature=" + signature + "&algorithm=SHA256"
 
     def _sub_query(self, params, root):
         if root in params:
@@ -60,5 +64,5 @@ class OAuthGateway(object):
         query = [(root + "[" + key + "]", str(value)) for key, value in sub_query.items()]
         return query
 
-    def _sign_url(self, url):
-        return url
+    def _compute_signature(self, url):
+        return Crypto.sha256_hmac_hash(self.config.client_secret, url)
