@@ -1,3 +1,7 @@
+## 3.19.0
+* Add new test payment method nonces
+* Allow passing description on PayPal transactions
+
 ## 3.18.0
 * Fix oauth authentication
 * Fix python 3 syntax
