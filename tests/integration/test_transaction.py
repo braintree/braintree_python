@@ -2210,6 +2210,28 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEquals(transaction.paypal_details.custom_field, "custom field stuff")
 
+    def test_creating_paypal_transaction_with_description_in_options_paypal_params(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {},
+            "options": {
+                "paypal": {
+                    "description": "Product description"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertEquals(transaction.paypal_details.description, "Product description")
+
     def test_paypal_transaction_payment_instrument_type(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

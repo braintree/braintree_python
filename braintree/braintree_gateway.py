@@ -28,8 +28,6 @@ class BraintreeGateway(object):
             self.config = config
         else:
             self.config = Configuration(
-                kwargs.get("environment"),
-                None,
                 client_id=kwargs.get("client_id"),
                 client_secret=kwargs.get("client_secret"),
                 access_token=kwargs.get("access_token"),
