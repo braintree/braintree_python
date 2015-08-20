@@ -465,6 +465,14 @@ class Transaction(Resource):
                             "required"
                         ],
                     },
+                    {
+                        "amex_rewards": [
+                            "request_id",
+                            "points",
+                            "currency_amount",
+                            "currency_iso_code"
+                        ]
+                    },
                 ]
             },
             {"custom_fields": ["__any_key__"]},
