@@ -62,6 +62,19 @@ class TestPayPalAccount(unittest.TestCase):
         self.assertTrue(subscription1.id in [s.id for s in paypal_account.subscriptions])
         self.assertTrue(subscription2.id in [s.id for s in paypal_account.subscriptions])
 
+    def test_find_retuns_billing_agreement_id_with_a_paypal_account(self):
+        customer_id = Customer.create().customer.id
+        payment_method_token = "paypal-account-" + str(int(time.time()))
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": Nonces.PayPalBillingAgreement,
+            "customer_id": customer_id
+        })
+        self.assertTrue(result.is_success)
+
+        paypal_account = PayPalAccount.find(result.payment_method.token)
+        self.assertNotEquals(None, paypal_account.billing_agreement_id)
+
     def test_delete_deletes_paypal_account(self):
         result = PaymentMethod.create({
             "customer_id": Customer.create().customer.id,
