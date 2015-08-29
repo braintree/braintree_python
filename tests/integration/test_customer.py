@@ -119,8 +119,15 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertNotEqual(None, customer.apple_pay_cards[0])
 
-    def test_create_with_android_pay_nonce(self):
-        result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCard})
+    def test_create_with_android_pay_proxy_card_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCardDiscover})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
+
+    def test_create_with_android_pay_network_token_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCardMasterCard})
         self.assertTrue(result.is_success)
 
         customer = result.customer
