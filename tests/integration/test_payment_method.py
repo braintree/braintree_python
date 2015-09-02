@@ -156,16 +156,17 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(apple_pay_card.token, None)
         self.assertEqual(ApplePayCard.CardType.MasterCard, apple_pay_card.card_type)
         self.assertEqual("MasterCard 0017", apple_pay_card.payment_instrument_name)
+        self.assertEqual("MasterCard 0017", apple_pay_card.source_description)
         self.assertTrue(apple_pay_card.default)
         self.assertIn("apple_pay", apple_pay_card.image_url)
         self.assertTrue(int(apple_pay_card.expiration_month) > 0)
         self.assertTrue(int(apple_pay_card.expiration_year) > 0)
 
-    def test_create_with_fake_android_pay_nonce(self):
+    def test_create_with_fake_android_pay_proxy_card_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": Nonces.AndroidPayCard
+            "payment_method_nonce": Nonces.AndroidPayCardDiscover
         })
 
         self.assertTrue(result.is_success)
@@ -174,6 +175,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(android_pay_card.token, None)
         self.assertEqual(CreditCard.CardType.Discover, android_pay_card.virtual_card_type)
         self.assertEqual("1117", android_pay_card.virtual_card_last_4)
+        self.assertEqual("Visa 1111", android_pay_card.source_description)
         self.assertEqual(CreditCard.CardType.Visa, android_pay_card.source_card_type)
         self.assertEqual("1111", android_pay_card.source_card_last_4)
         self.assertEqual("1117", android_pay_card.last_4)
@@ -185,6 +187,33 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertIsInstance(android_pay_card.created_at, datetime)
         self.assertIsInstance(android_pay_card.updated_at, datetime)
         self.assertEqual("601111", android_pay_card.bin)
+        self.assertEqual("google_transaction_id", android_pay_card.google_transaction_id)
+
+    def test_create_with_fake_android_pay_network_token_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.AndroidPayCardMasterCard
+        })
+
+        self.assertTrue(result.is_success)
+        android_pay_card = result.payment_method
+        self.assertIsInstance(android_pay_card, AndroidPayCard)
+        self.assertNotEqual(android_pay_card.token, None)
+        self.assertEqual(CreditCard.CardType.MasterCard, android_pay_card.virtual_card_type)
+        self.assertEqual("4444", android_pay_card.virtual_card_last_4)
+        self.assertEqual("MasterCard 4444", android_pay_card.source_description)
+        self.assertEqual(CreditCard.CardType.MasterCard, android_pay_card.source_card_type)
+        self.assertEqual("4444", android_pay_card.source_card_last_4)
+        self.assertEqual("4444", android_pay_card.last_4)
+        self.assertEqual(CreditCard.CardType.MasterCard, android_pay_card.card_type)
+        self.assertTrue(android_pay_card.default)
+        self.assertIn("android_pay", android_pay_card.image_url)
+        self.assertTrue(int(android_pay_card.expiration_month) > 0)
+        self.assertTrue(int(android_pay_card.expiration_year) > 0)
+        self.assertIsInstance(android_pay_card.created_at, datetime)
+        self.assertIsInstance(android_pay_card.updated_at, datetime)
+        self.assertEqual("555555", android_pay_card.bin)
         self.assertEqual("google_transaction_id", android_pay_card.google_transaction_id)
 
     def test_create_with_abstract_payment_method_nonce(self):

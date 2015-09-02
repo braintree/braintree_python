@@ -12,6 +12,11 @@ namespace :test do
   task :integration do
     sh "env nosetests tests/integration"
   end
+
+  desc "run single test (example: rake test:single[tests/integration/test_paypal_account.py:TestPayPalAccount.test_find_returns_paypal_account])"
+  task :single, [:test_name] do |t, args|
+      sh "nosetests #{args[:test_name]}"
+  end
 end
 
 task :clean do

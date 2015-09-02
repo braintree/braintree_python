@@ -1,3 +1,9 @@
+## 3.20.0
+* Add source\_description to Android Pay and Apple Pay
+* Add new Android Pay test nonces
+* Add support for amex rewards transactions
+* Add billing\_agreement\_id to PaypalAccount
+
 ## 3.19.0
 * Add new test payment method nonces
 * Allow passing description on PayPal transactions
