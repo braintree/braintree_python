@@ -257,3 +257,8 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(WebhookNotification.Kind.SubscriptionChargedSuccessfully, notification.kind)
         self.assertEquals("my_id", notification.subscription.id)
         self.assertTrue(len(notification.subscription.transactions) == 1)
+
+        transaction = notification.subscription.transactions.pop()
+
+        self.assertEquals("submitted_for_settlement", transaction.status)
+        self.assertEquals(Decimal("49.99"), transaction.amount)
