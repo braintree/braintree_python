@@ -2088,11 +2088,34 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
 
-    def test_sale_returns_a_successful_result_with_amex_rewards_response(self):
+    def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2020"
+            },
+            "options" : {
+                "submit_for_settlement" : True,
+                "amex_rewards" : {
+                    "request_id" : "ABC123",
+                    "points" : "100",
+                    "currency_amount" : "1.00",
+                    "currency_iso_code" : "USD"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
+
+    def test_sale_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.IneligibleCard,
                 "expiration_date": "05/2009"
             },
             "options" : {
@@ -2110,19 +2133,18 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
-        self.assertEquals("success", transaction.amex_rewards_response)
 
-    def test_sale_returns_an_unsuccessful_result_with_amex_rewards_response(self):
+    def test_sale_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.InsufficientPoints,
                 "expiration_date": "05/2009"
             },
             "options" : {
                 "submit_for_settlement" : True,
                 "amex_rewards" : {
-                    "request_id" : "CARD_INELIGIBLE",
+                    "request_id" : "ABC123",
                     "points" : "100",
                     "currency_amount" : "1.00",
                     "currency_iso_code" : "USD"
@@ -2134,13 +2156,12 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
-        self.assertEquals("RDM2002 Card is not eligible for redemption", transaction.amex_rewards_response)
 
-    def test_submit_for_settlement_returns_a_successful_result_with_amex_rewards_response(self):
+    def test_submit_for_settlement_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
                 "expiration_date": "05/2009"
             },
             "options" : {
@@ -2159,19 +2180,18 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals("success", submitted_transaction.amex_rewards_response)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
-    def test_submit_for_settlement_returns_an_unsuccessful_result_with_amex_rewards_response(self):
+    def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.IneligibleCard,
                 "expiration_date": "05/2009"
             },
             "options" : {
                 "amex_rewards" : {
-                    "request_id" : "CARD_INELIGIBLE",
+                    "request_id" : "ABC123",
                     "points" : "100",
                     "currency_amount" : "1.00",
                     "currency_iso_code" : "USD"
@@ -2185,7 +2205,31 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals("RDM2002 Card is not eligible for redemption", submitted_transaction.amex_rewards_response)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
+    def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.InsufficientPoints,
+                "expiration_date": "05/2009"
+            },
+            "options" : {
+                "amex_rewards" : {
+                    "request_id" : "ABC123",
+                    "points" : "100",
+                    "currency_amount" : "1.00",
+                    "currency_iso_code" : "USD"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals(Transaction.Status.Authorized, transaction.status)
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_find_exposes_disputes(self):
