@@ -43,7 +43,7 @@ instructions above for upgrading from pycurl / httplib to requests.
 
     result = braintree.Transaction.sale({
         "amount": "1000.00",
-        "payment_method_nonce": "nonce_from_the_client",
+        "payment_method_nonce": nonce_from_the_client,
         "options": {
             "submit_for_settlement": True
         }
