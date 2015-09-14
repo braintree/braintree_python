@@ -253,3 +253,20 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals(WebhookNotification.Kind.PartnerMerchantDeclined, notification.kind)
         self.assertEquals("abc123", notification.partner_merchant.partner_merchant_id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
+
+    def test_builds_notification_for_subscription_charged_successfully(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionChargedSuccessfully,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEquals(WebhookNotification.Kind.SubscriptionChargedSuccessfully, notification.kind)
+        self.assertEquals("my_id", notification.subscription.id)
+        self.assertTrue(len(notification.subscription.transactions) == 1)
+
+        transaction = notification.subscription.transactions.pop()
+
+        self.assertEquals("submitted_for_settlement", transaction.status)
+        self.assertEquals(Decimal("49.99"), transaction.amount)

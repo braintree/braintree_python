@@ -48,6 +48,8 @@ class WebhookTestingGateway(object):
             return self.__dispute_lost_sample_xml(id)
         elif kind == WebhookNotification.Kind.DisputeWon:
             return self.__dispute_won_sample_xml(id)
+        elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
+            return self.__subscription_charged_successfully_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
 
@@ -167,6 +169,22 @@ class WebhookTestingGateway(object):
             <subscription>
                 <id>%s</id>
                 <transactions type="array"></transactions>
+                <add_ons type="array"></add_ons>
+                <discounts type="array"></discounts>
+            </subscription>
+        """ % id
+
+    def __subscription_charged_successfully_sample_xml(self, id):
+        return """
+            <subscription>
+                <id>%s</id>
+                <transactions type="array">
+                    <transaction>
+                        <status>submitted_for_settlement</status>
+                        <amount>49.99</amount>
+                        <tax_amount></tax_amount>
+                    </transaction>
+                </transactions>
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>
