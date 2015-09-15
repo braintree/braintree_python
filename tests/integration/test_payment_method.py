@@ -22,6 +22,7 @@ class TestPaymentMethod(unittest.TestCase):
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
         self.assertEquals(found_account.token, created_account.token)
+        self.assertEquals(found_account.customer_id, created_account.customer_id)
 
     def test_create_returns_validation_failures(self):
         http = ClientApiHttp.create()
@@ -110,6 +111,7 @@ class TestPaymentMethod(unittest.TestCase):
         found_credit_card = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_credit_card)
         self.assertEquals(found_credit_card.token, created_credit_card.token)
+        self.assertEquals(found_credit_card.customer_id, created_credit_card.customer_id)
 
     def test_create_with_europe_bank_account_nonce(self):
         config = Configuration.instantiate()
@@ -137,6 +139,7 @@ class TestPaymentMethod(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertNotEqual(result.payment_method.image_url, None)
+        self.assertEqual(result.payment_method.customer_id, customer_id)
         found_bank_account = PaymentMethod.find(result.payment_method.token)
 
         self.assertNotEqual(found_bank_account, None)
@@ -154,6 +157,7 @@ class TestPaymentMethod(unittest.TestCase):
         apple_pay_card = result.payment_method
         self.assertIsInstance(apple_pay_card, ApplePayCard)
         self.assertNotEqual(apple_pay_card.token, None)
+        self.assertEqual(apple_pay_card.customer_id, customer_id)
         self.assertEqual(ApplePayCard.CardType.MasterCard, apple_pay_card.card_type)
         self.assertEqual("MasterCard 0017", apple_pay_card.payment_instrument_name)
         self.assertEqual("MasterCard 0017", apple_pay_card.source_description)
@@ -173,6 +177,7 @@ class TestPaymentMethod(unittest.TestCase):
         android_pay_card = result.payment_method
         self.assertIsInstance(android_pay_card, AndroidPayCard)
         self.assertNotEqual(android_pay_card.token, None)
+        self.assertEqual(android_pay_card.customer_id, customer_id)
         self.assertEqual(CreditCard.CardType.Discover, android_pay_card.virtual_card_type)
         self.assertEqual("1117", android_pay_card.virtual_card_last_4)
         self.assertEqual("Visa 1111", android_pay_card.source_description)
@@ -200,6 +205,7 @@ class TestPaymentMethod(unittest.TestCase):
         android_pay_card = result.payment_method
         self.assertIsInstance(android_pay_card, AndroidPayCard)
         self.assertNotEqual(android_pay_card.token, None)
+        self.assertEqual(android_pay_card.customer_id, customer_id)
         self.assertEqual(CreditCard.CardType.MasterCard, android_pay_card.virtual_card_type)
         self.assertEqual("4444", android_pay_card.virtual_card_last_4)
         self.assertEqual("MasterCard 4444", android_pay_card.source_description)
@@ -227,6 +233,7 @@ class TestPaymentMethod(unittest.TestCase):
         payment_method = result.payment_method
         self.assertNotEqual(None, payment_method)
         self.assertNotEqual(None, payment_method.token)
+        self.assertEqual(customer_id, payment_method.customer_id)
 
     def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
         config = Configuration.instantiate()
