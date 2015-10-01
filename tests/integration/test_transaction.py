@@ -2090,6 +2090,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.AmexPayWithPoints.Success,
@@ -2113,6 +2114,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.AmexPayWithPoints.IneligibleCard,
@@ -2136,6 +2138,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.AmexPayWithPoints.InsufficientPoints,
@@ -2159,6 +2162,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_submit_for_settlement_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.AmexPayWithPoints.Success,
@@ -2184,6 +2188,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.AmexPayWithPoints.IneligibleCard,
@@ -2209,6 +2214,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.AmexPayWithPoints.InsufficientPoints,
