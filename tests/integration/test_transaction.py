@@ -2713,3 +2713,52 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue("4002", transaction.processor_settlement_response_code)
         self.assertTrue("Settlement Pending", transaction.processor_settlement_response_text)
         self.assertTrue(Transaction.Status.SettlementPending, transaction.status)
+
+    def test_transaction_submit_for_partial_settlement(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        authorized_transaction = result.transaction
+
+        partial_settlement_result = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction = partial_settlement_result.transaction
+        self.assertTrue(partial_settlement_result.is_success)
+        self.assertEqual(partial_settlement_transaction.amount, Decimal("500.00"))
+        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction.type);
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction.status)
+        self.assertEqual(authorized_transaction.id, partial_settlement_transaction.authorized_transaction_id)
+
+        partial_settlement_result_2 = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction_2 = partial_settlement_result_2.transaction
+        self.assertTrue(partial_settlement_result_2.is_success)
+        self.assertEqual(partial_settlement_transaction_2.amount, Decimal("500.00"))
+        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction_2.type);
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction_2.status)
+        self.assertEqual(authorized_transaction.id, partial_settlement_transaction_2.authorized_transaction_id)
+
+        refreshed_authorized_transaction = Transaction.find(authorized_transaction.id)
+        self.assertEqual(2, len(refreshed_authorized_transaction.partial_settlement_transaction_ids))
+
+    def test_transaction_submit_for_partial_settlement_unsuccessful(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        authorized_transaction = result.transaction
+
+        partial_settlement_result = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction = partial_settlement_result.transaction
+
+        partial_settlement_result_2 = Transaction.submit_for_partial_settlement(partial_settlement_transaction.id, Decimal("250.00"))
+        self.assertFalse(partial_settlement_result_2.is_success)
+        error_code = partial_settlement_result_2.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.CannotSubmitForPartialSettlement, error_code)

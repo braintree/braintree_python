@@ -96,6 +96,14 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    def submit_for_partial_settlement(self, transaction_id, amount):
+        response = self.config.http().post(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/submit_for_partial_settlement",
+                {"transaction": {"amount": amount}})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+
     def tr_data_for_credit(self, tr_data, redirect_url):
         if "transaction" not in tr_data:
             tr_data["transaction"] = {}

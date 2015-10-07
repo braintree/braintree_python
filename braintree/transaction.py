@@ -31,7 +31,7 @@ class Transaction(Resource):
     """
     A class representing Braintree Transaction objects.
 
-    An example of creating an sale transaction with all available fields::
+    An example of creating a sale transaction with all available fields::
 
         result = Transaction.sale({
             "amount": "100.00",
@@ -489,6 +489,19 @@ class Transaction(Resource):
                     ]
                 }
             ]
+
+    @staticmethod
+    def submit_for_partial_settlement(transaction_id, amount):
+        """
+        Creates a partial settlement transaction for an authorized transaction
+
+        Requires the transaction id of the authorized transaction and an amount::
+
+            result = braintree.Transaction.submit_for_partial_settlement("my_transaction_id", "20.00")
+
+        """
+
+        return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount)
 
     def __init__(self, gateway, attributes):
         if "refund_id" in attributes:
