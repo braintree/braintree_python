@@ -120,6 +120,7 @@ class WebhookTestingGateway(object):
               <currency-iso-code>USD</currency-iso-code>
               <received-date type="date">2014-03-01</received-date>
               <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
               <status>open</status>
               <reason>fraud</reason>
               <id>%s</id>
@@ -137,6 +138,7 @@ class WebhookTestingGateway(object):
               <currency-iso-code>USD</currency-iso-code>
               <received-date type="date">2014-03-01</received-date>
               <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
               <status>lost</status>
               <reason>fraud</reason>
               <id>%s</id>
@@ -154,6 +156,7 @@ class WebhookTestingGateway(object):
               <currency-iso-code>USD</currency-iso-code>
               <received-date type="date">2014-03-01</received-date>
               <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
               <status>won</status>
               <reason>fraud</reason>
               <id>%s</id>

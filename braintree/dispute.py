@@ -43,6 +43,18 @@ class Dispute(AttributeGetter):
         Retrieval                     = "retrieval"
         TransactionAmountDiffers      = "transaction_amount_differs"
 
+    class Kind(object):
+        """
+        Constants representing dispute kinds. Available types are:
+
+        * braintree.Dispute.Kind.Chargeback
+        * braintree.Dispute.Kind.PreArbitration
+        * braintree.Dispute.Kind.Retrieval
+        """
+        Chargeback     = "chargeback"
+        PreArbitration = "pre_arbitration"
+        Retrieval      = "retrieval"
+
 
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
