@@ -190,6 +190,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals("my_id", notification.dispute.id)
         self.assertEquals(Dispute.Status.Open, notification.dispute.status)
         self.assertEquals(Dispute.Kind.Chargeback, notification.dispute.kind)
+        self.assertEquals(notification.dispute.date_opened, date(2014, 3, 28))
 
     def test_builds_notification_for_dispute_lost(self):
         sample_notification = WebhookTesting.sample_notification(
@@ -203,6 +204,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals("my_id", notification.dispute.id)
         self.assertEquals(Dispute.Status.Lost, notification.dispute.status)
         self.assertEquals(Dispute.Kind.Chargeback, notification.dispute.kind)
+        self.assertEquals(notification.dispute.date_opened, date(2014, 3, 28))
 
     def test_builds_notification_for_dispute_won(self):
         sample_notification = WebhookTesting.sample_notification(
@@ -216,6 +218,8 @@ class TestWebhooks(unittest.TestCase):
         self.assertEquals("my_id", notification.dispute.id)
         self.assertEquals(Dispute.Status.Won, notification.dispute.status)
         self.assertEquals(Dispute.Kind.Chargeback, notification.dispute.kind)
+        self.assertEquals(notification.dispute.date_opened, date(2014, 3, 28))
+        self.assertEquals(notification.dispute.date_won, date(2014, 9, 1))
 
     def test_builds_notification_for_partner_merchant_connected(self):
         sample_notification = WebhookTesting.sample_notification(
