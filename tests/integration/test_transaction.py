@@ -819,6 +819,22 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(int(android_pay_card_details.expiration_month) > 0)
         self.assertTrue(int(android_pay_card_details.expiration_year) > 0)
 
+    def test_sale_with_fake_amex_express_checkout_card_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.AmexExpressCheckoutCard,
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.AmexExpressCheckoutCard)
+        amex_express_checkout_card_details = result.transaction.amex_express_checkout_card_details
+        self.assertNotEqual(None, amex_express_checkout_card_details)
+        self.assertEqual(CreditCard.CardType.AmEx, amex_express_checkout_card_details.card_type)
+        self.assertTrue(int(amex_express_checkout_card_details.expiration_month) > 0)
+        self.assertTrue(int(amex_express_checkout_card_details.expiration_year) > 0)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

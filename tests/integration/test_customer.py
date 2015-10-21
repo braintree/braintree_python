@@ -133,6 +133,13 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
 
+    def test_create_with_amex_express_checkout_card_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.AmexExpressCheckoutCard})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertIsInstance(customer.amex_express_checkout_cards[0], AmexExpressCheckoutCard)
+
     def test_create_with_paypal_future_payments_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
         self.assertTrue(result.is_success)

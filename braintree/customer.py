@@ -5,6 +5,7 @@ from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.apple_pay_card import ApplePayCard
 from braintree.android_pay_card import AndroidPayCard
+from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
@@ -208,6 +209,10 @@ class Customer(Resource):
         if "android_pay_cards" in attributes:
             self.android_pay_cards  = [AndroidPayCard(gateway, android_pay_card) for android_pay_card in self.android_pay_cards]
             self.payment_methods += self.android_pay_cards
+
+        if "amex_express_checkout_cards" in attributes:
+            self.amex_express_checkout_cards  = [AmexExpressCheckoutCard(gateway, amex_express_checkout_card) for amex_express_checkout_card in self.amex_express_checkout_cards]
+            self.payment_methods += self.amex_express_checkout_cards
 
         if "europe_bank_accounts" in attributes:
             self.europe_bank_accounts = [EuropeBankAccount(gateway, europe_bank_account) for europe_bank_account in self.europe_bank_accounts]

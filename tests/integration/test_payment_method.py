@@ -222,6 +222,28 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual("555555", android_pay_card.bin)
         self.assertEqual("google_transaction_id", android_pay_card.google_transaction_id)
 
+    def test_create_with_fake_amex_express_checkout_card_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.AmexExpressCheckoutCard
+        })
+
+        self.assertTrue(result.is_success)
+        amex_express_checkout_card = result.payment_method
+        self.assertIsInstance(amex_express_checkout_card, AmexExpressCheckoutCard)
+        self.assertNotEqual(amex_express_checkout_card.token, None)
+        self.assertTrue(amex_express_checkout_card.default)
+        self.assertEqual(amex_express_checkout_card.card_type, "American Express")
+        self.assertRegexpMatches(amex_express_checkout_card.bin, r"\A\d{6}\Z")
+        self.assertRegexpMatches(amex_express_checkout_card.expiration_month, r"\A\d{2}\Z")
+        self.assertRegexpMatches(amex_express_checkout_card.expiration_year, r"\A\d{4}\Z")
+        self.assertRegexpMatches(amex_express_checkout_card.card_member_number, r"\A\d{4}\Z")
+        self.assertRegexpMatches(amex_express_checkout_card.card_member_expiry_date, r"\A\d{2}/\d{2}\Z")
+        self.assertRegexpMatches(amex_express_checkout_card.source_description, r"\AAmEx \d{4}\Z")
+        self.assertRegexpMatches(amex_express_checkout_card.image_url, r"\.png")
+        self.assertEqual(amex_express_checkout_card.customer_id, customer_id)
+
     def test_create_with_abstract_payment_method_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
