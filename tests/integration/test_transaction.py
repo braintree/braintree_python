@@ -2762,3 +2762,15 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(partial_settlement_result_2.is_success)
         error_code = partial_settlement_result_2.errors.for_object("transaction").on("base")[0].code
         self.assertEqual(ErrorCodes.Transaction.CannotSubmitForPartialSettlement, error_code)
+
+    def test_transaction_facilitator(self):
+        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+
+        result = Transaction.sale({
+            "payment_method_nonce": grant_result.nonce,
+            "amount": TransactionAmounts.Authorize,
+        })
+        self.assertTrue(result.transaction.facilitator_details is not None)
+        self.assertEqual(result.transaction.facilitator_details.oauth_application_client_id, "client_id$development$integration_client_id")
+        self.assertEqual(result.transaction.facilitator_details.oauth_application_name, "PseudoShop")

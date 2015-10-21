@@ -25,6 +25,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
 class Transaction(Resource):
@@ -558,6 +559,8 @@ class Transaction(Resource):
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
+        if "facilitator_details" in attributes:
+            self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
 
     @property
     def refund_id(self):
