@@ -277,3 +277,13 @@ class TestWebhooks(unittest.TestCase):
 
         self.assertEquals("submitted_for_settlement", transaction.status)
         self.assertEquals(Decimal("49.99"), transaction.amount)
+
+    def test_builds_notification_for_check(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.Check,
+            ""
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEquals(WebhookNotification.Kind.Check, notification.kind)

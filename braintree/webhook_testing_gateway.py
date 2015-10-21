@@ -26,6 +26,8 @@ class WebhookTestingGateway(object):
         return sample_xml.encode('utf-8')
 
     def __subject_sample_xml(self, kind, id):
+        if kind == WebhookNotification.Kind.Check:
+            return self.__check_sample_xml()
         if kind == WebhookNotification.Kind.SubMerchantAccountApproved:
             return self.__merchant_account_approved_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubMerchantAccountDeclined:
@@ -52,6 +54,13 @@ class WebhookTestingGateway(object):
             return self.__subscription_charged_successfully_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
+
+    def __check_sample_xml(self):
+        return """
+            <check type="boolean">
+              true
+            </check>
+        """
 
     def __transaction_disbursed_sample_xml(self, id):
         return """
