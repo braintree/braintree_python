@@ -1831,7 +1831,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
- 
+
     def test_transactions_return_validation_errors_on_travel_cruise_industry_data(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -2774,3 +2774,55 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.transaction.facilitator_details is not None)
         self.assertEqual(result.transaction.facilitator_details.oauth_application_client_id, "client_id$development$integration_client_id")
         self.assertEqual(result.transaction.facilitator_details.oauth_application_name, "PseudoShop")
+
+    def test_shared_vault_transaction(self):
+        config = Configuration(
+            merchant_id = "integration_merchant_public_id",
+            public_key = "oauth_app_partner_user_public_key",
+            private_key = "oauth_app_partner_user_private_key",
+            environment = Environment.Development
+        )
+
+        gateway = BraintreeGateway(config)
+        customer = gateway.customer.create({"first_name": "Bob"}).customer
+        address = gateway.address.create({
+            "customer_id": customer.id,
+            "first_name": "Joe",
+        }).address
+
+        credit_card = gateway.credit_card.create(
+            params = {
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+            }
+        ).credit_card
+
+        oauth_app_gateway = BraintreeGateway(
+            client_id = "client_id$development$integration_client_id",
+            client_secret = "client_secret$development$integration_client_secret",
+            environment = Environment.Development
+        )
+        code = TestHelper.create_grant(oauth_app_gateway, {
+            "merchant_public_id": "integration_merchant_id",
+            "scope": "grant_payment_method,shared_vault_transactions"
+        })
+        access_token = oauth_app_gateway.oauth.create_token_from_code({
+            "code": code
+        }).credentials.access_token
+
+        granting_gateway = BraintreeGateway(
+            access_token = access_token,
+        )
+
+        result = granting_gateway.transaction.sale({
+            "shared_payment_method_token": credit_card.token,
+            "shared_customer_id": customer.id,
+            "shared_shipping_address_id": address.id,
+            "shared_billing_address_id": address.id,
+            "amount": "100"
+        })
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.shipping_details.first_name, address.first_name)
+        self.assertEqual(result.transaction.billing_details.first_name, address.first_name)
+        self.assertEqual(result.transaction.customer_details.first_name, customer.first_name)
