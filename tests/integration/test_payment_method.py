@@ -869,6 +869,83 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(updated_result.is_success == False)
         self.assertTrue(updated_result.errors.deep_errors[0].code == "92906")
 
+    def _create_payment_method_grant_fixtures(self):
+        config = Configuration(
+            merchant_id = "integration_merchant_public_id",
+            public_key = "oauth_app_partner_user_public_key",
+            private_key = "oauth_app_partner_user_private_key",
+            environment = Environment.Development
+        )
+
+        gateway = BraintreeGateway(config)
+        customer = gateway.customer.create().customer
+        credit_card = gateway.credit_card.create(
+            params = {
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+            }
+        ).credit_card
+
+        oauth_app_gateway = BraintreeGateway(
+            client_id = "client_id$development$integration_client_id",
+            client_secret = "client_secret$development$integration_client_secret",
+            environment = Environment.Development
+        )
+        code = TestHelper.create_grant(oauth_app_gateway, {
+            "merchant_public_id": "integration_merchant_id",
+            "scope": "grant_payment_method"
+        })
+        access_token = oauth_app_gateway.oauth.create_token_from_code({
+            "code": code
+        }).credentials.access_token
+
+        granting_gateway = BraintreeGateway(
+            access_token = access_token,
+        )
+
+        return (granting_gateway, credit_card)
+
+    def test_payment_method_grant_returns_one_time_nonce(self):
+        """
+        Payment method grant returns a nonce that is transactable by a partner merchant exactly once
+        """
+        granting_gateway, credit_card = self._create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+
+        result = Transaction.sale({
+            "payment_method_nonce": grant_result.nonce,
+            "amount": TransactionAmounts.Authorize,
+        })
+        self.assertTrue(result.is_success)
+        result = Transaction.sale({
+            "payment_method_nonce": grant_result.nonce,
+            "amount": TransactionAmounts.Authorize,
+        })
+        self.assertFalse(result.is_success)
+
+    def test_payment_method_grant_returns_a_nonce_that_is_not_vaultable(self):
+        granting_gateway, credit_card = self._create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": grant_result.nonce
+        })
+        self.assertFalse(result.is_success)
+
+    def test_payment_method_grant_returns_a_nonce_that_is_vaultable(self):
+        granting_gateway, credit_card = self._create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, True)
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": grant_result.nonce
+        })
+        self.assertTrue(result.is_success)
+
 class CreditCardForwardingTest(unittest.TestCase):
     def setUp(self):
         braintree.Configuration.configure(

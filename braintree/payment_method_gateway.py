@@ -10,6 +10,7 @@ from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.ids_search import IdsSearch
+from braintree.payment_method_nonce import PaymentMethodNonce
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
@@ -50,13 +51,34 @@ class PaymentMethodGateway(object):
         self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
         return SuccessfulResult()
 
-    def _post(self, url, params={}):
+    def grant(self, payment_method_token, allow_vaulting):
+        if payment_method_token is None or not str(payment_method_token).strip():
+            raise ValueError
+
+        try:
+            response = self._post(
+                "/payment_methods/grant",
+                {
+                    "payment_method": {
+                        "shared_payment_method_token": payment_method_token,
+                        "allow_vaulting": allow_vaulting
+                    }
+                },
+                parse_response=False
+            )
+
+            return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])
+        except NotFoundError:
+            raise NotFoundError("payment method with payment_method_token " + repr(payment_method_token) + " not found")
+
+    def _post(self, url, params={}, parse_response=True):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-        else:
+        elif parse_response:
             payment_method = self._parse_payment_method(response)
             return SuccessfulResult({"payment_method": payment_method})
+        return response
 
     def _put(self, url, params={}):
         response = self.config.http().put(self.config.base_merchant_path() + url, params)

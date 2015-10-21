@@ -97,3 +97,17 @@ class TestPaymentMethodGateway(unittest.TestCase):
         ]
 
         self.assertEqual(expected_signature, actual_signature)
+
+    def test_nonce_grant_params(self):
+        """
+        We validate parameters to PaymentMethod.grant properly
+        """
+        payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
+        with self.assertRaises(ValueError):
+            payment_method_gateway.grant("", False)
+
+        with self.assertRaises(ValueError):
+            payment_method_gateway.grant("\t", False)
+
+        with self.assertRaises(ValueError):
+            payment_method_gateway.grant(None, False)
