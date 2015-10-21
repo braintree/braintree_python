@@ -659,15 +659,6 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
-    def test_advanced_search_multiple_value_node_allowed_values_source(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.source == "noSuchSource"
-            ])
-            self.assertTrue(False)
-        except AttributeError as error:
-            self.assertEquals("Invalid argument(s) for source: noSuchSource", str(error))
-
     def test_advanced_search_multiple_value_node_type(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

@@ -67,10 +67,7 @@ class TransactionSearch:
         Constants.get_all_constant_values_from_class(CreditCard.CustomerLocation)
     )
 
-    source = Search.MultipleValueNodeBuilder(
-        "source",
-        Constants.get_all_constant_values_from_class(Transaction.Source)
-    )
+    source = Search.MultipleValueNodeBuilder("source")
 
     status = Search.MultipleValueNodeBuilder(
         "status",
