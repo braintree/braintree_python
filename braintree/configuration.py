@@ -1,5 +1,3 @@
-import os
-import sys
 import braintree
 from braintree.exceptions.configuration_error import ConfigurationError
 from braintree.credentials_parser import CredentialsParser
