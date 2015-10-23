@@ -559,7 +559,7 @@ class Transaction(Resource):
             self.risk_data = RiskData(attributes["risk_data"])
         else:
             self.risk_data = None
-        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] == None:
+        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] is None:
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None

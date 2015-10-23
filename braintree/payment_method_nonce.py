@@ -15,7 +15,7 @@ class PaymentMethodNonce(Resource):
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
 
-        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] == None:
+        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] is None:
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
