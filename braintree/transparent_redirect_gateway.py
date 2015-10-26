@@ -52,7 +52,7 @@ class TransparentRedirectGateway(object):
         query_params = cgi.parse_qs(query_string)
         http_status = int(query_params["http_status"][0])
         message = query_params.get("bt_message")
-        if message != None:
+        if message is not None:
             message = message[0]
 
         if Http.is_error_status(http_status):
