@@ -1,6 +1,13 @@
 from tests.test_helper import *
 
 class TestResourceCollection(unittest.TestCase):
+    collection_data = {
+        "search_results": {
+            "page_size": 2,
+            "ids": ["0", "1", "2", "3", "4"]
+        }
+    }
+
     class TestResource:
         items = ["a", "b", "c", "d", "e"]
 
@@ -9,13 +16,7 @@ class TestResourceCollection(unittest.TestCase):
             return [TestResourceCollection.TestResource.items[int(id)] for id in ids]
 
     def test_iterating_over_contents(self):
-        collection_data = {
-            "search_results": {
-                "page_size": 2,
-                "ids": ["0", "1", "2", "3", "4"]
-            }
-        }
-        collection = ResourceCollection("some_query", collection_data, TestResourceCollection.TestResource.fetch)
+        collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
         new_items = []
         index = 0
         for item in collection.items:
@@ -25,3 +26,7 @@ class TestResourceCollection(unittest.TestCase):
 
         self.assertEquals(5, len(new_items))
 
+    def test_iterate_using_iterator_protocol(self):
+        collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
+        for test_elem, coll_elem in zip(self.TestResource.items, collection):
+            self.assertEqual(test_elem, coll_elem)
