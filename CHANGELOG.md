@@ -1,8 +1,18 @@
+## 3.21.0
+* Add transaction to subscription successfully charged webhook
+* Add new ProcessorDoesNotSupportAuths error
+* Add support for partial settlement transactions
+* Add constants for dispute kind
+* Preserve backtrace when not wrapping HTTP exceptions
+* Add date_opened and date_won to dispute webhooks
+* Add support for searching transactions from oauth app
+* Support AMEX express checkout
+
 ## 3.20.0
-* Add source\_description to Android Pay and Apple Pay
-* Add new Android Pay test nonces
-* Add support for amex rewards transactions
-* Add billing\_agreement\_id to PaypalAccount
+* add source\_description to android pay and apple pay
+* add new android pay test nonces
+* add support for amex rewards transactions
+* add billing\_agreement\_id to paypalaccount
 
 ## 3.19.0
 * Add new test payment method nonces
