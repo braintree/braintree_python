@@ -26,6 +26,8 @@ class WebhookTestingGateway(object):
         return sample_xml.encode('utf-8')
 
     def __subject_sample_xml(self, kind, id):
+        if kind == WebhookNotification.Kind.Check:
+            return self.__check_sample_xml()
         if kind == WebhookNotification.Kind.SubMerchantAccountApproved:
             return self.__merchant_account_approved_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubMerchantAccountDeclined:
@@ -48,8 +50,17 @@ class WebhookTestingGateway(object):
             return self.__dispute_lost_sample_xml(id)
         elif kind == WebhookNotification.Kind.DisputeWon:
             return self.__dispute_won_sample_xml(id)
+        elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
+            return self.__subscription_charged_successfully_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
+
+    def __check_sample_xml(self):
+        return """
+            <check type="boolean">
+              true
+            </check>
+        """
 
     def __transaction_disbursed_sample_xml(self, id):
         return """
@@ -118,6 +129,7 @@ class WebhookTestingGateway(object):
               <currency-iso-code>USD</currency-iso-code>
               <received-date type="date">2014-03-01</received-date>
               <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
               <status>open</status>
               <reason>fraud</reason>
               <id>%s</id>
@@ -125,6 +137,7 @@ class WebhookTestingGateway(object):
                 <id>%s</id>
                 <amount>250.00</amount>
               </transaction>
+              <date-opened type="date">2014-03-28</date-opened>
             </dispute>
         """ % (id, id)
 
@@ -135,6 +148,7 @@ class WebhookTestingGateway(object):
               <currency-iso-code>USD</currency-iso-code>
               <received-date type="date">2014-03-01</received-date>
               <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
               <status>lost</status>
               <reason>fraud</reason>
               <id>%s</id>
@@ -142,6 +156,7 @@ class WebhookTestingGateway(object):
                 <id>%s</id>
                 <amount>250.00</amount>
               </transaction>
+              <date-opened type="date">2014-03-28</date-opened>
             </dispute>
         """ % (id, id)
 
@@ -152,6 +167,7 @@ class WebhookTestingGateway(object):
               <currency-iso-code>USD</currency-iso-code>
               <received-date type="date">2014-03-01</received-date>
               <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
               <status>won</status>
               <reason>fraud</reason>
               <id>%s</id>
@@ -159,6 +175,8 @@ class WebhookTestingGateway(object):
                 <id>%s</id>
                 <amount>250.00</amount>
               </transaction>
+              <date-opened type="date">2014-03-28</date-opened>
+              <date-won type="date">2014-09-01</date-won>
             </dispute>
         """ % (id, id)
 
@@ -167,6 +185,22 @@ class WebhookTestingGateway(object):
             <subscription>
                 <id>%s</id>
                 <transactions type="array"></transactions>
+                <add_ons type="array"></add_ons>
+                <discounts type="array"></discounts>
+            </subscription>
+        """ % id
+
+    def __subscription_charged_successfully_sample_xml(self, id):
+        return """
+            <subscription>
+                <id>%s</id>
+                <transactions type="array">
+                    <transaction>
+                        <status>submitted_for_settlement</status>
+                        <amount>49.99</amount>
+                        <tax_amount></tax_amount>
+                    </transaction>
+                </transactions>
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>

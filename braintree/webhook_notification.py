@@ -11,6 +11,7 @@ from braintree.validation_error_collection import ValidationErrorCollection
 
 class WebhookNotification(Resource):
     class Kind(object):
+        Check = "check"
         PartnerMerchantConnected = "partner_merchant_connected"
         PartnerMerchantDisconnected = "partner_merchant_disconnected"
         PartnerMerchantDeclined = "partner_merchant_declined"

@@ -31,7 +31,7 @@ class CustomerGateway(object):
 
     def find(self, customer_id):
         try:
-            if customer_id == None or customer_id.strip() == "":
+            if customer_id is None or customer_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/customers/" + customer_id)
             return Customer(self.gateway, response["customer"])

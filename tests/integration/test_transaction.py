@@ -819,6 +819,22 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(int(android_pay_card_details.expiration_month) > 0)
         self.assertTrue(int(android_pay_card_details.expiration_year) > 0)
 
+    def test_sale_with_fake_amex_express_checkout_card_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.AmexExpressCheckoutCard,
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.AmexExpressCheckoutCard)
+        amex_express_checkout_card_details = result.transaction.amex_express_checkout_card_details
+        self.assertNotEqual(None, amex_express_checkout_card_details)
+        self.assertEqual(CreditCard.CardType.AmEx, amex_express_checkout_card_details.card_type)
+        self.assertTrue(int(amex_express_checkout_card_details.expiration_month) > 0)
+        self.assertTrue(int(amex_express_checkout_card_details.expiration_year) > 0)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1831,7 +1847,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
- 
+
     def test_transactions_return_validation_errors_on_travel_cruise_industry_data(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -2088,11 +2104,36 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
 
-    def test_sale_returns_a_successful_result_with_amex_rewards_response(self):
+    def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2020"
+            },
+            "options" : {
+                "submit_for_settlement" : True,
+                "amex_rewards" : {
+                    "request_id" : "ABC123",
+                    "points" : "100",
+                    "currency_amount" : "1.00",
+                    "currency_iso_code" : "USD"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
+
+    def test_sale_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.IneligibleCard,
                 "expiration_date": "05/2009"
             },
             "options" : {
@@ -2110,19 +2151,19 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
-        self.assertEquals("success", transaction.amex_rewards_response)
 
-    def test_sale_returns_an_unsuccessful_result_with_amex_rewards_response(self):
+    def test_sale_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.InsufficientPoints,
                 "expiration_date": "05/2009"
             },
             "options" : {
                 "submit_for_settlement" : True,
                 "amex_rewards" : {
-                    "request_id" : "CARD_INELIGIBLE",
+                    "request_id" : "ABC123",
                     "points" : "100",
                     "currency_amount" : "1.00",
                     "currency_iso_code" : "USD"
@@ -2134,13 +2175,13 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
-        self.assertEquals("RDM2002 Card is not eligible for redemption", transaction.amex_rewards_response)
 
-    def test_submit_for_settlement_returns_a_successful_result_with_amex_rewards_response(self):
+    def test_submit_for_settlement_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
                 "expiration_date": "05/2009"
             },
             "options" : {
@@ -2159,19 +2200,19 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals("success", submitted_transaction.amex_rewards_response)
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
-    def test_submit_for_settlement_returns_an_unsuccessful_result_with_amex_rewards_response(self):
+    def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "371449635392376",
+                "number": CreditCardNumbers.AmexPayWithPoints.IneligibleCard,
                 "expiration_date": "05/2009"
             },
             "options" : {
                 "amex_rewards" : {
-                    "request_id" : "CARD_INELIGIBLE",
+                    "request_id" : "ABC123",
                     "points" : "100",
                     "currency_amount" : "1.00",
                     "currency_iso_code" : "USD"
@@ -2185,7 +2226,32 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals("RDM2002 Card is not eligible for redemption", submitted_transaction.amex_rewards_response)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
+    def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.InsufficientPoints,
+                "expiration_date": "05/2009"
+            },
+            "options" : {
+                "amex_rewards" : {
+                    "request_id" : "ABC123",
+                    "points" : "100",
+                    "currency_amount" : "1.00",
+                    "currency_iso_code" : "USD"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEquals(Transaction.Status.Authorized, transaction.status)
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_find_exposes_disputes(self):
@@ -2663,3 +2729,116 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue("4002", transaction.processor_settlement_response_code)
         self.assertTrue("Settlement Pending", transaction.processor_settlement_response_text)
         self.assertTrue(Transaction.Status.SettlementPending, transaction.status)
+
+    def test_transaction_submit_for_partial_settlement(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        authorized_transaction = result.transaction
+
+        partial_settlement_result = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction = partial_settlement_result.transaction
+        self.assertTrue(partial_settlement_result.is_success)
+        self.assertEqual(partial_settlement_transaction.amount, Decimal("500.00"))
+        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction.type);
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction.status)
+        self.assertEqual(authorized_transaction.id, partial_settlement_transaction.authorized_transaction_id)
+
+        partial_settlement_result_2 = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction_2 = partial_settlement_result_2.transaction
+        self.assertTrue(partial_settlement_result_2.is_success)
+        self.assertEqual(partial_settlement_transaction_2.amount, Decimal("500.00"))
+        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction_2.type);
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction_2.status)
+        self.assertEqual(authorized_transaction.id, partial_settlement_transaction_2.authorized_transaction_id)
+
+        refreshed_authorized_transaction = Transaction.find(authorized_transaction.id)
+        self.assertEqual(2, len(refreshed_authorized_transaction.partial_settlement_transaction_ids))
+
+    def test_transaction_submit_for_partial_settlement_unsuccessful(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        authorized_transaction = result.transaction
+
+        partial_settlement_result = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction = partial_settlement_result.transaction
+
+        partial_settlement_result_2 = Transaction.submit_for_partial_settlement(partial_settlement_transaction.id, Decimal("250.00"))
+        self.assertFalse(partial_settlement_result_2.is_success)
+        error_code = partial_settlement_result_2.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.CannotSubmitForPartialSettlement, error_code)
+
+    def test_transaction_facilitator(self):
+        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+
+        result = Transaction.sale({
+            "payment_method_nonce": grant_result.nonce,
+            "amount": TransactionAmounts.Authorize,
+        })
+        self.assertTrue(result.transaction.facilitator_details is not None)
+        self.assertEqual(result.transaction.facilitator_details.oauth_application_client_id, "client_id$development$integration_client_id")
+        self.assertEqual(result.transaction.facilitator_details.oauth_application_name, "PseudoShop")
+
+    def test_shared_vault_transaction(self):
+        config = Configuration(
+            merchant_id = "integration_merchant_public_id",
+            public_key = "oauth_app_partner_user_public_key",
+            private_key = "oauth_app_partner_user_private_key",
+            environment = Environment.Development
+        )
+
+        gateway = BraintreeGateway(config)
+        customer = gateway.customer.create({"first_name": "Bob"}).customer
+        address = gateway.address.create({
+            "customer_id": customer.id,
+            "first_name": "Joe",
+        }).address
+
+        credit_card = gateway.credit_card.create(
+            params = {
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+            }
+        ).credit_card
+
+        oauth_app_gateway = BraintreeGateway(
+            client_id = "client_id$development$integration_client_id",
+            client_secret = "client_secret$development$integration_client_secret",
+            environment = Environment.Development
+        )
+        code = TestHelper.create_grant(oauth_app_gateway, {
+            "merchant_public_id": "integration_merchant_id",
+            "scope": "grant_payment_method,shared_vault_transactions"
+        })
+        access_token = oauth_app_gateway.oauth.create_token_from_code({
+            "code": code
+        }).credentials.access_token
+
+        granting_gateway = BraintreeGateway(
+            access_token = access_token,
+        )
+
+        result = granting_gateway.transaction.sale({
+            "shared_payment_method_token": credit_card.token,
+            "shared_customer_id": customer.id,
+            "shared_shipping_address_id": address.id,
+            "shared_billing_address_id": address.id,
+            "amount": "100"
+        })
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.shipping_details.first_name, address.first_name)
+        self.assertEqual(result.transaction.billing_details.first_name, address.first_name)
+        self.assertEqual(result.transaction.customer_details.first_name, customer.first_name)

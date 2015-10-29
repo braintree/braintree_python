@@ -40,6 +40,7 @@ class TestHelper(object):
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
     non_default_sub_merchant_account_id = "sandbox_sub_merchant_account"
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
+    fake_amex_direct_merchant_account_id = "fake_amex_direct_usd"
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",
          "id": "integration_plan_with_add_ons_and_discounts",
@@ -194,6 +195,44 @@ class TestHelper(object):
         })
 
         return response["grant"]["code"]
+
+    @staticmethod
+    def create_payment_method_grant_fixtures():
+        config = Configuration(
+            merchant_id = "integration_merchant_public_id",
+            public_key = "oauth_app_partner_user_public_key",
+            private_key = "oauth_app_partner_user_private_key",
+            environment = Environment.Development
+        )
+
+        gateway = BraintreeGateway(config)
+        customer = gateway.customer.create().customer
+        credit_card = gateway.credit_card.create(
+            params = {
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2009",
+            }
+        ).credit_card
+
+        oauth_app_gateway = BraintreeGateway(
+            client_id = "client_id$development$integration_client_id",
+            client_secret = "client_secret$development$integration_client_secret",
+            environment = Environment.Development
+        )
+        code = TestHelper.create_grant(oauth_app_gateway, {
+            "merchant_public_id": "integration_merchant_id",
+            "scope": "grant_payment_method"
+        })
+        access_token = oauth_app_gateway.oauth.create_token_from_code({
+            "code": code
+        }).credentials.access_token
+
+        granting_gateway = BraintreeGateway(
+            access_token = access_token,
+        )
+
+        return (granting_gateway, credit_card)
 
 
 class ClientApiHttp(Http):

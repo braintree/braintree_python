@@ -43,9 +43,9 @@ instructions above for upgrading from pycurl / httplib to requests.
 
     result = braintree.Transaction.sale({
         "amount": "1000.00",
-        "credit_card": {
-            "number": "4111111111111111",
-            "expiration_date": "05/2012"
+        "payment_method_nonce": nonce_from_the_client,
+        "options": {
+            "submit_for_settlement": True
         }
     })
 
@@ -64,6 +64,8 @@ instructions above for upgrading from pycurl / httplib to requests.
 ## Testing
 
 Our friends at [Venmo](https://venmo.com) have [an open source library](https://github.com/venmo/btnamespace) designed to simplify testing of applications using this library.
+
+The unit specs can be run by anyone on any system, but the integration specs are meant to be run against a local development server of our gateway code. These integration specs are not meant for public consumption and will likely fail if run on your system. To run unit tests use rake(`rake test:unit`) or nose(`nosetests tests/unit`).
 
 ## Open Source Attribution
 

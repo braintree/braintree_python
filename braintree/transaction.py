@@ -5,6 +5,7 @@ from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
+from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.disbursement_detail import DisbursementDetail
 from braintree.dispute import Dispute
 from braintree.discount import Discount
@@ -25,13 +26,14 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
 class Transaction(Resource):
     """
     A class representing Braintree Transaction objects.
 
-    An example of creating an sale transaction with all available fields::
+    An example of creating a sale transaction with all available fields::
 
         result = Transaction.sale({
             "amount": "100.00",
@@ -420,6 +422,7 @@ class Transaction(Resource):
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "shipping_address_id",
             "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
+            "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id",
             "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "credit_card": [
@@ -490,6 +493,19 @@ class Transaction(Resource):
                 }
             ]
 
+    @staticmethod
+    def submit_for_partial_settlement(transaction_id, amount):
+        """
+        Creates a partial settlement transaction for an authorized transaction
+
+        Requires the transaction id of the authorized transaction and an amount::
+
+            result = braintree.Transaction.submit_for_partial_settlement("my_transaction_id", "20.00")
+
+        """
+
+        return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount)
+
     def __init__(self, gateway, attributes):
         if "refund_id" in attributes:
             self._refund_id = attributes["refund_id"]
@@ -516,6 +532,8 @@ class Transaction(Resource):
             self.coinbase_details = CoinbaseAccount(gateway, attributes.pop("coinbase_account"))
         if "android_pay_card" in attributes:
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
+        if "amex_express_checkout_card" in attributes:
+            self.amex_express_checkout_card_details = AmexExpressCheckoutCard(gateway, attributes.pop("amex_express_checkout_card"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:
@@ -541,10 +559,12 @@ class Transaction(Resource):
             self.risk_data = RiskData(attributes["risk_data"])
         else:
             self.risk_data = None
-        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] == None:
+        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] is None:
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
+        if "facilitator_details" in attributes:
+            self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
 
     @property
     def refund_id(self):

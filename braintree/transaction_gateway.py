@@ -34,7 +34,7 @@ class TransactionGateway(object):
 
     def find(self, transaction_id):
         try:
-            if transaction_id == None or transaction_id.strip() == "":
+            if transaction_id is None or transaction_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/transactions/" + transaction_id)
             return Transaction(self.gateway, response["transaction"])
@@ -90,6 +90,14 @@ class TransactionGateway(object):
 
     def submit_for_settlement(self, transaction_id, amount=None):
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/submit_for_settlement",
+                {"transaction": {"amount": amount}})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+
+    def submit_for_partial_settlement(self, transaction_id, amount):
+        response = self.config.http().post(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/submit_for_partial_settlement",
                 {"transaction": {"amount": amount}})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})

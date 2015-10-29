@@ -25,3 +25,8 @@ class CreditCardNumbers(object):
         Discover   = "6011000990139424"
         MasterCard = "5105105105105100"
         Visa       = "4000111111111115"
+
+    class AmexPayWithPoints(object):
+        Success            = "371260714673002"
+        IneligibleCard     = "378267515471109"
+        InsufficientPoints = "371544868764018"

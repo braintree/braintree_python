@@ -30,7 +30,7 @@ class SubscriptionGateway(object):
 
     def find(self, subscription_id):
         try:
-            if subscription_id == None or subscription_id.strip() == "":
+            if subscription_id is None or subscription_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/subscriptions/" + subscription_id)
             return Subscription(self.gateway, response["subscription"])
