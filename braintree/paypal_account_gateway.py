@@ -12,7 +12,7 @@ class PayPalAccountGateway(object):
 
     def find(self, paypal_account_token):
         try:
-            if paypal_account_token == None or paypal_account_token.strip() == "":
+            if paypal_account_token is None or paypal_account_token.strip() == "":
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/paypal_account/" + paypal_account_token)

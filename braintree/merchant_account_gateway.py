@@ -19,7 +19,7 @@ class MerchantAccountGateway(object):
 
     def find(self, merchant_account_id):
         try:
-            if merchant_account_id == None or merchant_account_id.strip() == "":
+            if merchant_account_id is None or merchant_account_id.strip() == "":
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/merchant_accounts/" + merchant_account_id)
             return MerchantAccount(self.gateway, response["merchant_account"])

@@ -25,7 +25,7 @@ class PaymentMethodGateway(object):
 
     def find(self, payment_method_token):
         try:
-            if payment_method_token == None or payment_method_token.strip() == "":
+            if payment_method_token is None or payment_method_token.strip() == "":
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
@@ -36,7 +36,7 @@ class PaymentMethodGateway(object):
     def update(self, payment_method_token, params):
         Resource.verify_keys(params, PaymentMethod.update_signature())
         try:
-            if payment_method_token == None or payment_method_token.strip() == "":
+            if payment_method_token is None or payment_method_token.strip() == "":
                 raise NotFoundError()
 
             return self._put(
