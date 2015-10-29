@@ -69,7 +69,7 @@ class Http(object):
             if self.config.wrap_http_exceptions:
                 http_strategy.handle_exception(e)
             else:
-                raise e
+                raise sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2]
 
         if Http.is_error_status(status):
             Http.raise_exception_from_status(status)
