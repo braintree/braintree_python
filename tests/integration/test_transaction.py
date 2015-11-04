@@ -1542,6 +1542,116 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
         self.assertEquals(Decimal("900.00"), submitted_transaction.amount)
 
+    def test_submit_for_settlement_with_order_id(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {"order_id": "ABC123"}
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals("ABC123", submitted_transaction.order_id)
+
+    def test_submit_for_settlement_with_descriptor(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals("123*123456789012345678", submitted_transaction.descriptor.name)
+        self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
+        self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
+
+    def test_submit_for_settlement_with_invalid_params(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            },
+            "invalid_param": "foo",
+        }
+
+        try:
+            Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'Invalid keys: invalid_param'", str(e))
+
+    def test_submit_for_settlement_with_order_id_on_unsupported_processor(self):
+        transaction = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = { "order_id": "ABC123" }
+
+        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingOrderId,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_submit_for_settlement_with_descriptor_on_unsupported_processor(self):
+        transaction = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingDescriptor ,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

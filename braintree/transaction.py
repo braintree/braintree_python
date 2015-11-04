@@ -335,7 +335,7 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.release_from_escrow(transaction_id)
 
     @staticmethod
-    def submit_for_settlement(transaction_id, amount=None):
+    def submit_for_settlement(transaction_id, amount=None, params={}):
         """
         Submits an authorized transaction for settlement.
 
@@ -345,7 +345,7 @@ class Transaction(Resource):
 
         """
 
-        return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount)
+        return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount, params)
 
     @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
@@ -492,6 +492,10 @@ class Transaction(Resource):
                     ]
                 }
             ]
+
+    @staticmethod
+    def submit_for_settlement_signature():
+        return ["order_id", {"descriptor": ["name", "phone", "url"]}]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount):
