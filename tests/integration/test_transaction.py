@@ -2501,6 +2501,24 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEquals(transaction.paypal_details.custom_field, "custom field stuff")
 
+    def test_creating_paypal_transaction_with_supplementary_data_in_options_paypal_params(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {},
+            "options": {
+                "paypal": {
+                    "supplementary_data": {
+                        "key1": "value1",
+                        "key2": "value2"
+                    }
+                }
+            }
+        })
+
+        # note - supplementary data is not returned in response
+        self.assertTrue(result.is_success)
+
     def test_creating_paypal_transaction_with_description_in_options_paypal_params(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
