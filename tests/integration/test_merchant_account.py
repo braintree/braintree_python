@@ -357,6 +357,10 @@ class TestMerchantAccount(unittest.TestCase):
         merchant_account_id = result.merchant_account.id
         merchant_account = MerchantAccount.find(merchant_account_id)
 
+    def test_retrieves_master_merchant_account_currency_iso_code(self):
+        merchant_account = MerchantAccount.find("sandbox_master_merchant_account")
+        self.assertEqual(merchant_account.currency_iso_code,"USD")
+
     def test_find_404(self):
         try:
             MerchantAccount.find("not_a_real_id")
