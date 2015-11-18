@@ -835,6 +835,22 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(int(amex_express_checkout_card_details.expiration_month) > 0)
         self.assertTrue(int(amex_express_checkout_card_details.expiration_year) > 0)
 
+    def test_sale_with_fake_venmo_account_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.VenmoAccount,
+            "merchant_account_id": TestHelper.fake_venmo_account_merchant_account_id,
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.VenmoAccount)
+
+        venmo_account_details = result.transaction.venmo_account_details
+        self.assertIsNotNone(venmo_account_details)
+        self.assertEqual(venmo_account_details.username, "venmojoe")
+        self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

@@ -140,6 +140,13 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertIsInstance(customer.amex_express_checkout_cards[0], AmexExpressCheckoutCard)
 
+    def test_create_with_venmo_account_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.VenmoAccount})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertIsInstance(customer.venmo_accounts[0], VenmoAccount)
+
     def test_create_with_paypal_future_payments_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
         self.assertTrue(result.is_success)

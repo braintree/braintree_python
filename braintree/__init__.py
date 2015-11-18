@@ -65,3 +65,4 @@ from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing import WebhookTesting
 from braintree.webhook_testing_gateway import WebhookTestingGateway
 from braintree.europe_bank_account import EuropeBankAccount
+from braintree.venmo_account import VenmoAccount

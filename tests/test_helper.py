@@ -41,6 +41,7 @@ class TestHelper(object):
     non_default_sub_merchant_account_id = "sandbox_sub_merchant_account"
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     fake_amex_direct_merchant_account_id = "fake_amex_direct_usd"
+    fake_venmo_account_merchant_account_id = "fake_first_data_venmo_account"
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",
          "id": "integration_plan_with_add_ons_and_discounts",

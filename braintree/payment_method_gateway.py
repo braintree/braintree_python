@@ -7,6 +7,7 @@ from braintree.europe_bank_account import EuropeBankAccount
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
+from braintree.venmo_account import VenmoAccount
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
@@ -104,6 +105,8 @@ class PaymentMethodGateway(object):
             return AmexExpressCheckoutCard(self.gateway, response["amex_express_checkout_card"])
         elif "coinbase_account" in response:
             return CoinbaseAccount(self.gateway, response["coinbase_account"])
+        elif "venmo_account" in response:
+            return VenmoAccount(self.gateway, response["venmo_account"])
         else:
             name = list(response)[0]
             return UnknownPaymentMethod(self.gateway, response[name])

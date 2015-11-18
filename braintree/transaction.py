@@ -6,6 +6,7 @@ from braintree.apple_pay_card import ApplePayCard
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
+from braintree.venmo_account import VenmoAccount
 from braintree.disbursement_detail import DisbursementDetail
 from braintree.dispute import Dispute
 from braintree.discount import Discount
@@ -539,6 +540,8 @@ class Transaction(Resource):
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         if "amex_express_checkout_card" in attributes:
             self.amex_express_checkout_card_details = AmexExpressCheckoutCard(gateway, attributes.pop("amex_express_checkout_card"))
+        if "venmo_account" in attributes:
+            self.venmo_account_details = VenmoAccount(gateway, attributes.pop("venmo_account"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

@@ -7,3 +7,4 @@ class PaymentInstrumentType():
     ApplePayCard = "apple_pay_card"
     AndroidPayCard = "android_pay_card"
     AmexExpressCheckoutCard = "amex_express_checkout_card"
+    VenmoAccount = "venmo_account"
