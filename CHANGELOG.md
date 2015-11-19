@@ -1,3 +1,7 @@
+## 3.22.0
+* Add VenmoAccount
+* Add support for Set Transaction Context supplementary data.
+
 ## 3.21.0
 * Add transaction to subscription successfully charged webhook
 * Add new ProcessorDoesNotSupportAuths error
