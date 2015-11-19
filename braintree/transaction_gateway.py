@@ -88,9 +88,12 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def submit_for_settlement(self, transaction_id, amount=None):
+    def submit_for_settlement(self, transaction_id, amount=None, params={}):
+        Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
+        transaction_params = {"amount": amount}
+        transaction_params.update(params)
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/submit_for_settlement",
-                {"transaction": {"amount": amount}})
+                {"transaction": transaction_params})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:

@@ -6,6 +6,7 @@ from braintree.apple_pay_card import ApplePayCard
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
+from braintree.venmo_account import VenmoAccount
 from braintree.disbursement_detail import DisbursementDetail
 from braintree.dispute import Dispute
 from braintree.discount import Discount
@@ -335,7 +336,7 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.release_from_escrow(transaction_id)
 
     @staticmethod
-    def submit_for_settlement(transaction_id, amount=None):
+    def submit_for_settlement(transaction_id, amount=None, params={}):
         """
         Submits an authorized transaction for settlement.
 
@@ -345,7 +346,7 @@ class Transaction(Resource):
 
         """
 
-        return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount)
+        return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount, params)
 
     @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
@@ -462,7 +463,8 @@ class Transaction(Resource):
                         "paypal": [
                             "payee_email",
                             "custom_field",
-                            "description"
+                            "description",
+                            {"supplementary_data": ["__any_key__"]}
                         ],
                         "three_d_secure": [
                             "required"
@@ -492,6 +494,10 @@ class Transaction(Resource):
                     ]
                 }
             ]
+
+    @staticmethod
+    def submit_for_settlement_signature():
+        return ["order_id", {"descriptor": ["name", "phone", "url"]}]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount):
@@ -534,6 +540,8 @@ class Transaction(Resource):
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         if "amex_express_checkout_card" in attributes:
             self.amex_express_checkout_card_details = AmexExpressCheckoutCard(gateway, attributes.pop("amex_express_checkout_card"))
+        if "venmo_account" in attributes:
+            self.venmo_account_details = VenmoAccount(gateway, attributes.pop("venmo_account"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

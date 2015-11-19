@@ -244,6 +244,26 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertRegexpMatches(amex_express_checkout_card.image_url, r"\.png")
         self.assertEqual(amex_express_checkout_card.customer_id, customer_id)
 
+    def test_create_with_venmo_account_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.VenmoAccount,
+        })
+
+        self.assertTrue(result.is_success)
+        venmo_account = result.payment_method
+        self.assertIsInstance(venmo_account, VenmoAccount)
+
+        self.assertTrue(venmo_account.default)
+        self.assertIsNotNone(venmo_account.token)
+        self.assertEqual(venmo_account.username, "venmojoe")
+        self.assertEqual(venmo_account.venmo_user_id, "Venmo-Joe-1")
+        self.assertEqual(venmo_account.source_description, "Venmo Account: venmojoe")
+        self.assertRegexpMatches(venmo_account.image_url, r"\.png")
+        self.assertEqual(venmo_account.customer_id, customer_id)
+
+
     def test_create_with_abstract_payment_method_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({

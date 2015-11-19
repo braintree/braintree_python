@@ -835,6 +835,22 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(int(amex_express_checkout_card_details.expiration_month) > 0)
         self.assertTrue(int(amex_express_checkout_card_details.expiration_year) > 0)
 
+    def test_sale_with_fake_venmo_account_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.VenmoAccount,
+            "merchant_account_id": TestHelper.fake_venmo_account_merchant_account_id,
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.VenmoAccount)
+
+        venmo_account_details = result.transaction.venmo_account_details
+        self.assertIsNotNone(venmo_account_details)
+        self.assertEqual(venmo_account_details.username, "venmojoe")
+        self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1541,6 +1557,116 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
         self.assertEquals(Decimal("900.00"), submitted_transaction.amount)
+
+    def test_submit_for_settlement_with_order_id(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {"order_id": "ABC123"}
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals("ABC123", submitted_transaction.order_id)
+
+    def test_submit_for_settlement_with_descriptor(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals("123*123456789012345678", submitted_transaction.descriptor.name)
+        self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
+        self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
+
+    def test_submit_for_settlement_with_invalid_params(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            },
+            "invalid_param": "foo",
+        }
+
+        try:
+            Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'Invalid keys: invalid_param'", str(e))
+
+    def test_submit_for_settlement_with_order_id_on_unsupported_processor(self):
+        transaction = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = { "order_id": "ABC123" }
+
+        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingOrderId,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_submit_for_settlement_with_descriptor_on_unsupported_processor(self):
+        transaction = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingDescriptor ,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
 
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
@@ -2390,6 +2516,24 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEquals(transaction.paypal_details.custom_field, "custom field stuff")
+
+    def test_creating_paypal_transaction_with_supplementary_data_in_options_paypal_params(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {},
+            "options": {
+                "paypal": {
+                    "supplementary_data": {
+                        "key1": "value1",
+                        "key2": "value2"
+                    }
+                }
+            }
+        })
+
+        # note - supplementary data is not returned in response
+        self.assertTrue(result.is_success)
 
     def test_creating_paypal_transaction_with_description_in_options_paypal_params(self):
         result = Transaction.sale({
