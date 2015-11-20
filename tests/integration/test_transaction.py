@@ -2392,6 +2392,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
         self.assertEquals("disputedtransaction", dispute.transaction_details.id)
         self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
+        self.assertEquals(Dispute.Kind.Chargeback, dispute.kind)
+        self.assertEquals(date(2014, 3, 1), dispute.date_opened)
+        self.assertEquals(date(2014, 3, 7), dispute.date_won)
 
     def test_find_exposes_three_d_secure_info(self):
         transaction = Transaction.find("threedsecuredtransaction")

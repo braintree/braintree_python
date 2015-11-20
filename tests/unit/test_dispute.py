@@ -16,7 +16,10 @@ class TestDispute(unittest.TestCase):
             "received_date": date(2013, 4, 10),
             "reply_by_date": date(2013, 4, 10),
             "reason": "fraud",
-            "transaction_ids": ["asdf", "qwer"]
+            "transaction_ids": ["asdf", "qwer"],
+            "date_opened": date(2013, 4, 1),
+            "date_won": date(2013, 4, 2),
+            "kind": "chargeback",
         }
 
         dispute = Dispute(attributes)
@@ -28,3 +31,6 @@ class TestDispute(unittest.TestCase):
         self.assertEquals(dispute.status, Dispute.Status.Open)
         self.assertEquals(dispute.transaction_details.id, "transaction_id")
         self.assertEquals(dispute.transaction_details.amount, Decimal("100.00"))
+        self.assertEquals(dispute.date_opened, date(2013, 4, 1))
+        self.assertEquals(dispute.date_won, date(2013, 4, 2))
+        self.assertEquals(dispute.kind, Dispute.Kind.Chargeback)
