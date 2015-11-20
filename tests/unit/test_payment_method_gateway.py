@@ -111,3 +111,14 @@ class TestPaymentMethodGateway(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             payment_method_gateway.grant(None, False)
+
+    def test_nonce_revoke_params(self):
+        payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
+        with self.assertRaises(ValueError):
+            payment_method_gateway.revoke("")
+
+        with self.assertRaises(ValueError):
+            payment_method_gateway.revoke("\t")
+
+        with self.assertRaises(ValueError):
+            payment_method_gateway.revoke(None)

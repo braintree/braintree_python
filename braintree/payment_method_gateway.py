@@ -58,7 +58,7 @@ class PaymentMethodGateway(object):
             raise ValueError
 
         try:
-            response = self._post(
+            return self._post(
                 "/payment_methods/grant",
                 {
                     "payment_method": {
@@ -66,20 +66,37 @@ class PaymentMethodGateway(object):
                         "allow_vaulting": allow_vaulting
                     }
                 },
-                parse_response=False
+                "payment_method_nonce"
             )
-
-            return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])
         except NotFoundError:
             raise NotFoundError("payment method with payment_method_token " + repr(payment_method_token) + " not found")
 
-    def _post(self, url, params={}, parse_response=True):
+    def revoke(self, payment_method_token):
+        if payment_method_token is None or not str(payment_method_token).strip():
+            raise ValueError
+
+        try:
+            return self._post(
+                "/payment_methods/revoke",
+                {
+                    "payment_method": {
+                        "shared_payment_method_token": payment_method_token
+                    }
+                },
+                None
+            )
+        except NotFoundError:
+            raise NotFoundError("payment method with payment_method_token " + repr(payment_method_token) + " not found")
+
+    def _post(self, url, params={}, result_key="payment_method"):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-        elif parse_response:
+        elif result_key is None:
+            return SuccessfulResult()
+        else:
             payment_method = self._parse_payment_method(response)
-            return SuccessfulResult({"payment_method": payment_method})
+            return SuccessfulResult({result_key: payment_method})
         return response
 
     def _put(self, url, params={}):
@@ -107,6 +124,10 @@ class PaymentMethodGateway(object):
             return CoinbaseAccount(self.gateway, response["coinbase_account"])
         elif "venmo_account" in response:
             return VenmoAccount(self.gateway, response["venmo_account"])
+        elif "payment_method_nonce" in response:
+            return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])
+        elif "success" in response:
+            return None
         else:
             name = list(response)[0]
             return UnknownPaymentMethod(self.gateway, response[name])

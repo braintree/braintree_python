@@ -911,21 +911,26 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(updated_result.is_success == False)
         self.assertTrue(updated_result.errors.deep_errors[0].code == "92906")
 
+    def test_payment_method_grant_raises_on_non_existent_tokens(self):
+        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        self.assertRaises(NotFoundError, granting_gateway.payment_method.grant, "non-existant-token", False)
+
     def test_payment_method_grant_returns_one_time_nonce(self):
         """
         Payment method grant returns a nonce that is transactable by a partner merchant exactly once
         """
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
         grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+        self.assertTrue(grant_result.is_success)
 
         result = Transaction.sale({
-            "payment_method_nonce": grant_result.nonce,
-            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
+            "amount": TransactionAmounts.Authorize
         })
         self.assertTrue(result.is_success)
         result = Transaction.sale({
-            "payment_method_nonce": grant_result.nonce,
-            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
+            "amount": TransactionAmounts.Authorize
         })
         self.assertFalse(result.is_success)
 
@@ -936,7 +941,7 @@ class TestPaymentMethod(unittest.TestCase):
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": grant_result.nonce
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce
         })
         self.assertFalse(result.is_success)
 
@@ -947,9 +952,26 @@ class TestPaymentMethod(unittest.TestCase):
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": grant_result.nonce
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce
         })
         self.assertTrue(result.is_success)
+
+    def test_payment_method_revoke_renders_a_granted_nonce_unusable(self):
+        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+
+        revoke_result = granting_gateway.payment_method.revoke(credit_card.token)
+        self.assertTrue(revoke_result.is_success)
+
+        result = Transaction.sale({
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
+            "amount": TransactionAmounts.Authorize
+        })
+        self.assertFalse(result.is_success)
+
+    def test_payment_method_revoke_raises_on_non_existent_tokens(self):
+        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        self.assertRaises(NotFoundError, granting_gateway.payment_method.revoke, "non-existant-token")
 
 class CreditCardForwardingTest(unittest.TestCase):
     def setUp(self):

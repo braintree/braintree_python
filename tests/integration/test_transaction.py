@@ -2931,7 +2931,7 @@ class TestTransaction(unittest.TestCase):
         grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
 
         result = Transaction.sale({
-            "payment_method_nonce": grant_result.nonce,
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
             "amount": TransactionAmounts.Authorize,
         })
         self.assertTrue(result.transaction.facilitator_details is not None)
