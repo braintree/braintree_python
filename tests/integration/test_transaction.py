@@ -1622,52 +1622,6 @@ class TestTransaction(unittest.TestCase):
         except KeyError as e:
             self.assertEquals("'Invalid keys: invalid_param'", str(e))
 
-    def test_submit_for_settlement_with_order_id_on_unsupported_processor(self):
-        transaction = Transaction.sale({
-            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.AmexPayWithPoints.Success,
-                "expiration_date": "05/2009"
-            }
-        }).transaction
-
-        params = { "order_id": "ABC123" }
-
-        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingOrderId,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
-
-    def test_submit_for_settlement_with_descriptor_on_unsupported_processor(self):
-        transaction = Transaction.sale({
-            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.AmexPayWithPoints.Success,
-                "expiration_date": "05/2009"
-            }
-        }).transaction
-
-        params = {
-            "descriptor": {
-                "name": "123*123456789012345678",
-                "phone": "3334445555",
-                "url": "ebay.com"
-            }
-        }
-
-        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingDescriptor ,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
-
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
