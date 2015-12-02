@@ -1622,52 +1622,6 @@ class TestTransaction(unittest.TestCase):
         except KeyError as e:
             self.assertEquals("'Invalid keys: invalid_param'", str(e))
 
-    def test_submit_for_settlement_with_order_id_on_unsupported_processor(self):
-        transaction = Transaction.sale({
-            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.AmexPayWithPoints.Success,
-                "expiration_date": "05/2009"
-            }
-        }).transaction
-
-        params = { "order_id": "ABC123" }
-
-        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingOrderId,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
-
-    def test_submit_for_settlement_with_descriptor_on_unsupported_processor(self):
-        transaction = Transaction.sale({
-            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.AmexPayWithPoints.Success,
-                "expiration_date": "05/2009"
-            }
-        }).transaction
-
-        params = {
-            "descriptor": {
-                "name": "123*123456789012345678",
-                "phone": "3334445555",
-                "url": "ebay.com"
-            }
-        }
-
-        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
-
-        self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingDescriptor ,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
-
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -2392,6 +2346,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
         self.assertEquals("disputedtransaction", dispute.transaction_details.id)
         self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
+        self.assertEquals(Dispute.Kind.Chargeback, dispute.kind)
+        self.assertEquals(date(2014, 3, 1), dispute.date_opened)
+        self.assertEquals(date(2014, 3, 7), dispute.date_won)
 
     def test_find_exposes_three_d_secure_info(self):
         transaction = Transaction.find("threedsecuredtransaction")
@@ -2928,7 +2885,7 @@ class TestTransaction(unittest.TestCase):
         grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
 
         result = Transaction.sale({
-            "payment_method_nonce": grant_result.nonce,
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
             "amount": TransactionAmounts.Authorize,
         })
         self.assertTrue(result.transaction.facilitator_details is not None)

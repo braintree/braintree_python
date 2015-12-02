@@ -10,17 +10,8 @@ class ClientToken(object):
 
     @staticmethod
     def generate(params={}, gateway=None):
-
         if gateway is None:
             gateway = Configuration.gateway().client_token
-
-        if "options" in params and not "customer_id" in params:
-            for option in ["verify_card", "make_default", "fail_on_duplicate_payment_method"]:
-                if option in params["options"]:
-                    raise exceptions.InvalidSignatureError("cannot specify %s without a customer_id" % option)
-
-        if "version" not in params:
-            params["version"] = 2
 
         return gateway.generate(params)
 
