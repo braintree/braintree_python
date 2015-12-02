@@ -1,3 +1,7 @@
+## 3.23.0
+* Add better defaults to client token generation when using an access token by consolidating client token defaults into ClientTokenGateway
+* Add PaymentMethodGateway#revoke
+
 ## 3.22.0
 * Add VenmoAccount
 * Add support for Set Transaction Context supplementary data.
