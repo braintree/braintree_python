@@ -291,6 +291,15 @@ class ErrorCodes(object):
         InvalidRequest = "93804"
         UnsupportedGrantType = "93805"
 
+    class Verification(object):
+        class Options(object):
+            AmountCannotBeNegative = "94201"
+            AmountFormatIsInvalid = "94202"
+            AmountNotSupportedByProcessor = "94203"
+            MerchantAccountIdIsInvalid = "94204"
+            MerchantAccountIsSuspended = "94205"
+            MerchantAccountIsForbidden = "94206"
+
     class PaymentMethod(object):
         CannotForwardPaymentMethodType = "93106"
         PaymentMethodParamsAreRequired = "93101"

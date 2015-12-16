@@ -21,6 +21,22 @@ class TestCreditCardVerfication(unittest.TestCase):
 
         self.assertFalse(result.is_success)
 
+    def test_create_returns_validation_errors(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.FailsSandboxVerification.MasterCard,
+                "expiration_date": "05/2012"
+            },
+            "options": {"amount": "-10.00"}
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Verification.Options.AmountCannotBeNegative,
+            result.errors.for_object("verification").for_object("options").on("amount")[0].code
+        )
+
+
     def test_find_with_verification_id(self):
         customer = Customer.create({
             "credit_card": {
