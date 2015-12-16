@@ -41,6 +41,10 @@ class CreditCardVerification(AttributeGetter):
     def search(*query):
         return Configuration.gateway().verification.search(*query)
 
+    @staticmethod
+    def create(params):
+        return Configuration.gateway().verification.create(params)
+
     def __eq__(self, other):
         if not isinstance(other, CreditCardVerification):
             return False

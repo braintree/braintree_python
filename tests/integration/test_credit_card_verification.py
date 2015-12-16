@@ -2,6 +2,25 @@ from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 
 class TestCreditCardVerfication(unittest.TestCase):
+
+    def test_create_success(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2012"
+        }})
+
+        self.assertTrue(result.is_success)
+
+    def test_create_failure(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.FailsSandboxVerification.MasterCard,
+                "expiration_date": "05/2012"
+        }})
+
+        self.assertFalse(result.is_success)
+
     def test_find_with_verification_id(self):
         customer = Customer.create({
             "credit_card": {
