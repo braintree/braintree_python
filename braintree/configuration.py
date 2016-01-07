@@ -3,6 +3,7 @@ import sys
 import braintree
 from braintree.exceptions.configuration_error import ConfigurationError
 from braintree.credentials_parser import CredentialsParser
+from braintree.environment import Environment
 
 class Configuration(object):
     """
@@ -18,7 +19,7 @@ class Configuration(object):
     """
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key, **kwargs):
-        Configuration.environment = environment
+        Configuration.environment = Environment.parse_environment(environment)
         Configuration.merchant_id = merchant_id
         Configuration.public_key = public_key
         Configuration.private_key = private_key
@@ -73,7 +74,7 @@ class Configuration(object):
             self.environment = parser.environment
             self.merchant_id = merchant_id
         else:
-            self.environment = environment
+            self.environment = Environment.parse_environment(environment)
             self.merchant_id = merchant_id
 
         self.public_key = public_key

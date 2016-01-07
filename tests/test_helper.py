@@ -23,12 +23,14 @@ from contextlib import contextmanager
 from base64 import b64decode
 from braintree.test.nonces import Nonces
 
-Configuration.configure(
-    Environment.Development,
-    "integration_merchant_id",
-    "integration_public_key",
-    "integration_private_key"
-)
+def reset_braintree_configuration():
+    Configuration.configure(
+        Environment.Development,
+        "integration_merchant_id",
+        "integration_public_key",
+        "integration_private_key"
+    )
+reset_braintree_configuration()
 
 def showwarning(message, category, filename, lineno, file=None, line=None):
     pass
