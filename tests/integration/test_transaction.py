@@ -2880,6 +2880,70 @@ class TestTransaction(unittest.TestCase):
         error_code = partial_settlement_result_2.errors.for_object("transaction").on("base")[0].code
         self.assertEqual(ErrorCodes.Transaction.CannotSubmitForPartialSettlement, error_code)
 
+    def test_submit_for_partial_settlement_with_order_id(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {"order_id": "ABC123"}
+
+        submitted_transaction = Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals("ABC123", submitted_transaction.order_id)
+
+    def test_submit_for_partial_settlement_with_descriptor(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        submitted_transaction = Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEquals("123*123456789012345678", submitted_transaction.descriptor.name)
+        self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
+        self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
+
+    def test_submit_for_partial_settlement_with_invalid_params(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            },
+            "invalid_param": "foo",
+        }
+
+        try:
+            Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params)
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'Invalid keys: invalid_param'", str(e))
+
     def test_transaction_facilitator(self):
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
         grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
