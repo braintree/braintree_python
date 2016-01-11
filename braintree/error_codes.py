@@ -107,6 +107,7 @@ class ErrorCodes(object):
         InvalidVenmoSDKPaymentMethodCode = "91727"
         NumberHasInvalidLength = NumberLengthIsInvalid = "81716"
         NumberIsInvalid = "81715"
+        NumberIsProhibited = "81750"
         NumberIsRequired = "81714"
         NumberMustBeTestNumber = "81717"
         PaymentMethodConflict = "81725"
