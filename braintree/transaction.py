@@ -500,7 +500,7 @@ class Transaction(Resource):
         return ["order_id", {"descriptor": ["name", "phone", "url"]}]
 
     @staticmethod
-    def submit_for_partial_settlement(transaction_id, amount):
+    def submit_for_partial_settlement(transaction_id, amount, params={}):
         """
         Creates a partial settlement transaction for an authorized transaction
 
@@ -510,7 +510,7 @@ class Transaction(Resource):
 
         """
 
-        return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount)
+        return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount, params)
 
     def __init__(self, gateway, attributes):
         if "refund_id" in attributes:
