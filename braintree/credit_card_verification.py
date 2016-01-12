@@ -49,13 +49,17 @@ class CreditCardVerification(AttributeGetter):
 
     @staticmethod
     def create_signature():
-        billing_address_params = ["postal_code", "street_address", "country_name", "locality"]
+        billing_address_params = [
+                "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric",
+                "country_name", "extended_address", "first_name", "last_name", "locality",
+                "postal_code", "region", "street_address"
+            ]
         credit_card_params = [
-                "number", "cvv", "first_name", "last_name", "cvv", "expiration_date", "expiration_month", 
+                "number", "cvv", "first_name", "last_name", "cvv", "expiration_date", "expiration_month",
                 "expiration_year", {"billing_address": billing_address_params}
             ]
         return [{"credit_card": credit_card_params}, {"options": ["amount", "merchant_account_id"]}]
-                    
+
     def __eq__(self, other):
         if not isinstance(other, CreditCardVerification):
             return False
