@@ -55,7 +55,7 @@ class CreditCardVerification(AttributeGetter):
                 "postal_code", "region", "street_address"
             ]
         credit_card_params = [
-                "number", "cvv", "first_name", "last_name", "cvv", "expiration_date", "expiration_month",
+                "number", "cvv", "cardholder_name", "cvv", "expiration_date", "expiration_month",
                 "expiration_year", {"billing_address": billing_address_params}
             ]
         return [{"credit_card": credit_card_params}, {"options": ["amount", "merchant_account_id"]}]

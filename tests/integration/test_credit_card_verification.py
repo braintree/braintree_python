@@ -7,6 +7,7 @@ class TestCreditCardVerfication(unittest.TestCase):
         result = CreditCardVerification.create({
             "credit_card": {
                 "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
                 "expiration_date": "05/2012"
         }})
 
