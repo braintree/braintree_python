@@ -37,6 +37,46 @@ class TestConfiguration(unittest.TestCase):
         self.assertEqual(config.public_key, 'public_key')
         self.assertEqual(config.private_key, 'private_key')
 
+    def test_configuration_configure_allows_strings_for_environment(self):
+        try:
+            for environment_string, environment_object in braintree.Environment.All.items():
+                braintree.Configuration.configure(
+                    environment_string,
+                    'my_merchant_id',
+                    'public_key',
+                    'private_key'
+                )
+                self.assertEqual(braintree.Configuration.environment, environment_object)
+        finally:
+            reset_braintree_configuration()
+
+    def test_configuration_construction_allows_strings_for_environment(self):
+        config = Configuration(
+            environment='sandbox',
+            merchant_id='my_merchant_id',
+            public_key='public_key',
+            private_key='private_key'
+        )
+
+        self.assertEqual(config.environment, braintree.Environment.Sandbox)
+
+    def test_configuration_construction_allows_empty_parameter_list(self):
+        config = Configuration()
+
+        self.assertIsInstance(config, braintree.Configuration)
+
+    def test_configuration_raises_configuration_error_for_invalid_environment(self):
+        for environment in [42, 'not_an_env']:
+            def setup_bad_configuration():
+                Configuration(
+                    environment=environment,
+                    merchant_id='my_merchant_id',
+                    public_key='public_key',
+                    private_key='private_key'
+                )
+
+            self.assertRaises(ConfigurationError, setup_bad_configuration)
+
     def test_configuration_construction_for_partner(self):
         config = Configuration.for_partner(
             braintree.Environment.Sandbox,

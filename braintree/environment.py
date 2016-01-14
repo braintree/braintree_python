@@ -1,5 +1,6 @@
 import os
 import inspect
+from braintree.exceptions.configuration_error import ConfigurationError
 
 class Environment(object):
     """
@@ -44,6 +45,15 @@ class Environment(object):
         return self.__server + ":" + self.__port
 
     @staticmethod
+    def parse_environment(environment):
+        if isinstance(environment, Environment) or environment is None:
+            return environment
+        try:
+            return Environment.All[environment]
+        except KeyError as e:
+            raise ConfigurationError("Unable to process supplied environment")
+
+    @staticmethod
     def braintree_root():
         return os.path.dirname(inspect.getfile(Environment))
 
@@ -54,3 +64,10 @@ Environment.Development = Environment("development", "localhost", os.getenv("GAT
 Environment.QA = Environment("qa", "gateway.qa.braintreepayments.com", "443", "http://auth.qa.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
 Environment.Sandbox = Environment("sandbox", "api.sandbox.braintreegateway.com", "443", "https://auth.sandbox.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
 Environment.Production = Environment("production", "api.braintreegateway.com", "443", "https://auth.venmo.com", True, Environment.braintree_root() + "/ssl/api_braintreegateway_com.ca.crt")
+Environment.All = {
+    "development": Environment.Development,
+    "integration": Environment.Development,
+    "qa": Environment.QA,
+    "sandbox": Environment.Sandbox,
+    "production": Environment.Production
+}

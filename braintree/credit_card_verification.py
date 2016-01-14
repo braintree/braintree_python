@@ -1,6 +1,7 @@
 from braintree.attribute_getter import AttributeGetter
 from braintree.configuration import Configuration
 from braintree.risk_data import RiskData
+from braintree.resource import Resource
 
 class CreditCardVerification(AttributeGetter):
 
@@ -40,6 +41,24 @@ class CreditCardVerification(AttributeGetter):
     @staticmethod
     def search(*query):
         return Configuration.gateway().verification.search(*query)
+
+    @staticmethod
+    def create(params):
+        Resource.verify_keys(params, CreditCardVerification.create_signature())
+        return Configuration.gateway().verification.create(params)
+
+    @staticmethod
+    def create_signature():
+        billing_address_params = [
+                "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric",
+                "country_name", "extended_address", "first_name", "last_name", "locality",
+                "postal_code", "region", "street_address"
+            ]
+        credit_card_params = [
+                "number", "cvv", "cardholder_name", "cvv", "expiration_date", "expiration_month",
+                "expiration_year", {"billing_address": billing_address_params}
+            ]
+        return [{"credit_card": credit_card_params}, {"options": ["amount", "merchant_account_id"]}]
 
     def __eq__(self, other):
         if not isinstance(other, CreditCardVerification):

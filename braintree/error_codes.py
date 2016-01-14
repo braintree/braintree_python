@@ -107,6 +107,7 @@ class ErrorCodes(object):
         InvalidVenmoSDKPaymentMethodCode = "91727"
         NumberHasInvalidLength = NumberLengthIsInvalid = "81716"
         NumberIsInvalid = "81715"
+        NumberIsProhibited = "81750"
         NumberIsRequired = "81714"
         NumberMustBeTestNumber = "81717"
         PaymentMethodConflict = "81725"
@@ -289,6 +290,15 @@ class ErrorCodes(object):
         InvalidScope = "93803"
         InvalidRequest = "93804"
         UnsupportedGrantType = "93805"
+
+    class Verification(object):
+        class Options(object):
+            AmountCannotBeNegative = "94201"
+            AmountFormatIsInvalid = "94202"
+            AmountNotSupportedByProcessor = "94203"
+            MerchantAccountIdIsInvalid = "94204"
+            MerchantAccountIsSuspended = "94205"
+            MerchantAccountIsForbidden = "94206"
 
     class PaymentMethod(object):
         CannotForwardPaymentMethodType = "93106"
