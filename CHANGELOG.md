@@ -1,3 +1,9 @@
+## 3.24.0
+* Add Verification#create
+* Add options to `submit_for_settlement` transaction flows
+* Update https certificate bundle
+* Support environment settings with strings
+
 ## 3.23.0
 * Add better defaults to client token generation when using an access token by consolidating client token defaults into ClientTokenGateway
 * Add PaymentMethodGateway#revoke
