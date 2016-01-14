@@ -39,7 +39,7 @@ class TestConfiguration(unittest.TestCase):
 
     def test_configuration_configure_allows_strings_for_environment(self):
         try:
-            for environment_string, environment_object in braintree.Environment.All.iteritems():
+            for environment_string, environment_object in braintree.Environment.All.items():
                 braintree.Configuration.configure(
                     environment_string,
                     'my_merchant_id',
