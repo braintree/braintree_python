@@ -52,6 +52,8 @@ class WebhookTestingGateway(object):
             return self.__dispute_won_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
             return self.__subscription_charged_successfully_sample_xml(id)
+        elif kind == WebhookNotification.Kind.AccountUpdaterDailyReport:
+            return self.__account_updater_daily_report_sample_xml()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -268,4 +270,12 @@ class WebhookTestingGateway(object):
             <partner-merchant>
                 <partner-merchant-id>abc123</partner-merchant-id>
             </partner-merchant>
+            """
+
+    def __account_updater_daily_report_sample_xml(self):
+        return """
+            <account-updater-daily-report>
+                <report-date type="date">2016-01-14</report-date>
+                <report-url>link-to-csv-report</report-url>
+            </account-updater-daily-report>
             """
