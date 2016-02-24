@@ -1,3 +1,6 @@
+## 3.25.0
+* Add AccountUpdaterDailyReport webhook parsing
+
 ## 3.24.0
 * Add Verification#create
 * Add options to `submit_for_settlement` transaction flows

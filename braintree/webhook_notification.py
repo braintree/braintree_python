@@ -6,11 +6,13 @@ from braintree.transaction import Transaction
 from braintree.partner_merchant import PartnerMerchant
 from braintree.disbursement import Disbursement
 from braintree.dispute import Dispute
+from braintree.account_updater_daily_report import AccountUpdaterDailyReport
 from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 
 class WebhookNotification(Resource):
     class Kind(object):
+        AccountUpdaterDailyReport = "account_updater_daily_report"
         Check = "check"
         PartnerMerchantConnected = "partner_merchant_connected"
         PartnerMerchantDisconnected = "partner_merchant_disconnected"
@@ -59,6 +61,8 @@ class WebhookNotification(Resource):
             self.disbursement = Disbursement(gateway, node_wrapper['disbursement'])
         elif "dispute" in node_wrapper:
             self.dispute = Dispute(node_wrapper['dispute'])
+        elif "account_updater_daily_report" in node_wrapper:
+            self.account_updater_daily_report = AccountUpdaterDailyReport(gateway, node_wrapper['account_updater_daily_report'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

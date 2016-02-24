@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from datetime import date
 from braintree.dispute import Dispute
 
 class TestWebhooks(unittest.TestCase):
@@ -287,3 +288,15 @@ class TestWebhooks(unittest.TestCase):
         notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
 
         self.assertEquals(WebhookNotification.Kind.Check, notification.kind)
+
+    def test_builds_notification_for_account_updater_daily_report_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.AccountUpdaterDailyReport,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEquals(WebhookNotification.Kind.AccountUpdaterDailyReport, notification.kind)
+        self.assertEquals("link-to-csv-report", notification.account_updater_daily_report.report_url)
+        self.assertEquals(date(2016, 1, 14), notification.account_updater_daily_report.report_date)
