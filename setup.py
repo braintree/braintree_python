@@ -9,5 +9,12 @@ setup(
     packages=["braintree", "braintree.exceptions", "braintree.exceptions.http", "braintree.merchant_account", "braintree.util", "braintree.test"],
     package_data={"braintree": ["ssl/*"]},
     install_requires=["requests>=0.11.1,<3.0"],
-    zip_safe=False
+    zip_safe=False,
+    classifiers = [
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5"
+    ]
 )
