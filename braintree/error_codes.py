@@ -180,10 +180,12 @@ class ErrorCodes(object):
         CountryCodeNumericIsNotAccepted = "93608"
         CountryNameIsInvalid = "93611"
         CountryNameIsNotAccepted = "93610"
+        CurrenciesAreInvalid = "93614"
         EmailFormatIsInvalid = "93602"
         EmailIsRequired = "83601"
         InconsistentCountry = "93612"
         PaymentMethodsAreInvalid = "93613"
+        PaymentMethodsAreNotAllowed = "93615"
 
     class MerchantAccount(object):
         IdFormatIsInvalid = "82603"
