@@ -633,6 +633,31 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(updated_credit_card.last_4 == CreditCardNumbers.MasterCard[-4:])
         self.assertTrue(updated_credit_card.expiration_date == "06/2013")
 
+    def test_update_coinbase_account_updates_the_coinbase_account(self):
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.ApplePayMasterCard
+        })
+
+        self.assertTrue(result.payment_method.default)
+
+
+        coinbase_result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.Coinbase
+        })
+        update_result = PaymentMethod.update(coinbase_result.payment_method.token, {
+            "options": {
+                "make_default": True
+            }
+        })
+        self.assertTrue(update_result.is_success)
+        updated_coinbase_account = update_result.payment_method
+        self.assertTrue(updated_coinbase_account.token == coinbase_result.payment_method.token)
+        self.assertTrue(updated_coinbase_account.default)
+
     def test_update_creates_a_new_billing_address_by_default(self):
         customer_id = Customer.create().customer.id
         credit_card_result = CreditCard.create({
