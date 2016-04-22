@@ -88,6 +88,7 @@ class TestOAuthGateway(unittest.TestCase):
              "redirect_uri": "http://bar.example.com",
              "scope": "read_write",
              "state": "baz_state",
+             "landing_page": "login",
              "user": {
                "country": "USA",
                "email": "foo@example.com",
@@ -130,6 +131,7 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEqual(params["redirect_uri"], ["http://bar.example.com"])
         self.assertEqual(params["scope"], ["read_write"])
         self.assertEqual(params["state"], ["baz_state"])
+        self.assertEqual(params["landing_page"], ["login"])
 
         self.assertEqual(params["user[country]"], ["USA"])
         self.assertEqual(params["business[name]"], ["14 Ladders"])
