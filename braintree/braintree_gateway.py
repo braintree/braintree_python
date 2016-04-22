@@ -3,21 +3,22 @@ from braintree.address_gateway import AddressGateway
 from braintree.client_token_gateway import ClientTokenGateway
 from braintree.configuration import Configuration
 from braintree.credit_card_gateway import CreditCardGateway
+from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
 from braintree.customer_gateway import CustomerGateway
 from braintree.discount_gateway import DiscountGateway
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.merchant_gateway import MerchantGateway
 from braintree.oauth_gateway import OAuthGateway
-from braintree.paypal_account_gateway import PayPalAccountGateway
 from braintree.payment_method_gateway import PaymentMethodGateway
 from braintree.payment_method_nonce_gateway import PaymentMethodNonceGateway
+from braintree.paypal_account_gateway import PayPalAccountGateway
 from braintree.plan_gateway import PlanGateway
 from braintree.settlement_batch_summary_gateway import SettlementBatchSummaryGateway
+from braintree.sub_merchant_account_gateway import SubMerchantAccountGateway
 from braintree.subscription_gateway import SubscriptionGateway
 from braintree.testing_gateway import TestingGateway
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
-from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing_gateway import WebhookTestingGateway
 import braintree.configuration
@@ -44,6 +45,7 @@ class BraintreeGateway(object):
         self.oauth = OAuthGateway(self)
         self.plan = PlanGateway(self)
         self.settlement_batch_summary = SettlementBatchSummaryGateway(self)
+        self.sub_merchant_account = SubMerchantAccountGateway(self)
         self.subscription = SubscriptionGateway(self)
         self.transaction = TransactionGateway(self)
         self.transparent_redirect = TransparentRedirectGateway(self)
