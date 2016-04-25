@@ -33,7 +33,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
@@ -52,7 +52,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
@@ -127,7 +127,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEquals(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
         self.assertEquals(Decimal("100.00"), transaction.amount)
@@ -1233,7 +1233,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEquals(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Credit, transaction.type)
         self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         cc_details = transaction.credit_card_details
