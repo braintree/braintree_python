@@ -349,6 +349,27 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount, params)
 
     @staticmethod
+    def update_details(transaction_id, params={}):
+        """
+        Updates exisiting details for transaction submtted_for_settlement.
+
+        Requires the transaction id::
+
+            result = braintree.Transaction.update_details("my_transaction_id", {
+                "amount": "100.00",
+                "order_id": "123",
+                "descriptor": {
+                    "name": "123*123456789012345678",
+                    "phone": "3334445555",
+                    "url": "url.com"
+                }
+            )
+
+        """
+
+        return Configuration.gateway().transaction.update_details(transaction_id, params)
+
+    @staticmethod
     def tr_data_for_credit(tr_data, redirect_url):
         """
         Builds tr_data for a Transaction of type Credit
@@ -498,6 +519,10 @@ class Transaction(Resource):
     @staticmethod
     def submit_for_settlement_signature():
         return ["order_id", {"descriptor": ["name", "phone", "url"]}]
+
+    @staticmethod
+    def update_details_signature():
+        return ["amount", "order_id", {"descriptor": ["name", "phone", "url"]}]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount, params={}):
