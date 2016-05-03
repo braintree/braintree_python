@@ -82,6 +82,26 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertIsNotNone(credentials.expires_at)
         self.assertEquals("bearer", credentials.token_type)
 
+    def test_revoke_access_token(self):
+        code = TestHelper.create_grant(self.gateway, {
+            "merchant_public_id": "integration_merchant_id",
+            "scope": "read_write"
+        })
+
+        access_token = self.gateway.oauth.create_token_from_code({
+            "code": code,
+            "scope": "read_write"
+        }).credentials.access_token
+
+        result = self.gateway.oauth.revoke_access_token(access_token)
+
+        self.assertTrue(result.is_success)
+
+        with self.assertRaises(AuthenticationError) as error:
+            gateway = BraintreeGateway(access_token = access_token)
+
+            gateway.customer.create()
+
     def test_connect_url(self):
         connect_url = self.gateway.oauth.connect_url({
              "merchant_id": "integration_merchant_id",
