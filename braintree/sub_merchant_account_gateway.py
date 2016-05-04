@@ -13,32 +13,110 @@ class SubMerchantAccountGateway(object):
         Resource.verify_keys(params, SubMerchantAccountGateway._create_signature())
         return self._post("/sub_merchant_accounts", {"sub_merchant_account": params})
 
+    def update(self, sub_merchant_account_id, params={}):
+        Resource.verify_keys(params, SubMerchantAccountGateway._update_signature())
+        return self._put("/sub_merchant_accounts/" + sub_merchant_account_id, {"sub_merchant_account": params})
+
     def _post(self, url, params={}):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
+        return SuccessfulResult({"sub_merchant_account": SubMerchantAccount(self.gateway, response["sub_merchant_account"])})
+
+    def _put(self, url, params={}):
+        response = self.config.http().put(self.config.base_merchant_path() + url, params)
         return SuccessfulResult({"sub_merchant_account": SubMerchantAccount(self.gateway, response["sub_merchant_account"])})
 
     @staticmethod
     def _create_signature():
         return [
-            {'director': [
-                'first_name',
-                'last_name',
-                'email',
-                ]
-            },
             {'business': [
-                'legal_name',
-                'registered_as',
                 {'address': [
-                    'country'
+                    'country',
+                    'locality',
+                    'postal_code',
+                    'region',
+                    'street_address',
                     ],
                 },
+                'dba_name',
+                'legal_name',
+                'registered_as',
+                'registration_number',
+                'tax_id',
+                'vat',
                 ],
             },
-            {'funding': [
-                'currency_iso_code',
+            {'director': [
+                {'address': [
+                    'country',
+                    'locality',
+                    'postal_code',
+                    'region',
+                    'street_address',
+                    ],
+                },
+                'date_of_birth',
+                'email',
+                'first_name',
+                'last_name',
+                'phone',
                 ]
             },
-            'tos_accepted',
+            {'funding': [
+                'account_holder_name',
+                'account_number',
+                'currency_iso_code',
+                'descriptor',
+                'routing_number',
+                ]
+            },
             'id',
+            'tos_accepted',
+        ]
+
+    @staticmethod
+    def _update_signature():
+        return [
+            {'business': [
+                {'address': [
+                    'country',
+                    'locality',
+                    'postal_code',
+                    'region',
+                    'street_address',
+                    ],
+                },
+                'dba_name',
+                'legal_name',
+                'registered_as',
+                'registration_number',
+                'tax_id',
+                'vat',
+                ],
+            },
+            {'director': [
+                {'address': [
+                    'country',
+                    'locality',
+                    'postal_code',
+                    'region',
+                    'street_address',
+                    ],
+                },
+                'date_of_birth',
+                'email',
+                'first_name',
+                'last_name',
+                'phone',
+                ]
+            },
+            {'funding': [
+                'account_holder_name',
+                'account_number',
+                'currency_iso_code',
+                'descriptor',
+                'routing_number',
+                ]
+            },
+            'id',
+            'tos_accepted',
         ]

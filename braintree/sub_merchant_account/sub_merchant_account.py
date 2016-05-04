@@ -19,3 +19,7 @@ class SubMerchantAccount(Resource):
     @staticmethod
     def create(params={}):
         return Configuration.gateway().sub_merchant_account.create(params)
+
+    @staticmethod
+    def update(sub_merchant_account_id, params={}):
+        return Configuration.gateway().sub_merchant_account.update(sub_merchant_account_id, params)
