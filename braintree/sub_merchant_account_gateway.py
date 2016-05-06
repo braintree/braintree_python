@@ -105,6 +105,7 @@ class SubMerchantAccountGateway(object):
                 'date_of_birth',
                 'email',
                 'first_name',
+                'id',
                 'last_name',
                 'phone',
                 ]

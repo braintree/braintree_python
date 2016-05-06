@@ -18,10 +18,10 @@ class TestSubMerchantAccount(unittest.TestCase):
                     "locality": "Liverpool",
                     "postal_code": "12345",
                     "region": "GBR",
-                    "street_address": "100 Doodadew Ave",
+                    "street_address": "100 Main Ave",
                 },
-                "dba_name": "Mountain Dew Store",
-                "legal_name": "PepsiCo",
+                "dba_name": "Generic Retail Shop",
+                "legal_name": "Generic's Store",
                 "registered_as": "sole_proprietorship",
                 "registration_number": "1234",
                 "tax_id": "123456789",
@@ -32,19 +32,19 @@ class TestSubMerchantAccount(unittest.TestCase):
                     "locality": "Liverpool",
                     "postal_code": "12345",
                     "region": "GBR",
-                    "street_address": "100 Doodadew Ave",
+                    "street_address": "100 Main Ave",
                 },
                 "date_of_birth": "1968-07-30",
-                "email": "dwayne.elizondo.mountain.dew.herbert.camacho@pepsico.com",
-                "first_name": "Dwayne",
-                "last_name": "Camacho",
-                "phone": "555-555-5555",
+                "email": "johndoe@example.com",
+                "first_name": "John",
+                "last_name": "Doe",
+                "phone": "5555555555",
             },
             "funding": {
-                "account_holder_name": "Dwayne Camacho",
+                "account_holder_name": "John Doe",
                 "account_number": "123456789",
                 "currency_iso_code": "GBP",
-                "descriptor": "payurdews",
+                "descriptor": "genericdescriptor",
                 "routing_number": "123456789",
             },
             "tos_accepted": True,
@@ -60,15 +60,15 @@ class TestSubMerchantAccount(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEquals(SubMerchantAccount.Status.Pending, result.sub_merchant_account.status)
-        self.assertRegexpMatches(result.sub_merchant_account.id, "dwayneelizondomountaind")
+        self.assertRegexpMatches(result.sub_merchant_account.id, "johndoeexamplecom")
 
         self.assertEquals(result.sub_merchant_account.business_details.address_details.country, "GBR")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.locality, "Liverpool")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.postal_code, "12345")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.region, "GBR")
-        self.assertEquals(result.sub_merchant_account.business_details.address_details.street_address, "100 Doodadew Ave")
-        self.assertEquals(result.sub_merchant_account.business_details.dba_name, "Mountain Dew Store")
-        self.assertEquals(result.sub_merchant_account.business_details.legal_name, "PepsiCo")
+        self.assertEquals(result.sub_merchant_account.business_details.address_details.street_address, "100 Main Ave")
+        self.assertEquals(result.sub_merchant_account.business_details.dba_name, "Generic Retail Shop")
+        self.assertEquals(result.sub_merchant_account.business_details.legal_name, "Generic's Store")
         self.assertEquals(result.sub_merchant_account.business_details.registered_as, "sole_proprietorship")
         self.assertEquals(result.sub_merchant_account.business_details.registration_number, "1234")
         self.assertEquals(result.sub_merchant_account.business_details.tax_id, "123456789")
@@ -77,17 +77,17 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.director_details.address_details.locality, "Liverpool")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.postal_code, "12345")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.region, "GBR")
-        self.assertEquals(result.sub_merchant_account.director_details.address_details.street_address, "100 Doodadew Ave")
+        self.assertEquals(result.sub_merchant_account.director_details.address_details.street_address, "100 Main Ave")
         self.assertEquals(result.sub_merchant_account.director_details.date_of_birth, "1968-07-30")
-        self.assertEquals(result.sub_merchant_account.director_details.email, "dwayne.elizondo.mountain.dew.herbert.camacho@pepsico.com")
-        self.assertEquals(result.sub_merchant_account.director_details.first_name, "Dwayne")
-        self.assertEquals(result.sub_merchant_account.director_details.last_name, "Camacho")
+        self.assertEquals(result.sub_merchant_account.director_details.email, "johndoe@example.com")
+        self.assertEquals(result.sub_merchant_account.director_details.first_name, "John")
+        self.assertEquals(result.sub_merchant_account.director_details.last_name, "Doe")
         self.assertEquals(result.sub_merchant_account.director_details.phone, "5555555555")
 
-        self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, 'Dwayne Camacho')
-        self.assertEquals(result.sub_merchant_account.funding_details.account_number, u'\u2022\u2022\u2022\u2022\u20226789')
+        self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "John Doe")
+        self.assertEquals(result.sub_merchant_account.funding_details.account_number, u"\u2022\u2022\u2022\u2022\u20226789")
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
-        self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "payurdews")
+        self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "genericdescriptor")
         self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "123456789")
 
     def test_create_allows_an_id_to_pass(self):
@@ -110,12 +110,12 @@ class TestSubMerchantAccount(unittest.TestCase):
                     "locality": "London",
                     "postal_code": "54321",
                     "region": "GBR",
-                    "street_address": "100 Cool Ranch",
+                    "street_address": "123 Main Street",
                 },
-                "dba_name": "Doritos Dormitory",
-                "legal_name": "Frito-Lay",
+                "dba_name": "Non-Generic Retail Shop",
+                "legal_name": "Non-Generic Store",
                 "registered_as": "sole_proprietorship",
-                "registration_number": "1234",
+                "registration_number": "4321",
                 "tax_id": "987654321",
                 "vat": "987654321",
             },
@@ -124,19 +124,20 @@ class TestSubMerchantAccount(unittest.TestCase):
                     "locality": "London",
                     "postal_code": "54321",
                     "region": "GBR",
-                    "street_address": "100 Cool Ranch",
+                    "street_address": "123 Main Street",
                 },
                 "date_of_birth": "1968-07-30",
-                "email": "geoff.keighley@G4tv.com",
-                "first_name": "Geoff",
-                "last_name": "Keighley",
-                "phone": "555-555-6666",
+                "email": "janedot@example.com",
+                "first_name": "Jane",
+                "id": director_id,
+                "last_name": "Dot",
+                "phone": "5555556666",
             },
             "funding": {
-                "account_holder_name": "Geoff Keighley",
+                "account_holder_name": "Jane Dot",
                 "account_number": "987654321",
                 "currency_iso_code": "GBP",
-                "descriptor": "rememberdoritos3d",
+                "descriptor": "nongenericdescriptor",
                 "routing_number": "987654321",
             },
             "tos_accepted": True,
@@ -149,9 +150,9 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.business_details.address_details.locality, "London")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.postal_code, "54321")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.region, "GBR")
-        self.assertEquals(result.sub_merchant_account.business_details.address_details.street_address, "100 Cool Ranch")
-        self.assertEquals(result.sub_merchant_account.business_details.dba_name, "Doritos Dormitory")
-        self.assertEquals(result.sub_merchant_account.business_details.legal_name, "Frito-Lay")
+        self.assertEquals(result.sub_merchant_account.business_details.address_details.street_address, "123 Main Street")
+        self.assertEquals(result.sub_merchant_account.business_details.dba_name, "Non-Generic Retail Shop")
+        self.assertEquals(result.sub_merchant_account.business_details.legal_name, "Non-Generic Store")
         self.assertEquals(result.sub_merchant_account.business_details.registered_as, "sole_proprietorship")
         self.assertEquals(result.sub_merchant_account.business_details.tax_id, "987654321")
         self.assertEquals(result.sub_merchant_account.business_details.vat, "987654321")
@@ -159,15 +160,15 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.director_details.address_details.locality, "London")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.postal_code, "54321")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.region, "GBR")
-        self.assertEquals(result.sub_merchant_account.director_details.address_details.street_address, "100 Cool Ranch")
+        self.assertEquals(result.sub_merchant_account.director_details.address_details.street_address, "123 Main Street")
         self.assertEquals(result.sub_merchant_account.director_details.date_of_birth, "1968-07-30")
-        self.assertEquals(result.sub_merchant_account.director_details.email, "geoff.keighley@G4tv.com")
-        self.assertEquals(result.sub_merchant_account.director_details.first_name, "Geoff")
-        self.assertEquals(result.sub_merchant_account.director_details.last_name, "Keighley")
+        self.assertEquals(result.sub_merchant_account.director_details.email, "janedot@example.com")
+        self.assertEquals(result.sub_merchant_account.director_details.first_name, "Jane")
+        self.assertEquals(result.sub_merchant_account.director_details.last_name, "Dot")
         self.assertEquals(result.sub_merchant_account.director_details.phone, "5555556666")
 
-        self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, 'Geoff Keighley')
-        self.assertEquals(result.sub_merchant_account.funding_details.account_number, u'\u2022\u2022\u2022\u2022\u20224321')
+        self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "Jane Dot")
+        self.assertEquals(result.sub_merchant_account.funding_details.account_number, u"\u2022\u2022\u2022\u2022\u20224321")
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
-        self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "rememberdoritos3d")
+        self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "nongenericdescriptor")
         self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "987654321")
