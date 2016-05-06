@@ -21,6 +21,10 @@ class TestSubMerchantAccount(unittest.TestCase):
             "funding": {
                 "currency_iso_code": "GBP",
             },
+            "missing_fields": [
+                "director.address.street_address",
+                "business.website",
+            ],
         }
 
         sub_merchant_account = SubMerchantAccount(None, params)
@@ -34,3 +38,4 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(sub_merchant_account.business_details.registered_as, "sole_proprietorship")
         self.assertEquals(sub_merchant_account.business_details.address_details.country, "GBR")
         self.assertEquals(sub_merchant_account.funding_details.currency_iso_code, "GBP")
+        self.assertEquals(sub_merchant_account.missing_fields, ["director.address.street_address", "business.website"])
