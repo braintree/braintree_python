@@ -11,6 +11,13 @@ class TestHttp(unittest.TestCase):
         except UpgradeRequiredError:
             pass
 
+    def test_raise_exception_from_too_many_requests(self):
+        try:
+            Http.raise_exception_from_status(429)
+            self.assertTrue(False)
+        except TooManyRequestsError:
+            pass
+
     def test_backtrace_preserved_when_not_wrapping_exceptions(self):
         class Error(Exception):
             pass

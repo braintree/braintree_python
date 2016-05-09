@@ -6,6 +6,7 @@ from braintree.exceptions.invalid_challenge_error import InvalidChallengeError
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
+from braintree.exceptions.too_many_requests_error import TooManyRequestsError
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 from braintree.exceptions.test_operation_performed_in_production_error import TestOperationPerformedInProductionError
