@@ -17,7 +17,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                     "country": "GBR",
                     "locality": "Liverpool",
                     "postal_code": "12345",
-                    "region": "GBR",
+                    "region": "JS",
                     "street_address": "100 Main Ave",
                 },
                 "dba_name": "Generic Retail Shop",
@@ -29,9 +29,10 @@ class TestSubMerchantAccount(unittest.TestCase):
             },
             "director": {
                 "address": {
+                    "country": "GBR",
                     "locality": "Liverpool",
                     "postal_code": "12345",
-                    "region": "GBR",
+                    "region": "JS",
                     "street_address": "100 Main Ave",
                 },
                 "date_of_birth": "1968-07-30",
@@ -65,7 +66,7 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.business_details.address_details.country, "GBR")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.locality, "Liverpool")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.postal_code, "12345")
-        self.assertEquals(result.sub_merchant_account.business_details.address_details.region, "GBR")
+        self.assertEquals(result.sub_merchant_account.business_details.address_details.region, "JS")
         self.assertEquals(result.sub_merchant_account.business_details.address_details.street_address, "100 Main Ave")
         self.assertEquals(result.sub_merchant_account.business_details.dba_name, "Generic Retail Shop")
         self.assertEquals(result.sub_merchant_account.business_details.legal_name, "Generic's Store")
@@ -74,9 +75,10 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.business_details.tax_id, "123456789")
         self.assertEquals(result.sub_merchant_account.business_details.vat, "123456789")
 
+        self.assertEquals(result.sub_merchant_account.director_details.address_details.country, "GBR")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.locality, "Liverpool")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.postal_code, "12345")
-        self.assertEquals(result.sub_merchant_account.director_details.address_details.region, "GBR")
+        self.assertEquals(result.sub_merchant_account.director_details.address_details.region, "JS")
         self.assertEquals(result.sub_merchant_account.director_details.address_details.street_address, "100 Main Ave")
         self.assertEquals(result.sub_merchant_account.director_details.date_of_birth, "1968-07-30")
         self.assertEquals(result.sub_merchant_account.director_details.email, "johndoe@example.com")
@@ -98,6 +100,14 @@ class TestSubMerchantAccount(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEquals(result.sub_merchant_account.id, unique_token)
+
+    def test_create_includes_fields_required_for_verification(self):
+        del(self.sub_merchant_account_create_params["business"]["dba_name"])
+
+        result = SubMerchantAccount.create(self.sub_merchant_account_create_params)
+
+        self.assertTrue(result.is_success)
+        self.assertTrue("business.dba_name" in result.sub_merchant_account.fields_required_for_verification)
 
     def test_update_with_valid_options(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
