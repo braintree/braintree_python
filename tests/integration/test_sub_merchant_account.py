@@ -101,6 +101,7 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEquals(result.sub_merchant_account.id, unique_token)
 
+<<<<<<< HEAD
     def test_create_includes_fields_required_for_verification(self):
         del(self.sub_merchant_account_create_params["business"]["dba_name"])
 
@@ -108,6 +109,26 @@ class TestSubMerchantAccount(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertTrue("business.dba_name" in result.sub_merchant_account.fields_required_for_verification)
+=======
+    def test_create_with_missing_fields(self):
+        self.sub_merchant_account_create_params["director"].pop("first_name")
+        result = SubMerchantAccount.create(self.sub_merchant_account_create_params)
+
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(1, result.errors.size)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.Director.FirstNameIsRequired, result.errors.for_object("sub_merchant_account").on("first_name")[0].code)
+
+
+    def test_create_with_invalid_options(self):
+        self.sub_merchant_account_create_params["director"]["date_of_birth"] = "1776-01-01"
+        result = SubMerchantAccount.create(self.sub_merchant_account_create_params)
+
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(1, result.errors.size)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.Director.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
+>>>>>>> BTMKPL-264 - Handle validation errors for sub merchant account create/update
 
     def test_update_with_valid_options(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
@@ -182,3 +203,19 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
         self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "nongenericdescriptor")
         self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "987654321")
+
+    def test_update_with_invalid_options(self):
+        sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
+        director_id = sub_merchant_account.director_details.id
+
+        result = SubMerchantAccount.update(sub_merchant_account.id, {
+            "director": {
+                "date_of_birth": "1776-07-30",
+                "id": director_id,
+            },
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(1, result.errors.size)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.Director.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)

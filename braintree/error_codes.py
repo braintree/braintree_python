@@ -538,3 +538,60 @@ class ErrorCodes(object):
                 LodgingCheckInDateIsInvalid = "93412"
                 LodgingCheckOutDateIsInvalid = "93413"
 
+    class SubMerchantAccount(object):
+        IdFormatIsInvalid = "84603"
+        IdIsInUse = "84604"
+        IdIsNotAllowed = "84605"
+        IdIsTooLong = "84602"
+        TosAcceptedIsRequiredToBeTrue = "84629"
+        UnexpectedErrorOccurredTryAgain = "84606"
+        TosAcceptedIsRequiredToBeTrue = "84607"
+        TosAcceptedIsInvalid = "84629"
+
+        class Director(object):
+            FirstNameIsRequired = "84608"
+            FirstNameIsInvalid = "84630"
+            LastNameIsRequired = "84616"
+            LastNameIsInvalid = "84631"
+            EmailIsRequired = "84601"
+            EmailIsInvalid = "84632"
+            BirthDateMustBe100YearsOldOrYounger = "84617"
+            BirthDateMustBe18YearsOldOrOlder = "84618"
+            BirthDateIsInvalid = "84633"
+
+            class Address(object):
+                CountryIsInvalid = "84626"
+                StreetAddressMustProvideAValidNonPoBoxAddress = "84613"
+                StreetAddressIsInvalid = "84634"
+
+        class Business(object):
+            LegalNameIsInvalid = "84628"
+            LegalNameIsRequired = "84609"
+            RegisteredAsIsInvalid = "84635"
+            RegisteredAsIsRequired = "84622"
+            RegisteredAsIsAnInvalidType = "84623"
+            MCCIsInvalid = "84636"
+            MCCMustBe4Digits = "84624"
+            EstablishedOnIsInvalid = "84637"
+            EstablishedOnMustBeYear1700OrLater = "84625"
+
+            class Address(object):
+                CountryIsInvalid = "84614"
+                CountryIsRequired = "84610"
+                StreetAddressMustProvideAValidNonPoBoxAddress = "84638"
+                StreetAddressIsInvalid = "84615"
+
+        class Funding(object):
+            CurrencyIsoCodeIsRequired = "84611"
+            CurrencyIsoCodeIsInvalid = "84639"
+            CurrencyIsoCodeMustMatchBusinessCountryCurrency = "84619"
+            IBANIsInvalid = "84640"
+            IBANCanOnlyIncludeLettersNumbersAndSpaces = "84620"
+            BICMustBe11CharactersOrLess = "84621"
+            BICIsInvalid = "84641"
+
+        class MerchantAccount(object):
+            TokenIsRequired = "84627"
+            TokenIsInvalid = "84642"
+            UniqueIdIsRequired = "84612"
+            UniqueIdIsInvalid = "84643"

@@ -19,11 +19,21 @@ class SubMerchantAccountGateway(object):
 
     def _post(self, url, params={}):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
-        return SuccessfulResult({"sub_merchant_account": SubMerchantAccount(self.gateway, response["sub_merchant_account"])})
+        if "sub_merchant_account" in response:
+            return SuccessfulResult({"sub_merchant_account": SubMerchantAccount(self.gateway, response["sub_merchant_account"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+        else:
+            pass
 
     def _put(self, url, params={}):
         response = self.config.http().put(self.config.base_merchant_path() + url, params)
-        return SuccessfulResult({"sub_merchant_account": SubMerchantAccount(self.gateway, response["sub_merchant_account"])})
+        if "sub_merchant_account" in response:
+            return SuccessfulResult({"sub_merchant_account": SubMerchantAccount(self.gateway, response["sub_merchant_account"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+        else:
+            pass
 
     @staticmethod
     def _create_signature():
