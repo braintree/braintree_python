@@ -543,10 +543,9 @@ class ErrorCodes(object):
         IdIsInUse = "84604"
         IdIsNotAllowed = "84605"
         IdIsTooLong = "84602"
-        TosAcceptedIsRequiredToBeTrue = "84629"
-        UnexpectedErrorOccurredTryAgain = "84606"
-        TosAcceptedIsRequiredToBeTrue = "84607"
         TosAcceptedIsInvalid = "84629"
+        TosAcceptedIsRequiredToBeTrue = "84607"
+        UnexpectedErrorOccurredTryAgain = "84606"
 
         class Director(object):
             FirstNameIsRequired = "84608"
