@@ -33,7 +33,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
@@ -52,7 +52,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEquals("411111", transaction.credit_card_details.bin)
@@ -127,7 +127,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEquals(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Sale, transaction.type)
         self.assertEquals(Transaction.Status.Authorized, transaction.status)
         self.assertEquals(Decimal("100.00"), transaction.amount)
@@ -1233,7 +1233,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\w{6}\Z", transaction.id))
+        self.assertNotEquals(None, re.search("\A\w{6,}\Z", transaction.id))
         self.assertEquals(Transaction.Type.Credit, transaction.type)
         self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
         cc_details = transaction.credit_card_details
@@ -1656,6 +1656,202 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals(
             ErrorCodes.Transaction.SettlementAmountIsLessThanServiceFeeAmount,
             result.errors.for_object("transaction").on("amount")[0].code
+        )
+
+    def test_update_details_with_valid_params(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        params = {
+            "amount" : "9.00",
+            "order_id": "123",
+            "descriptor": {
+                "name": "456*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        result = Transaction.update_details(transaction.id, params)
+        self.assertTrue(result.is_success)
+        self.assertEquals(Decimal("9.00"), result.transaction.amount)
+        self.assertEquals(Transaction.Status.SubmittedForSettlement, result.transaction.status)
+        self.assertEquals("123", result.transaction.order_id)
+        self.assertEquals("456*123456789012345678", result.transaction.descriptor.name)
+        self.assertEquals("3334445555", result.transaction.descriptor.phone)
+        self.assertEquals("ebay.com", result.transaction.descriptor.url)
+
+    def test_update_details_with_invalid_params(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        }).transaction
+
+        params = {
+            "amount" : "9.00",
+            "invalid_key": "invalid_value",
+            "order_id": "123",
+            "descriptor": {
+                "name": "456*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        try:
+            Transaction.update_details(transaction.id, params)
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEquals("'Invalid keys: invalid_key'", str(e))
+
+    def test_update_details_with_invalid_order_id(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        }).transaction
+
+        params = {
+            "amount" : "9.00",
+            "order_id": "A" * 256,
+            "descriptor": {
+                "name": "456*123456789012345678",
+                "phone": "3334445555",
+                "url": "ebay.com"
+            }
+        }
+
+        result = Transaction.update_details(transaction.id, params)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.OrderIdIsTooLong,
+            result.errors.for_object("transaction").on("order_id")[0].code
+        )
+
+    def test_update_details_with_invalid_descriptor(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        }).transaction
+
+        params = {
+            "amount" : "9.00",
+            "order_id": "123",
+            "descriptor": {
+                "name": "invalid name",
+                "phone": "invalid phone",
+                "url": "12345678901234567890"
+            }
+        }
+
+        result = Transaction.update_details(transaction.id, params)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Descriptor.NameFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Descriptor.PhoneFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Descriptor.UrlFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("descriptor").on("url")[0].code
+        )
+
+    def test_update_details_with_invalid_amount(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        }).transaction
+
+        params = {
+            "amount" : "999.00",
+            "order_id": "123",
+        }
+
+        result = Transaction.update_details(transaction.id, params)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.SettlementAmountIsTooLarge,
+            result.errors.for_object("transaction").on("amount")[0].code
+        )
+
+    def test_update_details_with_invalid_status(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        }).transaction
+
+        params = {
+            "amount" : "9.00",
+            "order_id": "123",
+        }
+
+        result = Transaction.update_details(transaction.id, params)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.CannotUpdateTransactionDetailsNotSubmittedForSettlement,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_update_details_with_invalid_processor(self):
+        transaction = Transaction.sale({
+            "amount": "10.00",
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2020"
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        }).transaction
+
+        params = {
+            "amount" : "9.00",
+            "order_id": "123",
+        }
+
+        result = Transaction.update_details(transaction.id, params)
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingTransactionDetails,
+            result.errors.for_object("transaction").on("base")[0].code
         )
 
     def test_status_history(self):

@@ -20,7 +20,6 @@ class MerchantGateway(object):
         })
 
         if "response" in response and "merchant" in response["response"]:
-            merchant = Merchant(self.gateway, response["response"]["merchant"])
             return SuccessfulResult({
                 "merchant": Merchant(self.gateway, response["response"]["merchant"]),
                 "credentials": OAuthCredentials(self.gateway, response["response"]["credentials"])

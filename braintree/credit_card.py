@@ -30,7 +30,8 @@ class CreditCard(Resource):
                 "country_name": "United States of America"
             },
             "options": {
-                "verify_card": True
+                "verify_card": True,
+                "verification_amount": "2.00"
             }
         })
 

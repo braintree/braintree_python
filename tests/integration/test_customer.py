@@ -231,6 +231,20 @@ class TestCustomer(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
+    def test_create_customer_and_verify_payment_method_with_verification_amount(self):
+        result = Customer.create({
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+                "options": {"verify_card": True, "verification_amount": "6.00"}
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
     def test_create_customer_with_check_duplicate_payment_method(self):
         attributes = {
             "first_name": "Mike",
@@ -564,6 +578,34 @@ class TestCustomer(unittest.TestCase):
             result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
             ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
         )
+
+    def test_update_with_nested_verification_amount(self):
+        customer = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/10",
+                "billing_address": {
+                    "postal_code": "11111"
+                }
+            }
+        }).customer
+        credit_card = customer.credit_cards[0]
+        address = credit_card.billing_address
+
+        result = Customer.update(customer.id, {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/10",
+                "options": {
+                    "verify_card": True,
+                    "verification_amount": "2.00"
+                },
+            }
+        })
+
+        self.assertTrue(result.is_success)
 
     def test_create_from_transparent_redirect_with_successful_result(self):
         tr_data = {
