@@ -33,3 +33,13 @@ class TestErrorResult(unittest.TestCase):
     def test_verification_is_none_if_not_set(self):
         result = ErrorResult("gateway", {"errors": {}, "params": {}, "message": "brief description"})
         self.assertTrue(result.credit_card_verification is None)
+
+    def test_result_includes_a_sub_merchant_account_for_sub_merchant_account_errors(self):
+        sub_merchant_account = {
+                "id": "sub-merchant-account-id",
+                "tos_accepted": True,
+        }
+        result = ErrorResult("gateway", {"errors": {}, "message": "brief description", "sub_merchant_account": sub_merchant_account})
+
+        self.assertEquals(result.sub_merchant_account.id, "sub-merchant-account-id")
+        self.assertEquals(result.sub_merchant_account.tos_accepted, True)
