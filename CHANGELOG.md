@@ -1,3 +1,6 @@
+## 3.26.1
+* Correct issue with setup.py
+
 ## 3.26.0
 * Add Transaction `update_details`
 * Support for Too Many Requests response codes
