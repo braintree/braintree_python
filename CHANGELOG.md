@@ -1,3 +1,11 @@
+## 3.26.0
+* Add Transaction `update_details`
+* Support for Too Many Requests response codes
+* Add SubMerchantAccount object with associate objects
+* Allow more parameters to be sent on SubMerchantAccount create
+* Add SubMerchantAccount update
+* Handle validation errors for SubMerchantAccount create / update
+
 ## 3.25.0
 * Add AccountUpdaterDailyReport webhook parsing
 
