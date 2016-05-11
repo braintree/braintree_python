@@ -3,9 +3,12 @@ from braintree.sub_merchant_account.address_details import AddressDetails
 
 class DirectorDetails(AttributeGetter):
     detail_list = [
+        "address_details",
+        "date_of_birth",
+        "email",
         "first_name",
         "last_name",
-        "email",
+        "phone",
     ]
 
     def __init__(self, attributes):

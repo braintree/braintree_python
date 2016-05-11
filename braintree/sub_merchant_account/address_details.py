@@ -3,6 +3,10 @@ from braintree.attribute_getter import AttributeGetter
 class AddressDetails(AttributeGetter):
     detail_list = [
         "country",
+        "locality",
+        "postal_code",
+        "region",
+        "street_address",
     ]
 
     def __init__(self, attributes):

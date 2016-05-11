@@ -13,7 +13,14 @@ class SubMerchantAccount(Resource):
         self.funding_details = FundingDetails(attributes.get("funding", {}))
 
     def __repr__(self):
-        detail_list = ["id", "tos_accepted", "director_details", "business_details", "funding_details"]
+        detail_list = [
+            "id",
+            "tos_accepted",
+            "director_details",
+            "business_details",
+            "funding_details",
+        ]
+
         return super(SubMerchantAccount, self).__repr__(detail_list)
 
     @staticmethod
