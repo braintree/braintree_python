@@ -24,6 +24,7 @@ class ErrorCodes(object):
         FirstNameIsInvalid = "91819"
         FirstNameIsTooLong = "81805"
         InconsistentCountry = "91815"
+        IsInvalid = "91828"
         LastNameIsInvalid = "91820"
         LastNameIsTooLong = "81806"
         LocalityIsInvalid = "91824"
@@ -179,10 +180,12 @@ class ErrorCodes(object):
         CountryCodeNumericIsNotAccepted = "93608"
         CountryNameIsInvalid = "93611"
         CountryNameIsNotAccepted = "93610"
+        CurrenciesAreInvalid = "93614"
         EmailFormatIsInvalid = "93602"
         EmailIsRequired = "83601"
         InconsistentCountry = "93612"
         PaymentMethodsAreInvalid = "93613"
+        PaymentMethodsAreNotAllowed = "93615"
 
     class MerchantAccount(object):
         IdFormatIsInvalid = "82603"
@@ -441,6 +444,7 @@ class ErrorCodes(object):
         CannotSimulateTransactionSettlement = "91575"
         CannotSubmitForPartialSettlement = "915103"
         CannotSubmitForSettlement = "91507"
+        CannotUpdateTransactionDetailsNotSubmittedForSettlement = "915129"
         ChannelIsTooLong = "91550"
         ChannelIsTooLong = "91550"
         CreditCardIsRequired = "91508"
@@ -481,6 +485,7 @@ class ErrorCodes(object):
         ProcessorDoesNotSupportPartialSettlement = "915102"
         ProcessorDoesNotSupportUpdatingOrderId = "915107"
         ProcessorDoesNotSupportUpdatingDescriptor = "915108"
+        ProcessorDoesNotSupportUpdatingTransactionDetails = "915130"
         ProcessorDoesNotSupportVoiceAuthorizations = "91545"
         PurchaseOrderNumberIsInvalid = "91548"
         PurchaseOrderNumberIsTooLong = "91537"
@@ -535,3 +540,59 @@ class ErrorCodes(object):
                 LodgingCheckInDateIsInvalid = "93412"
                 LodgingCheckOutDateIsInvalid = "93413"
 
+    class SubMerchantAccount(object):
+        IdFormatIsInvalid = "84603"
+        IdIsInUse = "84604"
+        IdIsNotAllowed = "84605"
+        IdIsTooLong = "84602"
+        TosAcceptedIsInvalid = "84629"
+        TosAcceptedIsRequiredToBeTrue = "84607"
+        UnexpectedErrorOccurredTryAgain = "84606"
+
+        class Director(object):
+            FirstNameIsRequired = "84608"
+            FirstNameIsInvalid = "84630"
+            LastNameIsRequired = "84616"
+            LastNameIsInvalid = "84631"
+            EmailIsRequired = "84601"
+            EmailIsInvalid = "84632"
+            BirthDateMustBe100YearsOldOrYounger = "84617"
+            BirthDateMustBe18YearsOldOrOlder = "84618"
+            BirthDateIsInvalid = "84633"
+
+            class Address(object):
+                CountryIsInvalid = "84626"
+                StreetAddressMustProvideAValidNonPoBoxAddress = "84613"
+                StreetAddressIsInvalid = "84634"
+
+        class Business(object):
+            LegalNameIsInvalid = "84628"
+            LegalNameIsRequired = "84609"
+            RegisteredAsIsInvalid = "84635"
+            RegisteredAsIsRequired = "84622"
+            RegisteredAsIsAnInvalidType = "84623"
+            MCCIsInvalid = "84636"
+            MCCMustBe4Digits = "84624"
+            EstablishedOnIsInvalid = "84637"
+            EstablishedOnMustBeYear1700OrLater = "84625"
+
+            class Address(object):
+                CountryIsInvalid = "84614"
+                CountryIsRequired = "84610"
+                StreetAddressMustProvideAValidNonPoBoxAddress = "84638"
+                StreetAddressIsInvalid = "84615"
+
+        class Funding(object):
+            CurrencyIsoCodeIsRequired = "84611"
+            CurrencyIsoCodeIsInvalid = "84639"
+            CurrencyIsoCodeMustMatchBusinessCountryCurrency = "84619"
+            IBANIsInvalid = "84640"
+            IBANCanOnlyIncludeLettersNumbersAndSpaces = "84620"
+            BICMustBe11CharactersOrLess = "84621"
+            BICIsInvalid = "84641"
+
+        class MerchantAccount(object):
+            TokenIsRequired = "84627"
+            TokenIsInvalid = "84642"
+            UniqueIdIsRequired = "84612"
+            UniqueIdIsInvalid = "84643"

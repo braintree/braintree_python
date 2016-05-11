@@ -1157,7 +1157,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.dispute_date >= past
         ])
 
-        self.assertEquals(2, collection.maximum_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction_id, collection.first.id)
 
         collection = Transaction.search([
@@ -1165,7 +1165,7 @@ class TestTransactionSearch(unittest.TestCase):
             TransactionSearch.dispute_date >= disputed_time
         ])
 
-        self.assertEquals(2, collection.maximum_size)
+        self.assertEquals(1, collection.maximum_size)
         self.assertEquals(transaction_id, collection.first.id)
 
         collection = Transaction.search([

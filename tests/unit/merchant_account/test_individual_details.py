@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.merchant_account.individual_details import IndividualDetails
 
 class TestIndividualDetails(unittest.TestCase):
     def test_repr_has_all_fields(self):

@@ -24,7 +24,7 @@ class MerchantAccount(Resource):
             self.master_merchant_account = MerchantAccount(gateway, attributes.pop("master_merchant_account"))
 
     def __repr__(self):
-        detail_list = ["id", "status", "master_merchant_account", "individual_details", "business_details", "funding_details"]
+        detail_list = ["id", "status", "master_merchant_account", "individual_details", "business_details", "funding_details", "default"]
         return super(MerchantAccount, self).__repr__(detail_list)
 
     @staticmethod

@@ -4,7 +4,7 @@ The Braintree library provides integration access to the Braintree Gateway.
 
 ## Dependencies
 
-* Python 2.6, 2.7, 3.3, or 3.4
+* Python 2.6, 2.7, 3.3, 3.4, or 3.5
 * [requests](http://docs.python-requests.org/en/latest/)
 
 ## Upgrading from 2.x.x to 3.x.x
