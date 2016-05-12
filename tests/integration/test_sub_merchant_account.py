@@ -195,6 +195,19 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(1, result.errors.size)
         self.assertEquals(ErrorCodes.SubMerchantAccount.Director.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
 
+    def test_create_fails_to_verify_identity_for_an_incomplete_and_invalid_sub_merchant_account(self):
+        del(self.sub_merchant_account_create_params["business"]["dba_name"])
+        self.sub_merchant_account_create_params["directors"][0]["date_of_birth"] = "1776-01-01"
+
+        self.sub_merchant_account_create_params["verify_identity"] = True
+
+        result = SubMerchantAccount.create(self.sub_merchant_account_create_params)
+
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(ErrorCodes.SubMerchantAccount.CannotVerifyIdentityForAnIncompleteSubMerchantAccount, result.errors.for_object("sub_merchant_account").on("verify_identity")[0].code)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.CannotVerifyIdentityForAnInvalidSubMerchantAccount, result.errors.for_object("sub_merchant_account").on("verify_identity")[1].code)
+
     def test_update_director_with_director_create(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
         director_id = sub_merchant_account.directors[0].id
@@ -330,3 +343,25 @@ class TestSubMerchantAccount(unittest.TestCase):
 
         self.assertEquals(1, result.errors.size)
         self.assertEquals(ErrorCodes.SubMerchantAccount.Director.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
+
+    def test_update_fails_to_verify_identity_for_an_incomplete_and_invalid_sub_merchant_account(self):
+        sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
+        director_id = sub_merchant_account.directors[0].id
+
+        result = SubMerchantAccount.update(sub_merchant_account.id, {
+            "verify_identity": True,
+            "business": {
+                "dba_name": "",
+            },
+            "directors": [
+                {
+                    "date_of_birth": "1776-07-30",
+                    "id": director_id,
+                },
+            ],
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEquals(ErrorCodes.SubMerchantAccount.CannotVerifyIdentityForAnIncompleteSubMerchantAccount, result.errors.for_object("sub_merchant_account").on("verify_identity")[0].code)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.CannotVerifyIdentityForAnInvalidSubMerchantAccount, result.errors.for_object("sub_merchant_account").on("verify_identity")[1].code)

@@ -548,6 +548,9 @@ class ErrorCodes(object):
         TosAcceptedIsInvalid = "84629"
         TosAcceptedIsRequiredToBeTrue = "84607"
         UnexpectedErrorOccurredTryAgain = "84606"
+        UnexpectedError = "84645"
+        CannotVerifyIdentityForAnIncompleteSubMerchantAccount = "84644"
+        CannotVerifyIdentityForAnInvalidSubMerchantAccount = "84646"
 
         class Director(object):
             FirstNameIsRequired = "84608"
