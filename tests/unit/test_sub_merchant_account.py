@@ -3,24 +3,45 @@ from tests.test_helper import *
 class TestSubMerchantAccount(unittest.TestCase):
     def test_create_new_sub_merchant_account_with_all_params(self):
         params = {
-            "id": "sub_merchant_account",
-            "status": "pending",
-            "tos_accepted": "true",
-            "director": {
-                "first_name": "John",
-                "last_name": "Doe",
-                "email": "john.doe@example.com",
-            },
             "business": {
-                "legal_name": "James's Bloggs",
-                "registered_as": "sole_proprietorship",
                 "address": {
                     "country": "GBR",
-                }
+                    "locality": "Liverpool",
+                    "postal_code": "12345",
+                    "region": "JS",
+                    "street_address": "100 Main Ave",
+                },
+                "dba_name": "Generic Retail Shop",
+                "legal_name": "Generic's Store",
+                "registered_as": "sole_proprietorship",
+                "registration_number": "1234",
+                "tax_id": "123456789",
+                "vat": "123456789",
             },
+            "directors": [{
+                "address": {
+                    "country": "GBR",
+                    "locality": "Liverpool",
+                    "postal_code": "12345",
+                    "region": "JS",
+                    "street_address": "100 Main Ave",
+                },
+                "date_of_birth": "1968-07-30",
+                "email": "johndoe@example.com",
+                "first_name": "John",
+                "last_name": "Doe",
+                "phone": "5555555555",
+            }],
             "funding": {
+                "account_holder_name": "John Doe",
                 "currency_iso_code": "GBP",
+                "descriptor": "genericdescriptor",
+                "bic": "123456789",
+                "iban": "123456789",
             },
+            "tos_accepted": True,
+            "status": "pending",
+            "id": "sub_merchant_account",
             "fields_required_for_verification": [
                 "director.address.street_address",
                 "business.website",
@@ -30,12 +51,31 @@ class TestSubMerchantAccount(unittest.TestCase):
         sub_merchant_account = SubMerchantAccount(None, params)
         self.assertEquals(sub_merchant_account.id, "sub_merchant_account")
         self.assertEquals(sub_merchant_account.status, SubMerchantAccount.Status.Pending)
-        self.assertEquals(sub_merchant_account.tos_accepted, "true")
-        self.assertEquals(sub_merchant_account.director_details.first_name, "John")
-        self.assertEquals(sub_merchant_account.director_details.last_name, "Doe")
-        self.assertEquals(sub_merchant_account.director_details.email, "john.doe@example.com")
-        self.assertEquals(sub_merchant_account.business_details.legal_name, "James's Bloggs")
+        self.assertEquals(sub_merchant_account.tos_accepted, True)
+        self.assertEquals(sub_merchant_account.directors[0].first_name, "John")
+        self.assertEquals(sub_merchant_account.directors[0].last_name, "Doe")
+        self.assertEquals(sub_merchant_account.directors[0].email, "johndoe@example.com")
+        self.assertEquals(sub_merchant_account.directors[0].phone, "5555555555")
+        self.assertEquals(sub_merchant_account.directors[0].date_of_birth, "1968-07-30")
+        self.assertEquals(sub_merchant_account.directors[0].address_details.country, "GBR")
+        self.assertEquals(sub_merchant_account.directors[0].address_details.locality, "Liverpool")
+        self.assertEquals(sub_merchant_account.directors[0].address_details.postal_code, "12345")
+        self.assertEquals(sub_merchant_account.directors[0].address_details.region, "JS")
+        self.assertEquals(sub_merchant_account.directors[0].address_details.street_address, "100 Main Ave")
+        self.assertEquals(sub_merchant_account.business_details.legal_name, "Generic's Store")
+        self.assertEquals(sub_merchant_account.business_details.dba_name, "Generic Retail Shop")
         self.assertEquals(sub_merchant_account.business_details.registered_as, "sole_proprietorship")
+        self.assertEquals(sub_merchant_account.business_details.registration_number, "1234")
+        self.assertEquals(sub_merchant_account.business_details.tax_id, "123456789")
+        self.assertEquals(sub_merchant_account.business_details.vat, "123456789")
         self.assertEquals(sub_merchant_account.business_details.address_details.country, "GBR")
+        self.assertEquals(sub_merchant_account.business_details.address_details.locality, "Liverpool")
+        self.assertEquals(sub_merchant_account.business_details.address_details.postal_code, "12345")
+        self.assertEquals(sub_merchant_account.business_details.address_details.region, "JS")
+        self.assertEquals(sub_merchant_account.business_details.address_details.street_address, "100 Main Ave")
+        self.assertEquals(sub_merchant_account.funding_details.account_holder_name, "John Doe")
         self.assertEquals(sub_merchant_account.funding_details.currency_iso_code, "GBP")
+        self.assertEquals(sub_merchant_account.funding_details.descriptor, "genericdescriptor")
+        self.assertEquals(sub_merchant_account.funding_details.bic, "123456789")
+        self.assertEquals(sub_merchant_account.funding_details.iban, "123456789")
         self.assertEquals(sub_merchant_account.fields_required_for_verification, ["director.address.street_address", "business.website"])

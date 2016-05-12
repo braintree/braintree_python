@@ -8,20 +8,27 @@ class SubMerchantAccount(Resource):
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
-        self.director_details = DirectorDetails(attributes.get("director", {}))
         self.business_details = BusinessDetails(attributes.get("business", {}))
         self.funding_details = FundingDetails(attributes.get("funding", {}))
+        self.directors = self._build_directors(attributes)
 
     def __repr__(self):
         detail_list = [
             "id",
             "tos_accepted",
-            "director_details",
+            "directors",
             "business_details",
             "funding_details",
         ]
 
         return super(SubMerchantAccount, self).__repr__(detail_list)
+
+    def _build_directors(self, attributes):
+        directors = []
+        for director_attributes in attributes.get("directors", []):
+            directors.append(DirectorDetails(director_attributes))
+
+        return directors
 
     @staticmethod
     def create(params={}):
