@@ -721,12 +721,9 @@ class TestCreditCard(unittest.TestCase):
         self.assertEquals(Decimal("1.00"), found_credit_card.subscriptions[0].price)
         self.assertEquals(credit_card.token, found_credit_card.subscriptions[0].payment_method_token)
 
+    @raises_with_regexp(NotFoundError, "payment method with token 'bad_token' not found")
     def test_find_with_invalid_token(self):
-        try:
-            CreditCard.find("bad_token")
-            self.assertTrue(False)
-        except Exception as e:
-            self.assertEquals("payment method with token 'bad_token' not found", str(e))
+        CreditCard.find("bad_token")
 
     def test_from_nonce_with_unlocked_nonce(self):
         config = Configuration.instantiate()
@@ -756,6 +753,7 @@ class TestCreditCard(unittest.TestCase):
         customer = Customer.find(customer.id)
         self.assertEquals(customer.credit_cards[0].token, card.token)
 
+    @raises_with_regexp(NotFoundError, "payment method with nonce .* or not found")
     def test_from_nonce_with_unlocked_nonce_pointing_to_shared_card(self):
         config = Configuration.instantiate()
 
@@ -778,12 +776,9 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(status_code, 201)
         nonce = json.loads(response)["creditCards"][0]["nonce"]
 
-        try:
-            CreditCard.from_nonce(nonce)
-            self.assertTrue(False)
-        except Exception as e:
-            self.assertIn("not found", str(e))
+        CreditCard.from_nonce(nonce)
 
+    @raises_with_regexp(NotFoundError, ".* consumed .*")
     def test_from_nonce_with_consumed_nonce(self):
         config = Configuration.instantiate()
         customer = Customer.create().customer
@@ -809,11 +804,7 @@ class TestCreditCard(unittest.TestCase):
         nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         CreditCard.from_nonce(nonce)
-        try:
-            CreditCard.from_nonce(nonce)
-            self.assertTrue(False)
-        except Exception as e:
-            self.assertIn("consumed", str(e))
+        CreditCard.from_nonce(nonce)
 
     def test_create_from_transparent_redirect(self):
         customer = Customer.create().customer

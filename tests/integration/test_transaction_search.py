@@ -447,14 +447,9 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
+    @raises_with_regexp(AttributeError, "Invalid argument\(s\) for created_using: noSuchCreatedUsing")
     def test_advanced_search_multiple_value_node_allowed_values_created_using(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.created_using == "noSuchCreatedUsing"
-            ])
-            self.assertTrue(False)
-        except AttributeError as error:
-            self.assertEquals("Invalid argument(s) for created_using: noSuchCreatedUsing", str(error))
+        collection = Transaction.search([TransactionSearch.created_using == "noSuchCreatedUsing"])
 
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
         transaction = Transaction.sale({
@@ -488,14 +483,12 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
+    @raises_with_regexp(AttributeError,
+            "Invalid argument\(s\) for credit_card_customer_location: noSuchCreditCardCustomerLocation")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_customer_location(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.credit_card_customer_location == "noSuchCreditCardCustomerLocation"
-            ])
-            self.assertTrue(False)
-        except AttributeError as error:
-            self.assertEquals("Invalid argument(s) for credit_card_customer_location: noSuchCreditCardCustomerLocation", str(error))
+        collection = Transaction.search([
+            TransactionSearch.credit_card_customer_location == "noSuchCreditCardCustomerLocation"
+        ])
 
     def test_advanced_search_multiple_value_node_merchant_account_id(self):
         transaction = Transaction.sale({
@@ -561,14 +554,12 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
+    @raises_with_regexp(AttributeError,
+            "Invalid argument\(s\) for credit_card_card_type: noSuchCreditCardCardType")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_card_type(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.credit_card_card_type == "noSuchCreditCardCardType"
-            ])
-            self.assertTrue(False)
-        except AttributeError as error:
-            self.assertEquals("Invalid argument(s) for credit_card_card_type: noSuchCreditCardCardType", str(error))
+        collection = Transaction.search([
+            TransactionSearch.credit_card_card_type == "noSuchCreditCardCardType"
+        ])
 
     def test_advanced_search_multiple_value_node_status(self):
         transaction = Transaction.sale({
@@ -611,21 +602,14 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(Transaction.Status.AuthorizationExpired, collection.first.status)
 
     def test_advanced_search_allows_new_settlement_statuses(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.status.in_list(["settlement_confirmed", "settlement_declined"])
-            ])
-        except AttributeError as error:
-            self.assertTrue(False)
+        collection = Transaction.search([
+            TransactionSearch.status.in_list(["settlement_confirmed", "settlement_declined"])
+        ])
+        print(collection)
 
+    @raises_with_regexp(AttributeError, "Invalid argument\(s\) for status: noSuchStatus")
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.status == "noSuchStatus"
-            ])
-            self.assertTrue(False)
-        except AttributeError as error:
-            self.assertEquals("Invalid argument(s) for status: noSuchStatus", str(error))
+        collection = Transaction.search([ TransactionSearch.status == "noSuchStatus" ])
 
     def test_advanced_search_multiple_value_node_source(self):
         transaction = Transaction.sale({
@@ -691,14 +675,11 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEquals(0, collection.maximum_size)
 
+    @raises_with_regexp(AttributeError, "Invalid argument\(s\) for type: noSuchType")
     def test_advanced_search_multiple_value_node_allowed_values_type(self):
-        try:
-            collection = Transaction.search([
-                TransactionSearch.type == "noSuchType"
-            ])
-            self.assertTrue(False)
-        except AttributeError as error:
-            self.assertEquals("Invalid argument(s) for type: noSuchType", str(error))
+        collection = Transaction.search([
+            TransactionSearch.type == "noSuchType"
+        ])
 
     def test_advanced_search_multiple_value_node_type_with_refund(self):
         name = "Anabel Atkins%s" % randint(1,100000)
