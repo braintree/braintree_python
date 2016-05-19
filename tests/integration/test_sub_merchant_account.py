@@ -89,7 +89,7 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.directors[0].phone, "5555555555")
 
         self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "John Doe")
-        self.assertEquals(result.sub_merchant_account.funding_details.account_number, u"\u2022\u2022\u2022\u2022\u20226789")
+        self.assertEquals(result.sub_merchant_account.funding_details.account_number, "*****6789")
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
         self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "genericdescriptor")
         self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "123456789")
@@ -321,7 +321,7 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.directors[0].phone, "5555556666")
 
         self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "Jane Dot")
-        self.assertEquals(result.sub_merchant_account.funding_details.account_number, u"\u2022\u2022\u2022\u2022\u20224321")
+        self.assertEquals(result.sub_merchant_account.funding_details.account_number, "*****4321")
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
         self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "nongenericdescriptor")
         self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "987654321")
