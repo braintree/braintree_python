@@ -55,7 +55,7 @@ class SubMerchantAccountGateway(object):
                 'vat',
                 ],
             },
-            {'directors': [
+            {'contacts': [
                 {'address': [
                     'country',
                     'locality',
@@ -104,7 +104,7 @@ class SubMerchantAccountGateway(object):
                 'vat',
                 ],
             },
-            {'directors': [
+            {'contacts': [
                 {'address': [
                     'country',
                     'locality',

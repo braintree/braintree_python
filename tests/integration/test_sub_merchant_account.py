@@ -27,7 +27,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                 "tax_id": "123456789",
                 "vat": "123456789",
             },
-            "directors": [
+            "contacts": [
                 {
                     "address": {
                         "country": "GBR",
@@ -77,16 +77,16 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.business_details.tax_id, "123456789")
         self.assertEquals(result.sub_merchant_account.business_details.vat, "123456789")
 
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.country, "GBR")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.locality, "Liverpool")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.postal_code, "12345")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.region, "JS")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.street_address, "100 Main Ave")
-        self.assertEquals(result.sub_merchant_account.directors[0].date_of_birth, "1968-07-30")
-        self.assertEquals(result.sub_merchant_account.directors[0].email, "johndoe@example.com")
-        self.assertEquals(result.sub_merchant_account.directors[0].first_name, "John")
-        self.assertEquals(result.sub_merchant_account.directors[0].last_name, "Doe")
-        self.assertEquals(result.sub_merchant_account.directors[0].phone, "5555555555")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.country, "GBR")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.locality, "Liverpool")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.postal_code, "12345")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.region, "JS")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.street_address, "100 Main Ave")
+        self.assertEquals(result.sub_merchant_account.contacts[0].date_of_birth, "1968-07-30")
+        self.assertEquals(result.sub_merchant_account.contacts[0].email, "johndoe@example.com")
+        self.assertEquals(result.sub_merchant_account.contacts[0].first_name, "John")
+        self.assertEquals(result.sub_merchant_account.contacts[0].last_name, "Doe")
+        self.assertEquals(result.sub_merchant_account.contacts[0].phone, "5555555555")
 
         self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "John Doe")
         self.assertEquals(result.sub_merchant_account.funding_details.account_number, "*****6789")
@@ -94,7 +94,7 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "genericdescriptor")
         self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "123456789")
 
-    def test_create_sub_merchant_account_with_multiple_directors(self):
+    def test_create_sub_merchant_account_with_multiple_contacts(self):
         sub_merchant_account_create_params = {
             "business": {
                 "address": {
@@ -102,7 +102,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                 },
                 "registered_as": "sole_proprietorship",
             },
-            "directors": [
+            "contacts": [
                 {
                     "first_name": "John",
                     "last_name": "Doe",
@@ -130,17 +130,17 @@ class TestSubMerchantAccount(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-        self.assertEquals(result.sub_merchant_account.directors[0].first_name, "John")
-        self.assertEquals(result.sub_merchant_account.directors[0].last_name, "Doe")
-        self.assertEquals(result.sub_merchant_account.directors[0].email, "johndoe@example.com")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.country, "GBR")
+        self.assertEquals(result.sub_merchant_account.contacts[0].first_name, "John")
+        self.assertEquals(result.sub_merchant_account.contacts[0].last_name, "Doe")
+        self.assertEquals(result.sub_merchant_account.contacts[0].email, "johndoe@example.com")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.country, "GBR")
 
-        self.assertEquals(result.sub_merchant_account.directors[1].first_name, "Jane")
-        self.assertEquals(result.sub_merchant_account.directors[1].last_name, "Doe")
-        self.assertEquals(result.sub_merchant_account.directors[1].email, "janedoe@example.com")
-        self.assertEquals(result.sub_merchant_account.directors[1].address_details.country, "GBR")
+        self.assertEquals(result.sub_merchant_account.contacts[1].first_name, "Jane")
+        self.assertEquals(result.sub_merchant_account.contacts[1].last_name, "Doe")
+        self.assertEquals(result.sub_merchant_account.contacts[1].email, "janedoe@example.com")
+        self.assertEquals(result.sub_merchant_account.contacts[1].address_details.country, "GBR")
 
-    def test_create_sub_merchant_account_with_multiple_directors_with_errors(self):
+    def test_create_sub_merchant_account_with_multiple_contacts_with_errors(self):
         sub_merchant_account_create_params = {
             "business": {
                 "address": {
@@ -148,7 +148,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                 },
                 "registered_as": "sole_proprietorship",
             },
-            "directors": [
+            "contacts": [
                 {
                     "first_name": "John",
                 },
@@ -167,7 +167,7 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertFalse(result.is_success)
 
         self.assertEquals(1, result.errors.size)
-        self.assertEquals(ErrorCodes.SubMerchantAccount.Director.EmailIsRequired, result.errors.for_object("sub_merchant_account").on("email")[0].code)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.Contact.EmailIsRequired, result.errors.for_object("sub_merchant_account").on("email")[0].code)
 
     def test_create_allows_an_id_to_pass(self):
         unique_token = "passed_in_token" + str(uuid1())[0:6]
@@ -187,17 +187,17 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertTrue("business.dba_name" in result.sub_merchant_account.fields_required_for_verification)
 
     def test_create_with_invalid_options(self):
-        self.sub_merchant_account_create_params["directors"][0]["date_of_birth"] = "1776-01-01"
+        self.sub_merchant_account_create_params["contacts"][0]["date_of_birth"] = "1776-01-01"
         result = SubMerchantAccount.create(self.sub_merchant_account_create_params)
 
         self.assertFalse(result.is_success)
 
         self.assertEquals(1, result.errors.size)
-        self.assertEquals(ErrorCodes.SubMerchantAccount.Director.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.Contact.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
 
     def test_create_fails_to_verify_identity_for_an_incomplete_and_invalid_sub_merchant_account(self):
         del(self.sub_merchant_account_create_params["business"]["dba_name"])
-        self.sub_merchant_account_create_params["directors"][0]["date_of_birth"] = "1776-01-01"
+        self.sub_merchant_account_create_params["contacts"][0]["date_of_birth"] = "1776-01-01"
 
         self.sub_merchant_account_create_params["verify_identity"] = True
 
@@ -208,9 +208,9 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(ErrorCodes.SubMerchantAccount.CannotVerifyIdentityForAnIncompleteSubMerchantAccount, result.errors.for_object("sub_merchant_account").on("verify_identity")[0].code)
         self.assertEquals(ErrorCodes.SubMerchantAccount.CannotVerifyIdentityForAnInvalidSubMerchantAccount, result.errors.for_object("sub_merchant_account").on("verify_identity")[1].code)
 
-    def test_update_director_with_director_create(self):
+    def test_update_contact_with_contact_create(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
-        director_id = sub_merchant_account.directors[0].id
+        contact_id = sub_merchant_account.contacts[0].id
 
         sub_merchant_account_update_params = {
             "business": {
@@ -219,9 +219,9 @@ class TestSubMerchantAccount(unittest.TestCase):
                 },
                 "registered_as": "sole_proprietorship",
             },
-            "directors": [
+            "contacts": [
                 {
-                    "id": director_id,
+                    "id": contact_id,
                     "first_name": "Johnathon",
                 },
                 {
@@ -243,16 +243,16 @@ class TestSubMerchantAccount(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-        self.assertEquals(result.sub_merchant_account.directors[0].first_name, "Johnathon")
+        self.assertEquals(result.sub_merchant_account.contacts[0].first_name, "Johnathon")
 
-        self.assertEquals(result.sub_merchant_account.directors[1].first_name, "Jane")
-        self.assertEquals(result.sub_merchant_account.directors[1].last_name, "Doe")
-        self.assertEquals(result.sub_merchant_account.directors[1].email, "janedoe@example.com")
-        self.assertEquals(result.sub_merchant_account.directors[1].address_details.country, "GBR")
+        self.assertEquals(result.sub_merchant_account.contacts[1].first_name, "Jane")
+        self.assertEquals(result.sub_merchant_account.contacts[1].last_name, "Doe")
+        self.assertEquals(result.sub_merchant_account.contacts[1].email, "janedoe@example.com")
+        self.assertEquals(result.sub_merchant_account.contacts[1].address_details.country, "GBR")
 
     def test_update_with_valid_options(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
-        director_id = sub_merchant_account.directors[0].id
+        contact_id = sub_merchant_account.contacts[0].id
 
         result = SubMerchantAccount.update(sub_merchant_account.id, {
             "business": {
@@ -270,7 +270,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                 "tax_id": "987654321",
                 "vat": "987654321",
             },
-            "directors": [
+            "contacts": [
                 {
                     "address": {
                         "locality": "London",
@@ -281,7 +281,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                     "date_of_birth": "1968-07-30",
                     "email": "janedot@example.com",
                     "first_name": "Jane",
-                    "id": director_id,
+                    "id": contact_id,
                     "last_name": "Dot",
                     "phone": "5555556666",
                 },
@@ -310,15 +310,15 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.business_details.tax_id, "987654321")
         self.assertEquals(result.sub_merchant_account.business_details.vat, "987654321")
 
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.locality, "London")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.postal_code, "54321")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.region, "GBR")
-        self.assertEquals(result.sub_merchant_account.directors[0].address_details.street_address, "123 Main Street")
-        self.assertEquals(result.sub_merchant_account.directors[0].date_of_birth, "1968-07-30")
-        self.assertEquals(result.sub_merchant_account.directors[0].email, "janedot@example.com")
-        self.assertEquals(result.sub_merchant_account.directors[0].first_name, "Jane")
-        self.assertEquals(result.sub_merchant_account.directors[0].last_name, "Dot")
-        self.assertEquals(result.sub_merchant_account.directors[0].phone, "5555556666")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.locality, "London")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.postal_code, "54321")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.region, "GBR")
+        self.assertEquals(result.sub_merchant_account.contacts[0].address_details.street_address, "123 Main Street")
+        self.assertEquals(result.sub_merchant_account.contacts[0].date_of_birth, "1968-07-30")
+        self.assertEquals(result.sub_merchant_account.contacts[0].email, "janedot@example.com")
+        self.assertEquals(result.sub_merchant_account.contacts[0].first_name, "Jane")
+        self.assertEquals(result.sub_merchant_account.contacts[0].last_name, "Dot")
+        self.assertEquals(result.sub_merchant_account.contacts[0].phone, "5555556666")
 
         self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "Jane Dot")
         self.assertEquals(result.sub_merchant_account.funding_details.account_number, "*****4321")
@@ -328,13 +328,13 @@ class TestSubMerchantAccount(unittest.TestCase):
 
     def test_update_with_invalid_options(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
-        director_id = sub_merchant_account.directors[0].id
+        contact_id = sub_merchant_account.contacts[0].id
 
         result = SubMerchantAccount.update(sub_merchant_account.id, {
-            "directors": [
+            "contacts": [
                 {
                     "date_of_birth": "1776-07-30",
-                    "id": director_id,
+                    "id": contact_id,
                 }
             ],
         })
@@ -342,21 +342,21 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertFalse(result.is_success)
 
         self.assertEquals(1, result.errors.size)
-        self.assertEquals(ErrorCodes.SubMerchantAccount.Director.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
+        self.assertEquals(ErrorCodes.SubMerchantAccount.Contact.BirthDateMustBe100YearsOldOrYounger, result.errors.for_object("sub_merchant_account").on("birth_date")[0].code)
 
     def test_update_fails_to_verify_identity_for_an_incomplete_and_invalid_sub_merchant_account(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account
-        director_id = sub_merchant_account.directors[0].id
+        contact_id = sub_merchant_account.contacts[0].id
 
         result = SubMerchantAccount.update(sub_merchant_account.id, {
             "verify_identity": True,
             "business": {
                 "dba_name": "",
             },
-            "directors": [
+            "contacts": [
                 {
                     "date_of_birth": "1776-07-30",
-                    "id": director_id,
+                    "id": contact_id,
                 },
             ],
         })

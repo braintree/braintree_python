@@ -554,7 +554,7 @@ class ErrorCodes(object):
         CannotVerifyIdentityForAnIncompleteSubMerchantAccount = "84644"
         CannotVerifyIdentityForAnInvalidSubMerchantAccount = "84646"
 
-        class Director(object):
+        class Contact(object):
             FirstNameIsRequired = "84608"
             FirstNameIsInvalid = "84630"
             LastNameIsRequired = "84616"

@@ -1,7 +1,7 @@
 from braintree.attribute_getter import AttributeGetter
 from braintree.sub_merchant_account.address_details import AddressDetails
 
-class DirectorDetails(AttributeGetter):
+class ContactDetails(AttributeGetter):
     detail_list = [
         "address_details",
         "date_of_birth",
@@ -16,4 +16,4 @@ class DirectorDetails(AttributeGetter):
         self.address_details = AddressDetails(attributes.get("address", {}))
 
     def __repr__(self):
-        return super(DirectorDetails, self).__repr__(self.detail_list)
+        return super(ContactDetails, self).__repr__(self.detail_list)

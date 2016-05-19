@@ -18,7 +18,7 @@ class TestSubMerchantAccount(unittest.TestCase):
                 "tax_id": "123456789",
                 "vat": "123456789",
             },
-            "directors": [{
+            "contacts": [{
                 "address": {
                     "country": "GBR",
                     "locality": "Liverpool",
@@ -43,7 +43,7 @@ class TestSubMerchantAccount(unittest.TestCase):
             "status": "pending",
             "id": "sub_merchant_account",
             "fields_required_for_verification": [
-                "director.address.street_address",
+                "contact.address.street_address",
                 "business.website",
             ],
         }
@@ -52,16 +52,16 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(sub_merchant_account.id, "sub_merchant_account")
         self.assertEquals(sub_merchant_account.status, SubMerchantAccount.Status.Pending)
         self.assertEquals(sub_merchant_account.tos_accepted, True)
-        self.assertEquals(sub_merchant_account.directors[0].first_name, "John")
-        self.assertEquals(sub_merchant_account.directors[0].last_name, "Doe")
-        self.assertEquals(sub_merchant_account.directors[0].email, "johndoe@example.com")
-        self.assertEquals(sub_merchant_account.directors[0].phone, "5555555555")
-        self.assertEquals(sub_merchant_account.directors[0].date_of_birth, "1968-07-30")
-        self.assertEquals(sub_merchant_account.directors[0].address_details.country, "GBR")
-        self.assertEquals(sub_merchant_account.directors[0].address_details.locality, "Liverpool")
-        self.assertEquals(sub_merchant_account.directors[0].address_details.postal_code, "12345")
-        self.assertEquals(sub_merchant_account.directors[0].address_details.region, "JS")
-        self.assertEquals(sub_merchant_account.directors[0].address_details.street_address, "100 Main Ave")
+        self.assertEquals(sub_merchant_account.contacts[0].first_name, "John")
+        self.assertEquals(sub_merchant_account.contacts[0].last_name, "Doe")
+        self.assertEquals(sub_merchant_account.contacts[0].email, "johndoe@example.com")
+        self.assertEquals(sub_merchant_account.contacts[0].phone, "5555555555")
+        self.assertEquals(sub_merchant_account.contacts[0].date_of_birth, "1968-07-30")
+        self.assertEquals(sub_merchant_account.contacts[0].address_details.country, "GBR")
+        self.assertEquals(sub_merchant_account.contacts[0].address_details.locality, "Liverpool")
+        self.assertEquals(sub_merchant_account.contacts[0].address_details.postal_code, "12345")
+        self.assertEquals(sub_merchant_account.contacts[0].address_details.region, "JS")
+        self.assertEquals(sub_merchant_account.contacts[0].address_details.street_address, "100 Main Ave")
         self.assertEquals(sub_merchant_account.business_details.legal_name, "Generic's Store")
         self.assertEquals(sub_merchant_account.business_details.dba_name, "Generic Retail Shop")
         self.assertEquals(sub_merchant_account.business_details.registered_as, "sole_proprietorship")
@@ -78,4 +78,4 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(sub_merchant_account.funding_details.descriptor, "genericdescriptor")
         self.assertEquals(sub_merchant_account.funding_details.bic, "123456789")
         self.assertEquals(sub_merchant_account.funding_details.iban, "123456789")
-        self.assertEquals(sub_merchant_account.fields_required_for_verification, ["director.address.street_address", "business.website"])
+        self.assertEquals(sub_merchant_account.fields_required_for_verification, ["contact.address.street_address", "business.website"])
