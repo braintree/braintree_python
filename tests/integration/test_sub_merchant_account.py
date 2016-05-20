@@ -45,10 +45,10 @@ class TestSubMerchantAccount(unittest.TestCase):
             ],
             "funding": {
                 "account_holder_name": "John Doe",
-                "account_number": "123456789",
+                "bic": "071000013",
                 "currency_iso_code": "GBP",
                 "descriptor": "genericdescriptor",
-                "routing_number": "123456789",
+                "iban": "GB82 WEST 1234 5698 7654 32",
             },
             "tos_accepted": True,
         }
@@ -89,10 +89,10 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.contacts[0].phone, "5555555555")
 
         self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "John Doe")
-        self.assertEquals(result.sub_merchant_account.funding_details.account_number, "*****6789")
+        self.assertEquals(result.sub_merchant_account.funding_details.bic, "071000013")
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
         self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "genericdescriptor")
-        self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "123456789")
+        self.assertEquals(result.sub_merchant_account.funding_details.iban, "GB****************5432")
 
     def test_create_sub_merchant_account_with_multiple_contacts(self):
         sub_merchant_account_create_params = {
@@ -288,10 +288,10 @@ class TestSubMerchantAccount(unittest.TestCase):
             ],
             "funding": {
                 "account_holder_name": "Jane Dot",
-                "account_number": "987654321",
+                "bic": "071000013",
                 "currency_iso_code": "GBP",
                 "descriptor": "nongenericdescriptor",
-                "routing_number": "987654321",
+                "iban": "GB82 WEST 1234 5698 7654 32",
             },
             "tos_accepted": True,
         })
@@ -321,10 +321,10 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(result.sub_merchant_account.contacts[0].phone, "5555556666")
 
         self.assertEquals(result.sub_merchant_account.funding_details.account_holder_name, "Jane Dot")
-        self.assertEquals(result.sub_merchant_account.funding_details.account_number, "*****4321")
+        self.assertEquals(result.sub_merchant_account.funding_details.bic, "071000013")
         self.assertEquals(result.sub_merchant_account.funding_details.currency_iso_code, "GBP")
         self.assertEquals(result.sub_merchant_account.funding_details.descriptor, "nongenericdescriptor")
-        self.assertEquals(result.sub_merchant_account.funding_details.routing_number, "987654321")
+        self.assertEquals(result.sub_merchant_account.funding_details.iban, "GB****************5432")
 
     def test_update_with_invalid_options(self):
         sub_merchant_account = SubMerchantAccount.create(self.sub_merchant_account_create_params).sub_merchant_account

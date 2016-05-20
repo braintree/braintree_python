@@ -73,10 +73,10 @@ class SubMerchantAccountGateway(object):
             },
             {'funding': [
                 'account_holder_name',
-                'account_number',
+                'bic',
                 'currency_iso_code',
                 'descriptor',
-                'routing_number',
+                'iban',
                 ]
             },
             'id',
@@ -123,10 +123,10 @@ class SubMerchantAccountGateway(object):
             },
             {'funding': [
                 'account_holder_name',
-                'account_number',
+                'bic',
                 'currency_iso_code',
                 'descriptor',
-                'routing_number',
+                'iban',
                 ]
             },
             'id',
