@@ -32,7 +32,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
 
     def test_create_with_device_session_id_and_fraud_merchant_id(self):
         result = Customer.create({
@@ -107,7 +107,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
 
         found_customer = Customer.find(customer.id)
         self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
@@ -464,7 +464,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", customer.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
 
     def test_update_with_nested_values(self):
         customer = Customer.create({

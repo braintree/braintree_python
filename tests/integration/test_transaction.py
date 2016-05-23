@@ -927,9 +927,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
-        self.assertNotEqual(None, re.search("\A\w{4,5}\Z", transaction.credit_card_details.token))
+        self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
         self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_can_store_customer_and_credit_card_in_the_vault_on_success(self):
@@ -950,9 +950,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
-        self.assertNotEqual(None, re.search("\A\w{4,5}\Z", transaction.credit_card_details.token))
+        self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
         self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_does_not_store_customer_and_credit_card_in_the_vault_on_failure(self):
@@ -1008,7 +1008,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEquals(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
         credit_card = CreditCard.find(transaction.vault_credit_card.token)
         self.assertEquals(credit_card.billing_address.id, transaction.billing_details.id)
@@ -1053,7 +1053,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEquals(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
         shipping_address = transaction.vault_customer.addresses[0]
         self.assertEquals("Carl", shipping_address.first_name)

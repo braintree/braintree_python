@@ -16,7 +16,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertTrue(re.search("\A\w{4,5}\Z", credit_card.token) is not None)
+        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
         self.assertEquals("411111", credit_card.bin)
         self.assertEquals("1111", credit_card.last_4)
         self.assertEquals("05", credit_card.expiration_month)
@@ -478,7 +478,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertTrue(re.search("\A\w{4,5}\Z", credit_card.token) is not None)
+        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
         self.assertEquals("510510", credit_card.bin)
         self.assertEquals("5100", credit_card.last_4)
         self.assertEquals("06", credit_card.expiration_month)
@@ -694,7 +694,7 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         found_credit_card = CreditCard.find(credit_card.token)
-        self.assertTrue(re.search("\A\w{4,5}\Z", credit_card.token) is not None)
+        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
         self.assertEquals("411111", credit_card.bin)
         self.assertEquals("1111", credit_card.last_4)
         self.assertEquals("05", credit_card.expiration_month)
