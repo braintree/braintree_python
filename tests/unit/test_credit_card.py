@@ -3,33 +3,21 @@ import datetime
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCreditCard(unittest.TestCase):
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_create_raises_exception_with_bad_keys(self):
-        try:
-            CreditCard.create({"bad_key": "value"})
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        CreditCard.create({"bad_key": "value"})
 
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_update_raises_exception_with_bad_keys(self):
-        try:
-            CreditCard.update("token", {"bad_key": "value"})
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        CreditCard.update("token", {"bad_key": "value"})
 
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_tr_data_for_create_raises_error_with_bad_keys(self):
-        try:
-            CreditCard.tr_data_for_create({"bad_key": "value"}, "http://example.com")
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        CreditCard.tr_data_for_create({"bad_key": "value"}, "http://example.com")
 
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_tr_data_for_update_raises_error_with_bad_keys(self):
-        try:
-            CreditCard.tr_data_for_update({"bad_key": "value"}, "http://example.com")
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        CreditCard.tr_data_for_update({"bad_key": "value"}, "http://example.com")
 
     def test_transparent_redirect_create_url(self):
         port = os.getenv("GATEWAY_PORT") or "3000"
@@ -81,19 +69,13 @@ class TestCreditCard(unittest.TestCase):
         ]
         self.assertEquals(expected, CreditCard.update_signature())
 
+    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        try:
-            CreditCard.find(" ")
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertTrue(True)
+        CreditCard.find(" ")
 
+    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        try:
-            CreditCard.find(None)
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertTrue(True)
+        CreditCard.find(None)
 
     def test_multiple_verifications_sort(self):
         verification1 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 20), "id":123}

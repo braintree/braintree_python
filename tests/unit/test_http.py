@@ -4,19 +4,13 @@ from tests.test_helper import *
 from braintree.attribute_getter import AttributeGetter
 
 class TestHttp(unittest.TestCase):
+    @raises(UpgradeRequiredError)
     def test_raise_exception_from_status_for_upgrade_required(self):
-        try:
-            Http.raise_exception_from_status(426)
-            self.assertTrue(False)
-        except UpgradeRequiredError:
-            pass
+        Http.raise_exception_from_status(426)
 
+    @raises(TooManyRequestsError)
     def test_raise_exception_from_too_many_requests(self):
-        try:
-            Http.raise_exception_from_status(429)
-            self.assertTrue(False)
-        except TooManyRequestsError:
-            pass
+        Http.raise_exception_from_status(429)
 
     def test_backtrace_preserved_when_not_wrapping_exceptions(self):
         class Error(Exception):

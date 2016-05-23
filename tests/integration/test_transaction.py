@@ -1336,12 +1336,9 @@ class TestTransaction(unittest.TestCase):
         found_transaction = Transaction.find(transaction.id)
         self.assertEquals(transaction.id, found_transaction.id)
 
+    @raises_with_regexp(NotFoundError, "transaction with id 'notreal' not found")
     def test_find_for_bad_transaction_raises_not_found_error(self):
-        try:
-            Transaction.find("notreal")
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertEquals("transaction with id 'notreal' not found", str(e))
+        Transaction.find("notreal")
 
     def test_void_with_successful_result(self):
         transaction = Transaction.sale({
@@ -1598,6 +1595,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
         self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
 
+    @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1616,11 +1614,7 @@ class TestTransaction(unittest.TestCase):
             "invalid_param": "foo",
         }
 
-        try:
-            Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: invalid_param'", str(e))
+        Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
 
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
@@ -1689,6 +1683,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("3334445555", result.transaction.descriptor.phone)
         self.assertEquals("ebay.com", result.transaction.descriptor.url)
 
+    @raises_with_regexp(KeyError, "'Invalid keys: invalid_key'")
     def test_update_details_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": "10.00",
@@ -1712,11 +1707,7 @@ class TestTransaction(unittest.TestCase):
             }
         }
 
-        try:
-            Transaction.update_details(transaction.id, params)
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: invalid_key'", str(e))
+        Transaction.update_details(transaction.id, params)
 
     def test_update_details_with_invalid_order_id(self):
         transaction = Transaction.sale({
@@ -3116,6 +3107,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
         self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
 
+    @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_partial_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -3134,11 +3126,7 @@ class TestTransaction(unittest.TestCase):
             "invalid_param": "foo",
         }
 
-        try:
-            Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params)
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: invalid_param'", str(e))
+        Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params)
 
     def test_transaction_facilitator(self):
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()

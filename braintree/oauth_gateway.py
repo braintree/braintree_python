@@ -25,6 +25,17 @@ class OAuthGateway(object):
         params["grant_type"] = "refresh_token"
         return self._create_token(params)
 
+    def revoke_access_token(self, access_token):
+        self.config.assert_has_client_credentials()
+        response = self.config.http().post("/oauth/revoke_access_token", {
+            "token": access_token
+        })
+
+        if "result" in response and response["result"]["success"]:
+            return SuccessfulResult
+        else:
+            return ErrorResult(self.gateway, "could not revoke access token")
+
     def _create_token(self, params):
         self.config.assert_has_client_credentials()
         response = self.config.http().post("/oauth/access_tokens", {

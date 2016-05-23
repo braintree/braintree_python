@@ -1,6 +1,6 @@
 from braintree.configuration import Configuration
 from braintree.resource import Resource
-from braintree.sub_merchant_account import DirectorDetails,  BusinessDetails, FundingDetails
+from braintree.sub_merchant_account import ContactDetails,  BusinessDetails, FundingDetails
 
 class SubMerchantAccount(Resource):
     class Status(object):
@@ -8,20 +8,27 @@ class SubMerchantAccount(Resource):
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
-        self.director_details = DirectorDetails(attributes.get("director", {}))
         self.business_details = BusinessDetails(attributes.get("business", {}))
         self.funding_details = FundingDetails(attributes.get("funding", {}))
+        self.contacts = self._build_contacts(attributes)
 
     def __repr__(self):
         detail_list = [
             "id",
             "tos_accepted",
-            "director_details",
+            "contacts",
             "business_details",
             "funding_details",
         ]
 
         return super(SubMerchantAccount, self).__repr__(detail_list)
+
+    def _build_contacts(self, attributes):
+        contacts = []
+        for contact_attributes in attributes.get("contacts", []):
+            contacts.append(ContactDetails(contact_attributes))
+
+        return contacts
 
     @staticmethod
     def create(params={}):

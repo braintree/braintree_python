@@ -3,47 +3,29 @@ from datetime import datetime
 from datetime import date
 
 class TestTransaction(unittest.TestCase):
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_clone_transaction_raises_exception_with_bad_keys(self):
-        try:
-            Transaction.clone_transaction("an id", {"bad_key": "value"})
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        Transaction.clone_transaction("an id", {"bad_key": "value"})
 
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_sale_raises_exception_with_bad_keys(self):
-        try:
-            Transaction.sale({"bad_key": "value"})
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        Transaction.sale({"bad_key": "value"})
 
+    @raises_with_regexp(KeyError, "'Invalid keys: credit_card\[bad_key\]'")
     def test_sale_raises_exception_with_nested_bad_keys(self):
-        try:
-            Transaction.sale({"credit_card": {"bad_key": "value"}})
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: credit_card[bad_key]'", str(e))
+        Transaction.sale({"credit_card": {"bad_key": "value"}})
 
+    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_tr_data_for_sale_raises_error_with_bad_keys(self):
-        try:
-            Transaction.tr_data_for_sale({"bad_key": "value"}, "http://example.com")
-            self.assertTrue(False)
-        except KeyError as e:
-            self.assertEquals("'Invalid keys: bad_key'", str(e))
+        Transaction.tr_data_for_sale({"bad_key": "value"}, "http://example.com")
 
+    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        try:
-            Transaction.find(" ")
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertTrue(True)
+        Transaction.find(" ")
 
+    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        try:
-            Transaction.find(None)
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertTrue(True)
+        Transaction.find(None)
 
     def test_constructor_includes_disbursement_information(self):
         attributes = {

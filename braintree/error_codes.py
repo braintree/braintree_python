@@ -135,6 +135,7 @@ class ErrorCodes(object):
             UpdateExistingTokenNotAllowed = "91729"
             VerificationAmountCannotBeNegative = "91739"
             VerificationAmountFormatIsInvalid = "91740"
+            VerificationAmountIsTooLarge = "91752"
             VerificationAmountNotSupportedByProcessor = "91741"
             VerificationMerchantAccountIdIsInvalid = "91728"
             VerificationMerchantAccountIsForbidden = "91743"
@@ -298,6 +299,7 @@ class ErrorCodes(object):
         class Options(object):
             AmountCannotBeNegative = "94201"
             AmountFormatIsInvalid = "94202"
+            AmountIsTooLarge = "94207"
             AmountNotSupportedByProcessor = "94203"
             MerchantAccountIdIsInvalid = "94204"
             MerchantAccountIsSuspended = "94205"
@@ -548,8 +550,11 @@ class ErrorCodes(object):
         TosAcceptedIsInvalid = "84629"
         TosAcceptedIsRequiredToBeTrue = "84607"
         UnexpectedErrorOccurredTryAgain = "84606"
+        UnexpectedError = "84645"
+        CannotVerifyIdentityForAnIncompleteSubMerchantAccount = "84644"
+        CannotVerifyIdentityForAnInvalidSubMerchantAccount = "84646"
 
-        class Director(object):
+        class Contact(object):
             FirstNameIsRequired = "84608"
             FirstNameIsInvalid = "84630"
             LastNameIsRequired = "84616"

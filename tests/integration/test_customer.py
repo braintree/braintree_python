@@ -428,12 +428,9 @@ class TestCustomer(unittest.TestCase):
         self.assertEquals(customer.first_name, found_customer.first_name)
         self.assertEquals(customer.last_name, found_customer.last_name)
 
+    @raises_with_regexp(NotFoundError, "customer with id 'badid' not found")
     def test_find_with_invalid_customer(self):
-        try:
-            Customer.find("badid")
-            self.assertTrue(False)
-        except NotFoundError as e:
-            self.assertEquals("customer with id 'badid' not found", str(e))
+        Customer.find("badid")
 
     def test_update_with_valid_options(self):
         customer = Customer.create({

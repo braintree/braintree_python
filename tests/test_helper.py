@@ -11,17 +11,42 @@ else:
     from http.client import HTTPConnection
 import warnings
 import json
-from braintree import *
-from braintree.exceptions import *
-from braintree.util import *
-from braintree.testing_gateway import *
+from base64 import b64decode
+from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from nose.tools import raises
 from random import randint
-from contextlib import contextmanager
-from base64 import b64decode
+
+from nose.tools import make_decorator
+from nose.tools import raises
+
+from braintree import *
+from braintree.exceptions import *
 from braintree.test.nonces import Nonces
+from braintree.testing_gateway import *
+from braintree.util import *
+
+def raises_with_regexp(expected_exception_class, regexp_to_match):
+    def decorate(func):
+        name = func.__name__
+        def generated_function(*args, **kwargs):
+            exception_string = None
+            try:
+                func(*args, **kwargs)
+            except expected_exception_class as e:
+                exception_string = str(e)
+            except:
+                raise
+
+            if exception_string is None:
+                message = "%s() did not raise %s" % (name, expected_exception_class.__name__)
+                raise AssertionError(message)
+            elif re.match(regexp_to_match, exception_string) is None:
+                message = "%s() exception message (%s) did not match (%s)" % \
+                    (name, exception_string, regexp_to_match)
+                raise AssertionError(message)
+        return make_decorator(func)(generated_function)
+    return decorate
 
 def reset_braintree_configuration():
     Configuration.configure(

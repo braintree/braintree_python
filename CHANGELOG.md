@@ -1,3 +1,6 @@
+## 3.27.0
+* Add method of revoking OAuth access tokens
+
 ## 3.26.1
 * Correct issue with setup.py
 

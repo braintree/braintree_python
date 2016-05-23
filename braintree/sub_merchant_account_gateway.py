@@ -55,7 +55,7 @@ class SubMerchantAccountGateway(object):
                 'vat',
                 ],
             },
-            {'director': [
+            {'contacts': [
                 {'address': [
                     'country',
                     'locality',
@@ -81,6 +81,7 @@ class SubMerchantAccountGateway(object):
             },
             'id',
             'tos_accepted',
+            'verify_identity',
         ]
 
     @staticmethod
@@ -103,7 +104,7 @@ class SubMerchantAccountGateway(object):
                 'vat',
                 ],
             },
-            {'director': [
+            {'contacts': [
                 {'address': [
                     'country',
                     'locality',
@@ -130,4 +131,5 @@ class SubMerchantAccountGateway(object):
             },
             'id',
             'tos_accepted',
+            'verify_identity',
         ]

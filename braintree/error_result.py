@@ -45,6 +45,11 @@ class ErrorResult(object):
         else:
             self.merchant_account = None
 
+        if "sub_merchant_account" in attributes:
+            self.sub_merchant_account = braintree.sub_merchant_account.SubMerchantAccount(gateway, attributes["sub_merchant_account"])
+        else:
+            self.sub_merchant_account = None
+
     def __repr__(self):
         return "<%s '%s' at %x>" % (self.__class__.__name__, self.message, id(self))
 

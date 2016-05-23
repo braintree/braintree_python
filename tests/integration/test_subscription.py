@@ -531,12 +531,9 @@ class TestSubscription(unittest.TestCase):
         found_subscription = Subscription.find(subscription.id)
         self.assertEquals(subscription.id, found_subscription.id)
 
+    @raises_with_regexp(NotFoundError, "subscription with id bad_token not found")
     def test_find_with_invalid_token(self):
-        try:
-            Subscription.find("bad_token")
-            self.assertTrue(False)
-        except Exception as e:
-            self.assertEquals("subscription with id bad_token not found", str(e))
+        Subscription.find("bad_token")
 
     def test_update_creates_a_prorated_transaction_when_merchant_is_set_to_prorate(self):
         new_id = str(random.randint(1, 1000000))
