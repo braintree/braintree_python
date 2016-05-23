@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
     name="braintree",
-    version="3.26.1",
+    version="3.27.0",
     description="Braintree Python Library",
     author="Braintree",
     author_email="support@braintreepayments.com",
