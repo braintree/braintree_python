@@ -2371,6 +2371,114 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
 
+    def test_transaction_with_three_d_secure_pass_thru(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Status.Authorized, result.transaction.status)
+
+    def test_transaction_with_three_d_secure_pass_thru_with_invalid_processor_settings(self):
+        result = Transaction.sale({
+            "merchant_account_id": "adyen_ma",
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureMerchantAccountDoesNotSupportCardType,
+            result.errors.for_object("transaction").on("merchant_account_id")[0].code
+        )
+
+    def test_transaction_with_three_d_secure_pass_thru_with_missing_eci_flag(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureEciFlagIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
+        )
+
+
+    def test_transaction_with_three_d_secure_pass_thru_with_missing_cavv_and_xid(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "06",
+                "cavv": "",
+                "xid": ""
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureCavvIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureXidIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("xid")[0].code
+        )
+
+    def test_transaction_with_three_d_secure_pass_thru_with_invalid_eci_flag(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "bad_eci_flag",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureEciFlagIsInvalid,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
+        )
+
+
     def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,

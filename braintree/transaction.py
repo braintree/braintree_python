@@ -471,6 +471,13 @@ class Transaction(Resource):
                 ]
             },
             {
+                "three_d_secure_pass_thru": [
+                    "eci_flag",
+                    "cavv",
+                    "xid"
+                ]
+            },
+            {
                 "options": [
                     "add_billing_address_to_payment_method",
                     "hold_in_escrow",
@@ -490,8 +497,6 @@ class Transaction(Resource):
                         "three_d_secure": [
                             "required"
                         ],
-                    },
-                    {
                         "amex_rewards": [
                             "request_id",
                             "points",
