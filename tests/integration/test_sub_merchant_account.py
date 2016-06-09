@@ -1,8 +1,10 @@
 from tests.test_helper import *
 from uuid import uuid1
+from nose.plugins.skip import SkipTest
 
 class TestSubMerchantAccount(unittest.TestCase):
     def setUp(self):
+        raise SkipTest("The SubMerchantAccount API is not currently supported. Skipping this test for now.")
         self.old_merchant_id = Configuration.merchant_id
         self.old_public_key = Configuration.public_key
         self.old_private_key = Configuration.private_key
