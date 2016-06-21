@@ -1914,6 +1914,24 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
+    def test_refund_with_options_params(self):
+        transaction = self.__create_transaction_to_refund()
+        options = {
+            "amount": Decimal("1.00"),
+            "order_id": "abcd"
+        }
+        result = Transaction.refund(transaction.id, options)
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(
+            "abcd",
+            result.transaction.order_id
+        )
+        self.assertEquals(
+            Decimal("1.00"),
+            result.transaction.amount
+        )
+
     def test_refund_returns_an_error_if_unsettled(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
