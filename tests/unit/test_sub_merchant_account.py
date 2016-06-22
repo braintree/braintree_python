@@ -34,10 +34,10 @@ class TestSubMerchantAccount(unittest.TestCase):
             }],
             "funding": {
                 "account_holder_name": "John Doe",
+                "bic": "071000013",
                 "currency_iso_code": "GBP",
                 "descriptor": "genericdescriptor",
-                "bic": "123456789",
-                "iban": "123456789",
+                "iban": "GB****************5432",
             },
             "tos_accepted": True,
             "status": "pending",
@@ -76,6 +76,6 @@ class TestSubMerchantAccount(unittest.TestCase):
         self.assertEquals(sub_merchant_account.funding_details.account_holder_name, "John Doe")
         self.assertEquals(sub_merchant_account.funding_details.currency_iso_code, "GBP")
         self.assertEquals(sub_merchant_account.funding_details.descriptor, "genericdescriptor")
-        self.assertEquals(sub_merchant_account.funding_details.bic, "123456789")
-        self.assertEquals(sub_merchant_account.funding_details.iban, "123456789")
+        self.assertEquals(sub_merchant_account.funding_details.bic, "071000013")
+        self.assertEquals(sub_merchant_account.funding_details.iban, "GB****************5432")
         self.assertEquals(sub_merchant_account.fields_required_for_verification, ["contact.address.street_address", "business.website"])

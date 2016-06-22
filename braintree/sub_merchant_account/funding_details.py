@@ -3,10 +3,10 @@ from braintree.attribute_getter import AttributeGetter
 class FundingDetails(AttributeGetter):
     detail_list = [
         "account_holder_name",
-        "account_number",
+        "bic",
         "currency_iso_code",
         "descriptor",
-        "routing_number",
+        "iban",
     ]
 
     def __init__(self, attributes):

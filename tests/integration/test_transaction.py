@@ -927,9 +927,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
-        self.assertNotEqual(None, re.search("\A\w{4,5}\Z", transaction.credit_card_details.token))
+        self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
         self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_can_store_customer_and_credit_card_in_the_vault_on_success(self):
@@ -950,9 +950,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
-        self.assertNotEqual(None, re.search("\A\w{4,5}\Z", transaction.credit_card_details.token))
+        self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
         self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_does_not_store_customer_and_credit_card_in_the_vault_on_failure(self):
@@ -1008,7 +1008,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEquals(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
         credit_card = CreditCard.find(transaction.vault_credit_card.token)
         self.assertEquals(credit_card.billing_address.id, transaction.billing_details.id)
@@ -1053,7 +1053,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\d{6,7}\Z", transaction.customer_details.id))
+        self.assertNotEquals(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
         shipping_address = transaction.vault_customer.addresses[0]
         self.assertEquals("Carl", shipping_address.first_name)
@@ -1914,6 +1914,24 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
+    def test_refund_with_options_params(self):
+        transaction = self.__create_transaction_to_refund()
+        options = {
+            "amount": Decimal("1.00"),
+            "order_id": "abcd"
+        }
+        result = Transaction.refund(transaction.id, options)
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(
+            "abcd",
+            result.transaction.order_id
+        )
+        self.assertEquals(
+            Decimal("1.00"),
+            result.transaction.amount
+        )
+
     def test_refund_returns_an_error_if_unsettled(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -2370,6 +2388,114 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.ThreeDSecureTransactionDataDoesntMatchVerify,
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
+
+    def test_transaction_with_three_d_secure_pass_thru(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEquals(Transaction.Status.Authorized, result.transaction.status)
+
+    def test_transaction_with_three_d_secure_pass_thru_with_invalid_processor_settings(self):
+        result = Transaction.sale({
+            "merchant_account_id": "adyen_ma",
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureMerchantAccountDoesNotSupportCardType,
+            result.errors.for_object("transaction").on("merchant_account_id")[0].code
+        )
+
+    def test_transaction_with_three_d_secure_pass_thru_with_missing_eci_flag(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureEciFlagIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
+        )
+
+
+    def test_transaction_with_three_d_secure_pass_thru_with_missing_cavv_and_xid(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "06",
+                "cavv": "",
+                "xid": ""
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureCavvIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv")[0].code
+        )
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureXidIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("xid")[0].code
+        )
+
+    def test_transaction_with_three_d_secure_pass_thru_with_invalid_eci_flag(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "bad_eci_flag",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEquals(
+            ErrorCodes.Transaction.ThreeDSecureEciFlagIsInvalid,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
+        )
+
 
     def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({

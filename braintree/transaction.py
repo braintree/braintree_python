@@ -277,7 +277,7 @@ class Transaction(Resource):
 
 
     @staticmethod
-    def refund(transaction_id, amount=None):
+    def refund(transaction_id, amount_or_options=None):
         """
         Refunds an existing transaction.
 
@@ -287,7 +287,7 @@ class Transaction(Resource):
 
         """
 
-        return Configuration.gateway().transaction.refund(transaction_id, amount)
+        return Configuration.gateway().transaction.refund(transaction_id, amount_or_options)
 
 
     @staticmethod
@@ -471,6 +471,13 @@ class Transaction(Resource):
                 ]
             },
             {
+                "three_d_secure_pass_thru": [
+                    "eci_flag",
+                    "cavv",
+                    "xid"
+                ]
+            },
+            {
                 "options": [
                     "add_billing_address_to_payment_method",
                     "hold_in_escrow",
@@ -490,8 +497,6 @@ class Transaction(Resource):
                         "three_d_secure": [
                             "required"
                         ],
-                    },
-                    {
                         "amex_rewards": [
                             "request_id",
                             "points",
@@ -523,6 +528,10 @@ class Transaction(Resource):
     @staticmethod
     def update_details_signature():
         return ["amount", "order_id", {"descriptor": ["name", "phone", "url"]}]
+
+    @staticmethod
+    def refund_signature():
+        return ["amount", "order_id"]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount, params={}):

@@ -8,10 +8,10 @@ class ResourceCollection(object):
     """
 
     def __init__(self, query, results, method):
-        self.__page_size = results["search_results"]["page_size"]
         self.__ids = results["search_results"]["ids"]
-        self.__query = query
         self.__method = method
+        self.__page_size = results["search_results"]["page_size"]
+        self.__query = query
 
     @property
     def maximum_size(self):
@@ -32,6 +32,11 @@ class ResourceCollection(object):
         for batch in self.__batch_ids():
             for item in self.__method(self.__query, batch):
                 yield item
+
+    @property
+    def ids(self):
+        """ Returns the list of ids in the search result. """
+        return self.__ids
 
     def __iter__(self):
         return self.items
