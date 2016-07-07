@@ -554,6 +554,123 @@ class TestCustomer(unittest.TestCase):
             result.errors.for_object("customer").on("email")[0].code
         )
 
+    def test_update_default_payment_method_to_amex_express_checkout_card(self):
+        result = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.email.com",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": Nonces.AmexExpressCheckoutCard,
+            "customer_id": customer.id
+        })
+
+        self.assertTrue(result.is_success)
+        new_payment_method = result.payment_method
+
+        result = Customer.update(customer.id, {
+            "payment_method": {
+                "options": {
+                    "update_existing_token": new_payment_method.token,
+                    "make_default": True
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.customer.amex_express_checkout_cards[0].default)
+
+    def test_update_default_payment_method_to_venmo_account(self):
+        result = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.email.com",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": Nonces.VenmoAccount,
+            "customer_id": customer.id
+        })
+
+        self.assertTrue(result.is_success)
+        new_payment_method = result.payment_method
+
+        result = Customer.update(customer.id, {
+            "payment_method": {
+                "options": {
+                    "update_existing_token": new_payment_method.token,
+                    "make_default": True
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.customer.venmo_accounts[0].default)
+
+    def test_update_default_payment_method_to_coinbase(self):
+        result = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "company": "Fake Company",
+            "email": "joe@email.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.email.com",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "cvv": "100"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": Nonces.Coinbase,
+            "customer_id": customer.id
+        })
+
+        self.assertTrue(result.is_success)
+        new_payment_method = result.payment_method
+
+        result = Customer.update(customer.id, {
+            "payment_method": {
+                "options": {
+                    "update_existing_token": new_payment_method.token,
+                    "make_default": True
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(result.customer.coinbase_accounts[0].default)
+
     def test_update_with_paypal_future_payments_nonce(self):
         customer = Customer.create().customer
 

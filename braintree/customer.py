@@ -187,6 +187,7 @@ class Customer(Resource):
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce",
             {"credit_card": CreditCard.signature("update_via_customer")},
+            {"payment_method": [{"options": ["update_existing_token", "make_default"]}]},
             {"custom_fields": ["__any_key__"]}
         ]
 
