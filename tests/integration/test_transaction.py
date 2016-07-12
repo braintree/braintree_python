@@ -909,6 +909,42 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEquals(True, transaction.recurring)
 
+    def test_create_can_set_transaction_source_flag_recurring(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "customer": {
+                "first_name": "Adam",
+                "last_name": "Williams"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "recurring"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(True, transaction.recurring)
+
+    def test_create_can_set_transaction_source_flag_moto(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "customer": {
+                "first_name": "Adam",
+                "last_name": "Williams"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "moto"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(False, transaction.recurring)
+
     def test_create_can_store_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({
             "amount": "100",
