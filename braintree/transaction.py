@@ -447,6 +447,11 @@ class Transaction(Resource):
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id",
             "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
+                "risk_data": [
+                    "customer_browser", "customer_ip"
+                ]
+            },
+            {
                 "credit_card": [
                     "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
                 ]

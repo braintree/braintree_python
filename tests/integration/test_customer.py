@@ -54,6 +54,25 @@ class TestCustomer(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    def test_create_with_risk_data_security_parameters(self):
+        result = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "options": {
+                    "verify_card": True,
+                }
+            },
+            "risk_data": {
+                "customer_browser": "IE7",
+                "customer_ip": "192.168.0.1"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
     def test_create_using_access_token(self):
         gateway = BraintreeGateway(
             client_id = "client_id$development$integration_client_id",

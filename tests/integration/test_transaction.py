@@ -296,6 +296,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
         self.assertEquals(address.id, transaction.shipping_details.id)
 
+    def test_sale_with_risk_data_security_parameters(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "risk_data": {
+                "customer_browser": "IE7",
+                "customer_ip": "192.168.0.1"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
     def test_sale_with_billing_address_id(self):
         result = Customer.create({
             "credit_card": {
