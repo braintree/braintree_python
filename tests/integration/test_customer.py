@@ -485,6 +485,75 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
 
+    def test_update_with_default_payment_method(self):
+        customer = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+        }).customer
+
+        token1 = str(random.randint(1, 1000000))
+
+        payment_method1 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableVisa,
+            "token": token1
+        }).payment_method
+
+        payment_method1 = PaymentMethod.find(payment_method1.token)
+        self.assertTrue(payment_method1.default)
+
+        token2 = str(random.randint(1, 1000000))
+
+        payment_method2 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableMasterCard,
+            "token": token2
+        }).payment_method
+
+        result = Customer.update(customer.id, {
+            "default_payment_method_token": payment_method2.token
+        })
+
+        payment_method2 = PaymentMethod.find(payment_method2.token)
+        self.assertTrue(payment_method2.default)
+
+    def test_update_with_default_payment_method_in_options(self):
+        customer = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+        }).customer
+
+        token1 = str(random.randint(1, 1000000))
+
+        payment_method1 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableVisa,
+            "token": token1
+        }).payment_method
+
+        payment_method1 = PaymentMethod.find(payment_method1.token)
+        self.assertTrue(payment_method1.default)
+
+        token2 = str(random.randint(1, 1000000))
+
+        payment_method2 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableMasterCard,
+            "token": token2
+        }).payment_method
+
+        Customer.update(customer.id, {
+            "credit_card": {
+                "options": {
+                    "update_existing_token": token2,
+                    "make_default": True
+                    }
+                }
+            })
+
+        payment_method2 = PaymentMethod.find(payment_method2.token)
+        self.assertTrue(payment_method2.default)
+
     def test_update_with_nested_values(self):
         customer = Customer.create({
             "first_name": "Joe",
