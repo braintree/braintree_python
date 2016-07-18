@@ -1,3 +1,6 @@
+## 3.29.0
+* Allow 'default_payment_method' option in Customer
+
 ## 3.28.0
 * Expose resource collection ids
 * Add order id to refund
