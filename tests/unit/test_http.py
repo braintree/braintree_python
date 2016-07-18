@@ -28,7 +28,7 @@ class TestHttp(unittest.TestCase):
                 "wrap_http_exceptions": False})
 
         try:
-            Http(config, "a")._Http__http_do("a", "b")
+            Http(config, "fake_environment").post("/example/path/to/reach")
         except Error as e:
             _, _, tb = sys.exc_info()
             self.assertEqual('raise_error', traceback.extract_tb(tb)[-1][2])

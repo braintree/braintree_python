@@ -54,6 +54,25 @@ class TestCustomer(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    def test_create_with_risk_data_security_parameters(self):
+        result = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2010",
+                "options": {
+                    "verify_card": True,
+                }
+            },
+            "risk_data": {
+                "customer_browser": "IE7",
+                "customer_ip": "192.168.0.1"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
     def test_create_using_access_token(self):
         gateway = BraintreeGateway(
             client_id = "client_id$development$integration_client_id",
@@ -465,6 +484,75 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
+
+    def test_update_with_default_payment_method(self):
+        customer = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+        }).customer
+
+        token1 = str(random.randint(1, 1000000))
+
+        payment_method1 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableVisa,
+            "token": token1
+        }).payment_method
+
+        payment_method1 = PaymentMethod.find(payment_method1.token)
+        self.assertTrue(payment_method1.default)
+
+        token2 = str(random.randint(1, 1000000))
+
+        payment_method2 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableMasterCard,
+            "token": token2
+        }).payment_method
+
+        result = Customer.update(customer.id, {
+            "default_payment_method_token": payment_method2.token
+        })
+
+        payment_method2 = PaymentMethod.find(payment_method2.token)
+        self.assertTrue(payment_method2.default)
+
+    def test_update_with_default_payment_method_in_options(self):
+        customer = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+        }).customer
+
+        token1 = str(random.randint(1, 1000000))
+
+        payment_method1 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableVisa,
+            "token": token1
+        }).payment_method
+
+        payment_method1 = PaymentMethod.find(payment_method1.token)
+        self.assertTrue(payment_method1.default)
+
+        token2 = str(random.randint(1, 1000000))
+
+        payment_method2 = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.TransactableMasterCard,
+            "token": token2
+        }).payment_method
+
+        Customer.update(customer.id, {
+            "credit_card": {
+                "options": {
+                    "update_existing_token": token2,
+                    "make_default": True
+                    }
+                }
+            })
+
+        payment_method2 = PaymentMethod.find(payment_method2.token)
+        self.assertTrue(payment_method2.default)
 
     def test_update_with_nested_values(self):
         customer = Customer.create({

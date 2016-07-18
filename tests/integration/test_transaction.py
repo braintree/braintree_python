@@ -296,6 +296,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
         self.assertEquals(address.id, transaction.shipping_details.id)
 
+    def test_sale_with_risk_data_security_parameters(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "risk_data": {
+                "customer_browser": "IE7",
+                "customer_ip": "192.168.0.1"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
     def test_sale_with_billing_address_id(self):
         result = Customer.create({
             "credit_card": {
@@ -908,6 +924,42 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEquals(True, transaction.recurring)
+
+    def test_create_can_set_transaction_source_flag_recurring(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "customer": {
+                "first_name": "Adam",
+                "last_name": "Williams"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "recurring"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(True, transaction.recurring)
+
+    def test_create_can_set_transaction_source_flag_moto(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "customer": {
+                "first_name": "Adam",
+                "last_name": "Williams"
+            },
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "moto"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEquals(False, transaction.recurring)
 
     def test_create_can_store_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({

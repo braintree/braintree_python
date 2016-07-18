@@ -89,6 +89,33 @@ class TestConfiguration(unittest.TestCase):
         self.assertEqual(config.private_key, 'private_key')
 
     def test_configuring_with_an_http_strategy(self):
+        class FakeStrategy(object):
+            def __init__(self, config, environment):
+                pass
+
+        strategy = Configuration(http_strategy=FakeStrategy).http_strategy()
+        self.assertIsInstance(strategy, FakeStrategy)
+
+    def test_partner_configuration_does_not_use_default_http_strategy(self):
+        old_http_strategy = Configuration.default_http_strategy
+
+        class FakeStrategy(object):
+            def __init__(self, config, environment):
+                pass
+
+        try:
+            Configuration.default_http_strategy = FakeStrategy
+            config = Configuration.for_partner(
+                braintree.Environment.Sandbox,
+                'my_partner_id',
+                'public_key',
+                'private_key'
+            )
+            self.assertNotIsInstance(config.http_strategy(), FakeStrategy)
+        finally:
+            Configuration.default_http_strategy = old_http_strategy
+
+    def test_instantiate_with_a_default_http_strategy(self):
         old_http_strategy = Configuration.default_http_strategy
 
         class FakeStrategy(object):
@@ -98,7 +125,7 @@ class TestConfiguration(unittest.TestCase):
         try:
             Configuration.default_http_strategy = FakeStrategy
             strategy = Configuration.instantiate().http_strategy()
-            self.assertTrue(isinstance(strategy, FakeStrategy))
+            self.assertIsInstance(strategy, FakeStrategy)
         finally:
             Configuration.default_http_strategy = old_http_strategy
 
