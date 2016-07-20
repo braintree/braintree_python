@@ -507,7 +507,12 @@ class Transaction(Resource):
                             "points",
                             "currency_amount",
                             "currency_iso_code"
-                        ]
+                        ],
+                        "venmo_merchant_data": [
+                            "venmo_merchant_public_id",
+                            "originating_transaction_id",
+                            "originating_merchant_id"
+                        ],
                     },
                 ]
             },
