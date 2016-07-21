@@ -5,6 +5,7 @@ from braintree.configuration import Configuration
 from braintree.credit_card_gateway import CreditCardGateway
 from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
 from braintree.customer_gateway import CustomerGateway
+from braintree.document_upload_gateway import DocumentUploadGateway
 from braintree.discount_gateway import DiscountGateway
 from braintree.dispute_gateway import DisputeGateway
 from braintree.merchant_account_gateway import MerchantAccountGateway
@@ -41,6 +42,7 @@ class BraintreeGateway(object):
         self.client_token = ClientTokenGateway(self)
         self.credit_card = CreditCardGateway(self)
         self.customer = CustomerGateway(self)
+        self.document_upload = DocumentUploadGateway(self)
         self.discount = DiscountGateway(self)
         self.dispute = DisputeGateway(self)
         self.merchant_account = MerchantAccountGateway(self)

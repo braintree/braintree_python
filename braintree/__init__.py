@@ -21,6 +21,8 @@ from braintree.customer_gateway import CustomerGateway
 from braintree.customer_search import CustomerSearch
 from braintree.descriptor import Descriptor
 from braintree.disbursement import Disbursement
+from braintree.document_upload import DocumentUpload
+from braintree.document_upload_gateway import DocumentUploadGateway
 from braintree.discount import Discount
 from braintree.discount_gateway import DiscountGateway
 from braintree.dispute import Dispute

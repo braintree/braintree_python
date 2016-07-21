@@ -21,6 +21,10 @@ from braintree.exceptions.http.invalid_response_error import InvalidResponseErro
 from braintree.exceptions.http.timeout_error import TimeoutError
 
 class Http(object):
+    class ContentType(object):
+        Xml = "application/xml"
+        Multipart = "multipart/form-data"
+
     @staticmethod
     def is_error_status(status):
         return status not in [200, 201, 422]
@@ -49,25 +53,34 @@ class Http(object):
         self.environment = environment or self.config.environment
 
     def post(self, path, params={}):
-        return self.__http_do("POST", path, params)
+        return self.__http_do("POST", path, Http.ContentType.Xml, params)
 
     def delete(self, path):
-        return self.__http_do("DELETE", path)
+        return self.__http_do("DELETE", path, Http.ContentType.Xml)
 
     def get(self, path):
-        return self.__http_do("GET", path)
+        return self.__http_do("GET", path, Http.ContentType.Xml)
 
     def put(self, path, params={}):
-        return self.__http_do("PUT", path, params)
+        return self.__http_do("PUT", path, Http.ContentType.Xml, params)
 
-    def __http_do(self, http_verb, path, params=None):
+    def post_multipart(self, path, files, params={}):
+        return self.__http_do("POST", path, Http.ContentType.Multipart, params, files)
+
+    def __http_do(self, http_verb, path, content_type, params=None, files=None):
         http_strategy = self.config.http_strategy()
-        request_body = XmlUtil.xml_from_dict(params) if params else ''
+
+        # content_type = Http.ContentType.Xml
+        # if files != None:
+        #     content_type = Http.ContentType.Multipart
+
+        headers = self.__headers(content_type)
+        request_body = self.__request_body(content_type, params, files)
 
         full_path = path if path.startswith(self.config.base_url()) else (self.config.base_url() + path)
 
         try:
-            status, response_body = http_strategy.http_do(http_verb, full_path, self.__headers(), request_body)
+            status, response_body = http_strategy.http_do(http_verb, full_path, headers, request_body)
         except Exception as e:
             if self.config.wrap_http_exceptions:
                 http_strategy.handle_exception(e)
@@ -86,7 +99,8 @@ class Http(object):
         response = self.__request_function(http_verb)(
             path if path.startswith(self.config.base_url()) else self.config.base_url() + path,
             headers=headers,
-            data=request_body,
+            data=request_body[0],
+            files=request_body[1],
             verify=self.environment.ssl_certificate,
             timeout=self.config.timeout
         )
@@ -129,13 +143,23 @@ class Http(object):
                         self.config.private_key.encode('ascii')
                     ).replace(b"\n", b"").strip()
 
-    def __headers(self):
-        return {
+    def __headers(self, content_type):
+        headers = {
             "Accept": "application/xml",
             "Authorization": self.__authorization_header(),
-            "Content-type": "application/xml",
             "User-Agent": "Braintree Python " + version.Version,
             "Accept-Encoding": "gzip",
             "X-ApiVersion": braintree.configuration.Configuration.api_version()
         }
 
+        if content_type == Http.ContentType.Xml:
+            headers["Content-type"] = Http.ContentType.Xml
+
+        return headers
+
+    def __request_body(self, content_type, params, files):
+        if content_type == Http.ContentType.Xml:
+            request_body = XmlUtil.xml_from_dict(params) if params else ''
+            return (request_body, None)
+        else:
+            return (params, files)

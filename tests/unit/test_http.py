@@ -19,7 +19,7 @@ class TestHttp(unittest.TestCase):
                 "has_client_credentials": (lambda: False),
                 "public_key": "",
                 "private_key": ""})
-        headers = Http(config, "fake_environment")._Http__headers()
+        headers = Http(config, "fake_environment")._Http__headers(Http.ContentType.Xml)
         self.assertTrue('Accept-Encoding' in headers)
         self.assertEqual('gzip', headers["Accept-Encoding"])
 
