@@ -920,6 +920,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
         self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
         self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
+        self.assertEqual(CreditCard.ProductId.Unknown, transaction.credit_card_details.product_id)
 
     def test_create_can_set_recurring_flag(self):
         result = Transaction.sale({

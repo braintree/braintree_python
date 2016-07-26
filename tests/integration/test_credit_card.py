@@ -1182,6 +1182,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = result.credit_card
 
         self.assertEqual(CreditCard.Healthcare.Yes, credit_card.healthcare)
+        self.assertEqual("J3", credit_card.product_id)
 
     def test_payroll_card(self):
         customer = Customer.create().customer
@@ -1195,6 +1196,7 @@ class TestCreditCard(unittest.TestCase):
         credit_card = result.credit_card
 
         self.assertEqual(CreditCard.Payroll.Yes, credit_card.payroll)
+        self.assertEqual("MSA", credit_card.product_id)
 
     def test_prepaid_card(self):
         customer = Customer.create().customer
@@ -1226,6 +1228,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(CreditCard.Payroll.No, credit_card.payroll)
         self.assertEqual(CreditCard.Commercial.No, credit_card.commercial)
         self.assertEqual(CreditCard.Healthcare.No, credit_card.healthcare)
+        self.assertEqual("MSB", credit_card.product_id)
 
     def test_card_without_card_type_indicators(self):
         customer = Customer.create().customer
@@ -1246,3 +1249,4 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(CreditCard.Healthcare.Unknown, credit_card.healthcare)
         self.assertEqual(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
         self.assertEqual(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
+        self.assertEquals(CreditCard.ProductId.Unknown, credit_card.product_id)

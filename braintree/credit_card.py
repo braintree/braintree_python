@@ -98,7 +98,7 @@ class CreditCard(Resource):
         Unknown = "Unknown"
 
     Commercial = DurbinRegulated = Debit = Healthcare = \
-            CountryOfIssuance = IssuingBank = Payroll = Prepaid = CardTypeIndicator
+            CountryOfIssuance = IssuingBank = Payroll = Prepaid = ProductId = CardTypeIndicator
 
     @staticmethod
     def confirm_transparent_redirect(query_string):

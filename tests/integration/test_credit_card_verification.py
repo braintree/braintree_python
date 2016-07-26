@@ -72,5 +72,6 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(CreditCard.Healthcare.Unknown, found_verifications.first.credit_card['healthcare'])
         self.assertEqual(CreditCard.Payroll.Unknown, found_verifications.first.credit_card['payroll'])
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, found_verifications.first.credit_card['durbin_regulated'])
-        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, found_verifications.first.credit_card['issuing_bank'])
-        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, found_verifications.first.credit_card['country_of_issuance'])
+        self.assertEqual(CreditCard.IssuingBank.Unknown, found_verifications.first.credit_card['issuing_bank'])
+        self.assertEqual(CreditCard.CountryOfIssuance.Unknown, found_verifications.first.credit_card['country_of_issuance'])
+        self.assertEqual(CreditCard.ProductId.Unknown, found_verifications.first.credit_card['product_id'])
