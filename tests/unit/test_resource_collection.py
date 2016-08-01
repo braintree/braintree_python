@@ -44,3 +44,8 @@ class TestResourceCollection(unittest.TestCase):
          }
         collection = ResourceCollection("some_query", empty_collection_data, TestResourceCollection.TestResource.fetch)
         self.assertEqual(collection.ids, [])
+
+    @raises_with_regexp(UnexpectedError, "Unprocessable entity due to an invalid request")
+    def test_no_search_results(self):
+        bad_collection_data = { }
+        collection = ResourceCollection("some_query", bad_collection_data, TestResourceCollection.TestResource.fetch)

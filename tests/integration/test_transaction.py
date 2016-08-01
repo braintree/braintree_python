@@ -220,6 +220,24 @@ class TestTransaction(unittest.TestCase):
         self.assertEquals("411111******1111", transaction.credit_card_details.masked_number)
         self.assertEquals("411111******1111", transaction.vault_credit_card.masked_number)
 
+    def test_sale_with_venmo_merchant_data(self):
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "venmo_merchant_data": {
+                    "venmo_merchant_public_id": "12345",
+                    "originating_transaction_id": "abc123",
+                    "originating_merchant_id": "xyz123",
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
     def test_sale_with_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

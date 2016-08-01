@@ -1,3 +1,6 @@
+## 3.29.1
+* Improve error handling around server timeouts
+
 ## 3.29.0
 * Allow 'default_payment_method' option in Customer
 

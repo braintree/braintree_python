@@ -16,6 +16,7 @@ from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from random import randint
+from subprocess import Popen, PIPE
 
 from nose.tools import make_decorator
 from nose.tools import raises
@@ -60,6 +61,11 @@ reset_braintree_configuration()
 def showwarning(message, category, filename, lineno, file=None, line=None):
     pass
 warnings.showwarning = showwarning
+
+def skip_sub_merchant_account_tests():
+    output, _ = Popen(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=PIPE).communicate()
+    branch_supports_sub_merchant_accounts = bool(re.match(r"^marketplace_v2$|^btmkpl", output.strip(), re.IGNORECASE))
+    return not branch_supports_sub_merchant_accounts
 
 class TestHelper(object):
 

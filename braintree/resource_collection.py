@@ -1,3 +1,6 @@
+import braintree
+from braintree.exceptions.unexpected_error import UnexpectedError
+
 class ResourceCollection(object):
     """
     A class representing results from a search. Supports the iterator protocol::
@@ -8,6 +11,8 @@ class ResourceCollection(object):
     """
 
     def __init__(self, query, results, method):
+        if "search_results" not in results:
+            raise UnexpectedError("Unprocessable entity due to an invalid request")
         self.__ids = results["search_results"]["ids"]
         self.__method = method
         self.__page_size = results["search_results"]["page_size"]
