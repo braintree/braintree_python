@@ -229,16 +229,16 @@ class TestSearch(unittest.TestCase):
             TransactionSearch.amount >= "1700"
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1800.id, collection.first.id)
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
             TransactionSearch.amount.greater_than_or_equal_to("1700")
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1800.id, collection.first.id)
 
     def test_range_node_max(self):
         name = "Henrietta Livingston%s" % randint(1,100000)
@@ -265,16 +265,16 @@ class TestSearch(unittest.TestCase):
             TransactionSearch.amount <= "1700"
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1500.id, collection.first.id)
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
             TransactionSearch.amount.less_than_or_equal_to("1700")
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1500.id, collection.first.id)
 
     def test_range_node_is(self):
         name = "Henrietta Livingston%s" % randint(1,100000)
@@ -301,8 +301,8 @@ class TestSearch(unittest.TestCase):
             TransactionSearch.amount == "1800"
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1800.id, collection.first.id)
 
     def test_range_node_between(self):
         name = "Henrietta Livingston%s" % randint(1,100000)
@@ -338,8 +338,8 @@ class TestSearch(unittest.TestCase):
             TransactionSearch.amount.between("1100", "1600")
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1500.id, collection.first.id)
 
     def test_search_on_multiple_values(self):
         credit_card = Customer.create({

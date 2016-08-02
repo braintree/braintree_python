@@ -28,32 +28,32 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         subscription = result.subscription
-        self.assertNotEquals(None, re.search("\A\w{6}\Z", subscription.id))
-        self.assertEquals(Decimal("12.34"), subscription.price)
-        self.assertEquals(Decimal("12.34"), subscription.next_bill_amount)
-        self.assertEquals(Decimal("12.34"), subscription.next_billing_period_amount)
-        self.assertEquals(Subscription.Status.Active, subscription.status)
-        self.assertEquals("integration_trialless_plan", subscription.plan_id)
-        self.assertEquals(TestHelper.default_merchant_account_id, subscription.merchant_account_id)
-        self.assertEquals(Decimal("0.00"), subscription.balance)
+        self.assertNotEqual(None, re.search(r"\A\w{6}\Z", subscription.id))
+        self.assertEqual(Decimal("12.34"), subscription.price)
+        self.assertEqual(Decimal("12.34"), subscription.next_bill_amount)
+        self.assertEqual(Decimal("12.34"), subscription.next_billing_period_amount)
+        self.assertEqual(Subscription.Status.Active, subscription.status)
+        self.assertEqual("integration_trialless_plan", subscription.plan_id)
+        self.assertEqual(TestHelper.default_merchant_account_id, subscription.merchant_account_id)
+        self.assertEqual(Decimal("0.00"), subscription.balance)
 
-        self.assertEquals(date, type(subscription.first_billing_date))
-        self.assertEquals(date, type(subscription.next_billing_date))
-        self.assertEquals(date, type(subscription.billing_period_start_date))
-        self.assertEquals(date, type(subscription.billing_period_end_date))
-        self.assertEquals(date, type(subscription.paid_through_date))
+        self.assertEqual(date, type(subscription.first_billing_date))
+        self.assertEqual(date, type(subscription.next_billing_date))
+        self.assertEqual(date, type(subscription.billing_period_start_date))
+        self.assertEqual(date, type(subscription.billing_period_end_date))
+        self.assertEqual(date, type(subscription.paid_through_date))
 
-        self.assertEquals(datetime, type(subscription.created_at))
-        self.assertEquals(datetime, type(subscription.updated_at))
+        self.assertEqual(datetime, type(subscription.created_at))
+        self.assertEqual(datetime, type(subscription.updated_at))
         
-        self.assertEquals(1, subscription.current_billing_cycle)
-        self.assertEquals(0, subscription.failure_count)
-        self.assertEquals(self.credit_card.token, subscription.payment_method_token)
+        self.assertEqual(1, subscription.current_billing_cycle)
+        self.assertEqual(0, subscription.failure_count)
+        self.assertEqual(self.credit_card.token, subscription.payment_method_token)
 
-        self.assertEquals(Subscription.Status.Active, subscription.status_history[0].status)
-        self.assertEquals(Decimal("12.34"), subscription.status_history[0].price)
-        self.assertEquals(Decimal("0.00"), subscription.status_history[0].balance)
-        self.assertEquals(Subscription.Source.Api, subscription.status_history[0].subscription_source)
+        self.assertEqual(Subscription.Status.Active, subscription.status_history[0].status)
+        self.assertEqual(Decimal("12.34"), subscription.status_history[0].price)
+        self.assertEqual(Decimal("0.00"), subscription.status_history[0].balance)
+        self.assertEqual(Subscription.Source.Api, subscription.status_history[0].subscription_source)
 
     def test_create_returns_successful_result_with_payment_method_nonce(self):
         config = Configuration.instantiate()
@@ -94,7 +94,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(new_id, result.subscription.id)
+        self.assertEqual(new_id, result.subscription.id)
 
     def test_create_can_set_the_merchant_account_id(self):
         result = Subscription.create({
@@ -104,7 +104,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(TestHelper.non_default_merchant_account_id, result.subscription.merchant_account_id)
+        self.assertEqual(TestHelper.non_default_merchant_account_id, result.subscription.merchant_account_id)
 
     def test_create_defaults_to_plan_without_trial(self):
         subscription = Subscription.create({
@@ -112,9 +112,9 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trialless_plan["id"],
         }).subscription
 
-        self.assertEquals(TestHelper.trialless_plan["trial_period"], subscription.trial_period)
-        self.assertEquals(None, subscription.trial_duration)
-        self.assertEquals(None, subscription.trial_duration_unit)
+        self.assertEqual(TestHelper.trialless_plan["trial_period"], subscription.trial_period)
+        self.assertEqual(None, subscription.trial_duration)
+        self.assertEqual(None, subscription.trial_duration_unit)
 
     def test_create_defaults_to_plan_with_trial(self):
         subscription = Subscription.create({
@@ -122,9 +122,9 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trial_plan["id"],
         }).subscription
 
-        self.assertEquals(TestHelper.trial_plan["trial_period"], subscription.trial_period)
-        self.assertEquals(TestHelper.trial_plan["trial_duration"], subscription.trial_duration)
-        self.assertEquals(TestHelper.trial_plan["trial_duration_unit"], subscription.trial_duration_unit)
+        self.assertEqual(TestHelper.trial_plan["trial_period"], subscription.trial_period)
+        self.assertEqual(TestHelper.trial_plan["trial_duration"], subscription.trial_duration)
+        self.assertEqual(TestHelper.trial_plan["trial_duration_unit"], subscription.trial_duration_unit)
 
     def test_create_and_override_plan_with_trial(self):
         subscription = Subscription.create({
@@ -134,9 +134,9 @@ class TestSubscription(unittest.TestCase):
             "trial_duration_unit": Subscription.TrialDurationUnit.Month
         }).subscription
 
-        self.assertEquals(True, subscription.trial_period)
-        self.assertEquals(5, subscription.trial_duration)
-        self.assertEquals(Subscription.TrialDurationUnit.Month, subscription.trial_duration_unit)
+        self.assertEqual(True, subscription.trial_period)
+        self.assertEqual(5, subscription.trial_duration)
+        self.assertEqual(Subscription.TrialDurationUnit.Month, subscription.trial_duration_unit)
 
     def test_create_and_override_trial_period(self):
         subscription = Subscription.create({
@@ -145,7 +145,7 @@ class TestSubscription(unittest.TestCase):
             "trial_period": False
         }).subscription
 
-        self.assertEquals(False, subscription.trial_period)
+        self.assertEqual(False, subscription.trial_period)
 
     def test_create_and_override_number_of_billing_cycles(self):
         subscription = Subscription.create({
@@ -154,7 +154,7 @@ class TestSubscription(unittest.TestCase):
             "number_of_billing_cycles": 10
         }).subscription
 
-        self.assertEquals(10, subscription.number_of_billing_cycles)
+        self.assertEqual(10, subscription.number_of_billing_cycles)
 
     def test_create_and_override_number_of_billing_cycles_to_never_expire(self):
         subscription = Subscription.create({
@@ -163,7 +163,7 @@ class TestSubscription(unittest.TestCase):
             "never_expires": True
         }).subscription
 
-        self.assertEquals(None, subscription.number_of_billing_cycles)
+        self.assertEqual(None, subscription.number_of_billing_cycles)
 
     def test_create_creates_a_transaction_if_no_trial_period(self):
         subscription = Subscription.create({
@@ -171,12 +171,12 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trialless_plan["id"],
         }).subscription
 
-        self.assertEquals(1, len(subscription.transactions))
+        self.assertEqual(1, len(subscription.transactions))
         transaction = subscription.transactions[0]
-        self.assertEquals(Transaction, type(transaction))
-        self.assertEquals(TestHelper.trialless_plan["price"], transaction.amount)
-        self.assertEquals("sale", transaction.type)
-        self.assertEquals(subscription.id, transaction.subscription_id)
+        self.assertEqual(Transaction, type(transaction))
+        self.assertEqual(TestHelper.trialless_plan["price"], transaction.amount)
+        self.assertEqual("sale", transaction.type)
+        self.assertEqual(subscription.id, transaction.subscription_id)
 
     def test_create_has_transaction_with_billing_period_dates(self):
         subscription = Subscription.create({
@@ -184,8 +184,8 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trialless_plan["id"],
         }).subscription
         transaction = subscription.transactions[0]
-        self.assertEquals(subscription.billing_period_start_date, transaction.subscription_details.billing_period_start_date)
-        self.assertEquals(subscription.billing_period_end_date, transaction.subscription_details.billing_period_end_date)
+        self.assertEqual(subscription.billing_period_start_date, transaction.subscription_details.billing_period_start_date)
+        self.assertEqual(subscription.billing_period_end_date, transaction.subscription_details.billing_period_end_date)
 
     def test_create_returns_a_transaction_if_transaction_is_declined(self):
         result = Subscription.create({
@@ -195,7 +195,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(Transaction.Status.ProcessorDeclined, result.transaction.status)
+        self.assertEqual(Transaction.Status.ProcessorDeclined, result.transaction.status)
 
     def test_create_doesnt_creates_a_transaction_if_trial_period(self):
         subscription = Subscription.create({
@@ -203,7 +203,7 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trial_plan["id"],
         }).subscription
 
-        self.assertEquals(0, len(subscription.transactions))
+        self.assertEqual(0, len(subscription.transactions))
 
     def test_create_with_error_result(self):
         result = Subscription.create({
@@ -211,9 +211,11 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.trial_plan["id"],
             "id": "invalid token"
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals("81906", result.errors.for_object("subscription").on("id")[0].code)
+
+        id_errors = result.errors.for_object("subscription").on("id")
+        self.assertEqual(1, len(id_errors))
+        self.assertEqual("81906", id_errors[0].code)
 
     def test_create_inherits_billing_day_of_month_from_plan(self):
         result = Subscription.create({
@@ -222,7 +224,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(5, result.subscription.billing_day_of_month)
+        self.assertEqual(5, result.subscription.billing_day_of_month)
 
     def test_create_allows_overriding_billing_day_of_month(self):
         result = Subscription.create({
@@ -232,7 +234,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(19, result.subscription.billing_day_of_month)
+        self.assertEqual(19, result.subscription.billing_day_of_month)
 
     def test_create_allows_overriding_billing_day_of_month_with_start_immediately(self):
         result = Subscription.create({
@@ -244,7 +246,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(1, len(result.subscription.transactions))
+        self.assertEqual(1, len(result.subscription.transactions))
 
     def test_create_allows_specifying_first_billing_date(self):
         result = Subscription.create({
@@ -254,8 +256,8 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(date.today() + timedelta(days=3), result.subscription.first_billing_date)
-        self.assertEquals(Subscription.Status.Pending, result.subscription.status)
+        self.assertEqual(date.today() + timedelta(days=3), result.subscription.first_billing_date)
+        self.assertEqual(Subscription.Status.Pending, result.subscription.status)
 
     def test_create_does_not_allow_first_billing_date_in_the_past(self):
         result = Subscription.create({
@@ -263,12 +265,11 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.billing_day_of_month_plan["id"],
             "first_billing_date": date.today() - timedelta(days=3)
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Subscription.FirstBillingDateCannotBeInThePast,
-            result.errors.for_object("subscription").on("first_billing_date")[0].code
-        )
+
+        billing_date_errors = result.errors.for_object("subscription").on("first_billing_date")
+        self.assertEqual(1, len(billing_date_errors))
+        self.assertEqual(ErrorCodes.Subscription.FirstBillingDateCannotBeInThePast, billing_date_errors[0].code)
 
     def test_create_does_not_inherit_add_ons_or_discounts_from_the_plan_when_flag_is_set(self):
         subscription = Subscription.create({
@@ -279,8 +280,8 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(0, len(subscription.add_ons))
-        self.assertEquals(0, len(subscription.discounts))
+        self.assertEqual(0, len(subscription.add_ons))
+        self.assertEqual(0, len(subscription.discounts))
 
     def test_create_inherits_add_ons_and_discounts_from_the_plan_when_not_specified(self):
         subscription = Subscription.create({
@@ -288,39 +289,39 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.add_on_discount_plan["id"]
         }).subscription
 
-        self.assertEquals(2, len(subscription.add_ons))
+        self.assertEqual(2, len(subscription.add_ons))
         add_ons = sorted(subscription.add_ons, key=lambda add_on: add_on.id)
 
-        self.assertEquals("increase_10", add_ons[0].id)
-        self.assertEquals(Decimal("10.00"), add_ons[0].amount)
-        self.assertEquals(1, add_ons[0].quantity)
-        self.assertEquals(None, add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_10", add_ons[0].id)
+        self.assertEqual(Decimal("10.00"), add_ons[0].amount)
+        self.assertEqual(1, add_ons[0].quantity)
+        self.assertEqual(None, add_ons[0].number_of_billing_cycles)
         self.assertTrue(add_ons[0].never_expires)
-        self.assertEquals(0, add_ons[0].current_billing_cycle)
+        self.assertEqual(0, add_ons[0].current_billing_cycle)
 
-        self.assertEquals("increase_20", add_ons[1].id)
-        self.assertEquals(Decimal("20.00"), add_ons[1].amount)
-        self.assertEquals(1, add_ons[1].quantity)
-        self.assertEquals(None, add_ons[1].number_of_billing_cycles)
+        self.assertEqual("increase_20", add_ons[1].id)
+        self.assertEqual(Decimal("20.00"), add_ons[1].amount)
+        self.assertEqual(1, add_ons[1].quantity)
+        self.assertEqual(None, add_ons[1].number_of_billing_cycles)
         self.assertTrue(add_ons[1].never_expires)
-        self.assertEquals(0, add_ons[1].current_billing_cycle)
+        self.assertEqual(0, add_ons[1].current_billing_cycle)
 
-        self.assertEquals(2, len(subscription.discounts))
+        self.assertEqual(2, len(subscription.discounts))
         discounts = sorted(subscription.discounts, key=lambda discount: discount.id)
 
-        self.assertEquals("discount_11", discounts[0].id)
-        self.assertEquals(Decimal("11.00"), discounts[0].amount)
-        self.assertEquals(1, discounts[0].quantity)
-        self.assertEquals(None, discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_11", discounts[0].id)
+        self.assertEqual(Decimal("11.00"), discounts[0].amount)
+        self.assertEqual(1, discounts[0].quantity)
+        self.assertEqual(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
-        self.assertEquals(0, discounts[0].current_billing_cycle)
+        self.assertEqual(0, discounts[0].current_billing_cycle)
 
-        self.assertEquals("discount_7", discounts[1].id)
-        self.assertEquals(Decimal("7.00"), discounts[1].amount)
-        self.assertEquals(1, discounts[1].quantity)
-        self.assertEquals(None, discounts[1].number_of_billing_cycles)
+        self.assertEqual("discount_7", discounts[1].id)
+        self.assertEqual(Decimal("7.00"), discounts[1].amount)
+        self.assertEqual(1, discounts[1].quantity)
+        self.assertEqual(None, discounts[1].number_of_billing_cycles)
         self.assertTrue(discounts[1].never_expires)
-        self.assertEquals(0, discounts[1].current_billing_cycle)
+        self.assertEqual(0, discounts[1].current_billing_cycle)
 
     def test_create_allows_overriding_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
@@ -354,39 +355,39 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(2, len(subscription.add_ons))
+        self.assertEqual(2, len(subscription.add_ons))
         add_ons = sorted(subscription.add_ons, key=lambda add_on: add_on.id)
 
-        self.assertEquals("increase_10", add_ons[0].id)
-        self.assertEquals(Decimal("50.00"), add_ons[0].amount)
-        self.assertEquals(2, add_ons[0].quantity)
-        self.assertEquals(5, add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_10", add_ons[0].id)
+        self.assertEqual(Decimal("50.00"), add_ons[0].amount)
+        self.assertEqual(2, add_ons[0].quantity)
+        self.assertEqual(5, add_ons[0].number_of_billing_cycles)
         self.assertFalse(add_ons[0].never_expires)
-        self.assertEquals(0, add_ons[0].current_billing_cycle)
+        self.assertEqual(0, add_ons[0].current_billing_cycle)
 
-        self.assertEquals("increase_20", add_ons[1].id)
-        self.assertEquals(Decimal("100.00"), add_ons[1].amount)
-        self.assertEquals(4, add_ons[1].quantity)
-        self.assertEquals(None, add_ons[1].number_of_billing_cycles)
+        self.assertEqual("increase_20", add_ons[1].id)
+        self.assertEqual(Decimal("100.00"), add_ons[1].amount)
+        self.assertEqual(4, add_ons[1].quantity)
+        self.assertEqual(None, add_ons[1].number_of_billing_cycles)
         self.assertTrue(add_ons[1].never_expires)
-        self.assertEquals(0, add_ons[1].current_billing_cycle)
+        self.assertEqual(0, add_ons[1].current_billing_cycle)
 
-        self.assertEquals(2, len(subscription.discounts))
+        self.assertEqual(2, len(subscription.discounts))
         discounts = sorted(subscription.discounts, key=lambda discount: discount.id)
 
-        self.assertEquals("discount_11", discounts[0].id)
-        self.assertEquals(Decimal("11.00"), discounts[0].amount)
-        self.assertEquals(1, discounts[0].quantity)
-        self.assertEquals(None, discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_11", discounts[0].id)
+        self.assertEqual(Decimal("11.00"), discounts[0].amount)
+        self.assertEqual(1, discounts[0].quantity)
+        self.assertEqual(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
-        self.assertEquals(0, discounts[0].current_billing_cycle)
+        self.assertEqual(0, discounts[0].current_billing_cycle)
 
-        self.assertEquals("discount_7", discounts[1].id)
-        self.assertEquals(Decimal("15.00"), discounts[1].amount)
-        self.assertEquals(3, discounts[1].quantity)
-        self.assertEquals(19, discounts[1].number_of_billing_cycles)
+        self.assertEqual("discount_7", discounts[1].id)
+        self.assertEqual(Decimal("15.00"), discounts[1].amount)
+        self.assertEqual(3, discounts[1].quantity)
+        self.assertEqual(19, discounts[1].number_of_billing_cycles)
         self.assertFalse(discounts[1].never_expires)
-        self.assertEquals(0, discounts[1].current_billing_cycle)
+        self.assertEqual(0, discounts[1].current_billing_cycle)
 
     def test_create_allows_deleting_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
@@ -400,9 +401,9 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(0, len(subscription.add_ons))
-        self.assertEquals(1, len(subscription.discounts))
-        self.assertEquals("discount_11", subscription.discounts[0].id)
+        self.assertEqual(0, len(subscription.add_ons))
+        self.assertEqual(1, len(subscription.discounts))
+        self.assertEqual("discount_11", subscription.discounts[0].id)
 
     def test_create_allows_adding_add_ons_and_discounts(self):
         subscription = Subscription.create({
@@ -431,23 +432,23 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(1, len(subscription.add_ons))
+        self.assertEqual(1, len(subscription.add_ons))
 
-        self.assertEquals("increase_30", subscription.add_ons[0].id)
-        self.assertEquals(Decimal("50.00"), subscription.add_ons[0].amount)
-        self.assertEquals(2, subscription.add_ons[0].quantity)
-        self.assertEquals(5, subscription.add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_30", subscription.add_ons[0].id)
+        self.assertEqual(Decimal("50.00"), subscription.add_ons[0].amount)
+        self.assertEqual(2, subscription.add_ons[0].quantity)
+        self.assertEqual(5, subscription.add_ons[0].number_of_billing_cycles)
         self.assertFalse(subscription.add_ons[0].never_expires)
-        self.assertEquals(0, subscription.add_ons[0].current_billing_cycle)
+        self.assertEqual(0, subscription.add_ons[0].current_billing_cycle)
 
-        self.assertEquals(1, len(subscription.discounts))
+        self.assertEqual(1, len(subscription.discounts))
 
-        self.assertEquals("discount_15", subscription.discounts[0].id)
-        self.assertEquals(Decimal("17.00"), subscription.discounts[0].amount)
-        self.assertEquals(1, subscription.discounts[0].quantity)
-        self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_15", subscription.discounts[0].id)
+        self.assertEqual(Decimal("17.00"), subscription.discounts[0].amount)
+        self.assertEqual(1, subscription.discounts[0].quantity)
+        self.assertEqual(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
-        self.assertEquals(0, subscription.discounts[0].current_billing_cycle)
+        self.assertEqual(0, subscription.discounts[0].current_billing_cycle)
 
     def test_create_properly_parses_validation_errors_for_arrays(self):
         result = Subscription.create({
@@ -466,14 +467,13 @@ class TestSubscription(unittest.TestCase):
                 ]
             }
         })
-
         self.assertFalse(result.is_success)
 
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Subscription.Modification.AmountIsInvalid,
             result.errors.for_object("subscription").for_object("add_ons").for_object("update").for_index(0).on("amount")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Subscription.Modification.QuantityIsInvalid,
             result.errors.for_object("subscription").for_object("add_ons").for_object("update").for_index(1).on("quantity")[0].code
         )
@@ -491,13 +491,13 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         subscription = result.subscription
-        self.assertEquals("123*123456789012345678", subscription.descriptor.name)
-        self.assertEquals("3334445555", subscription.descriptor.phone)
+        self.assertEqual("123*123456789012345678", subscription.descriptor.name)
+        self.assertEqual("3334445555", subscription.descriptor.phone)
 
         transaction = subscription.transactions[0]
-        self.assertEquals("123*123456789012345678", transaction.descriptor.name)
-        self.assertEquals("3334445555", transaction.descriptor.phone)
-        self.assertEquals("ebay.com", transaction.descriptor.url)
+        self.assertEqual("123*123456789012345678", transaction.descriptor.name)
+        self.assertEqual("3334445555", transaction.descriptor.phone)
+        self.assertEqual("ebay.com", transaction.descriptor.url)
 
     def test_descriptors_has_validation_errors_if_format_is_invalid(self):
         result = Transaction.sale({
@@ -512,15 +512,14 @@ class TestSubscription(unittest.TestCase):
             }
         })
         self.assertFalse(result.is_success)
-        transaction = result.transaction
-        self.assertEquals(
-            ErrorCodes.Descriptor.NameFormatIsInvalid,
-            result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.Descriptor.PhoneFormatIsInvalid,
-            result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
-        )
+
+        name_errors = result.errors.for_object("transaction").for_object("descriptor").on("name")
+        self.assertEqual(1, len(name_errors))
+        self.assertEqual(ErrorCodes.Descriptor.NameFormatIsInvalid, name_errors[0].code)
+
+        phone_errors = result.errors.for_object("transaction").for_object("descriptor").on("phone")
+        self.assertEqual(1, len(phone_errors))
+        self.assertEqual( ErrorCodes.Descriptor.PhoneFormatIsInvalid, phone_errors[0].code)
 
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
@@ -529,7 +528,7 @@ class TestSubscription(unittest.TestCase):
         }).subscription
 
         found_subscription = Subscription.find(subscription.id)
-        self.assertEquals(subscription.id, found_subscription.id)
+        self.assertEqual(subscription.id, found_subscription.id)
 
     @raises_with_regexp(NotFoundError, "subscription with id bad_token not found")
     def test_find_with_invalid_token(self):
@@ -544,7 +543,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(2, len(subscription.transactions))
+        self.assertEqual(2, len(subscription.transactions))
 
     def test_update_creates_a_prorated_transaction_when_flag_is_passed_as_True(self):
         new_id = str(random.randint(1, 1000000))
@@ -558,7 +557,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(2, len(subscription.transactions))
+        self.assertEqual(2, len(subscription.transactions))
 
     def test_update_does_not_create_a_prorated_transaction_when_flag_is_passed_as_False(self):
         new_id = str(random.randint(1, 1000000))
@@ -572,7 +571,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(1, len(subscription.transactions))
+        self.assertEqual(1, len(subscription.transactions))
 
     def test_update_does_not_update_subscription_when_revert_subscription_on_proration_failure_is_true(self):
         new_id = str(random.randint(1, 1000000))
@@ -587,11 +586,11 @@ class TestSubscription(unittest.TestCase):
         self.assertFalse(result.is_success)
 
         found_subscription = Subscription.find(result.subscription.id)
-        self.assertEquals(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
+        self.assertEqual(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
         self.assertEqual("processor_declined", result.subscription.transactions[0].status)
 
         self.assertEqual(Decimal("0.00"), found_subscription.balance)
-        self.assertEquals(self.updateable_subscription.price, found_subscription.price)
+        self.assertEqual(self.updateable_subscription.price, found_subscription.price)
 
     def test_update_updates_subscription_when_revert_subscription_on_proration_failure_is_false(self):
         new_id = str(random.randint(1, 1000000))
@@ -606,11 +605,11 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         found_subscription = Subscription.find(result.subscription.id)
-        self.assertEquals(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
+        self.assertEqual(len(self.updateable_subscription.transactions) + 1, len(result.subscription.transactions))
         self.assertEqual("processor_declined", result.subscription.transactions[0].status)
 
         self.assertEqual(result.subscription.transactions[0].amount, Decimal(found_subscription.balance))
-        self.assertEquals(self.updateable_subscription.price + Decimal("2100"), found_subscription.price)
+        self.assertEqual(self.updateable_subscription.price + Decimal("2100"), found_subscription.price)
 
     def test_update_with_successful_result(self):
         new_id = str(random.randint(1, 1000000))
@@ -623,9 +622,9 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(new_id, subscription.id)
-        self.assertEquals(TestHelper.trial_plan["id"], subscription.plan_id)
-        self.assertEquals(Decimal("9999.88"), subscription.price)
+        self.assertEqual(new_id, subscription.id)
+        self.assertEqual(TestHelper.trial_plan["id"], subscription.plan_id)
+        self.assertEqual(Decimal("9999.88"), subscription.price)
 
     def test_update_with_merchant_account_id(self):
         result = Subscription.update(self.updateable_subscription.id, {
@@ -635,7 +634,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(TestHelper.non_default_merchant_account_id, subscription.merchant_account_id)
+        self.assertEqual(TestHelper.non_default_merchant_account_id, subscription.merchant_account_id)
 
     def test_update_with_payment_method_token(self):
         newCard = CreditCard.create({
@@ -653,7 +652,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(newCard.token, subscription.payment_method_token)
+        self.assertEqual(newCard.token, subscription.payment_method_token)
 
     def test_update_with_payment_method_nonce(self):
         config = Configuration.instantiate()
@@ -683,8 +682,8 @@ class TestSubscription(unittest.TestCase):
 
         subscription = result.subscription
         newCard = CreditCard.find(subscription.payment_method_token)
-        self.assertEquals("4242", newCard.last_4)
-        self.assertNotEquals(newCard.last_4, self.credit_card.last_4)
+        self.assertEqual("4242", newCard.last_4)
+        self.assertNotEqual(newCard.last_4, self.credit_card.last_4)
 
     def test_update_with_number_of_billing_cycles(self):
         result = Subscription.update(self.updateable_subscription.id, {
@@ -694,7 +693,7 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(10, subscription.number_of_billing_cycles)
+        self.assertEqual(10, subscription.number_of_billing_cycles)
 
     def test_update_with_never_expires(self):
         result = Subscription.update(self.updateable_subscription.id, {
@@ -704,15 +703,17 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         subscription = result.subscription
-        self.assertEquals(None, subscription.number_of_billing_cycles)
+        self.assertEqual(None, subscription.number_of_billing_cycles)
 
     def test_update_with_error_result(self):
         result = Subscription.update(self.updateable_subscription.id, {
             "id": "bad id",
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals("81906", result.errors.for_object("subscription").on("id")[0].code)
+
+        id_errors = result.errors.for_object("subscription").on("id")
+        self.assertEqual(1, len(id_errors))
+        self.assertEqual("81906", id_errors[0].code)
 
     @raises(NotFoundError)
     def test_update_raises_error_when_subscription_not_found(self):
@@ -755,34 +756,34 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(2, len(subscription.add_ons))
+        self.assertEqual(2, len(subscription.add_ons))
         add_ons = sorted(subscription.add_ons, key=lambda add_on: add_on.id)
 
-        self.assertEquals("increase_10", add_ons[0].id)
-        self.assertEquals(Decimal("50.00"), add_ons[0].amount)
-        self.assertEquals(2, add_ons[0].quantity)
-        self.assertEquals(5, add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_10", add_ons[0].id)
+        self.assertEqual(Decimal("50.00"), add_ons[0].amount)
+        self.assertEqual(2, add_ons[0].quantity)
+        self.assertEqual(5, add_ons[0].number_of_billing_cycles)
         self.assertFalse(add_ons[0].never_expires)
 
-        self.assertEquals("increase_20", add_ons[1].id)
-        self.assertEquals(Decimal("100.00"), add_ons[1].amount)
-        self.assertEquals(4, add_ons[1].quantity)
-        self.assertEquals(None, add_ons[1].number_of_billing_cycles)
+        self.assertEqual("increase_20", add_ons[1].id)
+        self.assertEqual(Decimal("100.00"), add_ons[1].amount)
+        self.assertEqual(4, add_ons[1].quantity)
+        self.assertEqual(None, add_ons[1].number_of_billing_cycles)
         self.assertTrue(add_ons[1].never_expires)
 
-        self.assertEquals(2, len(subscription.discounts))
+        self.assertEqual(2, len(subscription.discounts))
         discounts = sorted(subscription.discounts, key=lambda discount: discount.id)
 
-        self.assertEquals("discount_11", discounts[0].id)
-        self.assertEquals(Decimal("11.00"), discounts[0].amount)
-        self.assertEquals(1, discounts[0].quantity)
-        self.assertEquals(None, discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_11", discounts[0].id)
+        self.assertEqual(Decimal("11.00"), discounts[0].amount)
+        self.assertEqual(1, discounts[0].quantity)
+        self.assertEqual(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
 
-        self.assertEquals("discount_7", discounts[1].id)
-        self.assertEquals(Decimal("15.00"), discounts[1].amount)
-        self.assertEquals(3, discounts[1].quantity)
-        self.assertEquals(19, discounts[1].number_of_billing_cycles)
+        self.assertEqual("discount_7", discounts[1].id)
+        self.assertEqual(Decimal("15.00"), discounts[1].amount)
+        self.assertEqual(3, discounts[1].quantity)
+        self.assertEqual(19, discounts[1].number_of_billing_cycles)
         self.assertFalse(discounts[1].never_expires)
 
     def test_update_allows_adding_and_removing_add_ons_and_discounts(self):
@@ -817,20 +818,20 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(1, len(subscription.add_ons))
+        self.assertEqual(1, len(subscription.add_ons))
 
-        self.assertEquals("increase_30", subscription.add_ons[0].id)
-        self.assertEquals(Decimal("50.00"), subscription.add_ons[0].amount)
-        self.assertEquals(2, subscription.add_ons[0].quantity)
-        self.assertEquals(5, subscription.add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_30", subscription.add_ons[0].id)
+        self.assertEqual(Decimal("50.00"), subscription.add_ons[0].amount)
+        self.assertEqual(2, subscription.add_ons[0].quantity)
+        self.assertEqual(5, subscription.add_ons[0].number_of_billing_cycles)
         self.assertFalse(subscription.add_ons[0].never_expires)
 
-        self.assertEquals(1, len(subscription.discounts))
+        self.assertEqual(1, len(subscription.discounts))
 
-        self.assertEquals("discount_15", subscription.discounts[0].id)
-        self.assertEquals(Decimal("17.00"), subscription.discounts[0].amount)
-        self.assertEquals(1, subscription.discounts[0].quantity)
-        self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_15", subscription.discounts[0].id)
+        self.assertEqual(Decimal("17.00"), subscription.discounts[0].amount)
+        self.assertEqual(1, subscription.discounts[0].quantity)
+        self.assertEqual(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
 
     def test_update_can_replace_entire_set_of_add_ons_and_discounts(self):
@@ -858,27 +859,27 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals(2, len(subscription.add_ons))
+        self.assertEqual(2, len(subscription.add_ons))
         add_ons = sorted(subscription.add_ons, key=lambda add_on: add_on.id)
 
-        self.assertEquals("increase_20", add_ons[0].id)
-        self.assertEquals(Decimal("20.00"), add_ons[0].amount)
-        self.assertEquals(1, add_ons[0].quantity)
-        self.assertEquals(None, add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_20", add_ons[0].id)
+        self.assertEqual(Decimal("20.00"), add_ons[0].amount)
+        self.assertEqual(1, add_ons[0].quantity)
+        self.assertEqual(None, add_ons[0].number_of_billing_cycles)
         self.assertTrue(add_ons[0].never_expires)
 
-        self.assertEquals("increase_30", add_ons[1].id)
-        self.assertEquals(Decimal("30.00"), add_ons[1].amount)
-        self.assertEquals(1, add_ons[1].quantity)
-        self.assertEquals(None, add_ons[1].number_of_billing_cycles)
+        self.assertEqual("increase_30", add_ons[1].id)
+        self.assertEqual(Decimal("30.00"), add_ons[1].amount)
+        self.assertEqual(1, add_ons[1].quantity)
+        self.assertEqual(None, add_ons[1].number_of_billing_cycles)
         self.assertTrue(add_ons[1].never_expires)
 
-        self.assertEquals(1, len(subscription.discounts))
+        self.assertEqual(1, len(subscription.discounts))
 
-        self.assertEquals("discount_15", subscription.discounts[0].id)
-        self.assertEquals(Decimal("15.00"), subscription.discounts[0].amount)
-        self.assertEquals(1, subscription.discounts[0].quantity)
-        self.assertEquals(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_15", subscription.discounts[0].id)
+        self.assertEqual(Decimal("15.00"), subscription.discounts[0].amount)
+        self.assertEqual(1, subscription.discounts[0].quantity)
+        self.assertEqual(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
 
     def test_update_descriptor_name_and_phone(self):
@@ -900,8 +901,8 @@ class TestSubscription(unittest.TestCase):
             }
         }).subscription
 
-        self.assertEquals("999*99", updated_subscription.descriptor.name)
-        self.assertEquals("1234567890", updated_subscription.descriptor.phone)
+        self.assertEqual("999*99", updated_subscription.descriptor.name)
+        self.assertEqual("1234567890", updated_subscription.descriptor.phone)
 
     def test_cancel_with_successful_response(self):
         subscription = Subscription.create({
@@ -916,9 +917,11 @@ class TestSubscription(unittest.TestCase):
     def test_unsuccessful_cancel_returns_validation_error(self):
         Subscription.cancel(self.updateable_subscription.id)
         result = Subscription.cancel(self.updateable_subscription.id)
-
         self.assertFalse(result.is_success)
-        self.assertEquals("81905", result.errors.for_object("subscription").on("status")[0].code)
+
+        status_errors = result.errors.for_object("subscription").on("status")
+        self.assertTrue(len(status_errors), 1)
+        self.assertEqual("81905", status_errors[0].code)
 
     @raises(NotFoundError)
     def test_cancel_raises_not_found_error_with_bad_subscription(self):
@@ -1027,7 +1030,7 @@ class TestSubscription(unittest.TestCase):
             SubscriptionSearch.price == Decimal("3")
         ])
 
-        self.assertEquals(0, collection.maximum_size)
+        self.assertEqual(0, collection.maximum_size)
 
     def test_search_on_status(self):
         active_subscription = Subscription.create({
@@ -1193,10 +1196,10 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success);
         transaction = result.transaction;
 
-        self.assertEquals(subscription.price, transaction.amount);
+        self.assertEqual(subscription.price, transaction.amount);
         self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEquals(Transaction.Type.Sale, transaction.type);
-        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(Transaction.Type.Sale, transaction.type);
+        self.assertEqual(Transaction.Status.Authorized, transaction.status);
 
     def test_retry_charge_without_amount(self):
         subscription = Subscription.create({
@@ -1210,10 +1213,10 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success);
         transaction = result.transaction;
 
-        self.assertEquals(subscription.price, transaction.amount);
+        self.assertEqual(subscription.price, transaction.amount);
         self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEquals(Transaction.Type.Sale, transaction.type);
-        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(Transaction.Type.Sale, transaction.type);
+        self.assertEqual(Transaction.Status.Authorized, transaction.status);
 
     def test_retryCharge_with_amount__deprecated(self):
         subscription = Subscription.create({
@@ -1227,10 +1230,10 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success);
         transaction = result.transaction;
 
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount);
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount);
         self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEquals(Transaction.Type.Sale, transaction.type);
-        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(Transaction.Type.Sale, transaction.type);
+        self.assertEqual(Transaction.Status.Authorized, transaction.status);
 
 
     def test_retry_charge_with_amount(self):
@@ -1245,10 +1248,10 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(result.is_success);
         transaction = result.transaction;
 
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount);
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount);
         self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEquals(Transaction.Type.Sale, transaction.type);
-        self.assertEquals(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(Transaction.Type.Sale, transaction.type);
+        self.assertEqual(Transaction.Status.Authorized, transaction.status);
 
     def test_create_with_paypal_future_payment_method_token(self):
         http = ClientApiHttp.create()
@@ -1256,7 +1259,7 @@ class TestSubscription(unittest.TestCase):
             "consent-code": "consent-code",
             "options": {"validate": False}
         })
-        self.assertEquals(status_code, 202)
+        self.assertEqual(202, status_code)
 
         payment_method_token = PaymentMethod.create({
             "customer_id": Customer.create().customer.id,
@@ -1270,7 +1273,7 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         subscription = result.subscription
-        self.assertEquals(payment_method_token, subscription.payment_method_token)
+        self.assertEqual(payment_method_token, subscription.payment_method_token)
 
     def test_create_fails_with_paypal_one_time_payment_method_nonce(self):
         result = Subscription.create({
@@ -1279,7 +1282,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Subscription.PaymentMethodNonceIsInvalid,
             result.errors.for_object("subscription")[0].code
         )
@@ -1291,7 +1294,7 @@ class TestSubscription(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Subscription.PaymentMethodNonceIsInvalid,
             result.errors.for_object("subscription")[0].code
         )

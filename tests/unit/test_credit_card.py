@@ -21,14 +21,14 @@ class TestCreditCard(unittest.TestCase):
 
     def test_transparent_redirect_create_url(self):
         port = os.getenv("GATEWAY_PORT") or "3000"
-        self.assertEquals(
+        self.assertEqual(
             "http://localhost:" + port + "/merchants/integration_merchant_id/payment_methods/all/create_via_transparent_redirect_request",
             CreditCard.transparent_redirect_create_url()
         )
 
     def test_transparent_redirect_update_url(self):
         port = os.getenv("GATEWAY_PORT") or "3000"
-        self.assertEquals(
+        self.assertEqual(
             "http://localhost:" + port + "/merchants/integration_merchant_id/payment_methods/all/update_via_transparent_redirect_request",
             CreditCard.transparent_redirect_update_url()
         )
@@ -52,7 +52,7 @@ class TestCreditCard(unittest.TestCase):
             {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method"]},
             "customer_id"
         ]
-        self.assertEquals(expected, CreditCard.create_signature())
+        self.assertEqual(expected, CreditCard.create_signature())
 
     def test_update_signature(self):
         expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month",
@@ -67,7 +67,7 @@ class TestCreditCard(unittest.TestCase):
             },
             {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session"]}
         ]
-        self.assertEquals(expected, CreditCard.update_signature())
+        self.assertEqual(expected, CreditCard.update_signature())
 
     @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
@@ -81,4 +81,4 @@ class TestCreditCard(unittest.TestCase):
         verification1 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 20), "id":123}
         verification2 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 21), "id":456}
         credit_card = CreditCard(Configuration.gateway(), {"verifications": [verification1, verification2]})
-        self.assertEquals(credit_card.verification.id, 456)
+        self.assertEqual(456, credit_card.verification.id)

@@ -7,8 +7,8 @@ class TestCustomer(unittest.TestCase):
         collection = Customer.all()
         self.assertTrue(collection.maximum_size > 100)
         customer_ids = [c.id for c in collection.items]
-        self.assertEquals(collection.maximum_size, len(TestHelper.unique(customer_ids)))
-        self.assertEquals(Customer, type(collection.first))
+        self.assertEqual(collection.maximum_size, len(TestHelper.unique(customer_ids)))
+        self.assertEqual(Customer, type(collection.first))
 
     def test_create(self):
         result = Customer.create({
@@ -136,13 +136,15 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         customer = result.customer
-        self.assertNotEqual(None, customer.apple_pay_cards[0])
+        self.assertEqual(1, len(customer.apple_pay_cards))
+        self.assertIsInstance(customer.apple_pay_cards[0], ApplePayCard)
 
     def test_create_with_android_pay_proxy_card_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCardDiscover})
         self.assertTrue(result.is_success)
 
         customer = result.customer
+        self.assertEqual(1, len(customer.android_pay_cards))
         self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
 
     def test_create_with_android_pay_network_token_nonce(self):
@@ -150,6 +152,7 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         customer = result.customer
+        self.assertEqual(1, len(customer.android_pay_cards))
         self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
 
     def test_create_with_amex_express_checkout_card_nonce(self):
@@ -157,6 +160,7 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         customer = result.customer
+        self.assertEqual(1, len(customer.amex_express_checkout_cards))
         self.assertIsInstance(customer.amex_express_checkout_cards[0], AmexExpressCheckoutCard)
 
     def test_create_with_venmo_account_nonce(self):
@@ -164,6 +168,7 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         customer = result.customer
+        self.assertEqual(1, len(customer.venmo_accounts))
         self.assertIsInstance(customer.venmo_accounts[0], VenmoAccount)
 
     def test_create_with_paypal_future_payments_nonce(self):
@@ -171,16 +176,17 @@ class TestCustomer(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         customer = result.customer
-        self.assertNotEqual(None, customer.paypal_accounts[0])
+        self.assertEqual(1, len(customer.paypal_accounts))
+        self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
 
     def test_create_with_paypal_one_time_nonce_fails(self):
         http = ClientApiHttp.create()
         result = Customer.create({"payment_method_nonce": Nonces.PayPalOneTimePayment})
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
-            ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
-        )
+
+        paypal_account_errors = result.errors.for_object("customer").for_object("paypal_account").on("base")
+        self.assertEqual(1, len(paypal_account_errors))
+        self.assertEqual(ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount, paypal_account_errors[0].code)
 
     def test_create_with_no_attributes(self):
         result = Customer.create()
@@ -206,12 +212,14 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(2, result.errors.size)
-        self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
-        self.assertEquals(
-            ErrorCodes.Address.InconsistentCountry,
-            result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("base")[0].code
-        )
+
+        customer_email_errors = result.errors.for_object("customer").on("email")
+        self.assertEqual(1, len(customer_email_errors))
+        self.assertEqual(ErrorCodes.Customer.EmailIsInvalid, customer_email_errors[0].code)
+
+        billing_address_errors = result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("base")
+        self.assertEqual(1, len(billing_address_errors))
+        self.assertEqual(ErrorCodes.Address.InconsistentCountry, billing_address_errors[0].code)
 
     def test_create_customer_and_payment_method_at_the_same_time(self):
         result = Customer.create({
@@ -248,7 +256,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_create_customer_and_verify_payment_method_with_verification_amount(self):
         result = Customer.create({
@@ -280,8 +288,11 @@ class TestCustomer(unittest.TestCase):
         result = Customer.create(attributes)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.DuplicateCardExists, result.errors.for_object("customer").for_object("credit_card").on("number")[0].code)
-        self.assertEquals("Duplicate card exists in the vault.", result.message)
+        self.assertEqual("Duplicate card exists in the vault.", result.message)
+
+        card_number_errors = result.errors.for_object("customer").for_object("credit_card").on("number")
+        self.assertEqual(1, len(card_number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, card_number_errors[0].code)
 
     def test_create_customer_with_payment_method_and_billing_address(self):
         result = Customer.create({
@@ -330,7 +341,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals("custom value", result.customer.custom_fields["store_me"])
+        self.assertEqual("custom value", result.customer.custom_fields["store_me"])
 
     def test_create_returns_nested_errors(self):
         result = Customer.create({
@@ -344,18 +355,18 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Customer.EmailIsInvalid,
-            result.errors.for_object("customer").on("email")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.CreditCard.NumberHasInvalidLength,
-            result.errors.for_object("customer").for_object("credit_card").on("number")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.Address.CountryNameIsNotAccepted,
-            result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("country_name")[0].code
-        )
+
+        email_errors = result.errors.for_object("customer").on("email")
+        self.assertEqual(1, len(email_errors))
+        self.assertEqual(ErrorCodes.Customer.EmailIsInvalid, email_errors[0].code)
+
+        card_number_errors = result.errors.for_object("customer").for_object("credit_card").on("number")
+        self.assertEqual(1, len(card_number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.NumberHasInvalidLength, card_number_errors[0].code)
+
+        country_name_errors = result.errors.for_object("customer").for_object("credit_card").for_object("billing_address").on("country_name")
+        self.assertEqual(1, len(country_name_errors))
+        self.assertEqual(ErrorCodes.Address.CountryNameIsNotAccepted, country_name_errors[0].code)
 
     def test_create_returns_errors_if_custom_fields_are_not_registered(self):
         result = Customer.create({
@@ -367,7 +378,10 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Customer.CustomFieldIsInvalid, result.errors.for_object("customer").on("custom_fields")[0].code)
+
+        custom_fields_errors = result.errors.for_object("customer").on("custom_fields")
+        self.assertEqual(1, len(custom_fields_errors))
+        self.assertEqual(ErrorCodes.Customer.CustomFieldIsInvalid, custom_fields_errors[0].code)
 
     def test_create_with_venmo_sdk_session(self):
         result = Customer.create({
@@ -395,7 +409,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals("411111", result.customer.credit_cards[0].bin)
+        self.assertEqual("411111", result.customer.credit_cards[0].bin)
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
@@ -422,7 +436,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals("411111", result.customer.credit_cards[0].bin)
+        self.assertEqual("411111", result.customer.credit_cards[0].bin)
 
     def test_delete_with_valid_customer(self):
         customer = Customer.create().customer
@@ -443,9 +457,9 @@ class TestCustomer(unittest.TestCase):
         }).customer
 
         found_customer = Customer.find(customer.id)
-        self.assertEquals(customer.id, found_customer.id)
-        self.assertEquals(customer.first_name, found_customer.first_name)
-        self.assertEquals(customer.last_name, found_customer.last_name)
+        self.assertEqual(customer.id, found_customer.id)
+        self.assertEqual(customer.first_name, found_customer.first_name)
+        self.assertEqual(customer.last_name, found_customer.last_name)
 
     @raises_with_regexp(NotFoundError, "customer with id 'badid' not found")
     def test_find_with_invalid_customer(self):
@@ -637,10 +651,10 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Customer.EmailIsInvalid,
-            result.errors.for_object("customer").on("email")[0].code
-        )
+
+        email_errors = result.errors.for_object("customer").on("email")
+        self.assertEqual(1, len(email_errors))
+        self.assertEqual(ErrorCodes.Customer.EmailIsInvalid, email_errors[0].code)
 
     def test_update_with_paypal_future_payments_nonce(self):
         customer = Customer.create().customer
@@ -659,10 +673,10 @@ class TestCustomer(unittest.TestCase):
             "payment_method_nonce": Nonces.PayPalOneTimePayment
         })
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            result.errors.for_object("customer").for_object("paypal_account").on("base")[0].code,
-            ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount
-        )
+
+        paypal_account_errors = result.errors.for_object("customer").for_object("paypal_account").on("base")
+        self.assertEqual(1, len(paypal_account_errors))
+        self.assertEqual(ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount, paypal_account_errors[0].code)
 
     def test_update_with_nested_verification_amount(self):
         customer = Customer.create({
@@ -718,18 +732,18 @@ class TestCustomer(unittest.TestCase):
         result = Customer.confirm_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         customer = result.customer
-        self.assertEquals("John", customer.first_name)
-        self.assertEquals("Doe", customer.last_name)
-        self.assertEquals("Doe Co", customer.company)
-        self.assertEquals("john@doe.com", customer.email)
-        self.assertEquals("312.555.2323", customer.phone)
-        self.assertEquals("614.555.5656", customer.fax)
-        self.assertEquals("www.johndoe.com", customer.website)
-        self.assertEquals("05/2012", customer.credit_cards[0].expiration_date)
-        self.assertEquals("MX", customer.credit_cards[0].billing_address.country_code_alpha2)
-        self.assertEquals("MEX", customer.credit_cards[0].billing_address.country_code_alpha3)
-        self.assertEquals("484", customer.credit_cards[0].billing_address.country_code_numeric)
-        self.assertEquals("Mexico", customer.credit_cards[0].billing_address.country_name)
+        self.assertEqual("John", customer.first_name)
+        self.assertEqual("Doe", customer.last_name)
+        self.assertEqual("Doe Co", customer.company)
+        self.assertEqual("john@doe.com", customer.email)
+        self.assertEqual("312.555.2323", customer.phone)
+        self.assertEqual("614.555.5656", customer.fax)
+        self.assertEqual("www.johndoe.com", customer.website)
+        self.assertEqual("05/2012", customer.credit_cards[0].expiration_date)
+        self.assertEqual("MX", customer.credit_cards[0].billing_address.country_code_alpha2)
+        self.assertEqual("MEX", customer.credit_cards[0].billing_address.country_code_alpha3)
+        self.assertEqual("484", customer.credit_cards[0].billing_address.country_code_numeric)
+        self.assertEqual("Mexico", customer.credit_cards[0].billing_address.country_name)
 
     def test_create_from_transparent_redirect_with_error_result(self):
         tr_data = {
@@ -745,7 +759,10 @@ class TestCustomer(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_create_url())
         result = Customer.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
+
+        email_errors = result.errors.for_object("customer").on("email")
+        self.assertEqual(1, len(email_errors))
+        self.assertEqual(ErrorCodes.Customer.EmailIsInvalid, email_errors[0].code)
 
     def test_update_from_transparent_redirect_with_successful_result(self):
         customer = Customer.create({
@@ -767,8 +784,8 @@ class TestCustomer(unittest.TestCase):
         result = Customer.confirm_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         customer = result.customer
-        self.assertEquals("John", customer.first_name)
-        self.assertEquals("john@doe.com", customer.email)
+        self.assertEqual("John", customer.first_name)
+        self.assertEqual("john@doe.com", customer.email)
 
     def test_update_with_nested_values_via_transparent_redirect(self):
         customer = Customer.create({
@@ -837,7 +854,10 @@ class TestCustomer(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, Customer.transparent_redirect_update_url())
         result = Customer.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Customer.EmailIsInvalid, result.errors.for_object("customer").on("email")[0].code)
+
+        customer_email_errors = result.errors.for_object("customer").on("email")
+        self.assertEqual(1, len(customer_email_errors))
+        self.assertEqual(ErrorCodes.Customer.EmailIsInvalid, customer_email_errors[0].code)
 
     def test_customer_payment_methods(self):
         customer = Customer("gateway", {

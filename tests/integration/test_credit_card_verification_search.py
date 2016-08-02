@@ -5,7 +5,7 @@ class TestVerificationSearch(unittest.TestCase):
     def test_advanced_search_no_results(self):
         collection = CreditCardVerification.search([
             CreditCardVerificationSearch.credit_card_cardholder_name == "no such person"])
-        self.assertEquals(0, collection.maximum_size)
+        self.assertEqual(0, collection.maximum_size)
 
     def test_search_on_verification_id(self):
         customer_id = "%s" % randint(1, 10000)
@@ -96,7 +96,7 @@ class TestVerificationSearch(unittest.TestCase):
                     verification1.status, verification2.status])
         )
 
-        self.assertEquals(2, search_results.maximum_size)
+        self.assertEqual(2, search_results.maximum_size)
 
     def test_range_field(self):
         cardholder_name = "Tom %s" % randint(1, 10000)
@@ -116,7 +116,7 @@ class TestVerificationSearch(unittest.TestCase):
                 CreditCardVerificationSearch.id == created_verification.id,
                 CreditCardVerificationSearch.created_at.between(before_creation, after_creation))
 
-        self.assertEquals(1, found_verifications.maximum_size)
+        self.assertEqual(1, found_verifications.maximum_size)
 
         way_before_creation = created_time - timedelta(minutes=10)
         just_before_creation = created_time - timedelta(minutes=1)
@@ -124,11 +124,11 @@ class TestVerificationSearch(unittest.TestCase):
                 CreditCardVerificationSearch.id == created_verification.id,
                 CreditCardVerificationSearch.created_at.between(way_before_creation, just_before_creation))
 
-        self.assertEquals(0, found_verifications.maximum_size)
+        self.assertEqual(0, found_verifications.maximum_size)
 
         found_verifications = CreditCardVerification.search(
                 CreditCardVerificationSearch.id == created_verification.id,
                 CreditCardVerificationSearch.created_at == created_time)
 
-        self.assertEquals(1, found_verifications.maximum_size)
+        self.assertEqual(1, found_verifications.maximum_size)
 

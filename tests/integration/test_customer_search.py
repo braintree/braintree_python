@@ -5,7 +5,7 @@ class TestCustomerSearch(unittest.TestCase):
         collection = Transaction.search([
             TransactionSearch.billing_first_name == "no_such_person"
         ])
-        self.assertEquals(0, collection.maximum_size)
+        self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_finds_duplicate_cards_given_payment_method_token(self):
         credit_card_dict = {
@@ -91,8 +91,8 @@ class TestCustomerSearch(unittest.TestCase):
 
         collection = Customer.search(criteria)
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(customer.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(customer.id, collection.first.id)
 
         for search_field, value in search_criteria.items():
             collection = Customer.search(
@@ -100,8 +100,8 @@ class TestCustomerSearch(unittest.TestCase):
                 getattr(CustomerSearch, search_field) == value
             )
 
-            self.assertEquals(1, collection.maximum_size)
-            self.assertEquals(customer.id, collection.first.id)
+            self.assertEqual(1, collection.maximum_size)
+            self.assertEqual(customer.id, collection.first.id)
 
     def test_advanced_search_range_node_created_at(self):
         customer = Customer.create().customer
@@ -114,24 +114,24 @@ class TestCustomerSearch(unittest.TestCase):
             CustomerSearch.created_at.between(past, future)
         )
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(customer.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(customer.id, collection.first.id)
 
         collection = Customer.search(
             CustomerSearch.id == customer.id,
             CustomerSearch.created_at <= future
         )
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(customer.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(customer.id, collection.first.id)
 
         collection = Customer.search(
             CustomerSearch.id == customer.id,
             CustomerSearch.created_at >= past
         )
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(customer.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(customer.id, collection.first.id)
 
     def test_search_on_paypal_account_email(self):
         http = ClientApiHttp.create()
@@ -139,7 +139,7 @@ class TestCustomerSearch(unittest.TestCase):
             "consent-code": "consent-code",
             "options": {"validate": False}
         })
-        self.assertEquals(status_code, 202)
+        self.assertEqual(202, status_code)
 
         customer = Customer.create({"payment_method_nonce": nonce}).customer
 
@@ -147,5 +147,5 @@ class TestCustomerSearch(unittest.TestCase):
             CustomerSearch.paypal_account_email == "jane.doe@example.com",
             CustomerSearch.id == customer.id
         )
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(customer.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(customer.id, collection.first.id)

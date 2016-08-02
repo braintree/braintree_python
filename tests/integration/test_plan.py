@@ -10,7 +10,7 @@ class TestPlan(unittest.TestCase):
             "test_private_key"
         )
         plans = Plan.all()
-        self.assertEquals(plans, [])
+        self.assertEqual([], plans)
         Configuration.configure(
             Environment.Development,
             "integration_merchant_id",
@@ -62,15 +62,18 @@ class TestPlan(unittest.TestCase):
             if plan.id == plan_token:
                 actual_plan = plan
 
-        self.assertNotEquals(None, actual_plan)
+        self.assertNotEqual(None, actual_plan)
 
-        self.assertEquals(attributes["billing_day_of_month"], 1)
-        self.assertEquals(attributes["billing_frequency"], 1)
-        self.assertEquals(attributes["currency_iso_code"], "USD")
-        self.assertEquals(attributes["description"], "some description")
-        self.assertEquals(attributes["name"], "python test plan")
-        self.assertEquals(attributes["number_of_billing_cycles"], 1)
-        self.assertEquals(attributes["price"], "1.00")
+        self.assertEqual(1, attributes["billing_day_of_month"])
+        self.assertEqual(1, attributes["billing_frequency"])
+        self.assertEqual("USD", attributes["currency_iso_code"])
+        self.assertEqual("some description", attributes["description"])
+        self.assertEqual("python test plan", attributes["name"])
+        self.assertEqual(1, attributes["number_of_billing_cycles"])
+        self.assertEqual("1.00", attributes["price"])
 
-        self.assertEquals(add_on_attributes["name"], actual_plan.add_ons[0].name)
-        self.assertEquals(discount_attributes["name"], actual_plan.discounts[0].name)
+        self.assertEqual(1, len(actual_plan.add_ons))
+        self.assertEqual(add_on_attributes["name"], actual_plan.add_ons[0].name)
+
+        self.assertEqual(1, len(actual_plan.discounts))
+        self.assertEqual(discount_attributes["name"], actual_plan.discounts[0].name)

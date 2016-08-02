@@ -20,11 +20,11 @@ class TestResourceCollection(unittest.TestCase):
         new_items = []
         index = 0
         for item in collection.items:
-            self.assertEquals(TestResourceCollection.TestResource.items[index], item)
+            self.assertEqual(TestResourceCollection.TestResource.items[index], item)
             new_items.append(item)
             index += 1
 
-        self.assertEquals(5, len(new_items))
+        self.assertEqual(5, len(new_items))
 
     def test_iterate_using_iterator_protocol(self):
         collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)

@@ -22,7 +22,7 @@ class TestDisbursement(unittest.TestCase):
 
         disbursement = Disbursement(None, attributes)
 
-        self.assertEquals(disbursement.id, "123456")
-        self.assertEquals(disbursement.amount, Decimal("100.00"))
-        self.assertEquals(disbursement.transaction_ids, ["asdf", "qwer"])
-        self.assertEquals(disbursement.merchant_account.master_merchant_account.id, "master_merchant_account")
+        self.assertEqual("123456", disbursement.id)
+        self.assertEqual(Decimal("100.00"), disbursement.amount)
+        self.assertEqual(["asdf", "qwer"], disbursement.transaction_ids)
+        self.assertEqual("master_merchant_account", disbursement.merchant_account.master_merchant_account.id)

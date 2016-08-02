@@ -49,12 +49,12 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
 
-        self.assertEquals(transaction.disbursement_details.settlement_amount, Decimal('27.00'))
-        self.assertEquals(transaction.disbursement_details.settlement_currency_iso_code, 'USD')
-        self.assertEquals(transaction.disbursement_details.settlement_currency_exchange_rate, Decimal('1'))
-        self.assertEquals(transaction.disbursement_details.disbursement_date, date(2013, 4, 10))
-        self.assertEquals(transaction.disbursement_details.funds_held, False)
-        self.assertEquals(transaction.is_disbursed, True)
+        self.assertEqual(transaction.disbursement_details.settlement_amount, Decimal('27.00'))
+        self.assertEqual(transaction.disbursement_details.settlement_currency_iso_code, 'USD')
+        self.assertEqual(transaction.disbursement_details.settlement_currency_exchange_rate, Decimal('1'))
+        self.assertEqual(transaction.disbursement_details.disbursement_date, date(2013, 4, 10))
+        self.assertEqual(transaction.disbursement_details.funds_held, False)
+        self.assertEqual(transaction.is_disbursed, True)
 
     def test_transaction_handles_nil_risk_data(self):
         attributes = {
@@ -71,7 +71,7 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
 
-        self.assertEquals(transaction.risk_data, None)
+        self.assertEqual(transaction.risk_data, None)
 
     def test_is_disbursed_false(self):
         attributes = {
@@ -95,4 +95,4 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
 
-        self.assertEquals(transaction.is_disbursed, False)
+        self.assertEqual(transaction.is_disbursed, False)

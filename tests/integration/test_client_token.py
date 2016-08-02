@@ -11,7 +11,7 @@ class TestClientTokenGenerate(unittest.TestCase):
     def test_allows_client_token_version_to_be_specified(self):
         client_token = ClientToken.generate({"version": 1})
         version = json.loads(client_token)["version"]
-        self.assertEqual(version, 1)
+        self.assertEqual(1, version)
 
     def test_error_in_generate_raises_value_error(self):
         self.assertRaises(ValueError, ClientToken.generate, {
@@ -31,13 +31,13 @@ class TestClientToken(unittest.TestCase):
         })
 
         status_code, response = http.get_cards()
-        self.assertEqual(status_code, 200)
+        self.assertEqual(200, status_code)
 
     def test_client_token_version_defaults_to_two(self):
         client_token = TestHelper.generate_decoded_client_token()
         version = json.loads(client_token)["version"]
 
-        self.assertEqual(version, 2)
+        self.assertEqual(2, version)
 
     def test_can_pass_verify_card(self):
         config = Configuration.instantiate()
@@ -64,7 +64,7 @@ class TestClientToken(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 422)
+        self.assertEqual(422, status_code)
 
     def test_can_pass_make_default(self):
         config = Configuration.instantiate()
@@ -91,7 +91,7 @@ class TestClientToken(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 201)
+        self.assertEqual(201, status_code)
 
         status_code, response = http.add_card({
             "credit_card": {
@@ -100,10 +100,10 @@ class TestClientToken(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 201)
+        self.assertEqual(201, status_code)
 
         customer = braintree.Customer.find(customer_id)
-        self.assertEqual(len(customer.credit_cards), 2)
+        self.assertEqual(2, len(customer.credit_cards))
         for credit_card in customer.credit_cards:
             if credit_card.bin == "400551":
                 self.assertTrue(credit_card.default)
@@ -130,7 +130,7 @@ class TestClientToken(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 201)
+        self.assertEqual(201, status_code)
 
         client_token = TestHelper.generate_decoded_client_token({
             "customer_id": customer_id,
@@ -147,10 +147,10 @@ class TestClientToken(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 422)
+        self.assertEqual(422, status_code)
 
         customer = braintree.Customer.find(customer_id)
-        self.assertEqual(len(customer.credit_cards), 1)
+        self.assertEqual(1, len(customer.credit_cards))
 
     def test_can_pass_sepa_params(self):
         result = braintree.Customer.create()
@@ -170,7 +170,7 @@ class TestClientToken(unittest.TestCase):
         })
         merchant_account_id = json.loads(client_token)["merchantAccountId"]
 
-        self.assertEqual(merchant_account_id, "my_merchant_account")
+        self.assertEqual("my_merchant_account", merchant_account_id)
 
     def test_required_data_cannot_be_overridden(self):
         try:

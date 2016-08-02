@@ -7,7 +7,7 @@ class TestTransparentRedirect(unittest.TestCase):
 
     def __assert_valid_tr_data(self, data):
         hash, content = data.split("|", 1)
-        self.assertEquals(hash, Crypto.sha1_hmac_hash(Configuration.private_key, content))
+        self.assertEqual(hash, Crypto.sha1_hmac_hash(Configuration.private_key, content))
 
     @raises(ForgedQueryStringError)
     def test_parse_and_validate_query_string_raises_for_invalid_hash(self):

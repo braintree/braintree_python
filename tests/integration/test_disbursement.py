@@ -21,5 +21,5 @@ class TestDisbursement(unittest.TestCase):
         })
 
         transactions = disbursement.transactions()
-        self.assertEquals(1, transactions.maximum_size)
-        self.assertEquals("sub_merchant_transaction", transactions.first.id)
+        self.assertEqual(1, transactions.maximum_size)
+        self.assertEqual("sub_merchant_transaction", transactions.first.id)

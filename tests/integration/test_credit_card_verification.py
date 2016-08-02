@@ -32,11 +32,10 @@ class TestCreditCardVerfication(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Verification.Options.AmountCannotBeNegative,
-            result.errors.for_object("verification").for_object("options").on("amount")[0].code
-        )
 
+        amount_errors = result.errors.for_object("verification").for_object("options").on("amount")
+        self.assertEqual(1, len(amount_errors))
+        self.assertEqual(ErrorCodes.Verification.Options.AmountCannotBeNegative, amount_errors[0].code)
 
     def test_find_with_verification_id(self):
         customer = Customer.create({
@@ -49,7 +48,7 @@ class TestCreditCardVerfication(unittest.TestCase):
 
         created_verification = customer.credit_card_verification
         found_verification = CreditCardVerification.find(created_verification.id)
-        self.assertEquals(created_verification, found_verification)
+        self.assertEqual(created_verification, found_verification)
 
     def test_verification_not_found(self):
         self.assertRaises(NotFoundError, CreditCardVerification.find,

@@ -10,11 +10,11 @@ class TestErrorResult(unittest.TestCase):
 
         result = ErrorResult("gateway", {"errors": errors, "params": "params", "message": "brief description"})
         self.assertFalse(result.is_success)
-        self.assertEquals("params", result.params)
-        self.assertEquals(1, result.errors.size)
-        self.assertEquals("something is invalid", result.errors.for_object("scope")[0].message)
-        self.assertEquals("something", result.errors.for_object("scope")[0].attribute)
-        self.assertEquals(123, result.errors.for_object("scope")[0].code)
+        self.assertEqual("params", result.params)
+        self.assertEqual(1, result.errors.size)
+        self.assertEqual("something is invalid", result.errors.for_object("scope")[0].message)
+        self.assertEqual("something", result.errors.for_object("scope")[0].attribute)
+        self.assertEqual(123, result.errors.for_object("scope")[0].code)
 
     def test_it_ignores_other_params(self):
         errors = {

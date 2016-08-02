@@ -5,9 +5,9 @@ class TestValidationErrorCollection(unittest.TestCase):
         hash = {"errors": [{"attribute": "some model attribute", "code": 1, "message": "bad juju"}]}
         errors = ValidationErrorCollection(hash)
         error = errors[0]
-        self.assertEquals("some model attribute", error.attribute)
-        self.assertEquals(1, error.code)
-        self.assertEquals("bad juju", error.message)
+        self.assertEqual("some model attribute", error.attribute)
+        self.assertEqual(1, error.code)
+        self.assertEqual("bad juju", error.message)
 
     def test_for_object_provides_access_to_nested_attributes(self):
         hash = {
@@ -19,9 +19,9 @@ class TestValidationErrorCollection(unittest.TestCase):
         errors = ValidationErrorCollection(hash)
         error = errors.for_object("nested").on("number")[0]
 
-        self.assertEquals("number", error.attribute)
-        self.assertEquals(2, error.code)
-        self.assertEquals("badder juju", error.message)
+        self.assertEqual("number", error.attribute)
+        self.assertEqual(2, error.code)
+        self.assertEqual("badder juju", error.message)
 
     def test_deep_size_non_nested(self):
         hash = {
@@ -32,7 +32,7 @@ class TestValidationErrorCollection(unittest.TestCase):
             ]
         }
 
-        self.assertEquals(3, ValidationErrorCollection(hash).deep_size)
+        self.assertEqual(3, ValidationErrorCollection(hash).deep_size)
 
     def test_deep_size_nested(self):
         hash = {
@@ -42,7 +42,7 @@ class TestValidationErrorCollection(unittest.TestCase):
             }
         }
 
-        self.assertEquals(2, ValidationErrorCollection(hash).deep_size)
+        self.assertEqual(2, ValidationErrorCollection(hash).deep_size)
 
     def test_deep_size_multiple_nestings(self):
         hash = {
@@ -58,7 +58,7 @@ class TestValidationErrorCollection(unittest.TestCase):
             }
         }
 
-        self.assertEquals(4, ValidationErrorCollection(hash).deep_size)
+        self.assertEqual(4, ValidationErrorCollection(hash).deep_size)
 
     def test_len_multiple_nestings(self):
         hash = {
@@ -74,9 +74,9 @@ class TestValidationErrorCollection(unittest.TestCase):
             }
         }
         validation_error_collection = ValidationErrorCollection(hash)
-        self.assertEquals(1, len(validation_error_collection))
-        self.assertEquals(1, len(validation_error_collection.for_object("nested")))
-        self.assertEquals(2, len(validation_error_collection.for_object("nested").for_object("nested_again")))
+        self.assertEqual(1, len(validation_error_collection))
+        self.assertEqual(1, len(validation_error_collection.for_object("nested")))
+        self.assertEqual(2, len(validation_error_collection.for_object("nested").for_object("nested_again")))
 
     def test_deep_errors(self):
         hash = {
@@ -92,7 +92,7 @@ class TestValidationErrorCollection(unittest.TestCase):
             }
         }
         validation_error_collection = ValidationErrorCollection(hash)
-        self.assertEquals([1, 2, 3, 4], [error.code for error in validation_error_collection.deep_errors])
+        self.assertEqual([1, 2, 3, 4], [error.code for error in validation_error_collection.deep_errors])
 
     def test_errors(self):
         hash = {
@@ -109,7 +109,7 @@ class TestValidationErrorCollection(unittest.TestCase):
         }
         validation_error_collection = ValidationErrorCollection(hash)
 
-        self.assertEquals([1], [error.code for error in validation_error_collection.errors])
+        self.assertEqual([1], [error.code for error in validation_error_collection.errors])
 
-        self.assertEquals([2], [error.code for error in validation_error_collection.for_object("nested").errors])
-        self.assertEquals([3,4], [error.code for error in validation_error_collection.for_object("nested").for_object("nested_again").errors])
+        self.assertEqual([2], [error.code for error in validation_error_collection.for_object("nested").errors])
+        self.assertEqual([3,4], [error.code for error in validation_error_collection.for_object("nested").for_object("nested_again").errors])

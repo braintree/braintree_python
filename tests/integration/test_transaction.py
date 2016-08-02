@@ -19,8 +19,8 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertIsInstance(transaction.risk_data, RiskData)
-        self.assertEquals(transaction.risk_data.id, None)
-        self.assertEquals(transaction.risk_data.decision, "Not Evaluated")
+        self.assertEqual(transaction.risk_data.id, None)
+        self.assertEqual(transaction.risk_data.decision, "Not Evaluated")
 
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
@@ -34,12 +34,12 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
-        self.assertEquals("411111", transaction.credit_card_details.bin)
-        self.assertEquals("1111", transaction.credit_card_details.last_4)
-        self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
-        self.assertEquals(None, transaction.voice_referral_number)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+        self.assertEqual("1111", transaction.credit_card_details.last_4)
+        self.assertEqual("05/2009", transaction.credit_card_details.expiration_date)
+        self.assertEqual(None, transaction.voice_referral_number)
 
     def test_sale_allows_amount_as_a_decimal(self):
         result = Transaction.sale({
@@ -53,11 +53,11 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
-        self.assertEquals("411111", transaction.credit_card_details.bin)
-        self.assertEquals("1111", transaction.credit_card_details.last_4)
-        self.assertEquals("05/2009", transaction.credit_card_details.expiration_date)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+        self.assertEqual("1111", transaction.credit_card_details.last_4)
+        self.assertEqual("05/2009", transaction.credit_card_details.expiration_date)
 
     def test_sale_with_expiration_month_and_year_separately(self):
         result = Transaction.sale({
@@ -71,9 +71,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals("05", transaction.credit_card_details.expiration_month)
-        self.assertEquals("2012", transaction.credit_card_details.expiration_year)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual("05", transaction.credit_card_details.expiration_month)
+        self.assertEqual("2012", transaction.credit_card_details.expiration_year)
 
     def test_sale_works_with_all_attributes(self):
         result = Transaction.sale({
@@ -127,55 +127,55 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\w{6,}\Z", transaction.id))
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.Authorized, transaction.status)
-        self.assertEquals(Decimal("100.00"), transaction.amount)
-        self.assertEquals("123", transaction.order_id)
-        self.assertEquals("MyShoppingCartProvider", transaction.channel)
-        self.assertEquals("1000", transaction.processor_response_code)
-        self.assertEquals(datetime, type(transaction.created_at))
-        self.assertEquals(datetime, type(transaction.updated_at))
-        self.assertEquals("510510", transaction.credit_card_details.bin)
-        self.assertEquals("5100", transaction.credit_card_details.last_4)
-        self.assertEquals("510510******5100", transaction.credit_card_details.masked_number)
-        self.assertEquals("MasterCard", transaction.credit_card_details.card_type)
-        self.assertEquals("The Cardholder", transaction.credit_card_details.cardholder_name)
-        self.assertEquals(None, transaction.avs_error_response_code)
-        self.assertEquals("M", transaction.avs_postal_code_response_code)
-        self.assertEquals("M", transaction.avs_street_address_response_code)
-        self.assertEquals("Dan", transaction.customer_details.first_name)
-        self.assertEquals("Smith", transaction.customer_details.last_name)
-        self.assertEquals("Braintree", transaction.customer_details.company)
-        self.assertEquals("dan@example.com", transaction.customer_details.email)
-        self.assertEquals("419-555-1234", transaction.customer_details.phone)
-        self.assertEquals("419-555-1235", transaction.customer_details.fax)
-        self.assertEquals("http://braintreepayments.com", transaction.customer_details.website)
-        self.assertEquals("Carl", transaction.billing_details.first_name)
-        self.assertEquals("Jones", transaction.billing_details.last_name)
-        self.assertEquals("Braintree", transaction.billing_details.company)
-        self.assertEquals("123 E Main St", transaction.billing_details.street_address)
-        self.assertEquals("Suite 403", transaction.billing_details.extended_address)
-        self.assertEquals("Chicago", transaction.billing_details.locality)
-        self.assertEquals("IL", transaction.billing_details.region)
-        self.assertEquals("60622", transaction.billing_details.postal_code)
-        self.assertEquals("United States of America", transaction.billing_details.country_name)
-        self.assertEquals("US", transaction.billing_details.country_code_alpha2)
-        self.assertEquals("USA", transaction.billing_details.country_code_alpha3)
-        self.assertEquals("840", transaction.billing_details.country_code_numeric)
-        self.assertEquals("Andrew", transaction.shipping_details.first_name)
-        self.assertEquals("Mason", transaction.shipping_details.last_name)
-        self.assertEquals("Braintree", transaction.shipping_details.company)
-        self.assertEquals("456 W Main St", transaction.shipping_details.street_address)
-        self.assertEquals("Apt 2F", transaction.shipping_details.extended_address)
-        self.assertEquals("Bartlett", transaction.shipping_details.locality)
-        self.assertEquals("IL", transaction.shipping_details.region)
-        self.assertEquals("60103", transaction.shipping_details.postal_code)
-        self.assertEquals("Mexico", transaction.shipping_details.country_name)
-        self.assertEquals("MX", transaction.shipping_details.country_code_alpha2)
-        self.assertEquals("MEX", transaction.shipping_details.country_code_alpha3)
-        self.assertEquals("484", transaction.shipping_details.country_code_numeric)
-        self.assertEquals(None, transaction.additional_processor_response)
+        self.assertNotEqual(None, re.search(r"\A\w{6,}\Z", transaction.id))
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
+        self.assertEqual(Decimal("100.00"), transaction.amount)
+        self.assertEqual("123", transaction.order_id)
+        self.assertEqual("MyShoppingCartProvider", transaction.channel)
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(datetime, type(transaction.created_at))
+        self.assertEqual(datetime, type(transaction.updated_at))
+        self.assertEqual("510510", transaction.credit_card_details.bin)
+        self.assertEqual("5100", transaction.credit_card_details.last_4)
+        self.assertEqual("510510******5100", transaction.credit_card_details.masked_number)
+        self.assertEqual("MasterCard", transaction.credit_card_details.card_type)
+        self.assertEqual("The Cardholder", transaction.credit_card_details.cardholder_name)
+        self.assertEqual(None, transaction.avs_error_response_code)
+        self.assertEqual("M", transaction.avs_postal_code_response_code)
+        self.assertEqual("M", transaction.avs_street_address_response_code)
+        self.assertEqual("Dan", transaction.customer_details.first_name)
+        self.assertEqual("Smith", transaction.customer_details.last_name)
+        self.assertEqual("Braintree", transaction.customer_details.company)
+        self.assertEqual("dan@example.com", transaction.customer_details.email)
+        self.assertEqual("419-555-1234", transaction.customer_details.phone)
+        self.assertEqual("419-555-1235", transaction.customer_details.fax)
+        self.assertEqual("http://braintreepayments.com", transaction.customer_details.website)
+        self.assertEqual("Carl", transaction.billing_details.first_name)
+        self.assertEqual("Jones", transaction.billing_details.last_name)
+        self.assertEqual("Braintree", transaction.billing_details.company)
+        self.assertEqual("123 E Main St", transaction.billing_details.street_address)
+        self.assertEqual("Suite 403", transaction.billing_details.extended_address)
+        self.assertEqual("Chicago", transaction.billing_details.locality)
+        self.assertEqual("IL", transaction.billing_details.region)
+        self.assertEqual("60622", transaction.billing_details.postal_code)
+        self.assertEqual("United States of America", transaction.billing_details.country_name)
+        self.assertEqual("US", transaction.billing_details.country_code_alpha2)
+        self.assertEqual("USA", transaction.billing_details.country_code_alpha3)
+        self.assertEqual("840", transaction.billing_details.country_code_numeric)
+        self.assertEqual("Andrew", transaction.shipping_details.first_name)
+        self.assertEqual("Mason", transaction.shipping_details.last_name)
+        self.assertEqual("Braintree", transaction.shipping_details.company)
+        self.assertEqual("456 W Main St", transaction.shipping_details.street_address)
+        self.assertEqual("Apt 2F", transaction.shipping_details.extended_address)
+        self.assertEqual("Bartlett", transaction.shipping_details.locality)
+        self.assertEqual("IL", transaction.shipping_details.region)
+        self.assertEqual("60103", transaction.shipping_details.postal_code)
+        self.assertEqual("Mexico", transaction.shipping_details.country_name)
+        self.assertEqual("MX", transaction.shipping_details.country_code_alpha2)
+        self.assertEqual("MEX", transaction.shipping_details.country_code_alpha3)
+        self.assertEqual("484", transaction.shipping_details.country_code_numeric)
+        self.assertEqual(None, transaction.additional_processor_response)
 
     def test_sale_with_vault_customer_and_credit_card_data(self):
         customer = Customer.create({
@@ -194,8 +194,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(transaction.credit_card_details.masked_number, "411111******1111")
-        self.assertEquals(None, transaction.vault_credit_card)
+        self.assertEqual(transaction.credit_card_details.masked_number, "411111******1111")
+        self.assertEqual(None, transaction.vault_credit_card)
 
     def test_sale_with_vault_customer_and_credit_card_data_and_store_in_vault(self):
         customer = Customer.create({
@@ -217,8 +217,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals("411111******1111", transaction.credit_card_details.masked_number)
-        self.assertEquals("411111******1111", transaction.vault_credit_card.masked_number)
+        self.assertEqual("411111******1111", transaction.credit_card_details.masked_number)
+        self.assertEqual("411111******1111", transaction.vault_credit_card.masked_number)
 
     def test_sale_with_venmo_merchant_data(self):
         result = Transaction.sale({
@@ -253,7 +253,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals("some extra stuff", transaction.custom_fields["store_me"])
+        self.assertEqual("some extra stuff", transaction.custom_fields["store_me"])
 
     def test_sale_with_merchant_account_id(self):
         result = Transaction.sale({
@@ -267,7 +267,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(TestHelper.non_default_merchant_account_id, transaction.merchant_account_id)
+        self.assertEqual(TestHelper.non_default_merchant_account_id, transaction.merchant_account_id)
 
     def test_sale_without_merchant_account_id_falls_back_to_default(self):
         result = Transaction.sale({
@@ -280,7 +280,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
+        self.assertEqual(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
 
     def test_sale_with_shipping_address_id(self):
         result = Customer.create({
@@ -311,8 +311,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals("123 Fake St.", transaction.shipping_details.street_address)
-        self.assertEquals(address.id, transaction.shipping_details.id)
+        self.assertEqual("123 Fake St.", transaction.shipping_details.street_address)
+        self.assertEqual(address.id, transaction.shipping_details.id)
 
     def test_sale_with_risk_data_security_parameters(self):
         result = Transaction.sale({
@@ -359,8 +359,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals("123 Fake St.", transaction.billing_details.street_address)
-        self.assertEquals(address.id, transaction.billing_details.id)
+        self.assertEqual("123 Fake St.", transaction.billing_details.street_address)
+        self.assertEqual(address.id, transaction.billing_details.id)
 
     def test_sale_with_device_session_id_and_fraud_merchant_id(self):
         result = Transaction.sale({
@@ -390,9 +390,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals("12345", transaction.purchase_order_number)
-        self.assertEquals(Decimal("10.00"), transaction.tax_amount)
-        self.assertEquals(True, transaction.tax_exempt)
+        self.assertEqual("12345", transaction.purchase_order_number)
+        self.assertEqual(Decimal("10.00"), transaction.tax_amount)
+        self.assertEqual(True, transaction.tax_exempt)
 
     def test_create_with_invalid_tax_amount(self):
         result = Transaction.sale({
@@ -403,12 +403,11 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             }
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.TaxAmountFormatIsInvalid,
-            result.errors.for_object("transaction").on("tax_amount")[0].code
-        )
+
+        tax_amount_errors = result.errors.for_object("transaction").on("tax_amount")
+        self.assertEqual(1, len(tax_amount_errors))
+        self.assertEqual(ErrorCodes.Transaction.TaxAmountFormatIsInvalid, tax_amount_errors[0].code)
 
     def test_create_with_too_long_purchase_order_number(self):
         result = Transaction.sale({
@@ -419,12 +418,11 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             }
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.PurchaseOrderNumberIsTooLong,
-            result.errors.for_object("transaction").on("purchase_order_number")[0].code
-        )
+
+        purchase_order_number_errors = result.errors.for_object("transaction").on("purchase_order_number")
+        self.assertEqual(1, len(purchase_order_number_errors))
+        self.assertEqual(ErrorCodes.Transaction.PurchaseOrderNumberIsTooLong, purchase_order_number_errors[0].code)
 
     def test_create_with_invalid_purchase_order_number(self):
         result = Transaction.sale({
@@ -435,12 +433,11 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             }
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.PurchaseOrderNumberIsInvalid,
-            result.errors.for_object("transaction").on("purchase_order_number")[0].code
-        )
+
+        purchase_order_number_errors = result.errors.for_object("transaction").on("purchase_order_number")
+        self.assertEqual(1, len(purchase_order_number_errors))
+        self.assertEqual(ErrorCodes.Transaction.PurchaseOrderNumberIsInvalid, purchase_order_number_errors[0].code)
 
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
@@ -453,8 +450,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Status.ProcessorDeclined, transaction.status)
-        self.assertEquals("2000 : Do Not Honor", transaction.additional_processor_response);
+        self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEqual("2000 : Do Not Honor", transaction.additional_processor_response);
 
     def test_sale_with_gateway_rejected_with_incomplete_application(self):
         gateway = BraintreeGateway(
@@ -487,7 +484,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.GatewayRejectionReason.ApplicationIncomplete, transaction.gateway_rejection_reason)
+        self.assertEqual(Transaction.GatewayRejectionReason.ApplicationIncomplete, transaction.gateway_rejection_reason)
 
     def test_sale_with_gateway_rejected_with_avs(self):
         old_merchant_id = Configuration.merchant_id
@@ -512,7 +509,7 @@ class TestTransaction(unittest.TestCase):
 
             self.assertFalse(result.is_success)
             transaction = result.transaction
-            self.assertEquals(Transaction.GatewayRejectionReason.Avs, transaction.gateway_rejection_reason)
+            self.assertEqual(Transaction.GatewayRejectionReason.Avs, transaction.gateway_rejection_reason)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
@@ -542,7 +539,7 @@ class TestTransaction(unittest.TestCase):
 
             self.assertFalse(result.is_success)
             transaction = result.transaction
-            self.assertEquals(Transaction.GatewayRejectionReason.AvsAndCvv, transaction.gateway_rejection_reason)
+            self.assertEqual(Transaction.GatewayRejectionReason.AvsAndCvv, transaction.gateway_rejection_reason)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
@@ -569,7 +566,7 @@ class TestTransaction(unittest.TestCase):
 
             self.assertFalse(result.is_success)
             transaction = result.transaction
-            self.assertEquals(Transaction.GatewayRejectionReason.Cvv, transaction.gateway_rejection_reason)
+            self.assertEqual(Transaction.GatewayRejectionReason.Cvv, transaction.gateway_rejection_reason)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
@@ -586,7 +583,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
+        self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_service_fee(self):
         result = Transaction.sale({
@@ -614,10 +611,10 @@ class TestTransaction(unittest.TestCase):
             "service_fee_amount": "1.00"
         })
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Transaction.ServiceFeeAmountNotAllowedOnMasterMerchantAccount,
-            result.errors.for_object("transaction").on("service_fee_amount")[0].code
-        )
+
+        amount_errors = result.errors.for_object("transaction").on("service_fee_amount")
+        self.assertEqual(1, len(amount_errors))
+        self.assertEqual(ErrorCodes.Transaction.ServiceFeeAmountNotAllowedOnMasterMerchantAccount, amount_errors[0].code)
 
     def test_sale_on_submerchant_is_invalid_without_with_service_fee(self):
         result = Transaction.sale({
@@ -629,7 +626,7 @@ class TestTransaction(unittest.TestCase):
             }
         })
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.SubMerchantAccountRequiresServiceFeeAmount,
             result.errors.for_object("transaction").on("merchant_account_id")[0].code
         )
@@ -648,7 +645,7 @@ class TestTransaction(unittest.TestCase):
             "service_fee_amount": "1.00"
         })
         self.assertTrue(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             Transaction.EscrowStatus.HoldPending,
             result.transaction.escrow_status
         )
@@ -666,7 +663,7 @@ class TestTransaction(unittest.TestCase):
             }
         })
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotHoldInEscrow,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -684,7 +681,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         result = Transaction.hold_in_escrow(result.transaction.id)
         self.assertTrue(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             Transaction.EscrowStatus.HoldPending,
             result.transaction.escrow_status
         )
@@ -701,7 +698,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         result = Transaction.hold_in_escrow(result.transaction.id)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotHoldInEscrow,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -710,7 +707,7 @@ class TestTransaction(unittest.TestCase):
         transaction = self.__create_escrowed_transaction()
         result = Transaction.release_from_escrow(transaction.id)
         self.assertTrue(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             Transaction.EscrowStatus.ReleasePending,
             result.transaction.escrow_status
         )
@@ -728,7 +725,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         result = Transaction.release_from_escrow(result.transaction.id)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotReleaseFromEscrow,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -738,7 +735,7 @@ class TestTransaction(unittest.TestCase):
         submit_result = Transaction.release_from_escrow(transaction.id)
         result = Transaction.cancel_release(submit_result.transaction.id)
         self.assertTrue(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
                 Transaction.EscrowStatus.Held,
                 result.transaction.escrow_status
         )
@@ -747,7 +744,7 @@ class TestTransaction(unittest.TestCase):
         transaction = self.__create_escrowed_transaction()
         result = Transaction.cancel_release(transaction.id)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotCancelRelease,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -899,7 +896,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CustomFieldIsInvalid,
             result.errors.for_object("transaction").on("custom_fields")[0].code
         )
@@ -916,14 +913,14 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(CreditCard.Prepaid.Unknown, transaction.credit_card_details.prepaid)
-        self.assertEquals(CreditCard.Debit.Unknown, transaction.credit_card_details.debit)
-        self.assertEquals(CreditCard.Commercial.Unknown, transaction.credit_card_details.commercial)
-        self.assertEquals(CreditCard.Healthcare.Unknown, transaction.credit_card_details.healthcare)
-        self.assertEquals(CreditCard.Payroll.Unknown, transaction.credit_card_details.payroll)
-        self.assertEquals(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
-        self.assertEquals(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
-        self.assertEquals(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
+        self.assertEqual(CreditCard.Prepaid.Unknown, transaction.credit_card_details.prepaid)
+        self.assertEqual(CreditCard.Debit.Unknown, transaction.credit_card_details.debit)
+        self.assertEqual(CreditCard.Commercial.Unknown, transaction.credit_card_details.commercial)
+        self.assertEqual(CreditCard.Healthcare.Unknown, transaction.credit_card_details.healthcare)
+        self.assertEqual(CreditCard.Payroll.Unknown, transaction.credit_card_details.payroll)
+        self.assertEqual(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
+        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
+        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
 
     def test_create_can_set_recurring_flag(self):
         result = Transaction.sale({
@@ -941,7 +938,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(True, transaction.recurring)
+        self.assertEqual(True, transaction.recurring)
 
     def test_create_can_set_transaction_source_flag_recurring(self):
         result = Transaction.sale({
@@ -959,7 +956,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(True, transaction.recurring)
+        self.assertEqual(True, transaction.recurring)
 
     def test_create_can_set_transaction_source_flag_moto(self):
         result = Transaction.sale({
@@ -977,7 +974,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(False, transaction.recurring)
+        self.assertEqual(False, transaction.recurring)
 
     def test_create_can_store_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({
@@ -998,9 +995,9 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
-        self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
+        self.assertEqual(transaction.customer_details.id, transaction.vault_customer.id)
         self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
-        self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
+        self.assertEqual(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_can_store_customer_and_credit_card_in_the_vault_on_success(self):
         result = Transaction.sale({
@@ -1021,9 +1018,9 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
-        self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
+        self.assertEqual(transaction.customer_details.id, transaction.vault_customer.id)
         self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
-        self.assertEquals(transaction.credit_card_details.token, transaction.vault_credit_card.token)
+        self.assertEqual(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_does_not_store_customer_and_credit_card_in_the_vault_on_failure(self):
         result = Transaction.sale({
@@ -1078,20 +1075,20 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
-        self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", transaction.customer_details.id))
+        self.assertEqual(transaction.customer_details.id, transaction.vault_customer.id)
         credit_card = CreditCard.find(transaction.vault_credit_card.token)
-        self.assertEquals(credit_card.billing_address.id, transaction.billing_details.id)
-        self.assertEquals(credit_card.billing_address.id, transaction.vault_billing_address.id)
-        self.assertEquals("Carl", credit_card.billing_address.first_name)
-        self.assertEquals("Jones", credit_card.billing_address.last_name)
-        self.assertEquals("Braintree", credit_card.billing_address.company)
-        self.assertEquals("123 E Main St", credit_card.billing_address.street_address)
-        self.assertEquals("Suite 403", credit_card.billing_address.extended_address)
-        self.assertEquals("Chicago", credit_card.billing_address.locality)
-        self.assertEquals("IL", credit_card.billing_address.region)
-        self.assertEquals("60622", credit_card.billing_address.postal_code)
-        self.assertEquals("United States of America", credit_card.billing_address.country_name)
+        self.assertEqual(credit_card.billing_address.id, transaction.billing_details.id)
+        self.assertEqual(credit_card.billing_address.id, transaction.vault_billing_address.id)
+        self.assertEqual("Carl", credit_card.billing_address.first_name)
+        self.assertEqual("Jones", credit_card.billing_address.last_name)
+        self.assertEqual("Braintree", credit_card.billing_address.company)
+        self.assertEqual("123 E Main St", credit_card.billing_address.street_address)
+        self.assertEqual("Suite 403", credit_card.billing_address.extended_address)
+        self.assertEqual("Chicago", credit_card.billing_address.locality)
+        self.assertEqual("IL", credit_card.billing_address.region)
+        self.assertEqual("60622", credit_card.billing_address.postal_code)
+        self.assertEqual("United States of America", credit_card.billing_address.country_name)
 
     def test_create_and_store_the_shipping_address_in_the_vault(self):
         result = Transaction.sale({
@@ -1123,18 +1120,18 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
-        self.assertEquals(transaction.customer_details.id, transaction.vault_customer.id)
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", transaction.customer_details.id))
+        self.assertEqual(transaction.customer_details.id, transaction.vault_customer.id)
         shipping_address = transaction.vault_customer.addresses[0]
-        self.assertEquals("Carl", shipping_address.first_name)
-        self.assertEquals("Jones", shipping_address.last_name)
-        self.assertEquals("Braintree", shipping_address.company)
-        self.assertEquals("123 E Main St", shipping_address.street_address)
-        self.assertEquals("Suite 403", shipping_address.extended_address)
-        self.assertEquals("Chicago", shipping_address.locality)
-        self.assertEquals("IL", shipping_address.region)
-        self.assertEquals("60622", shipping_address.postal_code)
-        self.assertEquals("United States of America", shipping_address.country_name)
+        self.assertEqual("Carl", shipping_address.first_name)
+        self.assertEqual("Jones", shipping_address.last_name)
+        self.assertEqual("Braintree", shipping_address.company)
+        self.assertEqual("123 E Main St", shipping_address.street_address)
+        self.assertEqual("Suite 403", shipping_address.extended_address)
+        self.assertEqual("Chicago", shipping_address.locality)
+        self.assertEqual("IL", shipping_address.region)
+        self.assertEqual("60622", shipping_address.postal_code)
+        self.assertEqual("United States of America", shipping_address.country_name)
 
     def test_create_submits_for_settlement_if_given_submit_for_settlement_option(self):
         result = Transaction.sale({
@@ -1149,7 +1146,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, result.transaction.status)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, result.transaction.status)
 
     def test_create_does_not_submit_for_settlement_if_submit_for_settlement_is_false(self):
         result = Transaction.sale({
@@ -1164,7 +1161,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(Transaction.Status.Authorized, result.transaction.status)
+        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
 
     def test_create_can_specify_the_customer_id_and_payment_method_token(self):
         customer_id = "customer_" + str(random.randint(1, 1000000))
@@ -1189,10 +1186,10 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(customer_id, transaction.customer_details.id)
-        self.assertEquals(customer_id, transaction.vault_customer.id)
-        self.assertEquals(payment_method_token, transaction.credit_card_details.token)
-        self.assertEquals(payment_method_token, transaction.vault_credit_card.token)
+        self.assertEqual(customer_id, transaction.customer_details.id)
+        self.assertEqual(customer_id, transaction.vault_customer.id)
+        self.assertEqual(payment_method_token, transaction.credit_card_details.token)
+        self.assertEqual(payment_method_token, transaction.vault_credit_card.token)
 
     def test_create_using_customer_id(self):
         result = Customer.create({
@@ -1214,10 +1211,10 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(customer.id, transaction.customer_details.id)
-        self.assertEquals(customer.id, transaction.vault_customer.id)
-        self.assertEquals(credit_card.token, transaction.credit_card_details.token)
-        self.assertEquals(credit_card.token, transaction.vault_credit_card.token)
+        self.assertEqual(customer.id, transaction.customer_details.id)
+        self.assertEqual(customer.id, transaction.vault_customer.id)
+        self.assertEqual(credit_card.token, transaction.credit_card_details.token)
+        self.assertEqual(credit_card.token, transaction.vault_credit_card.token)
 
     def test_create_using_payment_method_token(self):
         result = Customer.create({
@@ -1239,10 +1236,10 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(customer.id, transaction.customer_details.id)
-        self.assertEquals(customer.id, transaction.vault_customer.id)
-        self.assertEquals(credit_card.token, transaction.credit_card_details.token)
-        self.assertEquals(credit_card.token, transaction.vault_credit_card.token)
+        self.assertEqual(customer.id, transaction.customer_details.id)
+        self.assertEqual(customer.id, transaction.vault_customer.id)
+        self.assertEqual(credit_card.token, transaction.credit_card_details.token)
+        self.assertEqual(credit_card.token, transaction.vault_credit_card.token)
 
     def test_create_using_payment_method_token_with_cvv(self):
         result = Customer.create({
@@ -1267,11 +1264,11 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(customer.id, transaction.customer_details.id)
-        self.assertEquals(customer.id, transaction.vault_customer.id)
-        self.assertEquals(credit_card.token, transaction.credit_card_details.token)
-        self.assertEquals(credit_card.token, transaction.vault_credit_card.token)
-        self.assertEquals("S", transaction.cvv_response_code)
+        self.assertEqual(customer.id, transaction.customer_details.id)
+        self.assertEqual(customer.id, transaction.vault_customer.id)
+        self.assertEqual(credit_card.token, transaction.credit_card_details.token)
+        self.assertEqual(credit_card.token, transaction.vault_credit_card.token)
+        self.assertEqual("S", transaction.cvv_response_code)
 
     def test_create_with_failing_validations(self):
         params = {
@@ -1286,8 +1283,8 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.sale(params["transaction"])
         params["transaction"]["credit_card"].pop("number")
         self.assertFalse(result.is_success)
-        self.assertEquals(params, result.params)
-        self.assertEquals(
+        self.assertEqual(params, result.params)
+        self.assertEqual(
             ErrorCodes.Transaction.AmountIsRequired,
             result.errors.for_object("transaction").on("amount")[0].code
         )
@@ -1303,13 +1300,13 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEquals(None, re.search("\A\w{6,}\Z", transaction.id))
-        self.assertEquals(Transaction.Type.Credit, transaction.type)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertNotEqual(None, re.search(r"\A\w{6,}\Z", transaction.id))
+        self.assertEqual(Transaction.Type.Credit, transaction.type)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
         cc_details = transaction.credit_card_details
-        self.assertEquals("411111", cc_details.bin)
-        self.assertEquals("1111", cc_details.last_4)
-        self.assertEquals("05/2009", cc_details.expiration_date)
+        self.assertEqual("411111", cc_details.bin)
+        self.assertEqual("1111", cc_details.last_4)
+        self.assertEqual("05/2009", cc_details.expiration_date)
 
     def test_credit_with_unsuccessful_result(self):
         result = Transaction.credit({
@@ -1331,8 +1328,8 @@ class TestTransaction(unittest.TestCase):
         }
 
         self.assertFalse(result.is_success)
-        self.assertEquals(params, result.params)
-        self.assertEquals(
+        self.assertEqual(params, result.params)
+        self.assertEqual(
             ErrorCodes.Transaction.AmountIsRequired,
             result.errors.for_object("transaction").on("amount")[0].code
         )
@@ -1348,7 +1345,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(
+        self.assertEqual(
             PaymentInstrumentType.CreditCard,
             transaction.payment_instrument_type
         )
@@ -1380,7 +1377,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(TestHelper.non_default_merchant_account_id, transaction.merchant_account_id)
+        self.assertEqual(TestHelper.non_default_merchant_account_id, transaction.merchant_account_id)
 
     def test_credit_without_merchant_account_id_falls_back_to_default(self):
         result = Transaction.credit({
@@ -1393,18 +1390,19 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
+        self.assertEqual(TestHelper.default_merchant_account_id, transaction.merchant_account_id)
 
     def test_find_returns_a_found_transaction(self):
         transaction = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
+            "amount": TransactionAmounts.Fail,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
             }
         }).transaction
+        TestHelper.settle_transaction(transaction.id)
         found_transaction = Transaction.find(transaction.id)
-        self.assertEquals(transaction.id, found_transaction.id)
+        self.assertEqual(transaction.id, found_transaction.id)
 
     @raises_with_regexp(NotFoundError, "transaction with id 'notreal' not found")
     def test_find_for_bad_transaction_raises_not_found_error(self):
@@ -1421,8 +1419,8 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.void(transaction.id)
         self.assertTrue(result.is_success)
-        self.assertEquals(transaction.id, result.transaction.id)
-        self.assertEquals(Transaction.Status.Voided, result.transaction.status)
+        self.assertEqual(transaction.id, result.transaction.id)
+        self.assertEqual(Transaction.Status.Voided, result.transaction.status)
 
     def test_void_with_unsuccessful_result(self):
         transaction = Transaction.sale({
@@ -1435,7 +1433,7 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.void(transaction.id)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotBeVoided,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -1452,7 +1450,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
 
     def test_create_with_error_result(self):
         result = Transaction.create({
@@ -1470,20 +1468,20 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Transaction.TypeIsRequired, result.errors.for_object("transaction").on("type")[0].code)
-        self.assertEquals(
+        self.assertEqual(ErrorCodes.Transaction.TypeIsRequired, result.errors.for_object("transaction").on("type")[0].code)
+        self.assertEqual(
             ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted,
             result.errors.for_object("transaction").for_object("billing").on("country_code_alpha2")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted,
             result.errors.for_object("transaction").for_object("billing").on("country_code_alpha3")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Address.CountryCodeNumericIsNotAccepted,
             result.errors.for_object("transaction").for_object("billing").on("country_code_numeric")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Address.CountryNameIsNotAccepted,
             result.errors.for_object("transaction").for_object("billing").on("country_name")[0].code
         )
@@ -1505,11 +1503,11 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals("411111", transaction.credit_card_details.bin)
-        self.assertEquals("1111", transaction.credit_card_details.last_4)
-        self.assertEquals("05/2010", transaction.credit_card_details.expiration_date)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+        self.assertEqual("1111", transaction.credit_card_details.last_4)
+        self.assertEqual("05/2010", transaction.credit_card_details.expiration_date)
 
     def test_sale_from_transparent_redirect_with_error_result(self):
         tr_data = {
@@ -1546,7 +1544,7 @@ class TestTransaction(unittest.TestCase):
             result = Transaction.confirm_transparent_redirect(query_string)
             self.fail()
         except AuthorizationError as e:
-            self.assertEquals("Invalid params: transaction[bad]", str(e))
+            self.assertEqual("Invalid params: transaction[bad]", str(e))
 
     def test_credit_from_transparent_redirect_with_successful_result(self):
         tr_data = {
@@ -1569,16 +1567,16 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), transaction.amount)
-        self.assertEquals(Transaction.Type.Credit, transaction.type)
-        self.assertEquals("411111", transaction.credit_card_details.bin)
-        self.assertEquals("1111", transaction.credit_card_details.last_4)
-        self.assertEquals("05/2010", transaction.credit_card_details.expiration_date)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertEqual(Transaction.Type.Credit, transaction.type)
+        self.assertEqual("411111", transaction.credit_card_details.bin)
+        self.assertEqual("1111", transaction.credit_card_details.last_4)
+        self.assertEqual("05/2010", transaction.credit_card_details.expiration_date)
 
-        self.assertEquals("US", transaction.billing_details.country_code_alpha2)
-        self.assertEquals("USA", transaction.billing_details.country_code_alpha3)
-        self.assertEquals("840", transaction.billing_details.country_code_numeric)
-        self.assertEquals("United States of America", transaction.billing_details.country_name)
+        self.assertEqual("US", transaction.billing_details.country_code_alpha2)
+        self.assertEqual("USA", transaction.billing_details.country_code_alpha3)
+        self.assertEqual("840", transaction.billing_details.country_code_numeric)
+        self.assertEqual("United States of America", transaction.billing_details.country_name)
 
     def test_credit_from_transparent_redirect_with_error_result(self):
         tr_data = {
@@ -1608,8 +1606,8 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
 
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), submitted_transaction.amount)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), submitted_transaction.amount)
 
     def test_submit_for_settlement_with_amount(self):
         transaction = Transaction.sale({
@@ -1622,8 +1620,8 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900")).transaction
 
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals(Decimal("900.00"), submitted_transaction.amount)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual(Decimal("900.00"), submitted_transaction.amount)
 
     def test_submit_for_settlement_with_order_id(self):
         transaction = Transaction.sale({
@@ -1638,8 +1636,8 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
 
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals("ABC123", submitted_transaction.order_id)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual("ABC123", submitted_transaction.order_id)
 
     def test_submit_for_settlement_with_descriptor(self):
         transaction = Transaction.sale({
@@ -1660,10 +1658,10 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
 
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals("123*123456789012345678", submitted_transaction.descriptor.name)
-        self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
-        self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual("123*123456789012345678", submitted_transaction.descriptor.name)
+        self.assertEqual("3334445555", submitted_transaction.descriptor.phone)
+        self.assertEqual("ebay.com", submitted_transaction.descriptor.url)
 
     @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_settlement_with_invalid_params(self):
@@ -1698,7 +1696,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.submit_for_settlement(transaction.id, Decimal("1200"))
         self.assertFalse(result.is_success)
 
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.SettlementAmountIsTooLarge,
             result.errors.for_object("transaction").on("amount")[0].code
         )
@@ -1717,7 +1715,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.submit_for_settlement(transaction.id, "1.00")
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.SettlementAmountIsLessThanServiceFeeAmount,
             result.errors.for_object("transaction").on("amount")[0].code
         )
@@ -1746,12 +1744,12 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.update_details(transaction.id, params)
         self.assertTrue(result.is_success)
-        self.assertEquals(Decimal("9.00"), result.transaction.amount)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, result.transaction.status)
-        self.assertEquals("123", result.transaction.order_id)
-        self.assertEquals("456*123456789012345678", result.transaction.descriptor.name)
-        self.assertEquals("3334445555", result.transaction.descriptor.phone)
-        self.assertEquals("ebay.com", result.transaction.descriptor.url)
+        self.assertEqual(Decimal("9.00"), result.transaction.amount)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, result.transaction.status)
+        self.assertEqual("123", result.transaction.order_id)
+        self.assertEqual("456*123456789012345678", result.transaction.descriptor.name)
+        self.assertEqual("3334445555", result.transaction.descriptor.phone)
+        self.assertEqual("ebay.com", result.transaction.descriptor.url)
 
     @raises_with_regexp(KeyError, "'Invalid keys: invalid_key'")
     def test_update_details_with_invalid_params(self):
@@ -1803,7 +1801,7 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.update_details(transaction.id, params)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.OrderIdIsTooLong,
             result.errors.for_object("transaction").on("order_id")[0].code
         )
@@ -1832,15 +1830,15 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.update_details(transaction.id, params)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Descriptor.NameFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Descriptor.PhoneFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Descriptor.UrlFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("url")[0].code
         )
@@ -1864,7 +1862,7 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.update_details(transaction.id, params)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.SettlementAmountIsTooLarge,
             result.errors.for_object("transaction").on("amount")[0].code
         )
@@ -1885,7 +1883,7 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.update_details(transaction.id, params)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotUpdateTransactionDetailsNotSubmittedForSettlement,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -1910,7 +1908,7 @@ class TestTransaction(unittest.TestCase):
 
         result = Transaction.update_details(transaction.id, params)
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ProcessorDoesNotSupportUpdatingTransactionDetails,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -1926,11 +1924,11 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
 
-        self.assertEquals(2, len(submitted_transaction.status_history))
-        self.assertEquals(Transaction.Status.Authorized, submitted_transaction.status_history[0].status)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), submitted_transaction.status_history[0].amount)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status_history[1].status)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), submitted_transaction.status_history[1].amount)
+        self.assertEqual(2, len(submitted_transaction.status_history))
+        self.assertEqual(Transaction.Status.Authorized, submitted_transaction.status_history[0].status)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), submitted_transaction.status_history[0].amount)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status_history[1].status)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), submitted_transaction.status_history[1].amount)
 
     def test_successful_refund(self):
         transaction = self.__create_transaction_to_refund()
@@ -1940,11 +1938,11 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         refund = result.transaction
 
-        self.assertEquals(Transaction.Type.Credit, refund.type)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), refund.amount)
-        self.assertEquals(transaction.id, refund.refunded_transaction_id)
+        self.assertEqual(Transaction.Type.Credit, refund.type)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), refund.amount)
+        self.assertEqual(transaction.id, refund.refunded_transaction_id)
 
-        self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
+        self.assertEqual(refund.id, Transaction.find(transaction.id).refund_id)
 
     def test_successful_partial_refund(self):
         transaction = self.__create_transaction_to_refund()
@@ -1952,23 +1950,23 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id, Decimal("500.00"))
 
         self.assertTrue(result.is_success)
-        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
-        self.assertEquals(Decimal("500.00"), result.transaction.amount)
+        self.assertEqual(Transaction.Type.Credit, result.transaction.type)
+        self.assertEqual(Decimal("500.00"), result.transaction.amount)
 
     def test_multiple_successful_partial_refunds(self):
         transaction = self.__create_transaction_to_refund()
 
         refund1 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
-        self.assertEquals(Transaction.Type.Credit, refund1.type)
-        self.assertEquals(Decimal("500.00"), refund1.amount)
+        self.assertEqual(Transaction.Type.Credit, refund1.type)
+        self.assertEqual(Decimal("500.00"), refund1.amount)
 
         refund2 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
-        self.assertEquals(Transaction.Type.Credit, refund2.type)
-        self.assertEquals(Decimal("500.00"), refund2.amount)
+        self.assertEqual(Transaction.Type.Credit, refund2.type)
+        self.assertEqual(Decimal("500.00"), refund2.amount)
 
         transaction = Transaction.find(transaction.id)
 
-        self.assertEquals(2, len(transaction.refund_ids))
+        self.assertEqual(2, len(transaction.refund_ids))
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund1.id))
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
 
@@ -1979,7 +1977,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.HasAlreadyBeenRefunded,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -1993,11 +1991,11 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id, options)
 
         self.assertTrue(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             "abcd",
             result.transaction.order_id
         )
-        self.assertEquals(
+        self.assertEqual(
             Decimal("1.00"),
             result.transaction.amount
         )
@@ -2017,7 +2015,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotRefundUnlessSettled,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -2109,30 +2107,30 @@ class TestTransaction(unittest.TestCase):
 
         transaction = result.subscription.transactions[0]
 
-        self.assertEquals(TestHelper.trialless_plan["id"], transaction.plan_id)
+        self.assertEqual(TestHelper.trialless_plan["id"], transaction.plan_id)
 
-        self.assertEquals(2, len(transaction.add_ons))
+        self.assertEqual(2, len(transaction.add_ons))
         add_ons = sorted(transaction.add_ons, key=lambda add_on: add_on.id)
 
-        self.assertEquals("increase_10", add_ons[0].id)
-        self.assertEquals(Decimal("11.00"), add_ons[0].amount)
-        self.assertEquals(2, add_ons[0].quantity)
-        self.assertEquals(5, add_ons[0].number_of_billing_cycles)
+        self.assertEqual("increase_10", add_ons[0].id)
+        self.assertEqual(Decimal("11.00"), add_ons[0].amount)
+        self.assertEqual(2, add_ons[0].quantity)
+        self.assertEqual(5, add_ons[0].number_of_billing_cycles)
         self.assertFalse(add_ons[0].never_expires)
 
-        self.assertEquals("increase_20", add_ons[1].id)
-        self.assertEquals(Decimal("21.00"), add_ons[1].amount)
-        self.assertEquals(3, add_ons[1].quantity)
-        self.assertEquals(6, add_ons[1].number_of_billing_cycles)
+        self.assertEqual("increase_20", add_ons[1].id)
+        self.assertEqual(Decimal("21.00"), add_ons[1].amount)
+        self.assertEqual(3, add_ons[1].quantity)
+        self.assertEqual(6, add_ons[1].number_of_billing_cycles)
         self.assertFalse(add_ons[1].never_expires)
 
-        self.assertEquals(1, len(transaction.discounts))
+        self.assertEqual(1, len(transaction.discounts))
         discounts = transaction.discounts
 
-        self.assertEquals("discount_7", discounts[0].id)
-        self.assertEquals(Decimal("7.50"), discounts[0].amount)
-        self.assertEquals(2, discounts[0].quantity)
-        self.assertEquals(None, discounts[0].number_of_billing_cycles)
+        self.assertEqual("discount_7", discounts[0].id)
+        self.assertEqual(Decimal("7.50"), discounts[0].amount)
+        self.assertEqual(2, discounts[0].quantity)
+        self.assertEqual(None, discounts[0].number_of_billing_cycles)
         self.assertTrue(discounts[0].never_expires)
 
 
@@ -2176,7 +2174,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.Industry.Lodging.CheckOutDateMustFollowCheckInDate,
             result.errors.for_object("transaction").for_object("industry").on("check_out_date")[0].code
         )
@@ -2223,7 +2221,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.Industry.TravelCruise.TravelPackageIsInvalid,
             result.errors.for_object("transaction").for_object("industry").on("travel_package")[0].code
         )
@@ -2244,9 +2242,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals("123*123456789012345678", transaction.descriptor.name)
-        self.assertEquals("3334445555", transaction.descriptor.phone)
-        self.assertEquals("ebay.com", transaction.descriptor.url)
+        self.assertEqual("123*123456789012345678", transaction.descriptor.name)
+        self.assertEqual("3334445555", transaction.descriptor.phone)
+        self.assertEqual("ebay.com", transaction.descriptor.url)
 
     def test_descriptors_has_validation_errors_if_format_is_invalid(self):
         result = Transaction.sale({
@@ -2263,15 +2261,15 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertFalse(result.is_success)
         transaction = result.transaction
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Descriptor.NameFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Descriptor.PhoneFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("phone")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Descriptor.UrlFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("url")[0].code
         )
@@ -2308,17 +2306,17 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(clone_result.is_success)
         clone_transaction = clone_result.transaction
 
-        self.assertNotEquals(transaction.id, clone_transaction.id)
+        self.assertNotEqual(transaction.id, clone_transaction.id)
 
-        self.assertEquals(Transaction.Type.Sale, clone_transaction.type)
-        self.assertEquals(Transaction.Status.Authorized, clone_transaction.status)
-        self.assertEquals(Decimal("123.45"), clone_transaction.amount)
-        self.assertEquals("MyShoppingCartProvider", clone_transaction.channel)
-        self.assertEquals("123", clone_transaction.order_id)
-        self.assertEquals("510510******5100", clone_transaction.credit_card_details.masked_number)
-        self.assertEquals("Dan", clone_transaction.customer_details.first_name)
-        self.assertEquals("Carl", clone_transaction.billing_details.first_name)
-        self.assertEquals("Andrew", clone_transaction.shipping_details.first_name)
+        self.assertEqual(Transaction.Type.Sale, clone_transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, clone_transaction.status)
+        self.assertEqual(Decimal("123.45"), clone_transaction.amount)
+        self.assertEqual("MyShoppingCartProvider", clone_transaction.channel)
+        self.assertEqual("123", clone_transaction.order_id)
+        self.assertEqual("510510******5100", clone_transaction.credit_card_details.masked_number)
+        self.assertEqual("Dan", clone_transaction.customer_details.first_name)
+        self.assertEqual("Carl", clone_transaction.billing_details.first_name)
+        self.assertEqual("Andrew", clone_transaction.shipping_details.first_name)
 
     def test_clone_transaction_submits_for_settlement(self):
         result = Transaction.sale({
@@ -2335,8 +2333,8 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(clone_result.is_success)
         clone_transaction = clone_result.transaction
 
-        self.assertEquals(Transaction.Type.Sale, clone_transaction.type)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, clone_transaction.status)
+        self.assertEqual(Transaction.Type.Sale, clone_transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, clone_transaction.status)
 
     def test_clone_transaction_with_validations(self):
         result = Transaction.credit({
@@ -2353,7 +2351,7 @@ class TestTransaction(unittest.TestCase):
         clone_result = Transaction.clone_transaction(transaction.id, {"amount": "123.45"})
         self.assertFalse(clone_result.is_success)
 
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotCloneCredit,
             clone_result.errors.for_object("transaction").on("base")[0].code
         )
@@ -2362,12 +2360,12 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction.find("deposittransaction")
         disbursement_details = transaction.disbursement_details
 
-        self.assertEquals(date(2013, 4, 10), disbursement_details.disbursement_date)
-        self.assertEquals("USD", disbursement_details.settlement_currency_iso_code)
-        self.assertEquals(Decimal("1"), disbursement_details.settlement_currency_exchange_rate)
-        self.assertEquals(False, disbursement_details.funds_held)
-        self.assertEquals(True, disbursement_details.success)
-        self.assertEquals(Decimal("100.00"), disbursement_details.settlement_amount)
+        self.assertEqual(date(2013, 4, 10), disbursement_details.disbursement_date)
+        self.assertEqual("USD", disbursement_details.settlement_currency_iso_code)
+        self.assertEqual(Decimal("1"), disbursement_details.settlement_currency_exchange_rate)
+        self.assertEqual(False, disbursement_details.funds_held)
+        self.assertEqual(True, disbursement_details.success)
+        self.assertEqual(Decimal("100.00"), disbursement_details.settlement_amount)
 
     def test_sale_with_three_d_secure_option(self):
         result = Transaction.sale({
@@ -2385,8 +2383,8 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(Transaction.Status.GatewayRejected, result.transaction.status)
-        self.assertEquals(Transaction.GatewayRejectionReason.ThreeDSecure, result.transaction.gateway_rejection_reason)
+        self.assertEqual(Transaction.Status.GatewayRejected, result.transaction.status)
+        self.assertEqual(Transaction.GatewayRejectionReason.ThreeDSecure, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_three_d_secure_token(self):
         three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
@@ -2431,7 +2429,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureTokenIsInvalid,
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
@@ -2454,7 +2452,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureTransactionDataDoesntMatchVerify,
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
@@ -2475,7 +2473,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(Transaction.Status.Authorized, result.transaction.status)
+        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
 
     def test_transaction_with_three_d_secure_pass_thru_with_invalid_processor_settings(self):
         result = Transaction.sale({
@@ -2493,7 +2491,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureMerchantAccountDoesNotSupportCardType,
             result.errors.for_object("transaction").on("merchant_account_id")[0].code
         )
@@ -2514,7 +2512,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureEciFlagIsRequired,
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
         )
@@ -2536,11 +2534,11 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureCavvIsRequired,
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv")[0].code
         )
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureXidIsRequired,
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("xid")[0].code
         )
@@ -2561,7 +2559,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureEciFlagIsInvalid,
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
         )
@@ -2588,8 +2586,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
     def test_sale_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
@@ -2612,8 +2610,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
     def test_sale_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
@@ -2636,8 +2634,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, transaction.status)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
     def test_submit_for_settlement_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
@@ -2659,11 +2657,11 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.Authorized, transaction.status)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
@@ -2685,11 +2683,11 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.Authorized, transaction.status)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
@@ -2711,53 +2709,53 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEquals(Transaction.Type.Sale, transaction.type)
-        self.assertEquals(Transaction.Status.Authorized, transaction.status)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
         dispute = transaction.disputes[0]
 
-        self.assertEquals(date(2014, 3, 1), dispute.received_date)
-        self.assertEquals(date(2014, 3, 21), dispute.reply_by_date)
-        self.assertEquals("USD", dispute.currency_iso_code)
-        self.assertEquals(Decimal("250.00"), dispute.amount)
-        self.assertEquals(Dispute.Status.Won, dispute.status)
-        self.assertEquals(Dispute.Reason.Fraud, dispute.reason)
-        self.assertEquals("disputedtransaction", dispute.transaction_details.id)
-        self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
-        self.assertEquals(Dispute.Kind.Chargeback, dispute.kind)
-        self.assertEquals(date(2014, 3, 1), dispute.date_opened)
-        self.assertEquals(date(2014, 3, 7), dispute.date_won)
+        self.assertEqual(date(2014, 3, 1), dispute.received_date)
+        self.assertEqual(date(2014, 3, 21), dispute.reply_by_date)
+        self.assertEqual("USD", dispute.currency_iso_code)
+        self.assertEqual(Decimal("250.00"), dispute.amount)
+        self.assertEqual(Dispute.Status.Won, dispute.status)
+        self.assertEqual(Dispute.Reason.Fraud, dispute.reason)
+        self.assertEqual("disputedtransaction", dispute.transaction_details.id)
+        self.assertEqual(Decimal("1000.00"), dispute.transaction_details.amount)
+        self.assertEqual(Dispute.Kind.Chargeback, dispute.kind)
+        self.assertEqual(date(2014, 3, 1), dispute.date_opened)
+        self.assertEqual(date(2014, 3, 7), dispute.date_won)
 
     def test_find_exposes_three_d_secure_info(self):
         transaction = Transaction.find("threedsecuredtransaction")
         three_d_secure_info = transaction.three_d_secure_info
 
-        self.assertEquals("Y", three_d_secure_info.enrolled)
-        self.assertEquals("authenticate_successful", three_d_secure_info.status)
-        self.assertEquals(True, three_d_secure_info.liability_shifted)
-        self.assertEquals(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("Y", three_d_secure_info.enrolled)
+        self.assertEqual("authenticate_successful", three_d_secure_info.status)
+        self.assertEqual(True, three_d_secure_info.liability_shifted)
+        self.assertEqual(True, three_d_secure_info.liability_shift_possible)
 
     def test_find_exposes_none_for_null_three_d_secure_info(self):
         transaction = Transaction.find("settledtransaction")
         three_d_secure_info = transaction.three_d_secure_info
 
-        self.assertEquals(None, three_d_secure_info)
+        self.assertEqual(None, three_d_secure_info)
 
     def test_find_exposes_retrievals(self):
         transaction = Transaction.find("retrievaltransaction")
         dispute = transaction.disputes[0]
 
-        self.assertEquals("USD", dispute.currency_iso_code)
-        self.assertEquals(Decimal("1000.00"), dispute.amount)
-        self.assertEquals(Dispute.Status.Open, dispute.status)
-        self.assertEquals(Dispute.Reason.Retrieval, dispute.reason)
-        self.assertEquals("retrievaltransaction", dispute.transaction_details.id)
-        self.assertEquals(Decimal("1000.00"), dispute.transaction_details.amount)
+        self.assertEqual("USD", dispute.currency_iso_code)
+        self.assertEqual(Decimal("1000.00"), dispute.amount)
+        self.assertEqual(Dispute.Status.Open, dispute.status)
+        self.assertEqual(Dispute.Reason.Retrieval, dispute.reason)
+        self.assertEqual("retrievaltransaction", dispute.transaction_details.id)
+        self.assertEqual(Decimal("1000.00"), dispute.transaction_details.amount)
 
     def test_creating_paypal_transaction_with_one_time_use_nonce(self):
         result = Transaction.sale({
@@ -2768,7 +2766,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
@@ -2786,12 +2784,12 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEquals(transaction.paypal_details.payee_email, "payee@example.com")
+        self.assertEqual(transaction.paypal_details.payee_email, "payee@example.com")
 
     def test_creating_paypal_transaction_with_payee_email_in_options_params(self):
         result = Transaction.sale({
@@ -2806,12 +2804,12 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEquals(transaction.paypal_details.payee_email, "payee@example.com")
+        self.assertEqual(transaction.paypal_details.payee_email, "payee@example.com")
 
     def test_creating_paypal_transaction_with_payee_email_in_options_paypal_params(self):
         result = Transaction.sale({
@@ -2828,12 +2826,12 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEquals(transaction.paypal_details.payee_email, "foo@paypal.com")
+        self.assertEqual(transaction.paypal_details.payee_email, "foo@paypal.com")
 
     def test_creating_paypal_transaction_with_custom_field_in_options_paypal_params(self):
         result = Transaction.sale({
@@ -2850,12 +2848,12 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEquals(transaction.paypal_details.custom_field, "custom field stuff")
+        self.assertEqual(transaction.paypal_details.custom_field, "custom field stuff")
 
     def test_creating_paypal_transaction_with_supplementary_data_in_options_paypal_params(self):
         result = Transaction.sale({
@@ -2890,12 +2888,12 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEquals(transaction.paypal_details.description, "Product description")
+        self.assertEqual(transaction.paypal_details.description, "Product description")
 
     def test_paypal_transaction_payment_instrument_type(self):
         result = Transaction.sale({
@@ -2906,7 +2904,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         transaction = result.transaction
-        self.assertEquals(PaymentInstrumentType.PayPalAccount, transaction.payment_instrument_type)
+        self.assertEqual(PaymentInstrumentType.PayPalAccount, transaction.payment_instrument_type)
 
     def test_creating_paypal_transaction_with_one_time_use_nonce_and_store_in_vault(self):
         result = Transaction.sale({
@@ -2918,8 +2916,8 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertEquals(transaction.paypal_details.token, None)
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.token, None)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_creating_paypal_transaction_with_future_payment_nonce(self):
@@ -2931,7 +2929,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
@@ -2944,7 +2942,7 @@ class TestTransaction(unittest.TestCase):
             "access-token": "access-token",
             "options": {"validate": False}
         })
-        self.assertEquals(status_code, 202)
+        self.assertEqual(202, status_code)
 
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -2953,7 +2951,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         error_code = result.errors.for_object("transaction").for_object("paypal_account").on("base")[0].code
-        self.assertEquals(error_code, ErrorCodes.PayPalAccount.CannotHaveBothAccessTokenAndConsentCode)
+        self.assertEqual(error_code, ErrorCodes.PayPalAccount.CannotHaveBothAccessTokenAndConsentCode)
 
     def test_validation_failure_on_non_existent_nonce(self):
         result = Transaction.sale({
@@ -2963,7 +2961,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
-        self.assertEquals(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
+        self.assertEqual(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
     def test_creating_paypal_transaction_with_vaulted_token(self):
         customer_id = Customer.create().customer.id
@@ -2983,7 +2981,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(transaction_result.is_success)
         transaction = transaction_result.transaction
 
-        self.assertEquals(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_creating_paypal_transaction_with_one_time_nonce_and_store_in_vault_fails_gracefully(self):
@@ -3009,7 +3007,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertNotEqual(None, transaction.paypal_details.token)
         paypal_account = PaymentMethod.find(transaction.paypal_details.token)
-        self.assertEquals(paypal_account.email, transaction.paypal_details.payer_email)
+        self.assertEqual(paypal_account.email, transaction.paypal_details.payer_email)
 
     def test_creating_paypal_transaction_and_submitting_for_settlement(self):
         result = Transaction.sale({
@@ -3019,7 +3017,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals(result.transaction.status, Transaction.Status.Settling)
+        self.assertEqual(result.transaction.status, Transaction.Status.Settling)
 
     def test_voiding_a_paypal_transaction(self):
         sale_result = Transaction.sale({
@@ -3033,8 +3031,8 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(void_result.is_success)
 
         void_transaction = void_result.transaction
-        self.assertEquals(void_transaction.id, sale_transaction.id)
-        self.assertEquals(void_transaction.status, Transaction.Status.Voided)
+        self.assertEqual(void_transaction.id, sale_transaction.id)
+        self.assertEqual(void_transaction.status, Transaction.Status.Voided)
 
     def test_paypal_transaction_successful_refund(self):
         transaction = self.__create_paypal_transaction()
@@ -3044,11 +3042,11 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         refund = result.transaction
 
-        self.assertEquals(Transaction.Type.Credit, refund.type)
-        self.assertEquals(Decimal(TransactionAmounts.Authorize), refund.amount)
-        self.assertEquals(transaction.id, refund.refunded_transaction_id)
+        self.assertEqual(Transaction.Type.Credit, refund.type)
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), refund.amount)
+        self.assertEqual(transaction.id, refund.refunded_transaction_id)
 
-        self.assertEquals(refund.id, Transaction.find(transaction.id).refund_id)
+        self.assertEqual(refund.id, Transaction.find(transaction.id).refund_id)
 
     def test_paypal_transaction_successful_partial_refund(self):
         transaction = self.__create_paypal_transaction()
@@ -3056,40 +3054,40 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id, Decimal("500.00"))
 
         self.assertTrue(result.is_success)
-        self.assertEquals(Transaction.Type.Credit, result.transaction.type)
-        self.assertEquals(Decimal("500.00"), result.transaction.amount)
+        self.assertEqual(Transaction.Type.Credit, result.transaction.type)
+        self.assertEqual(Decimal("500.00"), result.transaction.amount)
 
     def test_paypal_transaction_multiple_successful_partial_refunds(self):
         transaction = self.__create_paypal_transaction()
 
         refund1 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
-        self.assertEquals(Transaction.Type.Credit, refund1.type)
-        self.assertEquals(Decimal("500.00"), refund1.amount)
+        self.assertEqual(Transaction.Type.Credit, refund1.type)
+        self.assertEqual(Decimal("500.00"), refund1.amount)
 
         refund2 = Transaction.refund(transaction.id, Decimal("500.00")).transaction
-        self.assertEquals(Transaction.Type.Credit, refund2.type)
-        self.assertEquals(Decimal("500.00"), refund2.amount)
+        self.assertEqual(Transaction.Type.Credit, refund2.type)
+        self.assertEqual(Decimal("500.00"), refund2.amount)
 
         transaction = Transaction.find(transaction.id)
 
-        self.assertEquals(2, len(transaction.refund_ids))
+        self.assertEqual(2, len(transaction.refund_ids))
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund1.id))
         self.assertTrue(TestHelper.in_list(transaction.refund_ids, refund2.id))
 
     def test_paypal_transaction_returns_required_fields(self):
         transaction = self.__create_paypal_transaction()
 
-        self.assertNotEquals(None, transaction.paypal_details.debug_id)
-        self.assertNotEquals(None, transaction.paypal_details.payer_email)
-        self.assertNotEquals(None, transaction.paypal_details.authorization_id)
-        self.assertNotEquals(None, transaction.paypal_details.payer_id)
-        self.assertNotEquals(None, transaction.paypal_details.payer_first_name)
-        self.assertNotEquals(None, transaction.paypal_details.payer_last_name)
-        self.assertNotEquals(None, transaction.paypal_details.seller_protection_status)
-        self.assertNotEquals(None, transaction.paypal_details.capture_id)
-        #self.assertNotEquals(None, transaction.paypal_details.refund_id)
-        self.assertNotEquals(None, transaction.paypal_details.transaction_fee_amount)
-        self.assertNotEquals(None, transaction.paypal_details.transaction_fee_currency_iso_code)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertNotEqual(None, transaction.paypal_details.payer_email)
+        self.assertNotEqual(None, transaction.paypal_details.authorization_id)
+        self.assertNotEqual(None, transaction.paypal_details.payer_id)
+        self.assertNotEqual(None, transaction.paypal_details.payer_first_name)
+        self.assertNotEqual(None, transaction.paypal_details.payer_last_name)
+        self.assertNotEqual(None, transaction.paypal_details.seller_protection_status)
+        self.assertNotEqual(None, transaction.paypal_details.capture_id)
+        #self.assertNotEqual(None, transaction.paypal_details.refund_id)
+        self.assertNotEqual(None, transaction.paypal_details.transaction_fee_amount)
+        self.assertNotEqual(None, transaction.paypal_details.transaction_fee_currency_iso_code)
 
     def test_paypal_transaction_refund_already_refunded_transation_fails(self):
         transaction = self.__create_paypal_transaction()
@@ -3098,7 +3096,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.HasAlreadyBeenRefunded,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -3118,7 +3116,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
+        self.assertEqual(
             ErrorCodes.Transaction.CannotRefundUnlessSettled,
             result.errors.for_object("transaction").on("base")[0].code
         )
@@ -3155,11 +3153,11 @@ class TestTransaction(unittest.TestCase):
             })
             self.assertTrue(result.is_success)
             europe_bank_account_details = result.transaction.europe_bank_account_details
-            self.assertEquals(europe_bank_account_details.bic, "DEUTDEFF")
-            self.assertEquals(europe_bank_account_details.account_holder_name, "Baron Von Holder")
-            self.assertEquals(europe_bank_account_details.masked_iban[-4:], "3000")
-            self.assertNotEquals(europe_bank_account_details.image_url, None)
-            self.assertEquals(PaymentInstrumentType.EuropeBankAccount, result.transaction.payment_instrument_type)
+            self.assertEqual(europe_bank_account_details.bic, "DEUTDEFF")
+            self.assertEqual(europe_bank_account_details.account_holder_name, "Baron Von Holder")
+            self.assertEqual(europe_bank_account_details.masked_iban[-4:], "3000")
+            self.assertNotEqual(europe_bank_account_details.image_url, None)
+            self.assertEqual(PaymentInstrumentType.EuropeBankAccount, result.transaction.payment_instrument_type)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
@@ -3276,8 +3274,8 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params).transaction
 
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals("ABC123", submitted_transaction.order_id)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual("ABC123", submitted_transaction.order_id)
 
     def test_submit_for_partial_settlement_with_descriptor(self):
         transaction = Transaction.sale({
@@ -3298,10 +3296,10 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params).transaction
 
-        self.assertEquals(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
-        self.assertEquals("123*123456789012345678", submitted_transaction.descriptor.name)
-        self.assertEquals("3334445555", submitted_transaction.descriptor.phone)
-        self.assertEquals("ebay.com", submitted_transaction.descriptor.url)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual("123*123456789012345678", submitted_transaction.descriptor.name)
+        self.assertEqual("3334445555", submitted_transaction.descriptor.phone)
+        self.assertEqual("ebay.com", submitted_transaction.descriptor.url)
 
     @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_partial_settlement_with_invalid_params(self):

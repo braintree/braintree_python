@@ -29,7 +29,7 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertIsNotNone(credentials.access_token)
         self.assertIsNotNone(credentials.refresh_token)
         self.assertIsNotNone(credentials.expires_at)
-        self.assertEquals("bearer", credentials.token_type)
+        self.assertEqual("bearer", credentials.token_type)
 
 
     def test_create_token_from_code_with_bad_parameters(self):
@@ -39,11 +39,11 @@ class TestOAuthGateway(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEqual(
-            result.errors.for_object("credentials").on("code")[0].code,
-            ErrorCodes.OAuth.InvalidGrant
-        )
         self.assertIn(result.message, "Invalid grant: code not found")
+
+        credentials_code_errors = result.errors.for_object("credentials").on("code")
+        self.assertEqual(1, len(credentials_code_errors))
+        self.assertEqual(ErrorCodes.OAuth.InvalidGrant, credentials_code_errors[0].code)
 
     def test_create_token_from_code_returns_helpful_error_with_bad_credentials(self):
         gateway = BraintreeGateway(
@@ -80,7 +80,7 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertIsNotNone(credentials.access_token)
         self.assertIsNotNone(credentials.refresh_token)
         self.assertIsNotNone(credentials.expires_at)
-        self.assertEquals("bearer", credentials.token_type)
+        self.assertEqual("bearer", credentials.token_type)
 
     def test_revoke_access_token(self):
         code = TestHelper.create_grant(self.gateway, {
@@ -157,8 +157,8 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEqual(params["business[name]"], ["14 Ladders"])
         self.assertEqual(params["payment_methods[]"], ["credit_card", "paypal"])
 
-        self.assertEqual(len(params["signature"][0]), 64)
-        self.assertEqual(params["algorithm"], ["SHA256"])
+        self.assertEqual(64, len(params["signature"][0]))
+        self.assertEqual(["SHA256"], params["algorithm"])
 
     def test_connect_url_limits_payment_methods(self):
         connect_url = self.gateway.oauth.connect_url({
@@ -180,4 +180,4 @@ class TestOAuthGateway(unittest.TestCase):
         url = "http://localhost:3000/oauth/connect?business%5Bname%5D=We+Like+Spaces&client_id=client_id%24development%24integration_client_id"
 
         signature = self.gateway.oauth._compute_signature(url)
-        self.assertEqual(signature, "a36bcf10dd982e2e47e0d6a2cb930aea47ade73f954b7d59c58dae6167894d41")
+        self.assertEqual("a36bcf10dd982e2e47e0d6a2cb930aea47ade73f954b7d59c58dae6167894d41", signature)

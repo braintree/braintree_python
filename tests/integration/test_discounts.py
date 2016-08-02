@@ -24,12 +24,12 @@ class TestDiscounts(unittest.TestCase):
         else:
             discount = None
 
-        self.assertNotEquals(None, discount)
+        self.assertNotEqual(None, discount)
 
-        self.assertEquals(discount.amount, Decimal("100.00"))
-        self.assertEquals(discount.description, "some description")
-        self.assertEquals(discount.id, new_id)
-        self.assertEquals(discount.kind, "discount")
-        self.assertEquals(discount.name, "python_discount")
-        self.assertEquals(discount.never_expires, False)
-        self.assertEquals(discount.number_of_billing_cycles, 1)
+        self.assertEqual(Decimal("100.00"), discount.amount)
+        self.assertEqual("some description", discount.description)
+        self.assertEqual(new_id, discount.id)
+        self.assertEqual("discount", discount.kind)
+        self.assertEqual("python_discount", discount.name)
+        self.assertEqual(False, discount.never_expires)
+        self.assertEqual(1, discount.number_of_billing_cycles)

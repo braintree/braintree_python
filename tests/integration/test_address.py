@@ -21,19 +21,19 @@ class TestAddress(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         address = result.address
-        self.assertEquals(customer.id, address.customer_id)
-        self.assertEquals("Ben", address.first_name)
-        self.assertEquals("Moore", address.last_name)
-        self.assertEquals("Moore Co.", address.company)
-        self.assertEquals("1811 E Main St", address.street_address)
-        self.assertEquals("Suite 200", address.extended_address)
-        self.assertEquals("Chicago", address.locality)
-        self.assertEquals("Illinois", address.region)
-        self.assertEquals("60622", address.postal_code)
-        self.assertEquals("US", address.country_code_alpha2)
-        self.assertEquals("USA", address.country_code_alpha3)
-        self.assertEquals("840", address.country_code_numeric)
-        self.assertEquals("United States of America", address.country_name)
+        self.assertEqual(customer.id, address.customer_id)
+        self.assertEqual("Ben", address.first_name)
+        self.assertEqual("Moore", address.last_name)
+        self.assertEqual("Moore Co.", address.company)
+        self.assertEqual("1811 E Main St", address.street_address)
+        self.assertEqual("Suite 200", address.extended_address)
+        self.assertEqual("Chicago", address.locality)
+        self.assertEqual("Illinois", address.region)
+        self.assertEqual("60622", address.postal_code)
+        self.assertEqual("US", address.country_code_alpha2)
+        self.assertEqual("USA", address.country_code_alpha3)
+        self.assertEqual("840", address.country_code_numeric)
+        self.assertEqual("United States of America", address.country_name)
 
     def test_error_response_if_invalid(self):
         customer = Customer.create().customer
@@ -46,10 +46,22 @@ class TestAddress(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Address.CountryNameIsNotAccepted, result.errors.for_object("address").on("country_name")[0].code)
-        self.assertEquals(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, result.errors.for_object("address").on("country_code_alpha2")[0].code)
-        self.assertEquals(ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted, result.errors.for_object("address").on("country_code_alpha3")[0].code)
-        self.assertEquals(ErrorCodes.Address.CountryCodeNumericIsNotAccepted, result.errors.for_object("address").on("country_code_numeric")[0].code)
+
+        country_name_errors = result.errors.for_object("address").on("country_name")
+        self.assertEqual(1, len(country_name_errors))
+        self.assertEqual(ErrorCodes.Address.CountryNameIsNotAccepted, country_name_errors[0].code)
+
+        country_code_alpha2_errors = result.errors.for_object("address").on("country_code_alpha2")
+        self.assertEqual(1, len(country_code_alpha2_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_code_alpha2_errors[0].code)
+
+        country_code_alpha3_errors = result.errors.for_object("address").on("country_code_alpha3")
+        self.assertEqual(1, len(country_code_alpha3_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted, country_code_alpha3_errors[0].code)
+
+        country_code_numeric_errors = result.errors.for_object("address").on("country_code_numeric")
+        self.assertEqual(1, len(country_code_numeric_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeNumericIsNotAccepted, country_code_numeric_errors[0].code)
 
     def test_error_response_if_inconsistent_country(self):
         customer = Customer.create().customer
@@ -60,7 +72,10 @@ class TestAddress(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Address.InconsistentCountry, result.errors.for_object("address").on("base")[0].code)
+
+        address_errors = result.errors.for_object("address").on("base")
+        self.assertEqual(1, len(address_errors))
+        self.assertEqual(ErrorCodes.Address.InconsistentCountry, address_errors[0].code)
 
     def test_delete_with_valid_customer_id_and_address_id(self):
         customer = Customer.create().customer
@@ -79,7 +94,7 @@ class TestAddress(unittest.TestCase):
         address = Address.create({"customer_id": customer.id, "street_address": "123 Main St."}).address
         found_address = Address.find(customer.id, address.id)
 
-        self.assertEquals(address.street_address, found_address.street_address)
+        self.assertEqual(address.street_address, found_address.street_address)
 
     @raises_with_regexp(NotFoundError,
         "address for customer 'notreal' with id 'badaddress' not found")
@@ -112,16 +127,16 @@ class TestAddress(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         address = result.address
-        self.assertEquals(customer.id, address.customer_id)
-        self.assertEquals("123 E New St", address.street_address)
-        self.assertEquals("New Suite 3", address.extended_address)
-        self.assertEquals("Chicago", address.locality)
-        self.assertEquals("Illinois", address.region)
-        self.assertEquals("60621", address.postal_code)
-        self.assertEquals("MX", address.country_code_alpha2)
-        self.assertEquals("MEX", address.country_code_alpha3)
-        self.assertEquals("484", address.country_code_numeric)
-        self.assertEquals("Mexico", address.country_name)
+        self.assertEqual(customer.id, address.customer_id)
+        self.assertEqual("123 E New St", address.street_address)
+        self.assertEqual("New Suite 3", address.extended_address)
+        self.assertEqual("Chicago", address.locality)
+        self.assertEqual("Illinois", address.region)
+        self.assertEqual("60621", address.postal_code)
+        self.assertEqual("MX", address.country_code_alpha2)
+        self.assertEqual("MEX", address.country_code_alpha3)
+        self.assertEqual("484", address.country_code_numeric)
+        self.assertEqual("Mexico", address.country_name)
 
     def test_update_with_invalid_values(self):
         customer = Customer.create().customer
@@ -141,7 +156,10 @@ class TestAddress(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.Address.CountryNameIsNotAccepted, result.errors.for_object("address").on("country_name")[0].code)
+
+        country_name_errors = result.errors.for_object("address").on("country_name")
+        self.assertEqual(1, len(country_name_errors))
+        self.assertEqual(ErrorCodes.Address.CountryNameIsNotAccepted, country_name_errors[0].code)
 
     @raises(NotFoundError)
     def test_update_raises_not_found_error_if_given_bad_address(self):

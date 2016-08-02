@@ -7,14 +7,15 @@ class TestSettlementBatchSummary(unittest.TestCase):
         result = SettlementBatchSummary.generate('2011-01-01')
 
         self.assertTrue(result.is_success)
-        self.assertEquals([], result.settlement_batch_summary.records)
+        self.assertEqual([], result.settlement_batch_summary.records)
 
     def test_generate_returns_error_if_date_can_not_be_parsed(self):
         result = SettlementBatchSummary.generate('THIS AINT NO DATE')
-
         self.assertFalse(result.is_success)
-        code = result.errors.for_object('settlement_batch_summary').on('settlement_date')[0].code
-        self.assertEquals(ErrorCodes.SettlementBatchSummary.SettlementDateIsInvalid, code)
+
+        settlement_date_errors = result.errors.for_object('settlement_batch_summary').on('settlement_date')
+        self.assertEqual(1, len(settlement_date_errors))
+        self.assertEqual(ErrorCodes.SettlementBatchSummary.SettlementDateIsInvalid, settlement_date_errors[0].code)
 
     def test_generate_returns_transactions_settled_on_a_given_day(self):
         result = Transaction.sale({

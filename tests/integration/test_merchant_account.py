@@ -64,16 +64,16 @@ class TestMerchantAccount(unittest.TestCase):
         result = MerchantAccount.create(self.DEPRECATED_APPLICATION_PARAMS)
 
         self.assertTrue(result.is_success)
-        self.assertEquals(MerchantAccount.Status.Pending, result.merchant_account.status)
-        self.assertEquals("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
+        self.assertEqual(MerchantAccount.Status.Pending, result.merchant_account.status)
+        self.assertEqual("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
 
     def test_create_application_with_valid_params_and_no_id(self):
         customer = Customer.create().customer
         result = MerchantAccount.create(self.VALID_APPLICATION_PARAMS)
 
         self.assertTrue(result.is_success)
-        self.assertEquals(MerchantAccount.Status.Pending, result.merchant_account.status)
-        self.assertEquals("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
+        self.assertEqual(MerchantAccount.Status.Pending, result.merchant_account.status)
+        self.assertEqual("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
 
     def test_create_allows_an_id_to_pass(self):
         params_with_id = self.VALID_APPLICATION_PARAMS.copy()
@@ -82,14 +82,17 @@ class TestMerchantAccount(unittest.TestCase):
         result = MerchantAccount.create(params_with_id)
 
         self.assertTrue(result.is_success)
-        self.assertEquals(MerchantAccount.Status.Pending, result.merchant_account.status)
-        self.assertEquals(params_with_id['id'], result.merchant_account.id)
-        self.assertEquals("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
+        self.assertEqual(MerchantAccount.Status.Pending, result.merchant_account.status)
+        self.assertEqual(params_with_id['id'], result.merchant_account.id)
+        self.assertEqual("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
 
     def test_create_handles_unsuccessful_results(self):
         result = MerchantAccount.create({})
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.MerchantAccount.MasterMerchantAccountIdIsRequired, result.errors.for_object("merchant_account").on("master_merchant_account_id")[0].code)
+
+        merchant_account_id_errors = result.errors.for_object("merchant_account").on("master_merchant_account_id")
+        self.assertEqual(1, len(merchant_account_id_errors))
+        self.assertEqual(ErrorCodes.MerchantAccount.MasterMerchantAccountIdIsRequired, merchant_account_id_errors[0].code)
 
     def test_create_requires_all_fields(self):
         result = MerchantAccount.create(
@@ -98,7 +101,10 @@ class TestMerchantAccount(unittest.TestCase):
             "tos_accepted": True}
         )
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")[0].code)
+
+        first_name_errors = result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")
+        self.assertEqual(1, len(first_name_errors))
+        self.assertEqual(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, first_name_errors[0].code)
 
     def test_create_funding_destination_accepts_a_bank(self):
         params = self.VALID_APPLICATION_PARAMS.copy()
@@ -159,31 +165,31 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = MerchantAccount.update("sandbox_sub_merchant_account", UPDATE_PARAMS)
         self.assertTrue(result.is_success)
-        self.assertEquals(result.merchant_account.status, "active")
-        self.assertEquals(result.merchant_account.id, "sandbox_sub_merchant_account")
-        self.assertEquals(result.merchant_account.master_merchant_account.id, "sandbox_master_merchant_account")
-        self.assertEquals(result.merchant_account.individual_details.first_name, "John")
-        self.assertEquals(result.merchant_account.individual_details.last_name, "Doe")
-        self.assertEquals(result.merchant_account.individual_details.email, "john.doe@example.com")
-        self.assertEquals(result.merchant_account.individual_details.date_of_birth, "1970-01-01")
-        self.assertEquals(result.merchant_account.individual_details.phone, "3125551234")
-        self.assertEquals(result.merchant_account.individual_details.address_details.street_address, "123 Fake St")
-        self.assertEquals(result.merchant_account.individual_details.address_details.locality, "Chicago")
-        self.assertEquals(result.merchant_account.individual_details.address_details.region, "IL")
-        self.assertEquals(result.merchant_account.individual_details.address_details.postal_code, "60622")
-        self.assertEquals(result.merchant_account.business_details.dba_name, "James's Bloggs")
-        self.assertEquals(result.merchant_account.business_details.legal_name, "James's Junkyard")
-        self.assertEquals(result.merchant_account.business_details.tax_id, "987654321")
-        self.assertEquals(result.merchant_account.business_details.address_details.street_address, "456 Fake St")
-        self.assertEquals(result.merchant_account.business_details.address_details.postal_code, "48104")
-        self.assertEquals(result.merchant_account.business_details.address_details.locality, "Ann Arbor")
-        self.assertEquals(result.merchant_account.business_details.address_details.region, "MI")
-        self.assertEquals(result.merchant_account.funding_details.routing_number, "071000013")
-        self.assertEquals(result.merchant_account.funding_details.account_number_last_4, "6789")
-        self.assertEquals(result.merchant_account.funding_details.destination, MerchantAccount.FundingDestination.Email)
-        self.assertEquals(result.merchant_account.funding_details.email, "check@this.com")
-        self.assertEquals(result.merchant_account.funding_details.mobile_phone, "9998887777")
-        self.assertEquals(result.merchant_account.funding_details.descriptor, "Joes Bloggs MI")
+        self.assertEqual(result.merchant_account.status, "active")
+        self.assertEqual(result.merchant_account.id, "sandbox_sub_merchant_account")
+        self.assertEqual(result.merchant_account.master_merchant_account.id, "sandbox_master_merchant_account")
+        self.assertEqual(result.merchant_account.individual_details.first_name, "John")
+        self.assertEqual(result.merchant_account.individual_details.last_name, "Doe")
+        self.assertEqual(result.merchant_account.individual_details.email, "john.doe@example.com")
+        self.assertEqual(result.merchant_account.individual_details.date_of_birth, "1970-01-01")
+        self.assertEqual(result.merchant_account.individual_details.phone, "3125551234")
+        self.assertEqual(result.merchant_account.individual_details.address_details.street_address, "123 Fake St")
+        self.assertEqual(result.merchant_account.individual_details.address_details.locality, "Chicago")
+        self.assertEqual(result.merchant_account.individual_details.address_details.region, "IL")
+        self.assertEqual(result.merchant_account.individual_details.address_details.postal_code, "60622")
+        self.assertEqual(result.merchant_account.business_details.dba_name, "James's Bloggs")
+        self.assertEqual(result.merchant_account.business_details.legal_name, "James's Junkyard")
+        self.assertEqual(result.merchant_account.business_details.tax_id, "987654321")
+        self.assertEqual(result.merchant_account.business_details.address_details.street_address, "456 Fake St")
+        self.assertEqual(result.merchant_account.business_details.address_details.postal_code, "48104")
+        self.assertEqual(result.merchant_account.business_details.address_details.locality, "Ann Arbor")
+        self.assertEqual(result.merchant_account.business_details.address_details.region, "MI")
+        self.assertEqual(result.merchant_account.funding_details.routing_number, "071000013")
+        self.assertEqual(result.merchant_account.funding_details.account_number_last_4, "6789")
+        self.assertEqual(result.merchant_account.funding_details.destination, MerchantAccount.FundingDestination.Email)
+        self.assertEqual(result.merchant_account.funding_details.email, "check@this.com")
+        self.assertEqual(result.merchant_account.funding_details.mobile_phone, "9998887777")
+        self.assertEqual(result.merchant_account.funding_details.descriptor, "Joes Bloggs MI")
 
     def test_update_does_not_require_all_fields(self):
         result = MerchantAccount.update("sandbox_sub_merchant_account", { "individual": { "first_name": "Jose" } })
@@ -219,16 +225,25 @@ class TestMerchantAccount(unittest.TestCase):
         result = MerchantAccount.update("sandbox_sub_merchant_account", params)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("first_name")[0].code, ErrorCodes.MerchantAccount.Individual.FirstNameIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("last_name")[0].code, ErrorCodes.MerchantAccount.Individual.LastNameIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("date_of_birth")[0].code, ErrorCodes.MerchantAccount.Individual.DateOfBirthIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("email")[0].code, ErrorCodes.MerchantAccount.Individual.EmailAddressIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code, ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Individual.Address.PostalCodeIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("locality")[0].code, ErrorCodes.MerchantAccount.Individual.Address.LocalityIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Individual.Address.RegionIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("destination")[0].code, ErrorCodes.MerchantAccount.Funding.DestinationIsRequired)
-        self.assertEquals(len(result.errors.for_object("merchant_account").on("base")), 0)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("first_name")[0].code, ErrorCodes.MerchantAccount.Individual.FirstNameIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("last_name")[0].code, ErrorCodes.MerchantAccount.Individual.LastNameIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("date_of_birth")[0].code, ErrorCodes.MerchantAccount.Individual.DateOfBirthIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("email")[0].code, ErrorCodes.MerchantAccount.Individual.EmailAddressIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code, ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Individual.Address.PostalCodeIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("locality")[0].code, ErrorCodes.MerchantAccount.Individual.Address.LocalityIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Individual.Address.RegionIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("destination")[0].code, ErrorCodes.MerchantAccount.Funding.DestinationIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("first_name")[0].code, ErrorCodes.MerchantAccount.Individual.FirstNameIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("last_name")[0].code, ErrorCodes.MerchantAccount.Individual.LastNameIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("date_of_birth")[0].code, ErrorCodes.MerchantAccount.Individual.DateOfBirthIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("email")[0].code, ErrorCodes.MerchantAccount.Individual.EmailAddressIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code, ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Individual.Address.PostalCodeIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("locality")[0].code, ErrorCodes.MerchantAccount.Individual.Address.LocalityIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Individual.Address.RegionIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("destination")[0].code, ErrorCodes.MerchantAccount.Funding.DestinationIsRequired)
+        self.assertEqual(0, len(result.errors.for_object("merchant_account").on("base")))
 
     def test_update_handles_validation_errors_for_invalid_fields(self):
         params = {
@@ -267,29 +282,29 @@ class TestMerchantAccount(unittest.TestCase):
         result = MerchantAccount.update("sandbox_sub_merchant_account", params)
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("first_name")[0].code, ErrorCodes.MerchantAccount.Individual.FirstNameIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("last_name")[0].code, ErrorCodes.MerchantAccount.Individual.LastNameIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("email")[0].code, ErrorCodes.MerchantAccount.Individual.EmailAddressIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("phone")[0].code, ErrorCodes.MerchantAccount.Individual.PhoneIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code,  ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Individual.Address.PostalCodeIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Individual.Address.RegionIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("individual").on("ssn")[0].code, ErrorCodes.MerchantAccount.Individual.SsnIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("first_name")[0].code, ErrorCodes.MerchantAccount.Individual.FirstNameIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("last_name")[0].code, ErrorCodes.MerchantAccount.Individual.LastNameIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("email")[0].code, ErrorCodes.MerchantAccount.Individual.EmailAddressIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("phone")[0].code, ErrorCodes.MerchantAccount.Individual.PhoneIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code,  ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Individual.Address.PostalCodeIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Individual.Address.RegionIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("ssn")[0].code, ErrorCodes.MerchantAccount.Individual.SsnIsInvalid)
 
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").on("legal_name")[0].code, ErrorCodes.MerchantAccount.Business.LegalNameIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").on("dba_name")[0].code, ErrorCodes.MerchantAccount.Business.DbaNameIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("street_address")[0].code,  ErrorCodes.MerchantAccount.Business.Address.StreetAddressIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Business.Address.PostalCodeIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Business.Address.RegionIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("legal_name")[0].code, ErrorCodes.MerchantAccount.Business.LegalNameIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("dba_name")[0].code, ErrorCodes.MerchantAccount.Business.DbaNameIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("street_address")[0].code,  ErrorCodes.MerchantAccount.Business.Address.StreetAddressIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Business.Address.PostalCodeIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Business.Address.RegionIsInvalid)
 
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("destination")[0].code, ErrorCodes.MerchantAccount.Funding.DestinationIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("routing_number")[0].code, ErrorCodes.MerchantAccount.Funding.RoutingNumberIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("account_number")[0].code, ErrorCodes.MerchantAccount.Funding.AccountNumberIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("email")[0].code, ErrorCodes.MerchantAccount.Funding.EmailAddressIsInvalid)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("mobile_phone")[0].code, ErrorCodes.MerchantAccount.Funding.MobilePhoneIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("destination")[0].code, ErrorCodes.MerchantAccount.Funding.DestinationIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("routing_number")[0].code, ErrorCodes.MerchantAccount.Funding.RoutingNumberIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("account_number")[0].code, ErrorCodes.MerchantAccount.Funding.AccountNumberIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("email")[0].code, ErrorCodes.MerchantAccount.Funding.EmailAddressIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("mobile_phone")[0].code, ErrorCodes.MerchantAccount.Funding.MobilePhoneIsInvalid)
 
-        self.assertEquals(len(result.errors.for_object("merchant_account").on("base")), 0)
+        self.assertEqual(0, len(result.errors.for_object("merchant_account").on("base")))
 
     def test_update_handles_validation_errors_for_business_fields(self):
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
@@ -301,8 +316,8 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").on("legal_name")[0].code, ErrorCodes.MerchantAccount.Business.LegalNameIsRequiredWithTaxId)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdMustBeBlank)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("legal_name")[0].code, ErrorCodes.MerchantAccount.Business.LegalNameIsRequiredWithTaxId)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdMustBeBlank)
 
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
             "business": {
@@ -313,7 +328,7 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdIsRequiredWithLegalName)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdIsRequiredWithLegalName)
 
     def test_update_handles_validation_errors_for_funding_fields(self):
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
@@ -326,8 +341,8 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("routing_number")[0].code, ErrorCodes.MerchantAccount.Funding.RoutingNumberIsRequired)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("account_number")[0].code, ErrorCodes.MerchantAccount.Funding.AccountNumberIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("routing_number")[0].code, ErrorCodes.MerchantAccount.Funding.RoutingNumberIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("account_number")[0].code, ErrorCodes.MerchantAccount.Funding.AccountNumberIsRequired)
 
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
             "funding": {
@@ -338,7 +353,7 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("email")[0].code, ErrorCodes.MerchantAccount.Funding.EmailAddressIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("email")[0].code, ErrorCodes.MerchantAccount.Funding.EmailAddressIsRequired)
 
         result = MerchantAccount.update("sandbox_sub_merchant_account", {
             "funding": {
@@ -349,7 +364,7 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.errors.for_object("merchant_account").for_object("funding").on("mobile_phone")[0].code, ErrorCodes.MerchantAccount.Funding.MobilePhoneIsRequired)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("funding").on("mobile_phone")[0].code, ErrorCodes.MerchantAccount.Funding.MobilePhoneIsRequired)
 
     def test_find(self):
         result = MerchantAccount.create(self.VALID_APPLICATION_PARAMS)
