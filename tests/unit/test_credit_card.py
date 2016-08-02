@@ -1,6 +1,5 @@
 from tests.test_helper import *
 import datetime
-import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCreditCard(unittest.TestCase):
     @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")

@@ -1,5 +1,4 @@
 from tests.test_helper import *
-import base64
 import json
 import urllib
 import datetime
@@ -30,7 +29,7 @@ class TestClientToken(unittest.TestCase):
             "shared_customer_identifier_type": "testing"
         })
 
-        status_code, response = http.get_cards()
+        status_code, _ = http.get_cards()
         self.assertEqual(200, status_code)
 
     def test_client_token_version_defaults_to_two(self):
@@ -57,7 +56,7 @@ class TestClientToken(unittest.TestCase):
             "shared_customer_identifier_type": "testing"
         })
 
-        status_code, response = http.add_card({
+        status_code, _ = http.add_card({
             "credit_card": {
                 "number": "4000111111111115",
                 "expiration_month": "11",
@@ -84,7 +83,7 @@ class TestClientToken(unittest.TestCase):
             "shared_customer_identifier_type": "testing"
         })
 
-        status_code, response = http.add_card({
+        status_code, _ = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -93,7 +92,7 @@ class TestClientToken(unittest.TestCase):
         })
         self.assertEqual(201, status_code)
 
-        status_code, response = http.add_card({
+        status_code, _ = http.add_card({
             "credit_card": {
                 "number": "4005519200000004",
                 "expiration_month": "11",
@@ -123,7 +122,7 @@ class TestClientToken(unittest.TestCase):
             "shared_customer_identifier_type": "testing"
         })
 
-        status_code, response = http.add_card({
+        status_code, _ = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -140,7 +139,7 @@ class TestClientToken(unittest.TestCase):
         })
         authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
         http.set_authorization_fingerprint(authorization_fingerprint)
-        status_code, response = http.add_card({
+        status_code, _ = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -172,11 +171,8 @@ class TestClientToken(unittest.TestCase):
 
         self.assertEqual("my_merchant_account", merchant_account_id)
 
+    @raises_with_regexp(Exception, "'Invalid keys: merchant_id'")
     def test_required_data_cannot_be_overridden(self):
-        try:
-            client_token = TestHelper.generate_decoded_client_token({
-                "merchant_id": "1234"
-            })
-            self.fail("Should have raised exception!")
-        except Exception as e:
-            self.assertEqual("'Invalid keys: merchant_id'", str(e))
+        TestHelper.generate_decoded_client_token({
+            "merchant_id": "1234"
+        })

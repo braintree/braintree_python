@@ -12,8 +12,8 @@ class TestResourceCollection(unittest.TestCase):
         items = ["a", "b", "c", "d", "e"]
 
         @staticmethod
-        def fetch(query, ids):
-            return [TestResourceCollection.TestResource.items[int(id)] for id in ids]
+        def fetch(_, ids):
+            return [TestResourceCollection.TestResource.items[int(resource_id)] for resource_id in ids]
 
     def test_iterating_over_contents(self):
         collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
@@ -47,5 +47,5 @@ class TestResourceCollection(unittest.TestCase):
 
     @raises_with_regexp(UnexpectedError, "Unprocessable entity due to an invalid request")
     def test_no_search_results(self):
-        bad_collection_data = { }
-        collection = ResourceCollection("some_query", bad_collection_data, TestResourceCollection.TestResource.fetch)
+        bad_collection_data = {}
+        ResourceCollection("some_query", bad_collection_data, TestResourceCollection.TestResource.fetch)

@@ -14,4 +14,3 @@ class TestThreeDSecureInfo(unittest.TestCase):
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
-

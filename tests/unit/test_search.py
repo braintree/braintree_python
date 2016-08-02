@@ -109,7 +109,7 @@ class TestSearch(unittest.TestCase):
 
     def test_key_value_node_is_eq(self):
         node = Search.KeyValueNodeBuilder("name")
-        self.assertEqual(True, (node == True).to_param())
+        self.assertTrue((node == True).to_param())
 
     def test_key_value_node_is_equal(self):
         node = Search.KeyValueNodeBuilder("name")
@@ -122,4 +122,3 @@ class TestSearch(unittest.TestCase):
     def test_key_value_node_is_not_equal(self):
         node = Search.KeyValueNodeBuilder("name")
         self.assertEqual(False, (node != True).to_param())
-

@@ -32,7 +32,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", customer.id))
 
     def test_create_with_device_session_id_and_fraud_merchant_id(self):
         result = Customer.create({
@@ -75,9 +75,9 @@ class TestCustomer(unittest.TestCase):
 
     def test_create_using_access_token(self):
         gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret",
+            environment=Environment.Development
         )
 
         code = TestHelper.create_grant(gateway, {
@@ -90,8 +90,8 @@ class TestCustomer(unittest.TestCase):
         })
 
         gateway = BraintreeGateway(
-            access_token = result.credentials.access_token,
-            environment = Environment.Development
+            access_token=result.credentials.access_token,
+            environment=Environment.Development
         )
 
         result = gateway.customer.create({
@@ -126,7 +126,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", customer.id))
 
         found_customer = Customer.find(customer.id)
         self.assertEqual(u"G\u1f00t\u1F18s", found_customer.last_name)
@@ -180,7 +180,6 @@ class TestCustomer(unittest.TestCase):
         self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
 
     def test_create_with_paypal_one_time_nonce_fails(self):
-        http = ClientApiHttp.create()
         result = Customer.create({"payment_method_nonce": Nonces.PayPalOneTimePayment})
         self.assertFalse(result.is_success)
 
@@ -419,7 +418,7 @@ class TestCustomer(unittest.TestCase):
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
         })
-        status_code, response = http.add_card({
+        _, response = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -497,7 +496,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
-        self.assertNotEqual(None, re.search("\A\d{6,}\Z", customer.id))
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", customer.id))
 
     def test_update_with_default_payment_method(self):
         customer = Customer.create({
@@ -524,7 +523,7 @@ class TestCustomer(unittest.TestCase):
             "token": token2
         }).payment_method
 
-        result = Customer.update(customer.id, {
+        Customer.update(customer.id, {
             "default_payment_method_token": payment_method2.token
         })
 
@@ -690,8 +689,6 @@ class TestCustomer(unittest.TestCase):
                 }
             }
         }).customer
-        credit_card = customer.credit_cards[0]
-        address = credit_card.billing_address
 
         result = Customer.update(customer.id, {
             "credit_card": {
@@ -861,15 +858,14 @@ class TestCustomer(unittest.TestCase):
 
     def test_customer_payment_methods(self):
         customer = Customer("gateway", {
-            "credit_cards": [ {"token": "credit_card"} ],
-            "paypal_accounts": [ {"token": "paypal_account"} ],
-            "apple_pay_cards": [ {"token": "apple_pay_card"} ],
-            "android_pay_cards": [ {"token": "android_pay_card"} ],
-            "europe_bank_accounts": [ {"token": "europe_bank_account"} ],
-            "coinbase_accounts": [ {"token": "coinbase_account"} ]
+            "credit_cards": [{"token": "credit_card"}],
+            "paypal_accounts": [{"token": "paypal_account"}],
+            "apple_pay_cards": [{"token": "apple_pay_card"}],
+            "android_pay_cards": [{"token": "android_pay_card"}],
+            "europe_bank_accounts": [{"token": "europe_bank_account"}],
+            "coinbase_accounts": [{"token": "coinbase_account"}]
             })
 
-        payment_method_tokens = map(lambda payment_method: payment_method.token, customer.payment_methods)
+        payment_method_tokens = [ pm.token for pm in customer.payment_methods ]
 
         self.assertEqual(sorted(payment_method_tokens), ["android_pay_card", "apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
-

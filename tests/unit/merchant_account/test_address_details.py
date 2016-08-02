@@ -10,7 +10,7 @@ class TestAddressDetails(unittest.TestCase):
             "postal_code": "89913"
         })
 
-        regex = "<AddressDetails {street_address: '123 First St', locality: 'NV', region: 'Las Vegas', postal_code: '89913'} at \w+>"
+        regex = r"<AddressDetails {street_address: '123 First St', locality: 'NV', region: 'Las Vegas', postal_code: '89913'} at \w+>"
 
         matches = re.match(regex, repr(details))
         self.assertTrue(matches)

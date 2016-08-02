@@ -10,7 +10,8 @@ class TestHttp(unittest.TestCase):
     else:
         SSLError = requests.models.SSLError
 
-    def get_http(self, environment):
+    @staticmethod
+    def get_http(environment):
         config = Configuration(environment, "merchant_id", public_key="public_key", private_key="private_key")
         return config.http()
 
@@ -39,7 +40,7 @@ class TestHttp(unittest.TestCase):
             gateway.transaction.find("my_id")
         except braintree.exceptions.unexpected_error.UnexpectedError:
             correct_exception = True
-        except Exception as e:
+        except Exception:
             correct_exception = False
 
         self.assertTrue(correct_exception)
@@ -65,7 +66,7 @@ class TestHttp(unittest.TestCase):
         http = self.get_http(environment)
         try:
             http.get("/")
-        except self.SSLError as e:
+        except self.SSLError:
             pass
         else:
             self.fail("Expected to receive an SSL error but no exception was raised")
@@ -86,7 +87,7 @@ class TestHttp(unittest.TestCase):
             gateway.transaction.find("my_id")
         except braintree.exceptions.http.timeout_error.TimeoutError:
             correct_exception = True
-        except Exception as e:
+        except Exception:
             correct_exception = False
 
         self.assertTrue(correct_exception)

@@ -4,14 +4,14 @@ from braintree.test.nonces import Nonces
 class TestMerchantGateway(unittest.TestCase):
     def setUp(self):
         self.gateway = BraintreeGateway(
-            client_id = "client_id$development$signup_client_id",
-            client_secret = "client_secret$development$signup_client_secret"
+            client_id="client_id$development$signup_client_id",
+            client_secret="client_secret$development$signup_client_secret"
         )
 
     def test_create_merchant(self):
         gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret"
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
         )
 
         result = gateway.merchant.create({
@@ -37,8 +37,8 @@ class TestMerchantGateway(unittest.TestCase):
 
     def test_returns_error_with_invalid_payment_methods(self):
         gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret"
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
         )
 
         result = gateway.merchant.create({
@@ -160,8 +160,8 @@ class TestMerchantGateway(unittest.TestCase):
 
     def test_create_multi_currency_merchant_ignores_currencies_if_onboarding_application_not_internal(self):
         gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret"
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
         )
 
         result = gateway.merchant.create({

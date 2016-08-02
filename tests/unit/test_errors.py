@@ -12,14 +12,14 @@ class TestErrors(unittest.TestCase):
         self.assertEqual(0, len(errors.for_object("no_errors_here")))
 
     def test_size_returns_number_of_errors_at_first_level_if_only_one_level_exists(self):
-        hash = {
+        test_hash = {
             "level1": {"errors": [{"code": "code1", "attribute": "attr", "message": "message"}]}
         }
-        self.assertEqual(1, Errors(hash).size)
-        self.assertEqual(1, len(Errors(hash)))
+        self.assertEqual(1, Errors(test_hash).size)
+        self.assertEqual(1, len(Errors(test_hash)))
 
     def test_size_returns_number_of_errors_at_all_levels(self):
-        hash = {
+        test_hash = {
             "level1": {
                 "errors": [{"code": "code1", "attribute": "attr", "message": "message"}],
                 "level2": {
@@ -30,11 +30,11 @@ class TestErrors(unittest.TestCase):
                 }
             }
         }
-        self.assertEqual(3, Errors(hash).size)
-        self.assertEqual(3, len(Errors(hash)))
+        self.assertEqual(3, Errors(test_hash).size)
+        self.assertEqual(3, len(Errors(test_hash)))
 
     def test_deep_errors_returns_all_errors(self):
-        hash = {
+        test_hash = {
             "level1": {
                 "errors": [{"code": "code1", "attribute": "attr", "message": "message"}],
                 "level2": {
@@ -46,6 +46,5 @@ class TestErrors(unittest.TestCase):
             }
         }
 
-        errors = Errors(hash).deep_errors
+        errors = Errors(test_hash).deep_errors
         self.assertEqual(["code1", "code2", "code3"], [error.code for error in errors])
-

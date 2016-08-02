@@ -55,4 +55,3 @@ class TestEnvironment(unittest.TestCase):
 
     def test_ssl_certificate_for_development(self):
         self.assertEqual(None, Environment.Development.ssl_certificate)
-

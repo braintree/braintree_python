@@ -26,4 +26,3 @@ class TestTestHelper(unittest.TestCase):
     def test_settlement_decline_transaction(self):
         TestHelper.settlement_decline_transaction(self.transaction.id)
         self.assertEqual(Transaction.Status.SettlementDeclined, Transaction.find(self.transaction.id).status)
-

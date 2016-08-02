@@ -74,4 +74,3 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, found_verifications.first.credit_card['durbin_regulated'])
         self.assertEqual(CreditCard.CardTypeIndicator.Unknown, found_verifications.first.credit_card['issuing_bank'])
         self.assertEqual(CreditCard.CardTypeIndicator.Unknown, found_verifications.first.credit_card['country_of_issuance'])
-

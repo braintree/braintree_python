@@ -16,7 +16,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
+        self.assertTrue(re.search(r"\A\w{4,}\Z", credit_card.token) is not None)
         self.assertEqual("411111", credit_card.bin)
         self.assertEqual("1111", credit_card.last_4)
         self.assertEqual("05", credit_card.expiration_month)
@@ -418,7 +418,7 @@ class TestCreditCard(unittest.TestCase):
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
         })
-        status_code, response = http.add_card({
+        _, response = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -486,7 +486,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
+        self.assertTrue(re.search(r"\A\w{4,}\Z", credit_card.token) is not None)
         self.assertEqual("510510", credit_card.bin)
         self.assertEqual("5100", credit_card.last_4)
         self.assertEqual("06", credit_card.expiration_month)
@@ -567,7 +567,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(card1.default)
         self.assertFalse(card2.default)
 
-        result = CreditCard.update(card2.token, {
+        CreditCard.update(card2.token, {
             "options": {
                 "make_default": True
             }
@@ -694,7 +694,7 @@ class TestCreditCard(unittest.TestCase):
 
     @raises(NotFoundError)
     def test_delete_with_invalid_token(self):
-        result = CreditCard.delete("notreal")
+        CreditCard.delete("notreal")
 
     def test_find_with_valid_token(self):
         customer = Customer.create().customer
@@ -705,12 +705,12 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         found_credit_card = CreditCard.find(credit_card.token)
-        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
-        self.assertEqual("411111", credit_card.bin)
-        self.assertEqual("1111", credit_card.last_4)
-        self.assertEqual("05", credit_card.expiration_month)
-        self.assertEqual("2014", credit_card.expiration_year)
-        self.assertEqual("05/2014", credit_card.expiration_date)
+        self.assertTrue(re.search(r"\A\w{4,}\Z", found_credit_card.token) is not None)
+        self.assertEqual("411111", found_credit_card.bin)
+        self.assertEqual("1111", found_credit_card.last_4)
+        self.assertEqual("05", found_credit_card.expiration_month)
+        self.assertEqual("2014", found_credit_card.expiration_year)
+        self.assertEqual("05/2014", found_credit_card.expiration_date)
 
     def test_find_returns_associated_subsriptions(self):
         customer = Customer.create().customer
@@ -719,9 +719,9 @@ class TestCreditCard(unittest.TestCase):
             "number": "4111111111111111",
             "expiration_date": "05/2014"
         }).credit_card
-        id = "id_" + str(random.randint(1, 1000000))
+        subscription_id = "id_" + str(random.randint(1, 1000000))
         subscription = Subscription.create({
-            "id": id,
+            "id": subscription_id,
             "plan_id": "integration_trialless_plan",
             "payment_method_token": credit_card.token,
             "price": Decimal("1.00")
@@ -733,7 +733,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(1, len(subscriptions))
         subscription = subscriptions[0]
 
-        self.assertEqual(id, subscription.id)
+        self.assertEqual(subscription_id, subscription.id)
         self.assertEqual(Decimal("1.00"), subscription.price)
         self.assertEqual(credit_card.token, subscription.payment_method_token)
 
@@ -984,7 +984,7 @@ class TestCreditCard(unittest.TestCase):
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
-        result = CreditCard.confirm_transparent_redirect(query_string)
+        CreditCard.confirm_transparent_redirect(query_string)
 
         self.assertFalse(CreditCard.find(card1.token).default)
         self.assertTrue(CreditCard.find(card2.token).default)
@@ -1024,7 +1024,8 @@ class TestCreditCard(unittest.TestCase):
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
-        result = CreditCard.confirm_transparent_redirect(query_string)
+
+        CreditCard.confirm_transparent_redirect(query_string)
 
         self.assertEqual(1, len(Customer.find(customer.id).addresses))
         updated_card = CreditCard.find(card.token)
@@ -1035,14 +1036,14 @@ class TestCreditCard(unittest.TestCase):
 
     def test_update_from_transparent_redirect_with_error_result(self):
         old_token = str(random.randint(1, 1000000))
-        credit_card = Customer.create({
+        Customer.create({
             "credit_card": {
                 "cardholder_name": "Old Cardholder Name",
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "token": old_token
             }
-        }).customer.credit_cards[0]
+        })
 
         tr_data = {
             "payment_method_token": old_token,
@@ -1068,7 +1069,7 @@ class TestCreditCard(unittest.TestCase):
     def test_expired_can_iterate_over_all_items(self):
         customer_id = Customer.all().first.id
 
-        for i in range(110 - CreditCard.expired().maximum_size):
+        for _ in range(110 - CreditCard.expired().maximum_size):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",
@@ -1088,7 +1089,7 @@ class TestCreditCard(unittest.TestCase):
     def test_expiring_between(self):
         customer_id = Customer.all().first.id
 
-        for i in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
+        for _ in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",

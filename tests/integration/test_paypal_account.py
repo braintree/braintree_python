@@ -1,7 +1,6 @@
 from tests.test_helper import *
 import time
 from braintree.test.nonces import Nonces
-import braintree.test.venmo_sdk as venmo_sdk
 
 class TestPayPalAccount(unittest.TestCase):
     def test_find_returns_paypal_account(self):
@@ -64,7 +63,6 @@ class TestPayPalAccount(unittest.TestCase):
 
     def test_find_retuns_billing_agreement_id_with_a_paypal_account(self):
         customer_id = Customer.create().customer.id
-        payment_method_token = "paypal-account-" + str(int(time.time()))
 
         result = PaymentMethod.create({
             "payment_method_nonce": Nonces.PayPalBillingAgreement,
@@ -103,11 +101,11 @@ class TestPayPalAccount(unittest.TestCase):
     def test_update_can_update_token_and_default(self):
         customer_id = Customer.create().customer.id
 
-        credit_card = CreditCard.create({
+        CreditCard.create({
             "customer_id": customer_id,
             "number": "4111111111111111",
             "expiration_date": "12/2099"
-        }).credit_card
+        })
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
@@ -129,12 +127,12 @@ class TestPayPalAccount(unittest.TestCase):
     def test_update_returns_validation_errors(self):
         payment_method_token = "payment-token-%s" % int(round(time.time() * 1000))
         customer_id = Customer.create().customer.id
-        credit_card = CreditCard.create({
+        CreditCard.create({
             "token": payment_method_token,
             "customer_id": customer_id,
             "number": "4111111111111111",
             "expiration_date": "12/2099"
-        }).credit_card
+        })
 
         result = PaymentMethod.create({
             "customer_id": customer_id,

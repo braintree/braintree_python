@@ -33,7 +33,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
+        self.assertNotEqual(None, re.search(r"\A\w{6,}\Z", transaction.id))
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEqual("411111", transaction.credit_card_details.bin)
@@ -52,7 +52,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\w{6,}\Z", transaction.id))
+        self.assertNotEqual(None, re.search(r"\A\w{6,}\Z", transaction.id))
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertEqual("411111", transaction.credit_card_details.bin)
@@ -328,7 +328,6 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        transaction = result.transaction
 
     def test_sale_with_billing_address_id(self):
         result = Customer.create({
@@ -451,13 +450,13 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
-        self.assertEqual("2000 : Do Not Honor", transaction.additional_processor_response);
+        self.assertEqual("2000 : Do Not Honor", transaction.additional_processor_response)
 
     def test_sale_with_gateway_rejected_with_incomplete_application(self):
         gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret",
+            environment=Environment.Development
         )
 
         result = gateway.merchant.create({
@@ -467,8 +466,8 @@ class TestTransaction(unittest.TestCase):
         })
 
         gateway = BraintreeGateway(
-            access_token = result.credentials.access_token,
-            environment = Environment.Development
+            access_token=result.credentials.access_token,
+            environment=Environment.Development
         )
 
         result = gateway.transaction.sale({
@@ -783,7 +782,7 @@ class TestTransaction(unittest.TestCase):
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
         })
-        status_code, response = http.add_card({
+        _, response = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -994,9 +993,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEqual(transaction.customer_details.id, transaction.vault_customer.id)
-        self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
+        self.assertNotEqual(None, re.search(r"\A\w{4,}\Z", transaction.credit_card_details.token))
         self.assertEqual(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_can_store_customer_and_credit_card_in_the_vault_on_success(self):
@@ -1017,9 +1016,9 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertNotEqual(None, re.search("\A\d{6,}\Z", transaction.customer_details.id))
+        self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", transaction.customer_details.id))
         self.assertEqual(transaction.customer_details.id, transaction.vault_customer.id)
-        self.assertNotEqual(None, re.search("\A\w{4,}\Z", transaction.credit_card_details.token))
+        self.assertNotEqual(None, re.search(r"\A\w{4,}\Z", transaction.credit_card_details.token))
         self.assertEqual(transaction.credit_card_details.token, transaction.vault_credit_card.token)
 
     def test_create_does_not_store_customer_and_credit_card_in_the_vault_on_failure(self):
@@ -1541,7 +1540,7 @@ class TestTransaction(unittest.TestCase):
 
         query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
         try:
-            result = Transaction.confirm_transparent_redirect(query_string)
+            Transaction.confirm_transparent_redirect(query_string)
             self.fail()
         except AuthorizationError as e:
             self.assertEqual("Invalid params: transaction[bad]", str(e))
@@ -2020,7 +2019,8 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
-    def __create_transaction_to_refund(self):
+    @staticmethod
+    def __create_transaction_to_refund():
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -2035,7 +2035,8 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
         return transaction
 
-    def __create_paypal_transaction(self):
+    @staticmethod
+    def __create_paypal_transaction():
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "payment_method_nonce": Nonces.PayPalOneTimePayment,
@@ -2046,7 +2047,8 @@ class TestTransaction(unittest.TestCase):
 
         return transaction
 
-    def __create_escrowed_transaction(self):
+    @staticmethod
+    def __create_escrowed_transaction():
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -2153,7 +2155,6 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        transaction = result.transaction
 
     def test_transactions_return_validation_errors_on_lodging_industry_data(self):
         result = Transaction.sale({
@@ -2199,7 +2200,6 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        transaction = result.transaction
 
     def test_transactions_return_validation_errors_on_travel_cruise_industry_data(self):
         result = Transaction.sale({
@@ -2260,7 +2260,6 @@ class TestTransaction(unittest.TestCase):
             }
         })
         self.assertFalse(result.is_success)
-        transaction = result.transaction
         self.assertEqual(
             ErrorCodes.Descriptor.NameFormatIsInvalid,
             result.errors.for_object("transaction").for_object("descriptor").on("name")[0].code
@@ -2767,8 +2766,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
@@ -2785,8 +2784,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.payee_email, "payee@example.com")
@@ -2805,8 +2804,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.payee_email, "payee@example.com")
@@ -2827,8 +2826,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.payee_email, "foo@paypal.com")
@@ -2849,8 +2848,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.custom_field, "custom field stuff")
@@ -2889,8 +2888,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.description, "Product description")
@@ -2930,8 +2929,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search('PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search('SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_validation_failure_on_invalid_paypal_nonce(self):
@@ -3134,7 +3133,7 @@ class TestTransaction(unittest.TestCase):
             token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
-            client_api =  ClientApiHttp(config, {
+            client_api = ClientApiHttp(config, {
                 "authorization_fingerprint": authorization_fingerprint,
                 "shared_customer_identifier": "fake_identifier",
                 "shared_customer_identifier_type": "testing"
@@ -3227,7 +3226,7 @@ class TestTransaction(unittest.TestCase):
         partial_settlement_transaction = partial_settlement_result.transaction
         self.assertTrue(partial_settlement_result.is_success)
         self.assertEqual(partial_settlement_transaction.amount, Decimal("500.00"))
-        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction.type);
+        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction.type)
         self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction.status)
         self.assertEqual(authorized_transaction.id, partial_settlement_transaction.authorized_transaction_id)
 
@@ -3235,7 +3234,7 @@ class TestTransaction(unittest.TestCase):
         partial_settlement_transaction_2 = partial_settlement_result_2.transaction
         self.assertTrue(partial_settlement_result_2.is_success)
         self.assertEqual(partial_settlement_transaction_2.amount, Decimal("500.00"))
-        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction_2.type);
+        self.assertEqual(Transaction.Type.Sale, partial_settlement_transaction_2.type)
         self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction_2.status)
         self.assertEqual(authorized_transaction.id, partial_settlement_transaction_2.authorized_transaction_id)
 
@@ -3336,10 +3335,10 @@ class TestTransaction(unittest.TestCase):
 
     def test_shared_vault_transaction(self):
         config = Configuration(
-            merchant_id = "integration_merchant_public_id",
-            public_key = "oauth_app_partner_user_public_key",
-            private_key = "oauth_app_partner_user_private_key",
-            environment = Environment.Development
+            merchant_id="integration_merchant_public_id",
+            public_key="oauth_app_partner_user_public_key",
+            private_key="oauth_app_partner_user_private_key",
+            environment=Environment.Development
         )
 
         gateway = BraintreeGateway(config)
@@ -3350,7 +3349,7 @@ class TestTransaction(unittest.TestCase):
         }).address
 
         credit_card = gateway.credit_card.create(
-            params = {
+            params={
                 "customer_id": customer.id,
                 "number": "4111111111111111",
                 "expiration_date": "05/2009",
@@ -3358,9 +3357,9 @@ class TestTransaction(unittest.TestCase):
         ).credit_card
 
         oauth_app_gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret",
+            environment=Environment.Development
         )
         code = TestHelper.create_grant(oauth_app_gateway, {
             "merchant_public_id": "integration_merchant_id",
@@ -3371,7 +3370,7 @@ class TestTransaction(unittest.TestCase):
         }).credentials.access_token
 
         granting_gateway = BraintreeGateway(
-            access_token = access_token,
+            access_token=access_token,
         )
 
         result = granting_gateway.transaction.sale({

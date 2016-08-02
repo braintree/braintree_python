@@ -119,7 +119,7 @@ class TestPaymentMethod(unittest.TestCase):
         customer_id = Customer.create().customer.id
         token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
         authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-        client_api =  ClientApiHttp(config, {
+        client_api = ClientApiHttp(config, {
             "authorization_fingerprint": authorization_fingerprint,
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
@@ -563,7 +563,6 @@ class TestPaymentMethod(unittest.TestCase):
             "cardholder_name": "John Doe"
         })
         self.assertTrue(result.is_success)
-        credit_card = result.credit_card
 
         found_credit_card = PaymentMethod.find(result.credit_card.token)
         self.assertNotEqual(None, found_credit_card)
@@ -794,7 +793,7 @@ class TestPaymentMethod(unittest.TestCase):
             }
         })
         update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
-            "options": { "verify_card": "false" },
+            "options": {"verify_card": "false"},
             "billing_address": {
                 "first_name": "New First Name",
                 "last_name": "New Last Name",
@@ -851,15 +850,15 @@ class TestPaymentMethod(unittest.TestCase):
             "expiration_date": "05/2009"
         }).credit_card
 
-        self.assertTrue(card1.default == True)
-        self.assertTrue(card2.default == False)
+        self.assertTrue(card1.default)
+        self.assertFalse(card2.default)
 
-        update_result = PaymentMethod.update(card2.token, {
-            "options": { "make_default": True }
+        PaymentMethod.update(card2.token, {
+            "options": {"make_default": True}
         })
 
-        self.assertTrue(CreditCard.find(card1.token).default == False)
-        self.assertTrue(CreditCard.find(card2.token).default == True)
+        self.assertFalse(CreditCard.find(card1.token).default)
+        self.assertTrue(CreditCard.find(card2.token).default)
 
     def test_update_updates_a_paypal_accounts_token(self):
         customer_id = Customer.create().customer.id
@@ -873,8 +872,8 @@ class TestPaymentMethod(unittest.TestCase):
              "customer_id": customer_id
         })
 
-        updated_token = "UPDATED_TOKEN-" + str(randint(0,100000000))
-        updated_result = PaymentMethod.update(
+        updated_token = "UPDATED_TOKEN-" + str(randint(0, 100000000))
+        PaymentMethod.update(
             original_token,
             {"token": updated_token}
         )
@@ -901,24 +900,24 @@ class TestPaymentMethod(unittest.TestCase):
              "customer_id": customer_id
         }).payment_method.token
 
-        updated_result = PaymentMethod.update(
+        PaymentMethod.update(
             original_token,
             {"options": {"make_default": "true"}}
         )
 
         updated_paypal_account = PayPalAccount.find(original_token)
-        self.assertTrue(updated_paypal_account.default == True)
+        self.assertTrue(updated_paypal_account.default)
 
     def test_update_updates_a_paypal_accounts_token(self):
         customer_id = Customer.create().customer.id
-        first_token = "paypal-account-" + str(randint(0,100000000))
-        second_token = "paypal-account-" + str(randint(0,100000000))
+        first_token = "paypal-account-" + str(randint(0, 100000000))
+        second_token = "paypal-account-" + str(randint(0, 100000000))
 
         first_nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",
             "token": first_token
         })
-        first_result = PaymentMethod.create({
+        PaymentMethod.create({
              "payment_method_nonce": first_nonce,
              "customer_id": customer_id
         })
@@ -927,7 +926,7 @@ class TestPaymentMethod(unittest.TestCase):
             "consent_code": "consent-code",
             "token": second_token
         })
-        second_result = PaymentMethod.create({
+        PaymentMethod.create({
              "payment_method_nonce": second_nonce,
              "customer_id": customer_id
         })
@@ -944,7 +943,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual("92906", errors[0].code)
 
     def test_payment_method_grant_raises_on_non_existent_tokens(self):
-        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        granting_gateway, _ = TestHelper.create_payment_method_grant_fixtures()
         self.assertRaises(NotFoundError, granting_gateway.payment_method.grant, "non-existant-token", False)
 
     def test_payment_method_grant_returns_one_time_nonce(self):
@@ -1002,7 +1001,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(result.is_success)
 
     def test_payment_method_revoke_raises_on_non_existent_tokens(self):
-        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        granting_gateway, _ = TestHelper.create_payment_method_grant_fixtures()
         self.assertRaises(NotFoundError, granting_gateway.payment_method.revoke, "non-existant-token")
 
 class CreditCardForwardingTest(unittest.TestCase):

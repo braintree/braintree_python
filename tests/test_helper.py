@@ -58,7 +58,7 @@ def reset_braintree_configuration():
     )
 reset_braintree_configuration()
 
-def showwarning(message, category, filename, lineno, file=None, line=None):
+def showwarning(*_):
     pass
 warnings.showwarning = showwarning
 
@@ -185,8 +185,8 @@ class TestHelper(object):
         return (now - timedelta(hours=offset)).strftime("%Y-%m-%d")
 
     @staticmethod
-    def unique(list):
-        return set(list)
+    def unique(some_list):
+        return set(some_list)
 
     @staticmethod
     def __headers():
@@ -208,12 +208,12 @@ class TestHelper(object):
 
     @staticmethod
     def nonce_for_paypal_account(paypal_account_details):
-        client_token =json.loads(TestHelper.generate_decoded_client_token())
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
         client = ClientApiHttp(Configuration.instantiate(), {
             "authorization_fingerprint": client_token["authorizationFingerprint"]
         })
 
-        status_code, nonce = client.get_paypal_nonce(paypal_account_details)
+        _, nonce = client.get_paypal_nonce(paypal_account_details)
         return nonce
 
     @staticmethod
@@ -228,16 +228,16 @@ class TestHelper(object):
     @staticmethod
     def create_payment_method_grant_fixtures():
         config = Configuration(
-            merchant_id = "integration_merchant_public_id",
-            public_key = "oauth_app_partner_user_public_key",
-            private_key = "oauth_app_partner_user_private_key",
-            environment = Environment.Development
+            merchant_id="integration_merchant_public_id",
+            public_key="oauth_app_partner_user_public_key",
+            private_key="oauth_app_partner_user_private_key",
+            environment=Environment.Development
         )
 
         gateway = BraintreeGateway(config)
         customer = gateway.customer.create().customer
         credit_card = gateway.credit_card.create(
-            params = {
+            params={
                 "customer_id": customer.id,
                 "number": "4111111111111111",
                 "expiration_date": "05/2009",
@@ -245,9 +245,9 @@ class TestHelper(object):
         ).credit_card
 
         oauth_app_gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret",
-            environment = Environment.Development
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret",
+            environment=Environment.Development
         )
         code = TestHelper.create_grant(oauth_app_gateway, {
             "merchant_public_id": "integration_merchant_id",
@@ -258,7 +258,7 @@ class TestHelper(object):
         }).credentials.access_token
 
         granting_gateway = BraintreeGateway(
-            access_token = access_token,
+            access_token=access_token,
         )
 
         return (granting_gateway, credit_card)
@@ -284,10 +284,10 @@ class ClientApiHttp(Http):
     def get(self, path):
         return self.__http_do("GET", path)
 
-    def post(self, path, params = None):
+    def post(self, path, params=None):
         return self.__http_do("POST", path, params)
 
-    def put(self, path, params = None):
+    def put(self, path, params=None):
         return self.__http_do("PUT", path, params)
 
     def __http_do(self, http_verb, path, params=None):
@@ -358,9 +358,8 @@ class ClientApiHttp(Http):
 
         status_code, response = self.post(url, params)
         json_body = json.loads(response)
-        mandate_reference_number = json_body["europeBankAccounts"][0]["sepaMandates"][0]["mandateReferenceNumber"]
-        nonce = None
 
+        nonce = None
         if status_code == 201:
             nonce = json_body["europeBankAccounts"][0]["nonce"]
 

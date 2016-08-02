@@ -45,7 +45,7 @@ class TestSubscription(unittest.TestCase):
 
         self.assertEqual(datetime, type(subscription.created_at))
         self.assertEqual(datetime, type(subscription.updated_at))
-        
+
         self.assertEqual(1, subscription.current_billing_cycle)
         self.assertEqual(0, subscription.failure_count)
         self.assertEqual(self.credit_card.token, subscription.payment_method_token)
@@ -65,7 +65,7 @@ class TestSubscription(unittest.TestCase):
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
         })
-        status_code, response = http.add_card({
+        _, response = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -519,7 +519,7 @@ class TestSubscription(unittest.TestCase):
 
         phone_errors = result.errors.for_object("transaction").for_object("descriptor").on("phone")
         self.assertEqual(1, len(phone_errors))
-        self.assertEqual( ErrorCodes.Descriptor.PhoneFormatIsInvalid, phone_errors[0].code)
+        self.assertEqual(ErrorCodes.Descriptor.PhoneFormatIsInvalid, phone_errors[0].code)
 
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
@@ -535,7 +535,6 @@ class TestSubscription(unittest.TestCase):
         Subscription.find("bad_token")
 
     def test_update_creates_a_prorated_transaction_when_merchant_is_set_to_prorate(self):
-        new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
             "price": self.updateable_subscription.price + Decimal("1"),
         })
@@ -546,7 +545,6 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(2, len(subscription.transactions))
 
     def test_update_creates_a_prorated_transaction_when_flag_is_passed_as_True(self):
-        new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
             "price": self.updateable_subscription.price + Decimal("1"),
             "options": {
@@ -560,7 +558,6 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(2, len(subscription.transactions))
 
     def test_update_does_not_create_a_prorated_transaction_when_flag_is_passed_as_False(self):
-        new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
             "price": self.updateable_subscription.price + Decimal("1"),
             "options": {
@@ -574,7 +571,6 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(1, len(subscription.transactions))
 
     def test_update_does_not_update_subscription_when_revert_subscription_on_proration_failure_is_true(self):
-        new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
             "price": self.updateable_subscription.price + Decimal("2100"),
             "options": {
@@ -593,7 +589,6 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(self.updateable_subscription.price, found_subscription.price)
 
     def test_update_updates_subscription_when_revert_subscription_on_proration_failure_is_false(self):
-        new_id = str(random.randint(1, 1000000))
         result = Subscription.update(self.updateable_subscription.id, {
             "price": self.updateable_subscription.price + Decimal("2100"),
             "options": {
@@ -664,7 +659,7 @@ class TestSubscription(unittest.TestCase):
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
         })
-        status_code, response = http.add_card({
+        _, response = http.add_card({
             "credit_card": {
                 "number": "4242424242424242",
                 "expiration_month": "11",
@@ -845,18 +840,18 @@ class TestSubscription(unittest.TestCase):
             "plan_id": TestHelper.add_on_discount_plan["id"],
             "add_ons": {
                 "add": [
-                    { "inherited_from_id": "increase_30", },
-                    { "inherited_from_id": "increase_20", }
-                ]
+                    {"inherited_from_id": "increase_30"},
+                    {"inherited_from_id": "increase_20"},
+                ],
             },
             "discounts": {
                 "add": [
-                    { "inherited_from_id": "discount_15", }
-                ]
+                    {"inherited_from_id": "discount_15"},
+                ],
             },
             "options": {
-                "replace_all_add_ons_and_discounts": True
-            }
+                "replace_all_add_ons_and_discounts": True,
+            },
         }).subscription
 
         self.assertEqual(2, len(subscription.add_ons))
@@ -1013,17 +1008,12 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, trialless_subscription))
 
     def test_search_on_plan_id_is_acts_like_text_node_instead_of_multiple_value(self):
-        trial_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trial_plan["id"],
-            "price": Decimal("3")
-        }).subscription
-
-        trialless_subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"],
-            "price": Decimal("3")
-        }).subscription
+        for plan in [TestHelper.trial_plan, TestHelper.trialless_plan]:
+            Subscription.create({
+                "payment_method_token": self.credit_card.token,
+                "plan_id": plan["id"],
+                "price": Decimal("3")
+            })
 
         collection = Subscription.search([
             SubscriptionSearch.plan_id == "no such plan id",
@@ -1146,13 +1136,13 @@ class TestSubscription(unittest.TestCase):
 
     def test_search_on_id(self):
         subscription_found = Subscription.create({
-            "id": "find_me_%s" % random.randint(1,1000000),
+            "id": "find_me_%s" % random.randint(1, 1000000),
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trial_plan["id"],
         }).subscription
 
         subscription_not_found = Subscription.create({
-            "id": "do_not_find_me_%s" % random.randint(1,1000000),
+            "id": "do_not_find_me_%s" % random.randint(1, 1000000),
             "payment_method_token": self.credit_card.token,
             "plan_id": TestHelper.trial_plan["id"],
         }).subscription
@@ -1191,15 +1181,15 @@ class TestSubscription(unittest.TestCase):
         }).subscription
         TestHelper.make_past_due(subscription)
 
-        result = Subscription.retryCharge(subscription.id);
+        result = Subscription.retryCharge(subscription.id)
 
-        self.assertTrue(result.is_success);
-        transaction = result.transaction;
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
 
-        self.assertEqual(subscription.price, transaction.amount);
-        self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEqual(Transaction.Type.Sale, transaction.type);
-        self.assertEqual(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(subscription.price, transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
     def test_retry_charge_without_amount(self):
         subscription = Subscription.create({
@@ -1208,15 +1198,15 @@ class TestSubscription(unittest.TestCase):
         }).subscription
         TestHelper.make_past_due(subscription)
 
-        result = Subscription.retry_charge(subscription.id);
+        result = Subscription.retry_charge(subscription.id)
 
-        self.assertTrue(result.is_success);
-        transaction = result.transaction;
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
 
-        self.assertEqual(subscription.price, transaction.amount);
-        self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEqual(Transaction.Type.Sale, transaction.type);
-        self.assertEqual(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(subscription.price, transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
     def test_retryCharge_with_amount__deprecated(self):
         subscription = Subscription.create({
@@ -1225,15 +1215,15 @@ class TestSubscription(unittest.TestCase):
         }).subscription
         TestHelper.make_past_due(subscription)
 
-        result = Subscription.retryCharge(subscription.id, Decimal(TransactionAmounts.Authorize));
+        result = Subscription.retryCharge(subscription.id, Decimal(TransactionAmounts.Authorize))
 
-        self.assertTrue(result.is_success);
-        transaction = result.transaction;
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
 
-        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount);
-        self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEqual(Transaction.Type.Sale, transaction.type);
-        self.assertEqual(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
 
     def test_retry_charge_with_amount(self):
@@ -1243,15 +1233,15 @@ class TestSubscription(unittest.TestCase):
         }).subscription
         TestHelper.make_past_due(subscription)
 
-        result = Subscription.retry_charge(subscription.id, Decimal(TransactionAmounts.Authorize));
+        result = Subscription.retry_charge(subscription.id, Decimal(TransactionAmounts.Authorize))
 
-        self.assertTrue(result.is_success);
-        transaction = result.transaction;
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
 
-        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount);
-        self.assertNotEqual(None, transaction.processor_authorization_code);
-        self.assertEqual(Transaction.Type.Sale, transaction.type);
-        self.assertEqual(Transaction.Status.Authorized, transaction.status);
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
     def test_create_with_paypal_future_payment_method_token(self):
         http = ClientApiHttp.create()

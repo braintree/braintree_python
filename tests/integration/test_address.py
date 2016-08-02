@@ -87,7 +87,7 @@ class TestAddress(unittest.TestCase):
     @raises(NotFoundError)
     def test_delete_with_valid_customer_id_and_non_existing_address(self):
         customer = Customer.create().customer
-        result = Address.delete(customer.id, "notreal")
+        Address.delete(customer.id, "notreal")
 
     def test_find_with_valid_customer_id_and_address_id(self):
         customer = Customer.create().customer
@@ -165,4 +165,3 @@ class TestAddress(unittest.TestCase):
     def test_update_raises_not_found_error_if_given_bad_address(self):
         customer = Customer.create().customer
         Address.update(customer.id, "notfound", {"street_address": "123 Main St."})
-

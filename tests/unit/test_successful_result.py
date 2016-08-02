@@ -7,4 +7,3 @@ class TestSuccessfulResult(unittest.TestCase):
     def test_attributes_are_exposed(self):
         result = SuccessfulResult({"name": "drew"})
         self.assertEqual("drew", result.name)
-

@@ -9,8 +9,8 @@ else:
 class TestOAuthGateway(unittest.TestCase):
     def setUp(self):
         self.gateway = BraintreeGateway(
-            client_id = "client_id$development$integration_client_id",
-            client_secret = "client_secret$development$integration_client_secret"
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
         )
 
     def test_create_token_from_code(self):
@@ -47,11 +47,11 @@ class TestOAuthGateway(unittest.TestCase):
 
     def test_create_token_from_code_returns_helpful_error_with_bad_credentials(self):
         gateway = BraintreeGateway(
-            access_token = "access_token$development$integration_merchant_id$fb27c79dd",
+            access_token="access_token$development$integration_merchant_id$fb27c79dd",
         )
 
         with self.assertRaises(ConfigurationError) as error:
-            result = gateway.oauth.create_token_from_code({
+            gateway.oauth.create_token_from_code({
                 "code": "some_code",
                 "scope": "read_write"
             })
@@ -97,8 +97,8 @@ class TestOAuthGateway(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-        with self.assertRaises(AuthenticationError) as error:
-            gateway = BraintreeGateway(access_token = access_token)
+        with self.assertRaises(AuthenticationError):
+            gateway = BraintreeGateway(access_token=access_token)
 
             gateway.customer.create()
 

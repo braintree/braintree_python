@@ -68,7 +68,6 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual("sandbox_master_merchant_account", result.merchant_account.master_merchant_account.id)
 
     def test_create_application_with_valid_params_and_no_id(self):
-        customer = Customer.create().customer
         result = MerchantAccount.create(self.VALID_APPLICATION_PARAMS)
 
         self.assertTrue(result.is_success)
@@ -192,7 +191,11 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual(result.merchant_account.funding_details.descriptor, "Joes Bloggs MI")
 
     def test_update_does_not_require_all_fields(self):
-        result = MerchantAccount.update("sandbox_sub_merchant_account", { "individual": { "first_name": "Jose" } })
+        result = MerchantAccount.update("sandbox_sub_merchant_account", {
+            "individual": {
+                "first_name": "Jose"
+            }
+        })
         self.assertTrue(result.is_success)
 
     def test_update_handles_validation_errors_for_blank_fields(self):
@@ -286,7 +289,7 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("last_name")[0].code, ErrorCodes.MerchantAccount.Individual.LastNameIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("email")[0].code, ErrorCodes.MerchantAccount.Individual.EmailAddressIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("phone")[0].code, ErrorCodes.MerchantAccount.Individual.PhoneIsInvalid)
-        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code,  ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("street_address")[0].code, ErrorCodes.MerchantAccount.Individual.Address.StreetAddressIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Individual.Address.PostalCodeIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Individual.Address.RegionIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("individual").on("ssn")[0].code, ErrorCodes.MerchantAccount.Individual.SsnIsInvalid)
@@ -294,7 +297,7 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("legal_name")[0].code, ErrorCodes.MerchantAccount.Business.LegalNameIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("dba_name")[0].code, ErrorCodes.MerchantAccount.Business.DbaNameIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("business").on("tax_id")[0].code, ErrorCodes.MerchantAccount.Business.TaxIdIsInvalid)
-        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("street_address")[0].code,  ErrorCodes.MerchantAccount.Business.Address.StreetAddressIsInvalid)
+        self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("street_address")[0].code, ErrorCodes.MerchantAccount.Business.Address.StreetAddressIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("postal_code")[0].code, ErrorCodes.MerchantAccount.Business.Address.PostalCodeIsInvalid)
         self.assertEqual(result.errors.for_object("merchant_account").for_object("business").for_object("address").on("region")[0].code, ErrorCodes.MerchantAccount.Business.Address.RegionIsInvalid)
 
@@ -370,11 +373,11 @@ class TestMerchantAccount(unittest.TestCase):
         result = MerchantAccount.create(self.VALID_APPLICATION_PARAMS)
         self.assertTrue(result.is_success)
         merchant_account_id = result.merchant_account.id
-        merchant_account = MerchantAccount.find(merchant_account_id)
+        MerchantAccount.find(merchant_account_id)
 
     def test_retrieves_master_merchant_account_currency_iso_code(self):
         merchant_account = MerchantAccount.find("sandbox_master_merchant_account")
-        self.assertEqual(merchant_account.currency_iso_code,"USD")
+        self.assertEqual(merchant_account.currency_iso_code, "USD")
 
     @raises(NotFoundError)
     def test_find_404(self):

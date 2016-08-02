@@ -236,12 +236,12 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search(
             TransactionSearch.id == transaction.id,
-            TransactionSearch.payment_instrument_type == "CreditCardDetail" 
+            TransactionSearch.payment_instrument_type == "CreditCardDetail"
         )
 
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.CreditCard)
         self.assertEqual(transaction.id, collection.first.id)
-    
+
     def test_advanced_search_with_payment_instrument_type_is_paypal(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -250,12 +250,12 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search(
             TransactionSearch.id == transaction.id,
-            TransactionSearch.payment_instrument_type == "PayPalDetail" 
+            TransactionSearch.payment_instrument_type == "PayPalDetail"
         )
 
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.PayPalAccount)
         self.assertEqual(transaction.id, collection.first.id)
-    
+
     def test_advanced_search_with_payment_instrument_type_is_apple_pay(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -264,12 +264,12 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search(
             TransactionSearch.id == transaction.id,
-            TransactionSearch.payment_instrument_type == "ApplePayDetail" 
+            TransactionSearch.payment_instrument_type == "ApplePayDetail"
         )
 
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
         self.assertEqual(transaction.id, collection.first.id)
-    
+
     def test_advanced_search_with_payment_instrument_type_is_europe(self):
         old_merchant_id = Configuration.merchant_id
         old_public_key = Configuration.public_key
@@ -283,7 +283,7 @@ class TestTransactionSearch(unittest.TestCase):
             token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
-            client_api =  ClientApiHttp(config, {
+            client_api = ClientApiHttp(config, {
                 "authorization_fingerprint": authorization_fingerprint,
                 "shared_customer_identifier": "fake_identifier",
                 "shared_customer_identifier_type": "testing"
@@ -305,7 +305,7 @@ class TestTransactionSearch(unittest.TestCase):
 
             collection = Transaction.search(
                 TransactionSearch.id == transaction.id,
-                TransactionSearch.payment_instrument_type == "EuropeBankAccountDetail" 
+                TransactionSearch.payment_instrument_type == "EuropeBankAccountDetail"
             )
 
             self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.EuropeBankAccount)
@@ -449,7 +449,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     @raises_with_regexp(AttributeError, "Invalid argument\(s\) for created_using: noSuchCreatedUsing")
     def test_advanced_search_multiple_value_node_allowed_values_created_using(self):
-        collection = Transaction.search([TransactionSearch.created_using == "noSuchCreatedUsing"])
+        Transaction.search([TransactionSearch.created_using == "noSuchCreatedUsing"])
 
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
         transaction = Transaction.sale({
@@ -486,7 +486,7 @@ class TestTransactionSearch(unittest.TestCase):
     @raises_with_regexp(AttributeError,
             "Invalid argument\(s\) for credit_card_customer_location: noSuchCreditCardCustomerLocation")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_customer_location(self):
-        collection = Transaction.search([
+        Transaction.search([
             TransactionSearch.credit_card_customer_location == "noSuchCreditCardCustomerLocation"
         ])
 
@@ -557,7 +557,7 @@ class TestTransactionSearch(unittest.TestCase):
     @raises_with_regexp(AttributeError,
             "Invalid argument\(s\) for credit_card_card_type: noSuchCreditCardCardType")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_card_type(self):
-        collection = Transaction.search([
+        Transaction.search([
             TransactionSearch.credit_card_card_type == "noSuchCreditCardCardType"
         ])
 
@@ -609,7 +609,7 @@ class TestTransactionSearch(unittest.TestCase):
 
     @raises_with_regexp(AttributeError, "Invalid argument\(s\) for status: noSuchStatus")
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
-        collection = Transaction.search([ TransactionSearch.status == "noSuchStatus" ])
+        Transaction.search([TransactionSearch.status == "noSuchStatus"])
 
     def test_advanced_search_multiple_value_node_source(self):
         transaction = Transaction.sale({
@@ -677,12 +677,12 @@ class TestTransactionSearch(unittest.TestCase):
 
     @raises_with_regexp(AttributeError, "Invalid argument\(s\) for type: noSuchType")
     def test_advanced_search_multiple_value_node_allowed_values_type(self):
-        collection = Transaction.search([
+        Transaction.search([
             TransactionSearch.type == "noSuchType"
         ])
 
     def test_advanced_search_multiple_value_node_type_with_refund(self):
-        name = "Anabel Atkins%s" % randint(1,100000)
+        name = "Anabel Atkins%s" % randint(1, 100000)
         sale = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -733,7 +733,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(credit.id, collection.first.id)
 
     def test_advanced_search_range_node_amount(self):
-        name = "Henrietta Livingston%s" % randint(1,100000)
+        name = "Henrietta Livingston%s" % randint(1, 100000)
         t_1000 = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -786,7 +786,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(t_1500.id, collection.first.id)
 
     def test_advanced_search_range_node_created_at_less_than_or_equal_to(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -822,7 +822,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.id, collection.first.id)
 
     def test_advanced_search_range_node_created_at_greater_than_or_equal_to(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -858,7 +858,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_created_at_between(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -903,7 +903,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_created_at_is(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -914,7 +914,6 @@ class TestTransactionSearch(unittest.TestCase):
         past = transaction.created_at - timedelta(minutes=10)
         now = transaction.created_at
         future = transaction.created_at + timedelta(minutes=10)
-        future2 = transaction.created_at + timedelta(minutes=20)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction.id,
@@ -939,7 +938,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_created_with_dates(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1060,7 +1059,6 @@ class TestTransactionSearch(unittest.TestCase):
         past = disbursement_time - timedelta(days=10)
         now = disbursement_time
         future = disbursement_time + timedelta(days=10)
-        future2 = disbursement_time + timedelta(days=20)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
@@ -1200,7 +1198,6 @@ class TestTransactionSearch(unittest.TestCase):
         past = disputed_time - timedelta(days=10)
         now = disputed_time
         future = disputed_time + timedelta(days=10)
-        future2 = disputed_time + timedelta(days=20)
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
@@ -1256,7 +1253,7 @@ class TestTransactionSearch(unittest.TestCase):
 
 
     def test_advanced_search_range_node_authorized_at(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1284,7 +1281,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_failed_at(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Fail,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1321,7 +1318,7 @@ class TestTransactionSearch(unittest.TestCase):
             Configuration.public_key = "processing_rules_public_key"
             Configuration.private_key = "processing_rules_private_key"
 
-            transaction  = Transaction.sale({
+            transaction = Transaction.sale({
                  "amount": TransactionAmounts.Authorize,
                  "credit_card": {
                      "number": "4111111111111111",
@@ -1354,7 +1351,7 @@ class TestTransactionSearch(unittest.TestCase):
             Configuration.private_key = old_private_key
 
     def test_advanced_search_range_node_processor_declined_at(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Decline,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1382,7 +1379,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_settled_at(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1416,7 +1413,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_submitted_for_settlement_at(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1447,7 +1444,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_voided_at(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1476,7 +1473,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_can_search_on_multiple_statuses(self):
-        transaction  = Transaction.sale({
+        transaction = Transaction.sale({
              "amount": TransactionAmounts.Authorize,
              "credit_card": {
                  "number": "4111111111111111",
@@ -1560,7 +1557,7 @@ class TestTransactionSearch(unittest.TestCase):
             token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
             authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
             config = Configuration.instantiate()
-            client_api =  ClientApiHttp(config, {
+            client_api = ClientApiHttp(config, {
                 "authorization_fingerprint": authorization_fingerprint,
                 "shared_customer_identifier": "fake_identifier",
                 "shared_customer_identifier_type": "testing"

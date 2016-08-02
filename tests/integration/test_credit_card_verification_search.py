@@ -131,4 +131,3 @@ class TestVerificationSearch(unittest.TestCase):
                 CreditCardVerificationSearch.created_at == created_time)
 
         self.assertEqual(1, found_verifications.maximum_size)
-

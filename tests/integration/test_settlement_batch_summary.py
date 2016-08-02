@@ -1,7 +1,7 @@
 from tests.test_helper import *
 
 class TestSettlementBatchSummary(unittest.TestCase):
-    possible_gateway_time_zone_offsets = (5,4)
+    possible_gateway_time_zone_offsets = (5, 4)
 
     def test_generate_returns_empty_collection_if_there_is_no_data(self):
         result = SettlementBatchSummary.generate('2011-01-01')
