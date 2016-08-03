@@ -14,7 +14,6 @@ from braintree.payment_method_nonce_gateway import PaymentMethodNonceGateway
 from braintree.paypal_account_gateway import PayPalAccountGateway
 from braintree.plan_gateway import PlanGateway
 from braintree.settlement_batch_summary_gateway import SettlementBatchSummaryGateway
-from braintree.sub_merchant_account_gateway import SubMerchantAccountGateway
 from braintree.subscription_gateway import SubscriptionGateway
 from braintree.testing_gateway import TestingGateway
 from braintree.transaction_gateway import TransactionGateway
@@ -45,7 +44,6 @@ class BraintreeGateway(object):
         self.oauth = OAuthGateway(self)
         self.plan = PlanGateway(self)
         self.settlement_batch_summary = SettlementBatchSummaryGateway(self)
-        self.sub_merchant_account = SubMerchantAccountGateway(self)
         self.subscription = SubscriptionGateway(self)
         self.transaction = TransactionGateway(self)
         self.transparent_redirect = TransparentRedirectGateway(self)
