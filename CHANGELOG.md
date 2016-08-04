@@ -1,3 +1,8 @@
+## 3.29.2
+* Update links in docstrings
+* Remove Python 3.x-incompatible branch check
+* Remove references to SubMerchantAccount API
+
 ## 3.29.1
 * Improve error handling around server timeouts
 

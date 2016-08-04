@@ -41,8 +41,6 @@ from braintree.search import Search
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.signature_service import SignatureService
 from braintree.status_event import StatusEvent
-from braintree.sub_merchant_account import SubMerchantAccount
-from braintree.sub_merchant_account_gateway import SubMerchantAccountGateway
 from braintree.subscription import Subscription
 from braintree.subscription_gateway import SubscriptionGateway
 from braintree.subscription_search import SubscriptionSearch

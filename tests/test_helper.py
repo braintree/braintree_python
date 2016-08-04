@@ -62,11 +62,6 @@ def showwarning(message, category, filename, lineno, file=None, line=None):
     pass
 warnings.showwarning = showwarning
 
-def skip_sub_merchant_account_tests():
-    output, _ = Popen(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=PIPE).communicate()
-    branch_supports_sub_merchant_accounts = bool(re.match(r"^marketplace_v2$|^btmkpl", output.strip(), re.IGNORECASE))
-    return not branch_supports_sub_merchant_accounts
-
 class TestHelper(object):
 
     default_merchant_account_id = "sandbox_credit_card"
