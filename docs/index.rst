@@ -11,7 +11,7 @@ The Braintree library provides integration access to the Braintree Gateway.
 Quick Start
 -----------
 
-See: https://developers.braintreepayments.com/ios+python/start/hello-server
+See: https://developers.braintreepayments.com/start/hello-server/python
 
 Braintree Objects
 -----------------
