@@ -36,7 +36,7 @@ class TestCustomerSearch(unittest.TestCase):
 
 
     def test_advanced_search_searches_all_text_fields(self):
-        token = "creditcard%s" % randint(1, 100000)
+        token = "creditcard%s" % random.randint(1, 100000)
 
         customer = Customer.create({
             "first_name": "Timmy",

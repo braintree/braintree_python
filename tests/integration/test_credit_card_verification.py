@@ -55,7 +55,7 @@ class TestCreditCardVerfication(unittest.TestCase):
           "invalid-id")
 
     def test_card_type_indicators(self):
-        cardholder_name = "Tom %s" % randint(1, 10000)
+        cardholder_name = "Tom %s" % random.randint(1, 10000)
         Customer.create({"credit_card": {
             "cardholder_name": cardholder_name,
             "expiration_date": "10/2012",

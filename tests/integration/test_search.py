@@ -205,7 +205,7 @@ class TestSearch(unittest.TestCase):
         self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 
     def test_range_node_min(self):
-        name = "Henrietta Livingston%s" % randint(1, 100000)
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
         Transaction.sale({
             "amount": "1500.00",
             "credit_card": {
@@ -241,7 +241,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(t_1800.id, collection.first.id)
 
     def test_range_node_max(self):
-        name = "Henrietta Livingston%s" % randint(1, 100000)
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
         t_1500 = Transaction.sale({
             "amount": "1500.00",
             "credit_card": {
@@ -277,7 +277,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(t_1500.id, collection.first.id)
 
     def test_range_node_is(self):
-        name = "Henrietta Livingston%s" % randint(1, 100000)
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
         Transaction.sale({
             "amount": "1500.00",
             "credit_card": {
@@ -305,7 +305,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(t_1800.id, collection.first.id)
 
     def test_range_node_between(self):
-        name = "Henrietta Livingston%s" % randint(1, 100000)
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
         Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {

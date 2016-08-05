@@ -8,9 +8,9 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_searches_all_text_fields_at_once(self):
-        first_name = "Tim%s" % randint(1, 100000)
-        token = "creditcard%s" % randint(1, 100000)
-        customer_id = "customer%s" % randint(1, 100000)
+        first_name = "Tim%s" % random.randint(1, 100000)
+        token = "creditcard%s" % random.randint(1, 100000)
+        customer_id = "customer%s" % random.randint(1, 100000)
 
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -103,9 +103,9 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.id, collection.first.id)
 
     def test_advanced_search_search_each_text_field(self):
-        first_name = "Tim%s" % randint(1, 100000)
-        token = "creditcard%s" % randint(1, 100000)
-        customer_id = "customer%s" % randint(1, 100000)
+        first_name = "Tim%s" % random.randint(1, 100000)
+        token = "creditcard%s" % random.randint(1, 100000)
+        customer_id = "customer%s" % random.randint(1, 100000)
 
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -682,7 +682,7 @@ class TestTransactionSearch(unittest.TestCase):
         ])
 
     def test_advanced_search_multiple_value_node_type_with_refund(self):
-        name = "Anabel Atkins%s" % randint(1, 100000)
+        name = "Anabel Atkins%s" % random.randint(1, 100000)
         sale = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -733,7 +733,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(credit.id, collection.first.id)
 
     def test_advanced_search_range_node_amount(self):
-        name = "Henrietta Livingston%s" % randint(1, 100000)
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
         t_1000 = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {

@@ -1,6 +1,5 @@
 import time
 from datetime import datetime
-from random import randint
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
@@ -872,7 +871,7 @@ class TestPaymentMethod(unittest.TestCase):
              "customer_id": customer_id
         })
 
-        updated_token = "UPDATED_TOKEN-" + str(randint(0, 100000000))
+        updated_token = "UPDATED_TOKEN-" + str(random.randint(0, 100000000))
         PaymentMethod.update(
             original_token,
             {"token": updated_token}
@@ -910,8 +909,8 @@ class TestPaymentMethod(unittest.TestCase):
 
     def test_update_updates_a_paypal_accounts_token(self):
         customer_id = Customer.create().customer.id
-        first_token = "paypal-account-" + str(randint(0, 100000000))
-        second_token = "paypal-account-" + str(randint(0, 100000000))
+        first_token = "paypal-account-" + str(random.randint(0, 100000000))
+        second_token = "paypal-account-" + str(random.randint(0, 100000000))
 
         first_nonce = TestHelper.nonce_for_paypal_account({
             "consent_code": "consent-code",

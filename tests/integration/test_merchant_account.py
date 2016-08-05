@@ -76,7 +76,7 @@ class TestMerchantAccount(unittest.TestCase):
 
     def test_create_allows_an_id_to_pass(self):
         params_with_id = self.VALID_APPLICATION_PARAMS.copy()
-        rand = str(random.randrange(1000000))
+        rand = str(random.randint(1, 1000000))
         params_with_id['id'] = 'sub_merchant_account_id' + rand
         result = MerchantAccount.create(params_with_id)
 

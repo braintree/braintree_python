@@ -1,21 +1,22 @@
+import json
 import os
-import random
 import re
-import unittest
+import random
 import sys
+import unittest
+import warnings
+
 if sys.version_info[0] == 2:
     from urllib import urlencode, quote_plus
     from httplib import HTTPConnection
 else:
     from urllib.parse import urlencode, quote_plus
     from http.client import HTTPConnection
-import warnings
-import json
+
 from base64 import b64decode
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from random import randint
 from subprocess import Popen, PIPE
 
 from nose.tools import make_decorator

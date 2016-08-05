@@ -8,7 +8,7 @@ class TestVerificationSearch(unittest.TestCase):
         self.assertEqual(0, collection.maximum_size)
 
     def test_search_on_verification_id(self):
-        customer_id = "%s" % randint(1, 10000)
+        customer_id = "%s" % random.randint(1, 10000)
 
         result = Customer.create({
             "id": customer_id,
@@ -31,8 +31,8 @@ class TestVerificationSearch(unittest.TestCase):
 
     def test_all_text_fields(self):
         email = "mark.a@example.com"
-        cardholder_name = "Tom %s" % randint(1, 10000)
-        customer_id = "%s" % randint(1, 10000)
+        cardholder_name = "Tom %s" % random.randint(1, 10000)
+        customer_id = "%s" % random.randint(1, 10000)
         expiration_date = "10/2012"
         number = CreditCardNumbers.MasterCard
         postal_code = "44444"
@@ -66,7 +66,7 @@ class TestVerificationSearch(unittest.TestCase):
         self.assertEqual(customer.credit_cards[0].token, found_verifications.first.credit_card["token"])
 
     def test_multiple_value_fields(self):
-        cardholder_name = "Tom %s" % randint(1, 10000)
+        cardholder_name = "Tom %s" % random.randint(1, 10000)
         number = CreditCardNumbers.FailsSandboxVerification.MasterCard
         unsuccessful_result1 = Customer.create({"credit_card": {
             "cardholder_name": cardholder_name,
@@ -75,7 +75,7 @@ class TestVerificationSearch(unittest.TestCase):
             "options": {"verify_card": True}
         }})
 
-        cardholder_name = "Tom %s" % randint(1, 10000)
+        cardholder_name = "Tom %s" % random.randint(1, 10000)
         number = CreditCardNumbers.FailsSandboxVerification.Visa
         unsuccessful_result2 = Customer.create({"credit_card": {
             "cardholder_name": cardholder_name,
@@ -99,7 +99,7 @@ class TestVerificationSearch(unittest.TestCase):
         self.assertEqual(2, search_results.maximum_size)
 
     def test_range_field(self):
-        cardholder_name = "Tom %s" % randint(1, 10000)
+        cardholder_name = "Tom %s" % random.randint(1, 10000)
         number = CreditCardNumbers.FailsSandboxVerification.MasterCard
         unsuccessful_result = Customer.create({"credit_card": {
             "cardholder_name": cardholder_name,
