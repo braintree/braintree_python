@@ -36,3 +36,22 @@ namespace :pypi do
     sh "python setup.py sdist upload"
   end
 end
+
+namespace :lint do
+  desc "Evaluate test code quality using pylintrc file"
+  task :tests do
+    puts `pylint tests --rcfile=.pylintrc --disable=R0801 --disable=W0232`
+  end
+
+  desc "Evaluate app code quality using pylintrc file"
+  task :code do
+    puts `pylint braintree --rcfile=.pylintrc`
+  end
+
+  desc "Evaluate library code quality using pylintrc file"
+  task :all do
+    puts `pylint braintree tests --rcfile=.pylintrc`
+  end
+end
+
+task :lint => "lint:all"
