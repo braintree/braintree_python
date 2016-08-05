@@ -907,7 +907,7 @@ class TestPaymentMethod(unittest.TestCase):
         updated_paypal_account = PayPalAccount.find(original_token)
         self.assertTrue(updated_paypal_account.default)
 
-    def test_update_updates_a_paypal_accounts_token(self):
+    def test_update_fails_to_updates_a_paypal_accounts_token_with(self):
         customer_id = Customer.create().customer.id
         first_token = "paypal-account-" + str(random.randint(0, 100000000))
         second_token = "paypal-account-" + str(random.randint(0, 100000000))

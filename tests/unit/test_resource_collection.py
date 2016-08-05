@@ -33,9 +33,9 @@ class TestResourceCollection(unittest.TestCase):
 
     def test_ids_returns_array_of_ids(self):
         collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
-        self.assertEqual(collection.ids, collection_data['search_results']['ids'])
+        self.assertEqual(collection.ids, self.collection_data['search_results']['ids'])
 
-    def test_ids_returns_array_of_ids(self):
+    def test_ids_returns_array_of_empty_ids(self):
         empty_collection_data = {
             "search_results": {
                 "page_size": 2,

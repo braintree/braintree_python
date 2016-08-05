@@ -70,10 +70,6 @@ class TestSearch(unittest.TestCase):
         node = Search.MultipleValueOrTextNodeBuilder("name")
         self.assertEqual(["value1", "value2"], (node.in_list("value1", "value2")).to_param())
 
-    def test_multiple_value_or_text_node_is(self):
-        node = Search.MultipleValueOrTextNodeBuilder("name")
-        self.assertEqual({"is": "value1"}, (node == "value1").to_param())
-
     def test_multiple_value_or_text_node_with_value_in_whitelist(self):
         node = Search.MultipleValueOrTextNodeBuilder("name", ["okay"])
         self.assertEqual(["okay"], node.in_list("okay").to_param())
@@ -119,6 +115,6 @@ class TestSearch(unittest.TestCase):
         node = Search.KeyValueNodeBuilder("name")
         self.assertEqual(False, (node.is_not_equal(True)).to_param())
 
-    def test_key_value_node_is_not_equal(self):
+    def test_key_value_node_symbols_is_not_equal(self):
         node = Search.KeyValueNodeBuilder("name")
         self.assertEqual(False, (node != True).to_param())
