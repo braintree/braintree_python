@@ -54,6 +54,7 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(Decimal("12.34"), subscription.status_history[0].price)
         self.assertEqual(Decimal("0.00"), subscription.status_history[0].balance)
         self.assertEqual(Subscription.Source.Api, subscription.status_history[0].subscription_source)
+        self.assertEqual("USD", subscription.status_history[0].currency_iso_code)
 
     def test_create_returns_successful_result_with_payment_method_nonce(self):
         config = Configuration.instantiate()
