@@ -2533,8 +2533,15 @@ class TestTransaction(unittest.TestCase):
             }
         })
 
-        self.assertTrue(result.is_success)
-        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureCavvIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureXidIsRequired,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("xid")[0].code
+        )
 
     def test_transaction_with_three_d_secure_pass_thru_with_invalid_eci_flag(self):
         result = Transaction.sale({
