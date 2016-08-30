@@ -669,6 +669,30 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(1, len(expiration_date_errors))
         self.assertEqual(ErrorCodes.CreditCard.ExpirationDateIsInvalid, expiration_date_errors[0].code)
 
+    def test_update_returns_error_with_duplicate_payment_method_if_fail_on_duplicate_payment_method_is_set(self):
+        create_result = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2021",
+            }
+        })
+        self.assertTrue(create_result.is_success)
+
+        update_result = Customer.update(create_result.customer.id, {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2021",
+                "options": {
+                    "fail_on_duplicate_payment_method": True,
+                },
+            }
+        })
+
+        self.assertFalse(update_result.is_success)
+        number_errors = update_result.errors.for_object("customer").for_object("credit_card").on("number")
+        self.assertEqual(1, len(number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, number_errors[0].code)
+
     def test_delete_with_valid_token(self):
         customer = Customer.create().customer
         credit_card = CreditCard.create({

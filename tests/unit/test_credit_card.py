@@ -64,7 +64,7 @@ class TestCreditCard(unittest.TestCase):
                     {"options": ["update_existing"]}
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session"]}
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method"]}
         ]
         self.assertEqual(expected, CreditCard.update_signature())
 
