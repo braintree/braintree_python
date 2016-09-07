@@ -4,6 +4,9 @@ class TestSubscriptionSearch(unittest.TestCase):
     def test_billing_cycles_remaining_is_a_range_node(self):
         self.assertEqual(Search.RangeNodeBuilder, type(SubscriptionSearch.billing_cycles_remaining))
 
+    def test_created_at_is_a_range_node(self):
+        self.assertEqual(Search.RangeNodeBuilder, type(SubscriptionSearch.created_at))
+
     def test_days_past_due_is_a_range_node(self):
         self.assertEqual(Search.RangeNodeBuilder, type(SubscriptionSearch.days_past_due))
 

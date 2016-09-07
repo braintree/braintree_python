@@ -1,5 +1,6 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
+from datetime import date, timedelta
 
 class TestSubscription(unittest.TestCase):
     def setUp(self):
@@ -963,6 +964,24 @@ class TestSubscription(unittest.TestCase):
 
         self.assertTrue(TestHelper.includes(collection, subscription_10))
         self.assertFalse(TestHelper.includes(collection, subscription_5))
+
+    def test_search_on_created_at(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+
+        empty_collection = Subscription.search([
+            SubscriptionSearch.created_at.between(date.today() + timedelta(1), date.today() + timedelta(2))
+        ])
+
+        self.assertTrue(empty_collection.maximum_size == 0)
+
+        success_collection = Subscription.search([
+            SubscriptionSearch.created_at.between(date.today() - timedelta(1), date.today() + timedelta(1))
+        ])
+
+        self.assertTrue(success_collection.maximum_size > 0)
 
     def test_search_on_days_past_due(self):
         subscription = Subscription.create({
