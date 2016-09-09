@@ -28,7 +28,21 @@ class Address(Resource):
     """
 
     def __repr__(self):
-        detail_list = ["customer_id", "street_address", "extended_address", "postal_code", "country_code_alpha2"]
+        detail_list = [
+            "customer_id",
+            "company",
+            "country_code_alpha2",
+            "country_code_alpha3",
+            "country_code_numeric",
+            "country_name",
+            "extended_address",
+            "first_name",
+            "last_name",
+            "locality",
+            "postal_code",
+            "region",
+            "street_address",
+        ]
         return super(Address, self).__repr__(detail_list)
 
 

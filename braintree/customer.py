@@ -68,7 +68,20 @@ class Customer(Resource):
     """
 
     def __repr__(self):
-        detail_list = ["first_name", "last_name", "id"]
+        detail_list = [
+            "id",
+            "company",
+            "created_at",
+            "email",
+            "fax",
+            "first_name",
+            "last_name",
+            "merchant_id",
+            "phone",
+            "updated_at",
+            "website",
+        ]
+
         return super(Customer, self).__repr__(detail_list)
 
     @staticmethod
