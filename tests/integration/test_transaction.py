@@ -3163,6 +3163,75 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
+    def test_us_bank_account_nonce_transactions(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": "us_bank_merchant_account",
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "options": {
+                "submit_for_settlement": True,
+                "store_in_vault": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.us_bank_account.routing_number, "123456789")
+        self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
+        self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
+        self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
+        self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+
+    def test_us_bank_account_nonce_transactions_with_vaulted_token(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": "us_bank_merchant_account",
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "options": {
+                "submit_for_settlement": True,
+                "store_in_vault": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.us_bank_account.routing_number, "123456789")
+        self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
+        self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
+        self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
+        self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+        token = result.transaction.us_bank_account.token
+
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": "us_bank_merchant_account",
+            "payment_method_token": token,
+            "options": {
+                "submit_for_settlement": True,
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.us_bank_account.routing_number, "123456789")
+        self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
+        self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
+        self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
+        self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+
+
+    def test_us_bank_account_token_transactions_not_found(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": "us_bank_merchant_account",
+            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce(),
+            "options": {
+                "submit_for_settlement": True,
+                "store_in_vault": True
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
+        self.assertEqual(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
+
     def test_transaction_settlement_errors(self):
         sale_result = Transaction.sale({
             "credit_card": {

@@ -5,6 +5,7 @@ import random
 import sys
 import unittest
 import warnings
+import subprocess
 
 if sys.version_info[0] == 2:
     from urllib import urlencode, quote_plus
@@ -102,6 +103,8 @@ class TestHelper(object):
         "price": Decimal("12.34"),
         "trial_period": False
     }
+
+    valid_token_characters = list("bcdfghjkmnpqrstvwxyz23456789")
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
@@ -216,6 +219,30 @@ class TestHelper(object):
 
         _, nonce = client.get_paypal_nonce(paypal_account_details)
         return nonce
+
+    @staticmethod
+    def random_token_block(x):
+        string = ""
+        for i in range(6):
+            string += random.choice(TestHelper.valid_token_characters)
+        return string
+
+    @staticmethod
+    def generate_valid_us_bank_account_nonce():
+        process = subprocess.Popen('./tests/client.sh', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        nonce = ""
+        for line in process.stdout.readlines():
+            nonce += line
+        process.wait()
+        return nonce
+
+    @staticmethod
+    def generate_invalid_us_bank_account_nonce():
+        token = "tokenusbankacct"
+        for i in range(4):
+            token += "_" + TestHelper.random_token_block('d')
+        token += "_xxx"
+        return token
 
     @staticmethod
     def create_grant(gateway, params):

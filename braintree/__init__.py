@@ -25,6 +25,7 @@ from braintree.error_codes import ErrorCodes
 from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.europe_bank_account import EuropeBankAccount
+from braintree.us_bank_account import UsBankAccount
 from braintree.merchant import Merchant
 from braintree.merchant_account import MerchantAccount
 from braintree.merchant_account_gateway import MerchantAccountGateway
