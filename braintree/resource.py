@@ -17,7 +17,7 @@ class Resource(AttributeGetter):
 
     @staticmethod
     def __flattened_params_keys(params, parent=None):
-        if isinstance(params, str):
+        if isinstance(params, str) or isinstance(params, unicode):
             return [ "%s[%s]" % (parent, params) ]
         else:
             keys = []
