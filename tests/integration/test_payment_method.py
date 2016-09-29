@@ -950,7 +950,7 @@ class TestPaymentMethod(unittest.TestCase):
         Payment method grant returns a nonce that is transactable by a partner merchant exactly once
         """
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
-        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, { "allow_vaulting": False });
         self.assertTrue(grant_result.is_success)
 
         result = Transaction.sale({
@@ -977,7 +977,7 @@ class TestPaymentMethod(unittest.TestCase):
 
     def test_payment_method_grant_returns_a_nonce_that_is_vaultable(self):
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
-        grant_result = granting_gateway.payment_method.grant(credit_card.token, True)
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, { "allow_vaulting": True })
         customer_id = Customer.create().customer.id
 
         result = PaymentMethod.create({
@@ -988,7 +988,7 @@ class TestPaymentMethod(unittest.TestCase):
 
     def test_payment_method_revoke_renders_a_granted_nonce_unusable(self):
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
-        grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+        grant_result = granting_gateway.payment_method.grant(credit_card.token)
 
         revoke_result = granting_gateway.payment_method.revoke(credit_card.token)
         self.assertTrue(revoke_result.is_success)
