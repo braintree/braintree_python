@@ -2527,7 +2527,7 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             },
             "three_d_secure_pass_thru": {
-                "eci_flag": "06",
+                "eci_flag": "05",
                 "cavv": "",
                 "xid": ""
             }
