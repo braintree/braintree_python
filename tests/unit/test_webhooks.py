@@ -149,6 +149,42 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(100, notification.transaction.amount)
         self.assertEqual(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
 
+    def test_builds_notification_for_settled_transactions(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.TransactionSettled,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.TransactionSettled, notification.kind)
+        self.assertEqual("my_id", notification.transaction.id)
+        self.assertEqual("settled", notification.transaction.status)
+        self.assertEqual(100, notification.transaction.amount)
+        self.assertEqual(notification.transaction.us_bank_account.routing_number, "123456789")
+        self.assertEqual(notification.transaction.us_bank_account.last_4, "1234")
+        self.assertEqual(notification.transaction.us_bank_account.account_type, "checking")
+        self.assertEqual(notification.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
+        self.assertEqual(notification.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+
+    def test_builds_notification_for_settlement_declined_transactions(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.TransactionSettlementDeclined,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.TransactionSettlementDeclined, notification.kind)
+        self.assertEqual("my_id", notification.transaction.id)
+        self.assertEqual("settlement_declined", notification.transaction.status)
+        self.assertEqual(100, notification.transaction.amount)
+        self.assertEqual(notification.transaction.us_bank_account.routing_number, "123456789")
+        self.assertEqual(notification.transaction.us_bank_account.last_4, "1234")
+        self.assertEqual(notification.transaction.us_bank_account.account_type, "checking")
+        self.assertEqual(notification.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
+        self.assertEqual(notification.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+
     def test_builds_notification_for_disbursements(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.Disbursement,

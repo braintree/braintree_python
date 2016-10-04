@@ -34,6 +34,10 @@ class WebhookTestingGateway(object):
             return self.__merchant_account_declined_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionDisbursed:
             return self.__transaction_disbursed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.TransactionSettled:
+            return self.__transaction_settled_sample_xml(id)
+        elif kind == WebhookNotification.Kind.TransactionSettlementDeclined:
+            return self.__transaction_settlement_declined_sample_xml(id)
         elif kind == WebhookNotification.Kind.PartnerMerchantConnected:
             return self.__partner_merchant_connected_sample_xml()
         elif kind == WebhookNotification.Kind.PartnerMerchantDisconnected:
@@ -75,6 +79,48 @@ class WebhookTestingGateway(object):
                 <settlement-currency-exchange-rate>10</settlement-currency-exchange-rate>
                 <disbursement-date type="datetime">2013-07-09T18:23:29Z</disbursement-date>
               </disbursement-details>
+            </transaction>
+        """ % id
+
+    def __transaction_settled_sample_xml(self, id):
+        return """
+            <transaction>
+              <id>%s</id>
+              <status>settled</status>
+              <type>sale</type>
+              <currency-iso-code>USD</currency-iso-code>
+              <amount>100.00</amount>
+              <merchant-account-id>ogaotkivejpfayqfeaimuktty</merchant-account-id>
+              <payment-instrument-type>us_bank_account</payment-instrument-type>
+              <us-bank-account>
+                <routing-number>123456789</routing-number>
+                <last-4>1234</last-4>
+                <account-type>checking</account-type>
+                <account-description>PayPal Checking - 1234</account-description>
+                <account-holder-name>Dan Schulman</account-holder-name>
+              </us-bank-account>
+              <tax-amount>0</tax-amount>
+            </transaction>
+        """ % id
+
+    def __transaction_settlement_declined_sample_xml(self, id):
+        return """
+            <transaction>
+              <id>%s</id>
+              <status>settlement_declined</status>
+              <type>sale</type>
+              <currency-iso-code>USD</currency-iso-code>
+              <amount>100.00</amount>
+              <merchant-account-id>ogaotkivejpfayqfeaimuktty</merchant-account-id>
+              <payment-instrument-type>us_bank_account</payment-instrument-type>
+              <us-bank-account>
+                <routing-number>123456789</routing-number>
+                <last-4>1234</last-4>
+                <account-type>checking</account-type>
+                <account-description>PayPal Checking - 1234</account-description>
+                <account-holder-name>Dan Schulman</account-holder-name>
+              </us-bank-account>
+              <tax-amount>0</tax-amount>
             </transaction>
         """ % id
 
