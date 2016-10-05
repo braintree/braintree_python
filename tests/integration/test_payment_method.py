@@ -263,6 +263,32 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertRegexpMatches(venmo_account.image_url, r"\.png")
         self.assertEqual(customer_id, venmo_account.customer_id)
 
+    def test_create_with_us_bank_account_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()
+        })
+
+        self.assertTrue(result.is_success)
+        us_bank_account = result.payment_method
+        self.assertIsInstance(us_bank_account, UsBankAccount)
+        self.assertEqual(us_bank_account.routing_number, "123456789")
+        self.assertEqual(us_bank_account.last_4, "1234")
+        self.assertEqual(us_bank_account.account_type, "checking")
+        self.assertEqual(us_bank_account.account_description, "PayPal Checking - 1234")
+        self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
+
+    def test_create_fails_with_invalid_us_bank_account_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce()
+        })
+
+        self.assertFalse(result.is_success)
+        error_code = result.errors.for_object("payment_method").on("payment_method_nonce")[0].code
+        self.assertEqual(ErrorCodes.PaymentMethod.PaymentMethodNonceUnknown, error_code)
 
     def test_create_with_abstract_payment_method_nonce(self):
         customer_id = Customer.create().customer.id
