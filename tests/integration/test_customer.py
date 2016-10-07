@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 from tests.test_helper import *
 import braintree.test.venmo_sdk as venmo_sdk
 from braintree.test.nonces import Nonces
@@ -33,6 +34,29 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", customer.id))
+
+    def test_create_unicode(self):
+        result = Customer.create({
+            "first_name": "Kimi",
+            "last_name": u"Räikkönen",
+            "company": "Fake Company",
+            "email": "joe@email.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.email.com"
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        self.assertEqual("Kimi", customer.first_name)
+        self.assertEqual(u"Räikkönen", customer.last_name)
+        self.assertEqual("Fake Company", customer.company)
+        self.assertEqual("joe@email.com", customer.email)
+        self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("614.555.5678", customer.fax)
+        self.assertEqual("www.email.com", customer.website)
+        self.assertNotEqual(None, customer.id)
 
     def test_create_with_device_session_id_and_fraud_merchant_id(self):
         result = Customer.create({

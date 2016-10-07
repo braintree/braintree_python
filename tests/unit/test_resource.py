@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 from tests.test_helper import *
 from braintree.resource import Resource
 
@@ -78,6 +79,38 @@ class TestResource(unittest.TestCase):
                         "quantity": 10
                     }
                 ]
+            }
+        }
+        Resource.verify_keys(params, signature)
+
+    def test_verify_keys_allows_text(self):
+        text_string = u"â, ê, î, ô, û, ŷ"
+        assert isinstance(text_string, TestHelper.text_type)
+
+        signature = [
+            {"customer": [{"custom_fields": [text_string]}]}
+        ]
+        params = {
+            "customer": {
+                "custom_fields": {
+                    text_string : text_string
+                }
+            }
+        }
+        Resource.verify_keys(params, signature)
+
+    def test_verify_keys_allows_raw_data(self):
+        raw_string = str.encode("â, ê, î, ô, û, ŷ")
+        assert isinstance(raw_string, TestHelper.raw_type)
+
+        signature = [
+            {"customer": [{"custom_fields": [raw_string]}]}
+        ]
+        params = {
+            "customer": {
+                "custom_fields": {
+                    raw_string : raw_string
+                }
             }
         }
         Resource.verify_keys(params, signature)

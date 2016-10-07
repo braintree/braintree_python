@@ -1,6 +1,10 @@
 import re
 import string
+import sys
 from braintree.attribute_getter import AttributeGetter
+
+text_type = unicode if sys.version_info[0] == 2 else str
+raw_type = str if sys.version_info[0] == 2 else bytes
 
 class Resource(AttributeGetter):
     @staticmethod
@@ -17,7 +21,7 @@ class Resource(AttributeGetter):
 
     @staticmethod
     def __flattened_params_keys(params, parent=None):
-        if isinstance(params, str):
+        if isinstance(params, text_type) or isinstance(params, raw_type):
             return [ "%s[%s]" % (parent, params) ]
         else:
             keys = []
@@ -38,10 +42,10 @@ class Resource(AttributeGetter):
         for item in signature:
             if isinstance(item, dict):
                 for key, val in item.items():
-                    full_key = parent + "[" + key + "]" if parent else key
+                    full_key = '{0}[{1}]'.format(parent, key) if parent else key
                     flat_sig += Resource.__flattened_signature(val, full_key)
             else:
-                full_key = parent + "[" + item + "]" if parent else item
+                full_key = '{0}[{1}]'.format(parent, item) if parent else item
                 flat_sig.append(full_key)
         return flat_sig
 
