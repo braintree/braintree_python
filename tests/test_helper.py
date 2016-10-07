@@ -229,7 +229,8 @@ class TestHelper(object):
 
     @staticmethod
     def generate_valid_us_bank_account_nonce():
-        process = subprocess.Popen('./tests/client.sh', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        process = subprocess.Popen('./tests/client.sh ' + client_token["braintree_api"]["url"] + "/tokens", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         nonce = ""
         for line in process.stdout.readlines():
             nonce += line
