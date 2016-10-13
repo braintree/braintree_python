@@ -13,6 +13,7 @@ if sys.version_info[0] == 2:
 else:
     from urllib.parse import urlencode, quote_plus
     from http.client import HTTPConnection
+import requests
 
 from base64 import b64decode
 from contextlib import contextmanager
@@ -230,12 +231,31 @@ class TestHelper(object):
     @staticmethod
     def generate_valid_us_bank_account_nonce():
         client_token = json.loads(TestHelper.generate_decoded_client_token())
-        process = subprocess.Popen('./tests/client.sh ' + client_token["braintree_api"]["url"] + "/tokens", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        nonce = ""
-        for line in process.stdout.readlines():
-            nonce += line
-        process.wait()
-        return nonce
+        headers = {
+            "Content-Type": "application/json",
+            "Braintree-Version": "2015-11-01",
+            "Authorization": "Bearer integratexxxxxx_xxxxxx_xxxxxx_xxxxxx_xx1"
+        }
+        payload = {
+            "type": "us_bank_account",
+            "billing_address": {
+                "street_address": "123 Ave",
+                "region": "CA",
+                "locality": "San Francisco",
+                "postal_code": "94112"
+            },
+            "account_type": "checking",
+            "routing_number": "123456789",
+            "account_number": "567891234",
+            "account_holder_name": "Dan Schulman",
+            "account_description": "PayPal Checking - 1234",
+            "ach_mandate": {
+                "text": ""
+            }
+        }
+        resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
+        respJson = json.loads(resp.text)
+        return respJson["data"]["id"]
 
     @staticmethod
     def generate_invalid_us_bank_account_nonce():
