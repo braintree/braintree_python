@@ -1,3 +1,6 @@
+## 3.30.0
+* Add 'UsBankAccount' payment method
+
 ## 3.29.2
 * Update links in docstrings
 * Remove Python 3.x-incompatible branch check
