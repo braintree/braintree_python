@@ -1,6 +1,4 @@
-
 from tests.test_helper import *
-from braintree.resource import Resource
 from braintree.disbursement_detail import DisbursementDetail
 
 class TestDisbursementDetail(unittest.TestCase):
@@ -26,5 +24,4 @@ class TestDisbursementDetail(unittest.TestCase):
             'funds_held': None
         }
         disbursement_details = DisbursementDetail(detail_hash)
-        self.assertEquals(False, disbursement_details.is_valid)
-
+        self.assertEqual(False, disbursement_details.is_valid)

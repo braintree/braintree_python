@@ -15,7 +15,7 @@ class TestIndividualDetails(unittest.TestCase):
             }
         })
 
-        regex = "<IndividualDetails {first_name: 'Sue', last_name: 'Smith', email: 'sue@hotmail.com', phone: '1112223333', date_of_birth: '1980-12-05', ssn_last_4: '5555', address_details: <AddressDetails {street_address: '123 First St'} at \w+>} at \w+>"
+        regex = r"<IndividualDetails {first_name: 'Sue', last_name: 'Smith', email: 'sue@hotmail.com', phone: '1112223333', date_of_birth: '1980-12-05', ssn_last_4: '5555', address_details: <AddressDetails {street_address: '123 First St'} at \w+>} at \w+>"
 
         matches = re.match(regex, repr(details))
         self.assertTrue(matches)

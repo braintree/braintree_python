@@ -8,9 +8,9 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "credit_card": {"bin": "411111", "last_4": "1111"}
         })
 
-        self.assertEquals(credit_card.__class__, CreditCard)
-        self.assertEquals(credit_card.bin, "411111")
-        self.assertEquals(credit_card.last_4, "1111")
+        self.assertEqual(CreditCard, credit_card.__class__)
+        self.assertEqual("411111", credit_card.bin)
+        self.assertEqual("1111", credit_card.last_4)
 
     def test_parse_response_returns_a_paypal_account(self):
         payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
@@ -18,8 +18,8 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "paypal_account": {"token": "1234", "default": False}
         })
 
-        self.assertEquals(paypal_account.__class__, PayPalAccount)
-        self.assertEquals(paypal_account.token, "1234")
+        self.assertEqual(PayPalAccount, paypal_account.__class__)
+        self.assertEqual("1234", paypal_account.token)
         self.assertFalse(paypal_account.default)
 
     def test_parse_response_returns_an_unknown_payment_method(self):
@@ -32,8 +32,8 @@ class TestPaymentMethodGateway(unittest.TestCase):
             }
         })
 
-        self.assertEquals(unknown_payment_method.__class__, UnknownPaymentMethod)
-        self.assertEquals(unknown_payment_method.token, "1234")
+        self.assertEqual(UnknownPaymentMethod, unknown_payment_method.__class__)
+        self.assertEqual("1234", unknown_payment_method.token)
         self.assertTrue(unknown_payment_method.default)
 
     def test_create_signature(self):

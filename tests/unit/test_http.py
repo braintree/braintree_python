@@ -29,6 +29,6 @@ class TestHttp(unittest.TestCase):
 
         try:
             Http(config, "fake_environment").post("/example/path/to/reach")
-        except Error as e:
+        except Error:
             _, _, tb = sys.exc_info()
             self.assertEqual('raise_error', traceback.extract_tb(tb)[-1][2])

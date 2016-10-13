@@ -10,7 +10,7 @@ class TestSetup(unittest.TestCase):
 
         packages_from_directories = ['braintree']
         directories_that_dont_have_packages = ['braintree.ssl']
-        for dirname, dirnames, filenames in os.walk('braintree'):
+        for dirname, dirnames, _ in os.walk('braintree'):
             for subdirname in dirnames:
                 package_from_directory = re.sub('/', '.', os.path.join(dirname, subdirname))
                 if package_from_directory not in directories_that_dont_have_packages and subdirname != '__pycache__':
@@ -18,4 +18,4 @@ class TestSetup(unittest.TestCase):
 
         mismatch_message = "List of packages in setup.py doesn't match subdirectories of 'braintree' - " \
                 + "add your new directory to 'packages, or if none, `git clean -df` to remove a stale directory"
-        self.assertEquals(sorted(packages_from_directories), sorted(packages_from_setup), mismatch_message)
+        self.assertEqual(sorted(packages_from_directories), sorted(packages_from_setup), mismatch_message)

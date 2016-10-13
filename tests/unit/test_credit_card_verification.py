@@ -8,7 +8,7 @@ class TestCreditCardVerification(unittest.TestCase):
 
     def test_when_risk_data_is_not_included(self):
         verification = CreditCardVerification(None, {})
-        self.assertEquals(verification.risk_data, None)
+        self.assertEqual(verification.risk_data, None)
 
     @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):

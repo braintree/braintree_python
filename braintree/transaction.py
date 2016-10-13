@@ -27,6 +27,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.us_bank_account import UsBankAccount
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
@@ -86,8 +87,51 @@ class Transaction(Resource):
     """
 
     def __repr__(self):
-        detail_list = ["amount", "credit_card", "payment_method_token", "customer_id"]
-        return super(Transaction, self).__repr__(detail_list)
+      detail_list = [
+        "id",
+        "additional_processor_response",
+        "amount",
+        "avs_error_response_code",
+        "avs_postal_code_response_code",
+        "avs_street_address_response_code",
+        "channel",
+        "created_at",
+        "credit_card_details",
+        "currency_iso_code",
+        "customer_id",
+        "cvv_response_code",
+        "disputes",
+        "escrow_status",
+        "gateway_rejection_reason",
+        "master_merchant_account_id",
+        "merchant_account_id",
+        "order_id",
+        "payment_instrument_type",
+        "payment_method_token",
+        "plan_id",
+        "processor_authorization_code",
+        "processor_response_code",
+        "processor_response_text",
+        "processor_settlement_response_code",
+        "processor_settlement_response_text",
+        "purchase_order_number",
+        "recurring",
+        "refund_id",
+        "refunded_transaction_id",
+        "service_fee_amount",
+        "settlement_batch_id",
+        "status",
+        "status_history",
+        "sub_merchant_account_id",
+        "subscription_id",
+        "tax_amount",
+        "tax_exempt",
+        "type",
+        "updated_at",
+        "voice_referral_number",
+      ]
+
+      return super(Transaction, self).__repr__(detail_list)
 
     class CreatedUsing(object):
         """
@@ -576,6 +620,8 @@ class Transaction(Resource):
             self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
         if "europe_bank_account" in attributes:
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
+        if "us_bank_account" in attributes:
+            self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
         if "coinbase_account" in attributes:

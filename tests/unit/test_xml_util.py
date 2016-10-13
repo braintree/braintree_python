@@ -107,60 +107,61 @@ class TestXmlUtil(unittest.TestCase):
         self.assertEqual(expected, XmlUtil.dict_from_xml(xml))
 
     def test_xml_from_dict_escapes_keys_and_values(self):
-        dict = {"k<ey": "va&lue"}
-        self.assertEqual("<k&lt;ey>va&amp;lue</k&lt;ey>", XmlUtil.xml_from_dict(dict))
+        test_dict = {"k<ey": "va&lue"}
+        self.assertEqual("<k&lt;ey>va&amp;lue</k&lt;ey>", XmlUtil.xml_from_dict(test_dict))
 
     def test_xml_from_dict_simple(self):
-        dict = {"a": "b"}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"a": "b"}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_with_integer(self):
-        dict = {"a": 1}
-        self.assertEqual('<a type="integer">1</a>', XmlUtil.xml_from_dict(dict))
+        test_dict = {"a": 1}
+        self.assertEqual('<a type="integer">1</a>', XmlUtil.xml_from_dict(test_dict))
 
     def test_xml_from_dict_with_long(self):
-        dict = {"a": 12341234123412341234}
-        self.assertEqual('<a type="integer">12341234123412341234</a>', XmlUtil.xml_from_dict(dict))
+        test_dict = {"a": 12341234123412341234}
+        self.assertEqual('<a type="integer">12341234123412341234</a>', XmlUtil.xml_from_dict(test_dict))
 
     def test_xml_from_dict_with_boolean(self):
-        dict = {"a": True}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"a": True}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_simple_xml_and_back_twice(self):
-        dict = {"a": "b"}
-        self.assertEqual(dict, self.__xml_and_back(self.__xml_and_back(dict)))
+        test_dict = {"a": "b"}
+        self.assertEqual(test_dict, self.__xml_and_back(self.__xml_and_back(test_dict)))
 
     def test_xml_from_dict_nested(self):
-        dict = {"container": {"item": "val"}}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"container": {"item": "val"}}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_with_array(self):
-        dict = {"container": {"elements": ["val1", "val2", "val3"]}}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"container": {"elements": ["val1", "val2", "val3"]}}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_with_array_of_hashes(self):
-        dict = {"container": {"elements": [{"val": "val1"}, {"val": "val2"}, {"val": "val3"}]}}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"container": {"elements": [{"val": "val1"}, {"val": "val2"}, {"val": "val3"}]}}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_retains_underscores(self):
-        dict = {"container": {"my_element": "val"}}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"container": {"my_element": "val"}}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_escapes_special_chars(self):
-        dict = {"container": {"element": "<&>'\""}}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"container": {"element": "<&>'\""}}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_with_datetime(self):
-        dict = {"a": datetime(2010, 1, 2, 3, 4, 5)}
-        self.assertEqual(dict, self.__xml_and_back(dict))
+        test_dict = {"a": datetime(2010, 1, 2, 3, 4, 5)}
+        self.assertEqual(test_dict, self.__xml_and_back(test_dict))
 
     def test_xml_from_dict_with_unicode_characters(self):
-        dict = {"a": u"\u1f61hat?"}
-        self.assertEqual('<a>&#8033;hat?</a>', XmlUtil.xml_from_dict(dict))
+        test_dict = {"a": u"\u1f61hat?"}
+        self.assertEqual('<a>&#8033;hat?</a>', XmlUtil.xml_from_dict(test_dict))
 
     def test_xml_from_dict_with_dates_formats_as_datetime(self):
-        dict = {"a": date(2010, 1, 2)}
-        self.assertEqual('<a type="datetime">2010-01-02T00:00:00Z</a>', XmlUtil.xml_from_dict(dict))
+        test_dict = {"a": date(2010, 1, 2)}
+        self.assertEqual('<a type="datetime">2010-01-02T00:00:00Z</a>', XmlUtil.xml_from_dict(test_dict))
 
-    def __xml_and_back(self, dict):
-        return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(dict))
+    @staticmethod
+    def __xml_and_back(test_dict):
+        return XmlUtil.dict_from_xml(XmlUtil.xml_from_dict(test_dict))

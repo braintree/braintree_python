@@ -140,6 +140,7 @@ class ErrorCodes(object):
             VerificationMerchantAccountIdIsInvalid = "91728"
             VerificationMerchantAccountIsForbidden = "91743"
             VerificationMerchantAccountIsSuspended = "91742"
+            VerificationMerchantAccountCannotBeSubMerchantAccount = "91755"
 
 
     class Customer(object):
@@ -304,6 +305,7 @@ class ErrorCodes(object):
             MerchantAccountIdIsInvalid = "94204"
             MerchantAccountIsSuspended = "94205"
             MerchantAccountIsForbidden = "94206"
+            MerchantAccountCannotBeSubMerchantAccount = "94208"
 
     class PaymentMethod(object):
         CannotForwardPaymentMethodType = "93106"
@@ -431,6 +433,7 @@ class ErrorCodes(object):
         CannotBeVoided = "91504"
         CannotCancelRelease = "91562"
         CannotCloneCredit = "91543"
+        CannotCloneMarketplaceTransaction = "915137"
         CannotCloneTransactionWithPayPalAccount = "91573"
         CannotCloneTransactionWithVaultCreditCard = "91540"
         CannotCloneUnsuccessfulTransaction = "91542"

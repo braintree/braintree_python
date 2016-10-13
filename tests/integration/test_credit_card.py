@@ -16,16 +16,16 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
-        self.assertEquals("411111", credit_card.bin)
-        self.assertEquals("1111", credit_card.last_4)
-        self.assertEquals("05", credit_card.expiration_month)
-        self.assertEquals("2014", credit_card.expiration_year)
-        self.assertEquals("05/2014", credit_card.expiration_date)
-        self.assertEquals("John Doe", credit_card.cardholder_name)
-        self.assertNotEquals(re.search("\A\w{32}\Z", credit_card.unique_number_identifier), None)
+        self.assertTrue(re.search(r"\A\w{4,}\Z", credit_card.token) is not None)
+        self.assertEqual("411111", credit_card.bin)
+        self.assertEqual("1111", credit_card.last_4)
+        self.assertEqual("05", credit_card.expiration_month)
+        self.assertEqual("2014", credit_card.expiration_year)
+        self.assertEqual("05/2014", credit_card.expiration_date)
+        self.assertEqual("John Doe", credit_card.cardholder_name)
+        self.assertNotEqual(re.search(r"\A\w{32}\Z", credit_card.unique_number_identifier), None)
         self.assertFalse(credit_card.venmo_sdk)
-        self.assertNotEquals(re.search("png", credit_card.image_url), None)
+        self.assertNotEqual(re.search("png", credit_card.image_url), None)
 
     def test_create_and_make_default(self):
         customer = Customer.create().customer
@@ -66,7 +66,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertEquals("05/2014", credit_card.expiration_date)
+        self.assertEqual("05/2014", credit_card.expiration_date)
 
     def test_create_with_security_params(self):
         customer = Customer.create().customer
@@ -95,7 +95,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertEquals(token, credit_card.token)
+        self.assertEqual(token, credit_card.token)
 
     def test_create_with_billing_address(self):
         customer = Customer.create().customer
@@ -117,14 +117,14 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         address = result.credit_card.billing_address
-        self.assertEquals("123 Abc Way", address.street_address)
-        self.assertEquals("Chicago", address.locality)
-        self.assertEquals("Illinois", address.region)
-        self.assertEquals("60622", address.postal_code)
-        self.assertEquals("MX", address.country_code_alpha2)
-        self.assertEquals("MEX", address.country_code_alpha3)
-        self.assertEquals("484", address.country_code_numeric)
-        self.assertEquals("Mexico", address.country_name)
+        self.assertEqual("123 Abc Way", address.street_address)
+        self.assertEqual("Chicago", address.locality)
+        self.assertEqual("Illinois", address.region)
+        self.assertEqual("60622", address.postal_code)
+        self.assertEqual("MX", address.country_code_alpha2)
+        self.assertEqual("MEX", address.country_code_alpha3)
+        self.assertEqual("484", address.country_code_numeric)
+        self.assertEqual("Mexico", address.country_name)
 
     def test_create_with_billing_address_id(self):
         customer = Customer.create().customer
@@ -142,8 +142,8 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         billing_address = result.credit_card.billing_address
-        self.assertEquals(address.id, billing_address.id)
-        self.assertEquals("123 Abc Way", billing_address.street_address)
+        self.assertEqual(address.id, billing_address.id)
+        self.assertEqual("123 Abc Way", billing_address.street_address)
 
     def test_create_without_billing_address_still_has_billing_address_method(self):
         customer = Customer.create().customer
@@ -153,7 +153,7 @@ class TestCreditCard(unittest.TestCase):
             "expiration_date": "05/2014",
         })
         self.assertTrue(result.is_success)
-        self.assertEquals(None, result.credit_card.billing_address)
+        self.assertEqual(None, result.credit_card.billing_address)
 
 
     def test_create_with_card_verification_returns_risk_data(self):
@@ -168,8 +168,8 @@ class TestCreditCard(unittest.TestCase):
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
         self.assertIsInstance(verification.risk_data, RiskData)
-        self.assertEquals(verification.risk_data.id, None)
-        self.assertEquals(verification.risk_data.decision, "Not Evaluated")
+        self.assertEqual(None, verification.risk_data.id)
+        self.assertEqual("Not Evaluated", verification.risk_data.decision)
 
     def test_successful_create_with_card_verification_returns_risk_data(self):
         customer = Customer.create().customer
@@ -183,8 +183,8 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(result.is_success)
         verification = result.credit_card.verification
         self.assertIsInstance(verification.risk_data, RiskData)
-        self.assertEquals(verification.risk_data.id, None)
-        self.assertEquals(verification.risk_data.decision, "Not Evaluated")
+        self.assertEqual(None, verification.risk_data.id)
+        self.assertEqual("Not Evaluated", verification.risk_data.decision)
 
     def test_create_with_card_verification(self):
         customer = Customer.create().customer
@@ -197,14 +197,14 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
-        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
-        self.assertEquals("2000", verification.processor_response_code)
-        self.assertEquals("Do Not Honor", verification.processor_response_text)
-        self.assertEquals("I", verification.cvv_response_code)
-        self.assertEquals(None, verification.avs_error_response_code)
-        self.assertEquals("I", verification.avs_postal_code_response_code)
-        self.assertEquals("I", verification.avs_street_address_response_code)
-        self.assertEquals(TestHelper.default_merchant_account_id, verification.merchant_account_id)
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, verification.status)
+        self.assertEqual("2000", verification.processor_response_code)
+        self.assertEqual("Do Not Honor", verification.processor_response_text)
+        self.assertEqual("I", verification.cvv_response_code)
+        self.assertEqual(None, verification.avs_error_response_code)
+        self.assertEqual("I", verification.avs_postal_code_response_code)
+        self.assertEqual("I", verification.avs_street_address_response_code)
+        self.assertEqual(TestHelper.default_merchant_account_id, verification.merchant_account_id)
 
     def test_create_with_card_verification_with_overridden_amount(self):
         customer = Customer.create().customer
@@ -217,14 +217,14 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
-        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
-        self.assertEquals("2000", verification.processor_response_code)
-        self.assertEquals("Do Not Honor", verification.processor_response_text)
-        self.assertEquals("I", verification.cvv_response_code)
-        self.assertEquals(None, verification.avs_error_response_code)
-        self.assertEquals("I", verification.avs_postal_code_response_code)
-        self.assertEquals("I", verification.avs_street_address_response_code)
-        self.assertEquals(TestHelper.default_merchant_account_id, verification.merchant_account_id)
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, verification.status)
+        self.assertEqual("2000", verification.processor_response_code)
+        self.assertEqual("Do Not Honor", verification.processor_response_text)
+        self.assertEqual("I", verification.cvv_response_code)
+        self.assertEqual(None, verification.avs_error_response_code)
+        self.assertEqual("I", verification.avs_postal_code_response_code)
+        self.assertEqual("I", verification.avs_street_address_response_code)
+        self.assertEqual(TestHelper.default_merchant_account_id, verification.merchant_account_id)
 
     def test_create_with_card_verification_and_non_default_merchant_account(self):
         customer = Customer.create().customer
@@ -240,9 +240,9 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
-        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, verification.status)
-        self.assertEquals(None, verification.gateway_rejection_reason)
-        self.assertEquals(TestHelper.non_default_merchant_account_id, verification.merchant_account_id)
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, verification.status)
+        self.assertEqual(None, verification.gateway_rejection_reason)
+        self.assertEqual(TestHelper.non_default_merchant_account_id, verification.merchant_account_id)
 
     def test_verify_gateway_rejected_responds_to_processor_response_code(self):
         old_merchant_id = Configuration.merchant_id
@@ -269,8 +269,8 @@ class TestCreditCard(unittest.TestCase):
 
 
             self.assertFalse(result.is_success)
-            self.assertEquals('1000', result.credit_card_verification.processor_response_code)
-            self.assertEquals('Approved', result.credit_card_verification.processor_response_text)
+            self.assertEqual('1000', result.credit_card_verification.processor_response_code)
+            self.assertEqual('Approved', result.credit_card_verification.processor_response_text)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
@@ -299,7 +299,7 @@ class TestCreditCard(unittest.TestCase):
 
             self.assertFalse(result.is_success)
             verification = result.credit_card_verification
-            self.assertEquals(Transaction.GatewayRejectionReason.Cvv, verification.gateway_rejection_reason)
+            self.assertEqual(Transaction.GatewayRejectionReason.Cvv, verification.gateway_rejection_reason)
         finally:
             Configuration.merchant_id = old_merchant_id
             Configuration.public_key = old_public_key
@@ -332,8 +332,11 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.DuplicateCardExists, result.errors.for_object("credit_card").on("number")[0].code)
-        self.assertEquals("Duplicate card exists in the vault.", result.message)
+        self.assertEqual("Duplicate card exists in the vault.", result.message)
+
+        credit_card_number_errors = result.errors.for_object("credit_card").on("number")
+        self.assertEqual(1, len(credit_card_number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, credit_card_number_errors[0].code)
 
     def test_create_with_invalid_invalid_options(self):
         customer = Customer.create().customer
@@ -344,8 +347,11 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.ExpirationDateIsInvalid, result.errors.for_object("credit_card").on("expiration_date")[0].code)
-        self.assertEquals("Expiration date is invalid.", result.message)
+        self.assertEqual("Expiration date is invalid.", result.message)
+
+        expiration_date_errors = result.errors.for_object("credit_card").on("expiration_date")
+        self.assertEqual(1, len(expiration_date_errors))
+        self.assertEqual(ErrorCodes.CreditCard.ExpirationDateIsInvalid, expiration_date_errors[0].code)
 
     def test_create_with_invalid_country_codes(self):
         customer = Customer.create().customer
@@ -362,22 +368,22 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted,
-            result.errors.for_object("credit_card").for_object("billing_address").on("country_code_alpha2")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted,
-            result.errors.for_object("credit_card").for_object("billing_address").on("country_code_alpha3")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.Address.CountryCodeNumericIsNotAccepted,
-            result.errors.for_object("credit_card").for_object("billing_address").on("country_code_numeric")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.Address.CountryNameIsNotAccepted,
-            result.errors.for_object("credit_card").for_object("billing_address").on("country_name")[0].code
-        )
+
+        country_code_alpha2_errors = result.errors.for_object("credit_card").for_object("billing_address").on("country_code_alpha2")
+        self.assertEqual(1, len(country_code_alpha2_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_code_alpha2_errors[0].code)
+
+        country_code_alpha3_errors = result.errors.for_object("credit_card").for_object("billing_address").on("country_code_alpha3")
+        self.assertEqual(1, len(country_code_alpha3_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha3IsNotAccepted, country_code_alpha3_errors[0].code)
+
+        country_code_numeric_errors = result.errors.for_object("credit_card").for_object("billing_address").on("country_code_numeric")
+        self.assertEqual(1, len(country_code_numeric_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeNumericIsNotAccepted, country_code_numeric_errors[0].code)
+
+        country_name_errors = result.errors.for_object("credit_card").for_object("billing_address").on("country_name")
+        self.assertEqual(1, len(country_name_errors))
+        self.assertEqual(ErrorCodes.Address.CountryNameIsNotAccepted, country_name_errors[0].code)
 
     def test_create_with_venmo_sdk_payment_method_code(self):
         customer = Customer.create().customer
@@ -387,7 +393,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals("411111", result.credit_card.bin)
+        self.assertEqual("411111", result.credit_card.bin)
         self.assertTrue(result.credit_card.venmo_sdk)
 
     def test_create_with_invalid_venmo_sdk_payment_method_code(self):
@@ -398,9 +404,11 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(result.message, "Invalid VenmoSDK payment method code")
-        self.assertEquals(result.errors.for_object("credit_card") \
-                .on("venmo_sdk_payment_method_code")[0].code, ErrorCodes.CreditCard.InvalidVenmoSDKPaymentMethodCode)
+        self.assertEqual("Invalid VenmoSDK payment method code", result.message)
+
+        venmo_sdk_payment_method_code_errors = result.errors.for_object("credit_card").on("venmo_sdk_payment_method_code")
+        self.assertEqual(1, len(venmo_sdk_payment_method_code_errors))
+        self.assertEqual(ErrorCodes.CreditCard.InvalidVenmoSDKPaymentMethodCode, venmo_sdk_payment_method_code_errors[0].code)
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
@@ -410,7 +418,7 @@ class TestCreditCard(unittest.TestCase):
             "shared_customer_identifier": "fake_identifier",
             "shared_customer_identifier_type": "testing"
         })
-        status_code, response = http.add_card({
+        _, response = http.add_card({
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_month": "11",
@@ -427,7 +435,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEquals("411111", result.credit_card.bin)
+        self.assertEqual("411111", result.credit_card.bin)
 
     def test_create_with_venmo_sdk_session(self):
         customer = Customer.create().customer
@@ -478,13 +486,13 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
-        self.assertEquals("510510", credit_card.bin)
-        self.assertEquals("5100", credit_card.last_4)
-        self.assertEquals("06", credit_card.expiration_month)
-        self.assertEquals("2010", credit_card.expiration_year)
-        self.assertEquals("06/2010", credit_card.expiration_date)
-        self.assertEquals("Jane Jones", credit_card.cardholder_name)
+        self.assertTrue(re.search(r"\A\w{4,}\Z", credit_card.token) is not None)
+        self.assertEqual("510510", credit_card.bin)
+        self.assertEqual("5100", credit_card.last_4)
+        self.assertEqual("06", credit_card.expiration_month)
+        self.assertEqual("2010", credit_card.expiration_year)
+        self.assertEqual("06/2010", credit_card.expiration_date)
+        self.assertEqual("Jane Jones", credit_card.cardholder_name)
 
     def test_update_billing_address_creates_new_by_default(self):
         customer = Customer.create().customer
@@ -507,13 +515,13 @@ class TestCreditCard(unittest.TestCase):
             }
         }).credit_card
 
-        self.assertEquals("IL", updated_credit_card.billing_address.region)
-        self.assertEquals("NG", updated_credit_card.billing_address.country_code_alpha2)
-        self.assertEquals("NGA", updated_credit_card.billing_address.country_code_alpha3)
-        self.assertEquals("566", updated_credit_card.billing_address.country_code_numeric)
-        self.assertEquals("Nigeria", updated_credit_card.billing_address.country_name)
-        self.assertEquals(None, updated_credit_card.billing_address.street_address)
-        self.assertNotEquals(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
+        self.assertEqual("IL", updated_credit_card.billing_address.region)
+        self.assertEqual("NG", updated_credit_card.billing_address.country_code_alpha2)
+        self.assertEqual("NGA", updated_credit_card.billing_address.country_code_alpha3)
+        self.assertEqual("566", updated_credit_card.billing_address.country_code_numeric)
+        self.assertEqual("Nigeria", updated_credit_card.billing_address.country_name)
+        self.assertEqual(None, updated_credit_card.billing_address.street_address)
+        self.assertNotEqual(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
 
     def test_update_billing_address_when_update_existing_is_True(self):
         customer = Customer.create().customer
@@ -535,9 +543,9 @@ class TestCreditCard(unittest.TestCase):
             }
         }).credit_card
 
-        self.assertEquals("IL", updated_credit_card.billing_address.region)
-        self.assertEquals("123 Nigeria Ave", updated_credit_card.billing_address.street_address)
-        self.assertEquals(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
+        self.assertEqual("IL", updated_credit_card.billing_address.region)
+        self.assertEqual("123 Nigeria Ave", updated_credit_card.billing_address.street_address)
+        self.assertEqual(initial_credit_card.billing_address.id, updated_credit_card.billing_address.id)
 
     def test_update_and_make_default(self):
         customer = Customer.create().customer
@@ -559,7 +567,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(card1.default)
         self.assertFalse(card2.default)
 
-        result = CreditCard.update(card2.token, {
+        CreditCard.update(card2.token, {
             "options": {
                 "make_default": True
             }
@@ -587,7 +595,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_update_verifies_card_with_non_default_merchant_account(self):
         customer = Customer.create().customer
@@ -611,7 +619,7 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, result.credit_card_verification.status)
 
     def test_update_billing_address(self):
         customer = Customer.create().customer
@@ -638,10 +646,10 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         address = result.credit_card.billing_address
-        self.assertEquals("123 Abc Way", address.street_address)
-        self.assertEquals("Chicago", address.locality)
-        self.assertEquals("Illinois", address.region)
-        self.assertEquals("60622", address.postal_code)
+        self.assertEqual("123 Abc Way", address.street_address)
+        self.assertEqual("Chicago", address.locality)
+        self.assertEqual("Illinois", address.region)
+        self.assertEqual("60622", address.postal_code)
 
     def test_update_returns_error_if_invalid(self):
         customer = Customer.create().customer
@@ -656,7 +664,34 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(ErrorCodes.CreditCard.ExpirationDateIsInvalid, result.errors.for_object("credit_card").on("expiration_date")[0].code)
+
+        expiration_date_errors = result.errors.for_object("credit_card").on("expiration_date")
+        self.assertEqual(1, len(expiration_date_errors))
+        self.assertEqual(ErrorCodes.CreditCard.ExpirationDateIsInvalid, expiration_date_errors[0].code)
+
+    def test_update_returns_error_with_duplicate_payment_method_if_fail_on_duplicate_payment_method_is_set(self):
+        create_result = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2021",
+            }
+        })
+        self.assertTrue(create_result.is_success)
+
+        update_result = Customer.update(create_result.customer.id, {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2021",
+                "options": {
+                    "fail_on_duplicate_payment_method": True,
+                },
+            }
+        })
+
+        self.assertFalse(update_result.is_success)
+        number_errors = update_result.errors.for_object("customer").for_object("credit_card").on("number")
+        self.assertEqual(1, len(number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, number_errors[0].code)
 
     def test_delete_with_valid_token(self):
         customer = Customer.create().customer
@@ -683,7 +718,7 @@ class TestCreditCard(unittest.TestCase):
 
     @raises(NotFoundError)
     def test_delete_with_invalid_token(self):
-        result = CreditCard.delete("notreal")
+        CreditCard.delete("notreal")
 
     def test_find_with_valid_token(self):
         customer = Customer.create().customer
@@ -694,12 +729,12 @@ class TestCreditCard(unittest.TestCase):
         }).credit_card
 
         found_credit_card = CreditCard.find(credit_card.token)
-        self.assertTrue(re.search("\A\w{4,}\Z", credit_card.token) is not None)
-        self.assertEquals("411111", credit_card.bin)
-        self.assertEquals("1111", credit_card.last_4)
-        self.assertEquals("05", credit_card.expiration_month)
-        self.assertEquals("2014", credit_card.expiration_year)
-        self.assertEquals("05/2014", credit_card.expiration_date)
+        self.assertTrue(re.search(r"\A\w{4,}\Z", found_credit_card.token) is not None)
+        self.assertEqual("411111", found_credit_card.bin)
+        self.assertEqual("1111", found_credit_card.last_4)
+        self.assertEqual("05", found_credit_card.expiration_month)
+        self.assertEqual("2014", found_credit_card.expiration_year)
+        self.assertEqual("05/2014", found_credit_card.expiration_date)
 
     def test_find_returns_associated_subsriptions(self):
         customer = Customer.create().customer
@@ -708,18 +743,23 @@ class TestCreditCard(unittest.TestCase):
             "number": "4111111111111111",
             "expiration_date": "05/2014"
         }).credit_card
-        id = "id_" + str(random.randint(1, 1000000))
+        subscription_id = "id_" + str(random.randint(1, 1000000))
         subscription = Subscription.create({
-            "id": id,
+            "id": subscription_id,
             "plan_id": "integration_trialless_plan",
             "payment_method_token": credit_card.token,
             "price": Decimal("1.00")
         }).subscription
 
         found_credit_card = CreditCard.find(credit_card.token)
-        self.assertEquals(id, found_credit_card.subscriptions[0].id)
-        self.assertEquals(Decimal("1.00"), found_credit_card.subscriptions[0].price)
-        self.assertEquals(credit_card.token, found_credit_card.subscriptions[0].payment_method_token)
+        subscriptions = found_credit_card.subscriptions
+
+        self.assertEqual(1, len(subscriptions))
+        subscription = subscriptions[0]
+
+        self.assertEqual(subscription_id, subscription.id)
+        self.assertEqual(Decimal("1.00"), subscription.price)
+        self.assertEqual(credit_card.token, subscription.payment_method_token)
 
     @raises_with_regexp(NotFoundError, "payment method with token 'bad_token' not found")
     def test_find_with_invalid_token(self):
@@ -746,12 +786,13 @@ class TestCreditCard(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 201)
+        self.assertEqual(201, status_code)
         nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         card = CreditCard.from_nonce(nonce)
         customer = Customer.find(customer.id)
-        self.assertEquals(customer.credit_cards[0].token, card.token)
+        self.assertEqual(1, len(customer.credit_cards))
+        self.assertEqual(customer.credit_cards[0].token, card.token)
 
     @raises_with_regexp(NotFoundError, "payment method with nonce .* or not found")
     def test_from_nonce_with_unlocked_nonce_pointing_to_shared_card(self):
@@ -773,7 +814,7 @@ class TestCreditCard(unittest.TestCase):
             },
             "share": True
         })
-        self.assertEqual(status_code, 201)
+        self.assertEqual(201, status_code)
         nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         CreditCard.from_nonce(nonce)
@@ -800,7 +841,7 @@ class TestCreditCard(unittest.TestCase):
                 "expiration_year": "2099",
             }
         })
-        self.assertEqual(status_code, 201)
+        self.assertEqual(201, status_code)
         nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         CreditCard.from_nonce(nonce)
@@ -828,15 +869,15 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertEquals("411111", credit_card.bin)
-        self.assertEquals("1111", credit_card.last_4)
-        self.assertEquals("05", credit_card.expiration_month)
-        self.assertEquals("2012", credit_card.expiration_year)
-        self.assertEquals(customer.id, credit_card.customer_id)
-        self.assertEquals("MX", credit_card.billing_address.country_code_alpha2)
-        self.assertEquals("MEX", credit_card.billing_address.country_code_alpha3)
-        self.assertEquals("484", credit_card.billing_address.country_code_numeric)
-        self.assertEquals("Mexico", credit_card.billing_address.country_name)
+        self.assertEqual("411111", credit_card.bin)
+        self.assertEqual("1111", credit_card.last_4)
+        self.assertEqual("05", credit_card.expiration_month)
+        self.assertEqual("2012", credit_card.expiration_year)
+        self.assertEqual(customer.id, credit_card.customer_id)
+        self.assertEqual("MX", credit_card.billing_address.country_code_alpha2)
+        self.assertEqual("MEX", credit_card.billing_address.country_code_alpha3)
+        self.assertEqual("484", credit_card.billing_address.country_code_numeric)
+        self.assertEqual("Mexico", credit_card.billing_address.country_name)
 
 
     def test_create_from_transparent_redirect_and_make_default(self):
@@ -889,14 +930,14 @@ class TestCreditCard(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_create_url())
         result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.CreditCard.NumberHasInvalidLength,
-            result.errors.for_object("credit_card").on("number")[0].code
-        )
-        self.assertEquals(
-            ErrorCodes.CreditCard.ExpirationDateIsInvalid,
-            result.errors.for_object("credit_card").on("expiration_date")[0].code
-        )
+
+        credit_card_number_errors = result.errors.for_object("credit_card").on("number")
+        self.assertEqual(1, len(credit_card_number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.NumberHasInvalidLength, credit_card_number_errors[0].code)
+
+        expiration_date_errors = result.errors.for_object("credit_card").on("expiration_date")
+        self.assertEqual(1, len(expiration_date_errors))
+        self.assertEqual(ErrorCodes.CreditCard.ExpirationDateIsInvalid, expiration_date_errors[0].code)
 
     def test_update_from_transparent_redirect_with_successful_result(self):
         old_token = str(random.randint(1, 1000000))
@@ -927,11 +968,11 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertTrue(result.is_success)
         credit_card = result.credit_card
-        self.assertEquals(new_token, credit_card.token)
-        self.assertEquals("411111", credit_card.bin)
-        self.assertEquals("1111", credit_card.last_4)
-        self.assertEquals("05", credit_card.expiration_month)
-        self.assertEquals("2014", credit_card.expiration_year)
+        self.assertEqual(new_token, credit_card.token)
+        self.assertEqual("411111", credit_card.bin)
+        self.assertEqual("1111", credit_card.last_4)
+        self.assertEqual("05", credit_card.expiration_month)
+        self.assertEqual("2014", credit_card.expiration_year)
 
     def test_update_from_transparent_redirect_and_make_default(self):
         customer = Customer.create({
@@ -967,7 +1008,7 @@ class TestCreditCard(unittest.TestCase):
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
-        result = CreditCard.confirm_transparent_redirect(query_string)
+        CreditCard.confirm_transparent_redirect(query_string)
 
         self.assertFalse(CreditCard.find(card1.token).default)
         self.assertTrue(CreditCard.find(card2.token).default)
@@ -1007,25 +1048,26 @@ class TestCreditCard(unittest.TestCase):
         }
 
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
-        result = CreditCard.confirm_transparent_redirect(query_string)
 
-        self.assertEquals(1, len(Customer.find(customer.id).addresses))
+        CreditCard.confirm_transparent_redirect(query_string)
+
+        self.assertEqual(1, len(Customer.find(customer.id).addresses))
         updated_card = CreditCard.find(card.token)
-        self.assertEquals("123 New St", updated_card.billing_address.street_address)
-        self.assertEquals("Columbus", updated_card.billing_address.locality)
-        self.assertEquals("Ohio", updated_card.billing_address.region)
-        self.assertEquals("43215", updated_card.billing_address.postal_code)
+        self.assertEqual("123 New St", updated_card.billing_address.street_address)
+        self.assertEqual("Columbus", updated_card.billing_address.locality)
+        self.assertEqual("Ohio", updated_card.billing_address.region)
+        self.assertEqual("43215", updated_card.billing_address.postal_code)
 
     def test_update_from_transparent_redirect_with_error_result(self):
         old_token = str(random.randint(1, 1000000))
-        credit_card = Customer.create({
+        Customer.create({
             "credit_card": {
                 "cardholder_name": "Old Cardholder Name",
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "token": old_token
             }
-        }).customer.credit_cards[0]
+        })
 
         tr_data = {
             "payment_method_token": old_token,
@@ -1043,15 +1085,15 @@ class TestCreditCard(unittest.TestCase):
         query_string = TestHelper.simulate_tr_form_post(post_params, CreditCard.transparent_redirect_update_url())
         result = CreditCard.confirm_transparent_redirect(query_string)
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.CreditCard.TokenInvalid,
-            result.errors.for_object("credit_card").on("token")[0].code
-        )
+
+        credit_card_token_errors = result.errors.for_object("credit_card").on("token")
+        self.assertEqual(1, len(credit_card_token_errors))
+        self.assertEqual(ErrorCodes.CreditCard.TokenInvalid, credit_card_token_errors[0].code)
 
     def test_expired_can_iterate_over_all_items(self):
         customer_id = Customer.all().first.id
 
-        for i in range(110 - CreditCard.expired().maximum_size):
+        for _ in range(110 - CreditCard.expired().maximum_size):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",
@@ -1064,14 +1106,14 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 100)
 
         credit_card_tokens = [credit_card.token for credit_card in collection.items]
-        self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
+        self.assertEqual(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
 
-        self.assertEquals(set([True]), TestHelper.unique([credit_card.is_expired for credit_card in collection.items]))
+        self.assertEqual(set([True]), TestHelper.unique([credit_card.is_expired for credit_card in collection.items]))
 
     def test_expiring_between(self):
         customer_id = Customer.all().first.id
 
-        for i in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
+        for _ in range(110 - CreditCard.expiring_between(date(2010, 1, 1), date(2010, 12, 31)).maximum_size):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",
@@ -1084,9 +1126,9 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(collection.maximum_size > 100)
 
         credit_card_tokens = [credit_card.token for credit_card in collection.items]
-        self.assertEquals(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
+        self.assertEqual(collection.maximum_size, len(TestHelper.unique(credit_card_tokens)))
 
-        self.assertEquals(set(['2010']), TestHelper.unique([credit_card.expiration_year for credit_card in collection.items]))
+        self.assertEqual(set(['2010']), TestHelper.unique([credit_card.expiration_year for credit_card in collection.items]))
 
     def test_commercial_card(self):
         customer = Customer.create().customer
@@ -1099,7 +1141,7 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Commercial.Yes, credit_card.commercial)
+        self.assertEqual(CreditCard.Commercial.Yes, credit_card.commercial)
 
     def test_issuing_bank(self):
         customer = Customer.create().customer
@@ -1111,7 +1153,7 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(credit_card.issuing_bank, CreditCardDefaults.IssuingBank)
+        self.assertEqual(CreditCardDefaults.IssuingBank, credit_card.issuing_bank)
 
     def test_country_of_issuance(self):
         customer = Customer.create().customer
@@ -1124,7 +1166,7 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(credit_card.country_of_issuance, CreditCardDefaults.CountryOfIssuance)
+        self.assertEqual(CreditCardDefaults.CountryOfIssuance, credit_card.country_of_issuance)
 
     def test_durbin_regulated_card(self):
         customer = Customer.create().customer
@@ -1137,7 +1179,7 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.DurbinRegulated.Yes, credit_card.durbin_regulated)
+        self.assertEqual(CreditCard.DurbinRegulated.Yes, credit_card.durbin_regulated)
 
     def test_debit_card(self):
         customer = Customer.create().customer
@@ -1150,7 +1192,7 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Debit.Yes, credit_card.debit)
+        self.assertEqual(CreditCard.Debit.Yes, credit_card.debit)
 
     def test_healthcare_card(self):
         customer = Customer.create().customer
@@ -1163,7 +1205,8 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Healthcare.Yes, credit_card.healthcare)
+        self.assertEqual(CreditCard.Healthcare.Yes, credit_card.healthcare)
+        self.assertEqual("J3", credit_card.product_id)
 
     def test_payroll_card(self):
         customer = Customer.create().customer
@@ -1176,7 +1219,8 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Payroll.Yes, credit_card.payroll)
+        self.assertEqual(CreditCard.Payroll.Yes, credit_card.payroll)
+        self.assertEqual("MSA", credit_card.product_id)
 
     def test_prepaid_card(self):
         customer = Customer.create().customer
@@ -1189,7 +1233,7 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Prepaid.Yes, credit_card.prepaid)
+        self.assertEqual(CreditCard.Prepaid.Yes, credit_card.prepaid)
 
     def test_all_negative_card_type_indicators(self):
         customer = Customer.create().customer
@@ -1202,12 +1246,13 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Debit.No, credit_card.debit)
-        self.assertEquals(CreditCard.DurbinRegulated.No, credit_card.durbin_regulated)
-        self.assertEquals(CreditCard.Prepaid.No, credit_card.prepaid)
-        self.assertEquals(CreditCard.Payroll.No, credit_card.payroll)
-        self.assertEquals(CreditCard.Commercial.No, credit_card.commercial)
-        self.assertEquals(CreditCard.Healthcare.No, credit_card.healthcare)
+        self.assertEqual(CreditCard.Debit.No, credit_card.debit)
+        self.assertEqual(CreditCard.DurbinRegulated.No, credit_card.durbin_regulated)
+        self.assertEqual(CreditCard.Prepaid.No, credit_card.prepaid)
+        self.assertEqual(CreditCard.Payroll.No, credit_card.payroll)
+        self.assertEqual(CreditCard.Commercial.No, credit_card.commercial)
+        self.assertEqual(CreditCard.Healthcare.No, credit_card.healthcare)
+        self.assertEqual("MSB", credit_card.product_id)
 
     def test_card_without_card_type_indicators(self):
         customer = Customer.create().customer
@@ -1220,11 +1265,12 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
-        self.assertEquals(CreditCard.Debit.Unknown, credit_card.debit)
-        self.assertEquals(CreditCard.DurbinRegulated.Unknown, credit_card.durbin_regulated)
-        self.assertEquals(CreditCard.Prepaid.Unknown, credit_card.prepaid)
-        self.assertEquals(CreditCard.Payroll.Unknown, credit_card.payroll)
-        self.assertEquals(CreditCard.Commercial.Unknown, credit_card.commercial)
-        self.assertEquals(CreditCard.Healthcare.Unknown, credit_card.healthcare)
-        self.assertEquals(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
-        self.assertEquals(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
+        self.assertEqual(CreditCard.Debit.Unknown, credit_card.debit)
+        self.assertEqual(CreditCard.DurbinRegulated.Unknown, credit_card.durbin_regulated)
+        self.assertEqual(CreditCard.Prepaid.Unknown, credit_card.prepaid)
+        self.assertEqual(CreditCard.Payroll.Unknown, credit_card.payroll)
+        self.assertEqual(CreditCard.Commercial.Unknown, credit_card.commercial)
+        self.assertEqual(CreditCard.Healthcare.Unknown, credit_card.healthcare)
+        self.assertEqual(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
+        self.assertEqual(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
+        self.assertEquals(CreditCard.ProductId.Unknown, credit_card.product_id)

@@ -12,19 +12,19 @@ class TestResourceCollection(unittest.TestCase):
         items = ["a", "b", "c", "d", "e"]
 
         @staticmethod
-        def fetch(query, ids):
-            return [TestResourceCollection.TestResource.items[int(id)] for id in ids]
+        def fetch(_, ids):
+            return [TestResourceCollection.TestResource.items[int(resource_id)] for resource_id in ids]
 
     def test_iterating_over_contents(self):
         collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
         new_items = []
         index = 0
         for item in collection.items:
-            self.assertEquals(TestResourceCollection.TestResource.items[index], item)
+            self.assertEqual(TestResourceCollection.TestResource.items[index], item)
             new_items.append(item)
             index += 1
 
-        self.assertEquals(5, len(new_items))
+        self.assertEqual(5, len(new_items))
 
     def test_iterate_using_iterator_protocol(self):
         collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
@@ -33,9 +33,9 @@ class TestResourceCollection(unittest.TestCase):
 
     def test_ids_returns_array_of_ids(self):
         collection = ResourceCollection("some_query", self.collection_data, TestResourceCollection.TestResource.fetch)
-        self.assertEqual(collection.ids, collection_data['search_results']['ids'])
+        self.assertEqual(collection.ids, self.collection_data['search_results']['ids'])
 
-    def test_ids_returns_array_of_ids(self):
+    def test_ids_returns_array_of_empty_ids(self):
         empty_collection_data = {
             "search_results": {
                 "page_size": 2,
@@ -47,5 +47,5 @@ class TestResourceCollection(unittest.TestCase):
 
     @raises_with_regexp(UnexpectedError, "Unprocessable entity due to an invalid request")
     def test_no_search_results(self):
-        bad_collection_data = { }
-        collection = ResourceCollection("some_query", bad_collection_data, TestResourceCollection.TestResource.fetch)
+        bad_collection_data = {}
+        ResourceCollection("some_query", bad_collection_data, TestResourceCollection.TestResource.fetch)

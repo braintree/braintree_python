@@ -11,7 +11,7 @@ class TestFundingDetails(unittest.TestCase):
             "mobile_phone": "9998887777"
         })
 
-        regex = "<FundingDetails {account_number_last_4: '3333', routing_number: '11112222', destination: 'bank', email: 'lucyloo@work.com', mobile_phone: '9998887777'} at \w+>"
+        regex = r"<FundingDetails {account_number_last_4: '3333', routing_number: '11112222', destination: 'bank', email: 'lucyloo@work.com', mobile_phone: '9998887777'} at \w+>"
 
         matches = re.match(regex, repr(details))
         self.assertTrue(matches)

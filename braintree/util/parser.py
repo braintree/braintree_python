@@ -92,4 +92,4 @@ class Parser(object):
             return content or ""
 
     def __underscored(self, string):
-        return string.replace("-","_")
+        return string.replace("-", "_")

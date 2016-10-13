@@ -98,7 +98,7 @@ class CreditCard(Resource):
         Unknown = "Unknown"
 
     Commercial = DurbinRegulated = Debit = Healthcare = \
-            CountryOfIssuance = IssuingBank = Payroll = Prepaid = CardTypeIndicator
+            CountryOfIssuance = IssuingBank = Payroll = Prepaid = ProductId = CardTypeIndicator
 
     @staticmethod
     def confirm_transparent_redirect(query_string):
@@ -217,7 +217,7 @@ class CreditCard(Resource):
             "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
             "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
         ]
-        options = ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session"]
+        options = ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method"]
 
         signature = [
             "billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
@@ -229,7 +229,6 @@ class CreditCard(Resource):
 
         if type == "create":
             signature.append("customer_id")
-            options.append("fail_on_duplicate_payment_method")
         elif type == "update":
             billing_address_params.append({"options": ["update_existing"]})
         elif type == "update_via_customer":

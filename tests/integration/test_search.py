@@ -205,15 +205,15 @@ class TestSearch(unittest.TestCase):
         self.assertFalse(TestHelper.includes(collection, canceled_subscription))
 
     def test_range_node_min(self):
-        name = "Henrietta Livingston%s" % randint(1,100000)
-        t_1500 = Transaction.sale({
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
+        Transaction.sale({
             "amount": "1500.00",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "cardholder_name": name
             }
-        }).transaction
+        })
 
         t_1800 = Transaction.sale({
             "amount": "1800.00",
@@ -229,19 +229,19 @@ class TestSearch(unittest.TestCase):
             TransactionSearch.amount >= "1700"
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1800.id, collection.first.id)
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
             TransactionSearch.amount.greater_than_or_equal_to("1700")
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1800.id, collection.first.id)
 
     def test_range_node_max(self):
-        name = "Henrietta Livingston%s" % randint(1,100000)
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
         t_1500 = Transaction.sale({
             "amount": "1500.00",
             "credit_card": {
@@ -251,41 +251,41 @@ class TestSearch(unittest.TestCase):
             }
         }).transaction
 
-        t_1800 = Transaction.sale({
+        Transaction.sale({
             "amount": "1800.00",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "cardholder_name": name
             }
-        }).transaction
+        })
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
             TransactionSearch.amount <= "1700"
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1500.id, collection.first.id)
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
             TransactionSearch.amount.less_than_or_equal_to("1700")
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1500.id, collection.first.id)
 
     def test_range_node_is(self):
-        name = "Henrietta Livingston%s" % randint(1,100000)
-        t_1500 = Transaction.sale({
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
+        Transaction.sale({
             "amount": "1500.00",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "cardholder_name": name
             }
-        }).transaction
+        })
 
         t_1800 = Transaction.sale({
             "amount": "1800.00",
@@ -301,19 +301,19 @@ class TestSearch(unittest.TestCase):
             TransactionSearch.amount == "1800"
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1800.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1800.id, collection.first.id)
 
     def test_range_node_between(self):
-        name = "Henrietta Livingston%s" % randint(1,100000)
-        t_1000 = Transaction.sale({
+        name = "Henrietta Livingston%s" % random.randint(1, 100000)
+        Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "cardholder_name": name
             }
-        }).transaction
+        })
 
         t_1500 = Transaction.sale({
             "amount": "1500.00",
@@ -324,22 +324,22 @@ class TestSearch(unittest.TestCase):
             }
         }).transaction
 
-        t_1800 = Transaction.sale({
+        Transaction.sale({
             "amount": "1800.00",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2012",
                 "cardholder_name": name
             }
-        }).transaction
+        })
 
         collection = Transaction.search([
             TransactionSearch.credit_card_cardholder_name == name,
             TransactionSearch.amount.between("1100", "1600")
         ])
 
-        self.assertEquals(1, collection.maximum_size)
-        self.assertEquals(t_1500.id, collection.first.id)
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(t_1500.id, collection.first.id)
 
     def test_search_on_multiple_values(self):
         credit_card = Customer.create({
@@ -367,4 +367,3 @@ class TestSearch(unittest.TestCase):
 
         self.assertTrue(TestHelper.includes(collection, active_subscription))
         self.assertFalse(TestHelper.includes(collection, canceled_subscription))
-

@@ -32,11 +32,10 @@ class TestCreditCardVerfication(unittest.TestCase):
         })
 
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.Verification.Options.AmountCannotBeNegative,
-            result.errors.for_object("verification").for_object("options").on("amount")[0].code
-        )
 
+        amount_errors = result.errors.for_object("verification").for_object("options").on("amount")
+        self.assertEqual(1, len(amount_errors))
+        self.assertEqual(ErrorCodes.Verification.Options.AmountCannotBeNegative, amount_errors[0].code)
 
     def test_find_with_verification_id(self):
         customer = Customer.create({
@@ -49,14 +48,14 @@ class TestCreditCardVerfication(unittest.TestCase):
 
         created_verification = customer.credit_card_verification
         found_verification = CreditCardVerification.find(created_verification.id)
-        self.assertEquals(created_verification, found_verification)
+        self.assertEqual(created_verification, found_verification)
 
     def test_verification_not_found(self):
         self.assertRaises(NotFoundError, CreditCardVerification.find,
           "invalid-id")
 
     def test_card_type_indicators(self):
-        cardholder_name = "Tom %s" % randint(1, 10000)
+        cardholder_name = "Tom %s" % random.randint(1, 10000)
         Customer.create({"credit_card": {
             "cardholder_name": cardholder_name,
             "expiration_date": "10/2012",
@@ -73,6 +72,6 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(CreditCard.Healthcare.Unknown, found_verifications.first.credit_card['healthcare'])
         self.assertEqual(CreditCard.Payroll.Unknown, found_verifications.first.credit_card['payroll'])
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, found_verifications.first.credit_card['durbin_regulated'])
-        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, found_verifications.first.credit_card['issuing_bank'])
-        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, found_verifications.first.credit_card['country_of_issuance'])
-
+        self.assertEqual(CreditCard.IssuingBank.Unknown, found_verifications.first.credit_card['issuing_bank'])
+        self.assertEqual(CreditCard.CountryOfIssuance.Unknown, found_verifications.first.credit_card['country_of_issuance'])
+        self.assertEqual(CreditCard.ProductId.Unknown, found_verifications.first.credit_card['product_id'])

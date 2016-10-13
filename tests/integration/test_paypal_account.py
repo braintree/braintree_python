@@ -1,7 +1,6 @@
 from tests.test_helper import *
 import time
 from braintree.test.nonces import Nonces
-import braintree.test.venmo_sdk as venmo_sdk
 
 class TestPayPalAccount(unittest.TestCase):
     def test_find_returns_paypal_account(self):
@@ -14,8 +13,8 @@ class TestPayPalAccount(unittest.TestCase):
 
         found_account = PayPalAccount.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
-        self.assertEquals(found_account.__class__, PayPalAccount)
-        self.assertEquals(found_account.token, result.payment_method.token)
+        self.assertEqual(found_account.__class__, PayPalAccount)
+        self.assertEqual(found_account.token, result.payment_method.token)
         self.assertNotEqual(None, found_account.image_url)
         self.assertNotEqual(None, found_account.created_at)
         self.assertNotEqual(None, found_account.updated_at)
@@ -64,7 +63,6 @@ class TestPayPalAccount(unittest.TestCase):
 
     def test_find_retuns_billing_agreement_id_with_a_paypal_account(self):
         customer_id = Customer.create().customer.id
-        payment_method_token = "paypal-account-" + str(int(time.time()))
 
         result = PaymentMethod.create({
             "payment_method_nonce": Nonces.PayPalBillingAgreement,
@@ -73,7 +71,7 @@ class TestPayPalAccount(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         paypal_account = PayPalAccount.find(result.payment_method.token)
-        self.assertNotEquals(None, paypal_account.billing_agreement_id)
+        self.assertNotEqual(None, paypal_account.billing_agreement_id)
 
     def test_delete_deletes_paypal_account(self):
         result = PaymentMethod.create({
@@ -103,11 +101,11 @@ class TestPayPalAccount(unittest.TestCase):
     def test_update_can_update_token_and_default(self):
         customer_id = Customer.create().customer.id
 
-        credit_card = CreditCard.create({
+        CreditCard.create({
             "customer_id": customer_id,
             "number": "4111111111111111",
             "expiration_date": "12/2099"
-        }).credit_card
+        })
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
@@ -124,17 +122,17 @@ class TestPayPalAccount(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         updated_account = PayPalAccount.find(new_token)
-        self.assertEquals(updated_account.default, True)
+        self.assertEqual(updated_account.default, True)
 
     def test_update_returns_validation_errors(self):
         payment_method_token = "payment-token-%s" % int(round(time.time() * 1000))
         customer_id = Customer.create().customer.id
-        credit_card = CreditCard.create({
+        CreditCard.create({
             "token": payment_method_token,
             "customer_id": customer_id,
             "number": "4111111111111111",
             "expiration_date": "12/2099"
-        }).credit_card
+        })
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
@@ -146,19 +144,17 @@ class TestPayPalAccount(unittest.TestCase):
         result = PayPalAccount.update(old_token, {
             "token": payment_method_token,
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.PayPalAccount.TokenIsInUse,
-            result.errors.for_object("paypal_account").on("token")[0].code
-        )
+
+        token_errors = result.errors.for_object("paypal_account").on("token")
+        self.assertEqual(1, len(token_errors))
+        self.assertEqual(ErrorCodes.PayPalAccount.TokenIsInUse, token_errors[0].code)
 
         result = PayPalAccount.update(old_token, {
             "token": payment_method_token,
         })
-
         self.assertFalse(result.is_success)
-        self.assertEquals(
-            ErrorCodes.PayPalAccount.TokenIsInUse,
-            result.errors.for_object("paypal_account").on("token")[0].code
-        )
+
+        token_errors = result.errors.for_object("paypal_account").on("token")
+        self.assertEqual(1, len(token_errors))
+        self.assertEqual(ErrorCodes.PayPalAccount.TokenIsInUse, token_errors[0].code)

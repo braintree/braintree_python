@@ -27,6 +27,8 @@ class WebhookNotification(Resource):
         SubMerchantAccountApproved = "sub_merchant_account_approved"
         SubMerchantAccountDeclined = "sub_merchant_account_declined"
         TransactionDisbursed = "transaction_disbursed"
+        TransactionSettled = "transaction_settled"
+        TransactionSettlementDeclined = "transaction_settlement_declined"
         DisbursementException = "disbursement_exception"
         Disbursement = "disbursement"
         DisputeOpened = "dispute_opened"

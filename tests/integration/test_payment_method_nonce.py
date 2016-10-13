@@ -22,12 +22,12 @@ class TestPaymentMethodNonce(unittest.TestCase):
         nonce = PaymentMethodNonce.find("threedsecurednonce")
         three_d_secure_info = nonce.three_d_secure_info
 
-        self.assertEquals("CreditCard", nonce.type)
-        self.assertEquals("threedsecurednonce", nonce.nonce)
-        self.assertEquals("Y", three_d_secure_info.enrolled)
-        self.assertEquals("authenticate_successful", three_d_secure_info.status)
-        self.assertEquals(True, three_d_secure_info.liability_shifted)
-        self.assertEquals(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("CreditCard", nonce.type)
+        self.assertEqual("threedsecurednonce", nonce.nonce)
+        self.assertEqual("Y", three_d_secure_info.enrolled)
+        self.assertEqual("authenticate_successful", three_d_secure_info.status)
+        self.assertEqual(True, three_d_secure_info.liability_shifted)
+        self.assertEqual(True, three_d_secure_info.liability_shift_possible)
 
     def test_exposes_null_3ds_info_if_none_exists(self):
         http = ClientApiHttp.create()
@@ -40,8 +40,8 @@ class TestPaymentMethodNonce(unittest.TestCase):
 
         found_nonce = PaymentMethodNonce.find(nonce)
 
-        self.assertEquals(nonce, found_nonce.nonce)
-        self.assertEquals(None, found_nonce.three_d_secure_info)
+        self.assertEqual(nonce, found_nonce.nonce)
+        self.assertEqual(None, found_nonce.three_d_secure_info)
 
     def test_find_raises_not_found_when_404(self):
         self.assertRaises(NotFoundError, PaymentMethodNonce.find, "not-a-nonce")

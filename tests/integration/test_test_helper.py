@@ -17,13 +17,12 @@ class TestTestHelper(unittest.TestCase):
 
     def test_settle_transaction_settles_transaction(self):
         TestHelper.settle_transaction(self.transaction.id)
-        self.assertEquals(Transaction.Status.Settled, Transaction.find(self.transaction.id).status)
+        self.assertEqual(Transaction.Status.Settled, Transaction.find(self.transaction.id).status)
 
     def test_settlement_confirm_transaction(self):
         TestHelper.settlement_confirm_transaction(self.transaction.id)
-        self.assertEquals(Transaction.Status.SettlementConfirmed, Transaction.find(self.transaction.id).status)
+        self.assertEqual(Transaction.Status.SettlementConfirmed, Transaction.find(self.transaction.id).status)
 
     def test_settlement_decline_transaction(self):
         TestHelper.settlement_decline_transaction(self.transaction.id)
-        self.assertEquals(Transaction.Status.SettlementDeclined, Transaction.find(self.transaction.id).status)
-
+        self.assertEqual(Transaction.Status.SettlementDeclined, Transaction.find(self.transaction.id).status)

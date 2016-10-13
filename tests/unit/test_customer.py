@@ -41,8 +41,9 @@ class TestCustomer(unittest.TestCase):
             ]
         })
 
-        self.assertEquals(customer.paypal_accounts[0].token, "token1")
-        self.assertEquals(customer.paypal_accounts[1].token, "token2")
+        self.assertEqual(2, len(customer.paypal_accounts))
+        self.assertEqual("token1", customer.paypal_accounts[0].token)
+        self.assertEqual("token2", customer.paypal_accounts[1].token)
 
     def test_initialize_sets_europe_bank_accounts(self):
         customer = Customer("gateway", {
@@ -52,5 +53,6 @@ class TestCustomer(unittest.TestCase):
             ]
         })
 
-        self.assertEquals(customer.europe_bank_accounts[0].token, "token1")
-        self.assertEquals(customer.europe_bank_accounts[1].token, "token2")
+        self.assertEqual(2, len(customer.europe_bank_accounts))
+        self.assertEqual("token1", customer.europe_bank_accounts[0].token)
+        self.assertEqual("token2", customer.europe_bank_accounts[1].token)

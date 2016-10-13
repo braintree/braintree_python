@@ -23,12 +23,12 @@ class TestAddOn(unittest.TestCase):
         else:
             add_on = None
 
-        self.assertNotEquals(None, add_on)
+        self.assertNotEqual(None, add_on)
 
-        self.assertEquals(add_on.amount, Decimal("100.00"))
-        self.assertEquals(add_on.description, "some description")
-        self.assertEquals(add_on.id, new_id)
-        self.assertEquals(add_on.kind, "add_on")
-        self.assertEquals(add_on.name, "python_add_on")
-        self.assertEquals(add_on.never_expires, False)
-        self.assertEquals(add_on.number_of_billing_cycles, 1)
+        self.assertEqual(Decimal("100.00"), add_on.amount)
+        self.assertEqual("some description", add_on.description)
+        self.assertEqual(new_id, add_on.id)
+        self.assertEqual("add_on", add_on.kind)
+        self.assertEqual("python_add_on", add_on.name)
+        self.assertEqual(False, add_on.never_expires)
+        self.assertEqual(add_on.number_of_billing_cycles, 1)
