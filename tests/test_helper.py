@@ -290,6 +290,11 @@ class TestHelper(object):
                 "customer_id": customer.id,
                 "number": "4111111111111111",
                 "expiration_date": "05/2009",
+                "billing_address": {
+                    "first_name": "Jon",
+                    "last_name": "Doe",
+                    "postal_code": "95131"
+                }
             }
         ).credit_card
 

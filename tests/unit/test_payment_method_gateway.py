@@ -103,14 +103,15 @@ class TestPaymentMethodGateway(unittest.TestCase):
         We validate parameters to PaymentMethod.grant properly
         """
         payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
+        options = { "include_billing_postal_code": True }
         with self.assertRaises(ValueError):
-            payment_method_gateway.grant("", False)
+            payment_method_gateway.grant("", options)
 
         with self.assertRaises(ValueError):
             payment_method_gateway.grant("\t", False)
 
         with self.assertRaises(ValueError):
-            payment_method_gateway.grant(None, False)
+            payment_method_gateway.grant(None, True)
 
     def test_nonce_revoke_params(self):
         payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))

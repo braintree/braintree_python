@@ -54,19 +54,27 @@ class PaymentMethodGateway(object):
         self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
         return SuccessfulResult()
 
-    def grant(self, payment_method_token, allow_vaulting):
+    def grant(self, payment_method_token, options=None):
         if payment_method_token is None or not str(payment_method_token).strip():
-            raise ValueError
+            raise ValueError("payment method token cannot be empty or blank")
 
         try:
+            if isinstance(options, bool):
+                options = { "allow_vaulting": options }
+            elif options is None:
+                options = {}
+            self.options = options
+
+            params = {
+                       "payment_method": {
+                           "shared_payment_method_token": payment_method_token
+                        }
+                     }
+            params["payment_method"].update(options),
+
             return self._post(
                 "/payment_methods/grant",
-                {
-                    "payment_method": {
-                        "shared_payment_method_token": payment_method_token,
-                        "allow_vaulting": allow_vaulting
-                    }
-                },
+                params,
                 "payment_method_nonce"
             )
         except NotFoundError:
