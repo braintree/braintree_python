@@ -50,6 +50,7 @@ class CreditCard(Resource):
         * Braintree.CreditCard.ChinaUnionPay
         * Braintree.CreditCard.DinersClubInternational
         * Braintree.CreditCard.Discover
+        * Braintree.CreditCard.Electron
         * Braintree.CreditCard.JCB
         * Braintree.CreditCard.Laser
         * Braintree.CreditCard.Maestro
@@ -65,6 +66,7 @@ class CreditCard(Resource):
         ChinaUnionPay = "China UnionPay"
         DinersClubInternational = "Diners Club"
         Discover = "Discover"
+        Electron = "Electron"
         JCB = "JCB"
         Laser = "Laser"
         Maestro = "Maestro"
