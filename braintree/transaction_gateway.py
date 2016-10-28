@@ -155,7 +155,10 @@ class TransactionGateway(object):
         criteria = self.__criteria(query)
         criteria["ids"] = braintree.transaction_search.TransactionSearch.ids.in_list(ids).to_param()
         response = self.config.http().post(self.config.base_merchant_path() + "/transactions/advanced_search", {"search": criteria})
-        return [Transaction(self.gateway, item) for item in  ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
+        if "credit_card_transactions" in response:
+            return [Transaction(self.gateway, item) for item in ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
+        else:
+            raise DownForMaintenanceError("search timeout")
 
     def __criteria(self, query):
         criteria = {}
