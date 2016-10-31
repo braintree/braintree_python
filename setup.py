@@ -1,8 +1,15 @@
 from distutils.core import setup
+
+
+readme = open('README.rst').read()
+history = open('CHANGELOG.rst').read()
+
+
 setup(
     name="braintree",
     version="3.34.0",
     description="Braintree Python Library",
+    long_description=readme + '\n\n' + history,
     author="Braintree",
     author_email="support@braintreepayments.com",
     url="https://developers.braintreepayments.com/python/sdk/server/overview",
