@@ -236,7 +236,7 @@ class TestHelper(object):
         headers = {
             "Content-Type": "application/json",
             "Braintree-Version": "2015-11-01",
-            "Authorization": "Bearer integratexxxxxx_xxxxxx_xxxxxx_xxxxxx_xx1"
+            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
         }
         payload = {
             "type": "us_bank_account",
