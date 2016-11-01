@@ -25,6 +25,7 @@ class UsBankAccount(Resource):
             "account_description",
             "account_holder_name",
             "token",
-            "image_url"
+            "image_url",
+            "bank_name"
         ]
         return signature
