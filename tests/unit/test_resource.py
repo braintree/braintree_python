@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 from tests.test_helper import *
 from braintree.resource import Resource
 
@@ -84,7 +83,7 @@ class TestResource(unittest.TestCase):
         Resource.verify_keys(params, signature)
 
     def test_verify_keys_allows_text(self):
-        text_string = u"â, ê, î, ô, û, ŷ"
+        text_string = u"text_string"
         assert isinstance(text_string, TestHelper.text_type)
 
         signature = [
@@ -100,7 +99,7 @@ class TestResource(unittest.TestCase):
         Resource.verify_keys(params, signature)
 
     def test_verify_keys_allows_raw_data(self):
-        raw_string = str.encode("â, ê, î, ô, û, ŷ")
+        raw_string = str.encode("raw_string")
         assert isinstance(raw_string, TestHelper.raw_type)
 
         signature = [
