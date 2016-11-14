@@ -1,3 +1,9 @@
+## 3.31.0
+* Fix `UsBankAccount` support for `Customer`s
+* Added handling for unicode parameters. (Thanks @mgalgs)
+* Raise `ConfigurationError` for empty string credentials
+* Update `Grant` api to support options dictionary
+
 ## 3.30.0
 * Add 'UsBankAccount' payment method
 
