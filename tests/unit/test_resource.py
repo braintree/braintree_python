@@ -81,3 +81,35 @@ class TestResource(unittest.TestCase):
             }
         }
         Resource.verify_keys(params, signature)
+
+    def test_verify_keys_allows_text(self):
+        text_string = u"text_string"
+        assert isinstance(text_string, TestHelper.text_type)
+
+        signature = [
+            {"customer": [{"custom_fields": [text_string]}]}
+        ]
+        params = {
+            "customer": {
+                "custom_fields": {
+                    text_string : text_string
+                }
+            }
+        }
+        Resource.verify_keys(params, signature)
+
+    def test_verify_keys_allows_raw_data(self):
+        raw_string = str.encode("raw_string")
+        assert isinstance(raw_string, TestHelper.raw_type)
+
+        signature = [
+            {"customer": [{"custom_fields": [raw_string]}]}
+        ]
+        params = {
+            "customer": {
+                "custom_fields": {
+                    raw_string : raw_string
+                }
+            }
+        }
+        Resource.verify_keys(params, signature)

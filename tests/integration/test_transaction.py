@@ -3180,6 +3180,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+        self.assertEqual(result.transaction.us_bank_account.bank_name, "UNKNOWN")
 
     def test_us_bank_account_nonce_transactions_with_vaulted_token(self):
         result = Transaction.sale({
@@ -3198,6 +3199,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+        self.assertEqual(result.transaction.us_bank_account.bank_name, "UNKNOWN")
         token = result.transaction.us_bank_account.token
 
         result = Transaction.sale({
@@ -3215,6 +3217,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+        self.assertEqual(result.transaction.us_bank_account.bank_name, "UNKNOWN")
 
 
     def test_us_bank_account_token_transactions_not_found(self):
@@ -3402,6 +3405,18 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.transaction.facilitator_details is not None)
         self.assertEqual(result.transaction.facilitator_details.oauth_application_client_id, "client_id$development$integration_client_id")
         self.assertEqual(result.transaction.facilitator_details.oauth_application_name, "PseudoShop")
+        self.assertTrue(result.transaction.billing["postal_code"] is None)
+
+    def test_include_billing_postal_code(self):
+        granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
+        grant_result = granting_gateway.payment_method.grant(credit_card.token, { "allow_vaulting": False, "include_billing_postal_code": True })
+
+        result = Transaction.sale({
+            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
+            "amount": TransactionAmounts.Authorize,
+        })
+
+        self.assertTrue(result.transaction.billing["postal_code"], "95131")
 
     def test_shared_vault_transaction(self):
         config = Configuration(

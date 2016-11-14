@@ -106,6 +106,8 @@ class TestHelper(object):
     }
 
     valid_token_characters = list("bcdfghjkmnpqrstvwxyz23456789")
+    text_type = unicode if sys.version_info[0] == 2 else str
+    raw_type = str if sys.version_info[0] == 2 else bytes
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
@@ -234,7 +236,7 @@ class TestHelper(object):
         headers = {
             "Content-Type": "application/json",
             "Braintree-Version": "2015-11-01",
-            "Authorization": "Bearer integratexxxxxx_xxxxxx_xxxxxx_xxxxxx_xx1"
+            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
         }
         payload = {
             "type": "us_bank_account",
@@ -290,6 +292,11 @@ class TestHelper(object):
                 "customer_id": customer.id,
                 "number": "4111111111111111",
                 "expiration_date": "05/2009",
+                "billing_address": {
+                    "first_name": "Jon",
+                    "last_name": "Doe",
+                    "postal_code": "95131"
+                }
             }
         ).credit_card
 

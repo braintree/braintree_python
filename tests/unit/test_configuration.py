@@ -66,7 +66,7 @@ class TestConfiguration(unittest.TestCase):
         self.assertIsInstance(config, braintree.Configuration)
 
     def test_configuration_raises_configuration_error_for_invalid_environment(self):
-        for environment in [42, 'not_an_env']:
+        for environment in [42, 'not_an_env', '']:
             def setup_bad_configuration():
                 Configuration(
                     environment=environment,
@@ -76,6 +76,39 @@ class TestConfiguration(unittest.TestCase):
                 )
 
             self.assertRaises(ConfigurationError, setup_bad_configuration)
+
+    def test_configuration_raises_configuration_error_for_empty_merchant_id(self):
+        def setup_bad_configuration():
+            Configuration(
+                environment=braintree.Environment.Sandbox,
+                merchant_id='',
+                public_key='public_key',
+                private_key='private_key'
+            )
+
+        self.assertRaises(ConfigurationError, setup_bad_configuration)
+
+    def test_configuration_raises_configuration_error_for_empty_public_key(self):
+        def setup_bad_configuration():
+            Configuration(
+                environment=braintree.Environment.Sandbox,
+                merchant_id='my_merchant_id',
+                public_key='',
+                private_key='private_key'
+            )
+
+        self.assertRaises(ConfigurationError, setup_bad_configuration)
+
+    def test_configuration_raises_configuration_error_for_empty_private_key(self):
+        def setup_bad_configuration():
+            Configuration(
+                environment=braintree.Environment.Sandbox,
+                merchant_id='my_merchant_id',
+                public_key='public_key',
+                private_key=''
+            )
+
+        self.assertRaises(ConfigurationError, setup_bad_configuration)
 
     def test_configuration_construction_for_partner(self):
         config = Configuration.for_partner(

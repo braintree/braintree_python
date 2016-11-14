@@ -39,5 +39,6 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
+        self.assertEqual(result.transaction.us_bank_account.bank_name, "UNKNOWN")
 
 

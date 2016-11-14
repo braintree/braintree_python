@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 from tests.test_helper import *
 import braintree.test.venmo_sdk as venmo_sdk
 from braintree.test.nonces import Nonces
@@ -33,6 +34,29 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
         self.assertNotEqual(None, re.search(r"\A\d{6,}\Z", customer.id))
+
+    def test_create_unicode(self):
+        result = Customer.create({
+            "first_name": "Kimi",
+            "last_name": u"Räikkönen",
+            "company": "Fake Company",
+            "email": "joe@email.com",
+            "phone": "312.555.1234",
+            "fax": "614.555.5678",
+            "website": "www.email.com"
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+
+        self.assertEqual("Kimi", customer.first_name)
+        self.assertEqual(u"Räikkönen", customer.last_name)
+        self.assertEqual("Fake Company", customer.company)
+        self.assertEqual("joe@email.com", customer.email)
+        self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("614.555.5678", customer.fax)
+        self.assertEqual("www.email.com", customer.website)
+        self.assertNotEqual(None, customer.id)
 
     def test_create_with_device_session_id_and_fraud_merchant_id(self):
         result = Customer.create({
@@ -170,6 +194,14 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertEqual(1, len(customer.venmo_accounts))
         self.assertIsInstance(customer.venmo_accounts[0], VenmoAccount)
+
+    def test_create_with_us_bank_account_nonce(self):
+        result = Customer.create({"payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertEqual(1, len(customer.us_bank_accounts))
+        self.assertIsInstance(customer.us_bank_accounts[0], UsBankAccount)
 
     def test_create_with_paypal_future_payments_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
@@ -459,6 +491,18 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(customer.id, found_customer.id)
         self.assertEqual(customer.first_name, found_customer.first_name)
         self.assertEqual(customer.last_name, found_customer.last_name)
+
+    def test_find_customer_with_us_bank_account(self):
+        customer = Customer.create({
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()
+        }).customer
+
+        found_customer = Customer.find(customer.id)
+        self.assertEqual(customer.id, found_customer.id)
+        self.assertEqual(customer.first_name, found_customer.first_name)
+        self.assertEqual(customer.last_name, found_customer.last_name)
+        self.assertEqual(1, len(found_customer.us_bank_accounts))
+        self.assertIsInstance(found_customer.us_bank_accounts[0], UsBankAccount)
 
     @raises_with_regexp(NotFoundError, "customer with id 'badid' not found")
     def test_find_with_invalid_customer(self):
@@ -863,9 +907,10 @@ class TestCustomer(unittest.TestCase):
             "apple_pay_cards": [{"token": "apple_pay_card"}],
             "android_pay_cards": [{"token": "android_pay_card"}],
             "europe_bank_accounts": [{"token": "europe_bank_account"}],
-            "coinbase_accounts": [{"token": "coinbase_account"}]
+            "coinbase_accounts": [{"token": "coinbase_account"}],
+            "us_bank_accounts": [{"token": "us_bank_account"}]
             })
 
         payment_method_tokens = [ pm.token for pm in customer.payment_methods ]
 
-        self.assertEqual(sorted(payment_method_tokens), ["android_pay_card", "apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account"])
+        self.assertEqual(sorted(payment_method_tokens), ["android_pay_card", "apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account", "us_bank_account"])

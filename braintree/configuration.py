@@ -75,10 +75,21 @@ class Configuration(object):
             self.merchant_id = merchant_id
         else:
             self.environment = Environment.parse_environment(environment)
-            self.merchant_id = merchant_id
+            if merchant_id == "":
+                raise ConfigurationError("Missing merchant_id")
+            else:
+                self.merchant_id = merchant_id
 
-        self.public_key = public_key
-        self.private_key = private_key
+            if public_key == "":
+                raise ConfigurationError("Missing public_key")
+            else:
+                self.public_key = public_key
+
+            if private_key == "":
+                raise ConfigurationError("Missing private_key")
+            else:
+                self.private_key = private_key
+
         self.client_id = parser.client_id
         self.client_secret = parser.client_secret
         self.access_token = parser.access_token

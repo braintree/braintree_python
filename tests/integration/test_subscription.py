@@ -832,6 +832,54 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(None, subscription.discounts[0].number_of_billing_cycles)
         self.assertTrue(subscription.discounts[0].never_expires)
 
+    def test_update_allows_adding_and_removing_unicode_add_ons_and_discounts(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.add_on_discount_plan["id"],
+        }).subscription
+
+        subscription = Subscription.update(subscription.id, {
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.add_on_discount_plan["id"],
+            "add_ons": {
+                "add": [
+                    {
+                        "amount": Decimal("50.00"),
+                        "inherited_from_id": u"increase_30",
+                        "quantity": 2,
+                        "number_of_billing_cycles": 5
+                    }
+                ],
+                "remove": [u"increase_10", u"increase_20"]
+            },
+            "discounts": {
+                "add": [
+                    {
+                        "amount": Decimal("17.00"),
+                        "inherited_from_id": u"discount_15",
+                        "never_expires": True
+                    }
+                ],
+                "remove": [u"discount_7", u"discount_11"]
+            }
+        }).subscription
+
+        self.assertEqual(1, len(subscription.add_ons))
+
+        self.assertEqual(u"increase_30", subscription.add_ons[0].id)
+        self.assertEqual(Decimal("50.00"), subscription.add_ons[0].amount)
+        self.assertEqual(2, subscription.add_ons[0].quantity)
+        self.assertEqual(5, subscription.add_ons[0].number_of_billing_cycles)
+        self.assertFalse(subscription.add_ons[0].never_expires)
+
+        self.assertEqual(1, len(subscription.discounts))
+
+        self.assertEqual(u"discount_15", subscription.discounts[0].id)
+        self.assertEqual(Decimal("17.00"), subscription.discounts[0].amount)
+        self.assertEqual(1, subscription.discounts[0].quantity)
+        self.assertEqual(None, subscription.discounts[0].number_of_billing_cycles)
+        self.assertTrue(subscription.discounts[0].never_expires)
+
     def test_update_can_replace_entire_set_of_add_ons_and_discounts(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,

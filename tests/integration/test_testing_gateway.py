@@ -4,7 +4,7 @@ from braintree.exceptions.test_operation_performed_in_production_error import Te
 
 class TestTestingGateway(unittest.TestCase):
     def setUp(self):
-        config = Configuration(braintree.Environment.Production, "", "", "")
+        config = Configuration(braintree.Environment.Production, "merchant_id", "public_key", "private_key")
         braintree_gateway = BraintreeGateway(config)
         self.gateway = TestingGateway(braintree_gateway)
 
