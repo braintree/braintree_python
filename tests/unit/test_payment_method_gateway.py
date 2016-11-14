@@ -60,6 +60,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
                     "make_default",
                     "verification_merchant_account_id",
                     "verify_card",
+                    "verification_amount",
                 ]
             }
         ]

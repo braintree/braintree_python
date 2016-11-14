@@ -304,6 +304,36 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, payment_method.token)
         self.assertEqual(customer_id, payment_method.customer_id)
 
+    def test_create_with_custom_card_verification_amount(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+                    "authorization_fingerprint": authorization_fingerprint,
+                    "shared_customer_identifier": "fake_identifier",
+                    "shared_customer_identifier_type": "testing"
+                })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4000111111111115",
+            "expirationMonth": "11",
+            "expirationYear": "2099"
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce,
+            "options": {
+                "verify_card": "true",
+                "verification_amount": "1.02"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, verification.status)
+
     def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
         config = Configuration.instantiate()
         customer_id = Customer.create().customer.id

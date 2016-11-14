@@ -45,6 +45,7 @@ class PaymentMethod(Resource):
                 "make_default",
                 "verification_merchant_account_id",
                 "verify_card",
+                "verification_amount",
                 ]
             }
         ]
