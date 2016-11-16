@@ -3083,7 +3083,6 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.payer_id)
         self.assertNotEqual(None, transaction.paypal_details.payer_first_name)
         self.assertNotEqual(None, transaction.paypal_details.payer_last_name)
-        self.assertNotEqual(None, transaction.paypal_details.payer_status)
         self.assertNotEqual(None, transaction.paypal_details.seller_protection_status)
         self.assertNotEqual(None, transaction.paypal_details.capture_id)
         #self.assertNotEqual(None, transaction.paypal_details.refund_id)
