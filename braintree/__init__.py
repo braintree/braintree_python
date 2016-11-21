@@ -1,3 +1,4 @@
+from braintree.ach_mandate import AchMandate
 from braintree.add_on import AddOn
 from braintree.add_on_gateway import AddOnGateway
 from braintree.address import Address

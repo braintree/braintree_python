@@ -3199,6 +3199,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
+        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
 
     def test_us_bank_account_nonce_transactions_with_vaulted_token(self):
         result = Transaction.sale({
@@ -3218,6 +3220,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
+        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
         token = result.transaction.us_bank_account.token
 
         result = Transaction.sale({
@@ -3236,6 +3240,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
+        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
 
 
     def test_us_bank_account_token_transactions_not_found(self):

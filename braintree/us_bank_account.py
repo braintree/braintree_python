@@ -1,6 +1,7 @@
 import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
+from braintree.ach_mandate import AchMandate
 
 class UsBankAccount(Resource):
 
@@ -26,6 +27,14 @@ class UsBankAccount(Resource):
             "account_holder_name",
             "token",
             "image_url",
-            "bank_name"
+            "bank_name",
+            "ach_mandate"
         ]
         return signature
+
+    def __init__(self, gateway, attributes):
+        Resource.__init__(self, gateway, attributes)
+        if "ach_mandate" in attributes:
+            self.ach_mandate = AchMandate(gateway, self.ach_mandate)
+        else:
+            self.ach_mandate = None

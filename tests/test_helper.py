@@ -252,7 +252,7 @@ class TestHelper(object):
             "account_holder_name": "Dan Schulman",
             "account_description": "PayPal Checking - 1234",
             "ach_mandate": {
-                "text": ""
+                "text": "cl mandate text"
             }
         }
         resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )

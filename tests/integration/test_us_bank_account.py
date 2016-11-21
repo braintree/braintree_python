@@ -15,6 +15,10 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertEqual(found_account.account_type, "checking")
         self.assertEqual(found_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(found_account.account_holder_name, "Dan Schulman")
+        self.assertRegexpMatches(found_account.bank_name, r".*CHASE.*")
+        self.assertEqual(found_account.default, True)
+        self.assertEqual(found_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(found_account.ach_mandate.accepted_at, datetime)
 
     def test_find_does_not_return_invalid_us_bank_account(self):
         self.assertRaises(NotFoundError, UsBankAccount.find, TestHelper.generate_invalid_us_bank_account_nonce())
