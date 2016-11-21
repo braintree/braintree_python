@@ -273,12 +273,12 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(result.is_success)
         us_bank_account = result.payment_method
         self.assertIsInstance(us_bank_account, UsBankAccount)
-        self.assertEqual(us_bank_account.routing_number, "123456789")
+        self.assertEqual(us_bank_account.routing_number, "021000021")
         self.assertEqual(us_bank_account.last_4, "1234")
         self.assertEqual(us_bank_account.account_type, "checking")
         self.assertEqual(us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertEqual(us_bank_account.bank_name, "UNKNOWN")
+        self.assertEqual(us_bank_account.bank_name, "JPMORGAN CHASE")
 
     def test_create_fails_with_invalid_us_bank_account_nonce(self):
         customer_id = Customer.create().customer.id
