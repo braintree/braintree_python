@@ -3180,7 +3180,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertEqual(result.transaction.us_bank_account.bank_name, "JPMORGAN CHASE")
+        self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
 
     def test_us_bank_account_nonce_transactions_with_vaulted_token(self):
         result = Transaction.sale({
@@ -3199,7 +3199,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertEqual(result.transaction.us_bank_account.bank_name, "JPMORGAN CHASE")
+        self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
         token = result.transaction.us_bank_account.token
 
         result = Transaction.sale({
@@ -3217,7 +3217,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertEqual(result.transaction.us_bank_account.bank_name, "JPMORGAN CHASE")
+        self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
 
 
     def test_us_bank_account_token_transactions_not_found(self):
