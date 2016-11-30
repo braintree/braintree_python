@@ -19,11 +19,28 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertRaises(NotFoundError, PaymentMethodNonce.create, "not-a-token")
 
     def test_find_nonce_shows_details(self):
-        nonce = PaymentMethodNonce.find("threedsecurednonce")
-        three_d_secure_info = nonce.three_d_secure_info
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
 
-        self.assertEqual("CreditCard", nonce.type)
-        self.assertEqual("threedsecurednonce", nonce.nonce)
+        credit_card = {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "12",
+                "expiration_year": "2020"
+            }
+        }
+
+        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+        found_nonce = PaymentMethodNonce.find(nonce)
+        three_d_secure_info = found_nonce.three_d_secure_info
+
+        self.assertEqual("CreditCard", found_nonce.type)
+        self.assertEqual(nonce, found_nonce.nonce)
         self.assertEqual("Y", three_d_secure_info.enrolled)
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)

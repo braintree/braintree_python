@@ -268,6 +268,12 @@ class TestHelper(object):
         return token
 
     @staticmethod
+    def generate_three_d_secure_nonce(gateway, params):
+        url = gateway.config.base_merchant_path() + "/three_d_secure/create_nonce/" + TestHelper.three_d_secure_merchant_account_id
+        response = gateway.config.http().post(url, params)
+        return response["payment_method_nonce"]["nonce"]
+
+    @staticmethod
     def create_grant(gateway, params):
         config = gateway.config
         response = config.http().post("/oauth_testing/grants", {
