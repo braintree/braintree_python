@@ -26,15 +26,8 @@ class MerchantAccountGateway(object):
         except NotFoundError:
             raise NotFoundError("merchant account with id " + repr(merchant_account_id) + " not found")
 
-    def create_for_currency(self, params={}):
-        return self._post("/merchant_accounts/create_for_currency", {"merchant_account": params})
-
     def _post(self, url, params={}):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
-
-        if "response" in response:
-            response = response["response"]
-
         if "merchant_account" in response:
             return SuccessfulResult({"merchant_account": MerchantAccount(self.gateway, response["merchant_account"])})
         elif "api_error_response" in response:
