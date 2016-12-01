@@ -50,6 +50,7 @@ class CreditCard(Resource):
         * Braintree.CreditCard.ChinaUnionPay
         * Braintree.CreditCard.DinersClubInternational
         * Braintree.CreditCard.Discover
+        * Braintree.CreditCard.Electron
         * Braintree.CreditCard.JCB
         * Braintree.CreditCard.Laser
         * Braintree.CreditCard.Maestro
@@ -65,6 +66,7 @@ class CreditCard(Resource):
         ChinaUnionPay = "China UnionPay"
         DinersClubInternational = "Diners Club"
         Discover = "Discover"
+        Electron = "Electron"
         JCB = "JCB"
         Laser = "Laser"
         Maestro = "Maestro"
@@ -214,17 +216,55 @@ class CreditCard(Resource):
     @staticmethod
     def signature(type):
         billing_address_params = [
-            "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
-            "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
+            "company",
+            "country_code_alpha2",
+            "country_code_alpha3",
+            "country_code_numeric",
+            "country_name",
+            "extended_address",
+            "first_name",
+            "last_name",
+            "locality",
+            "postal_code",
+            "region",
+            "street_address"
         ]
-        options = ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method"]
+
+        options = [
+            "make_default",
+            "verification_merchant_account_id",
+            "verify_card",
+            "verification_amount",
+            "venmo_sdk_session",
+            "fail_on_duplicate_payment_method",
+            {
+                "adyen":[
+                    "overwrite_brand",
+                    "selected_brand"
+                ]
+            }
+        ]
 
         signature = [
-            "billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
-            "device_session_id", "fraud_merchant_id", "number", "token", "venmo_sdk_payment_method_code", "device_data",
+            "billing_address_id",
+            "cardholder_name",
+            "cvv",
+            "expiration_date",
+            "expiration_month",
+            "expiration_year",
+            "device_session_id",
+            "fraud_merchant_id",
+            "number",
+            "token",
+            "venmo_sdk_payment_method_code",
+            "device_data",
             "payment_method_nonce",
-            {"billing_address": billing_address_params},
-            {"options": options}
+            {
+                "billing_address": billing_address_params
+            },
+            {
+                "options": options
+            }
         ]
 
         if type == "create":

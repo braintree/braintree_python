@@ -1,3 +1,8 @@
+## 3.32.0
+* Update UsBank tests to use legal routing numbers
+* Allow setting a custom verification amount in `PaymentMethod` options
+* Allow setting processor specific fields for transactions and verifications
+
 ## 3.31.0
 * Fix `UsBankAccount` support for `Customer`s
 * Added handling for unicode parameters. (Thanks @mgalgs)

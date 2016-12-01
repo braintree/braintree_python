@@ -26,6 +26,20 @@ class PaymentMethod(Resource):
 
     @staticmethod
     def signature(type):
+        options = [
+            "fail_on_duplicate_payment_method",
+            "make_default",
+            "verification_merchant_account_id",
+            "verify_card",
+            "verification_amount",
+            {
+                "adyen": [
+                    "overwrite_brand",
+                    "selected_brand"
+                ]
+            }
+        ]
+
         signature = [
             "billing_address_id",
             "cardholder_name",
@@ -39,13 +53,11 @@ class PaymentMethod(Resource):
             "number",
             "payment_method_nonce",
             "token",
-            {"billing_address": Address.create_signature()},
-            {"options": [
-                "fail_on_duplicate_payment_method",
-                "make_default",
-                "verification_merchant_account_id",
-                "verify_card",
-                ]
+            {
+                "billing_address": Address.create_signature()
+            },
+            {
+                "options": options
             }
         ]
         return signature
@@ -66,16 +78,22 @@ class PaymentMethod(Resource):
             "device_data",
             "fraud_merchant_id",
             "payment_method_nonce",
-            {"options": [
-                "make_default",
-                "verify_card",
-                "verification_merchant_account_id",
-                "venmo_sdk_session"
+            {
+                "options": [
+                    "make_default",
+                    "verify_card",
+                    "verification_merchant_account_id",
+                    "venmo_sdk_session",
+                    {
+                        "adyen": [
+                            "overwrite_brand",
+                            "selected_brand"
+                        ]
+                    }
                 ]
             },
-            {"billing_address" :
-                Address.update_signature() +
-                [{"options": ["update_existing"]}]
+            {
+                "billing_address": Address.update_signature() + [{"options": ["update_existing"]}]
             }
         ]
         return signature

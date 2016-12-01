@@ -60,6 +60,13 @@ class TestPaymentMethodGateway(unittest.TestCase):
                     "make_default",
                     "verification_merchant_account_id",
                     "verify_card",
+                    "verification_amount",
+                    {
+                        "adyen":[
+                            "overwrite_brand",
+                            "selected_brand"
+                        ]
+                    }
                 ]
             }
         ]
@@ -88,7 +95,13 @@ class TestPaymentMethodGateway(unittest.TestCase):
                     "make_default",
                     "verify_card",
                     "verification_merchant_account_id",
-                    "venmo_sdk_session"
+                    "venmo_sdk_session",
+                    {
+                        "adyen":[
+                            "overwrite_brand",
+                            "selected_brand"
+                        ]
+                    }
                 ]
             },
             {

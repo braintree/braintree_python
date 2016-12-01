@@ -273,12 +273,12 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(result.is_success)
         us_bank_account = result.payment_method
         self.assertIsInstance(us_bank_account, UsBankAccount)
-        self.assertEqual(us_bank_account.routing_number, "123456789")
+        self.assertEqual(us_bank_account.routing_number, "021000021")
         self.assertEqual(us_bank_account.last_4, "1234")
         self.assertEqual(us_bank_account.account_type, "checking")
         self.assertEqual(us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertEqual(us_bank_account.bank_name, "UNKNOWN")
+        self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
 
     def test_create_fails_with_invalid_us_bank_account_nonce(self):
         customer_id = Customer.create().customer.id
@@ -303,6 +303,36 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, payment_method)
         self.assertNotEqual(None, payment_method.token)
         self.assertEqual(customer_id, payment_method.customer_id)
+
+    def test_create_with_custom_card_verification_amount(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+                    "authorization_fingerprint": authorization_fingerprint,
+                    "shared_customer_identifier": "fake_identifier",
+                    "shared_customer_identifier_type": "testing"
+                })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4000111111111115",
+            "expirationMonth": "11",
+            "expirationYear": "2099"
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce,
+            "options": {
+                "verify_card": "true",
+                "verification_amount": "1.02"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEqual(CreditCardVerification.Status.ProcessorDeclined, verification.status)
 
     def test_create_respects_verify_card_and_verification_merchant_account_id_when_outside_nonce(self):
         config = Configuration.instantiate()

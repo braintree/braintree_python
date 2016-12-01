@@ -558,6 +558,12 @@ class Transaction(Resource):
                             "originating_merchant_id"
                         ],
                     },
+                    {
+                        "adyen": [
+                            "overwrite_brand",
+                            "selected_brand"
+                        ]
+                    }
                 ]
             },
             {"custom_fields": ["__any_key__"]},
