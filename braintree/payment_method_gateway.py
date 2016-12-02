@@ -18,6 +18,12 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 
+import sys
+if sys.version_info[0] == 2:
+    from urllib import urlencode
+else:
+    from urllib.parse import urlencode
+
 class PaymentMethodGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
@@ -50,8 +56,15 @@ class PaymentMethodGateway(object):
         except NotFoundError:
             raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
-    def delete(self, payment_method_token):
-        self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
+    def delete(self, payment_method_token, options={}):
+        Resource.verify_keys(options, PaymentMethod.delete_signature())
+        query_param = ""
+        if options:
+            if 'revoke_all_grants' in options:
+                options['revoke_all_grants'] = str(options['revoke_all_grants']).lower()
+            query_param = "?" + urlencode(options)
+
+        self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token + query_param)
         return SuccessfulResult()
 
     def grant(self, payment_method_token, options=None):
