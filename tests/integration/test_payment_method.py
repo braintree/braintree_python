@@ -663,7 +663,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
 
-        delete_result = PaymentMethod.delete(result.payment_method.token)
+        delete_result = PaymentMethod.delete(result.payment_method.token, {"revoke_all_grants": False})
         self.assertTrue(delete_result.is_success)
         self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
 
