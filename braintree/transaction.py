@@ -536,6 +536,7 @@ class Transaction(Resource):
                     "submit_for_settlement",
                     "venmo_sdk_session",
                     "payee_email",
+                    "skip_advanced_fraud_checking",
                     {
                         "paypal": [
                             "payee_email",

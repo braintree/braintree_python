@@ -881,6 +881,23 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(venmo_account_details.username, "venmojoe")
         self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
 
+    def test_sale_with_advanced_fraud_checking_skipped(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "skip_advanced_fraud_checking": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsInstance(transaction.risk_data, RiskData)
+        self.assertEqual(transaction.risk_data.id, None)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
