@@ -2,7 +2,10 @@ from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 from datetime import datetime
 from datetime import date
-from mock import MagicMock
+if sys.version_info[0] == 2:
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 
 class TestTransaction(unittest.TestCase):
     @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
