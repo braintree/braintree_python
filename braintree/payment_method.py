@@ -17,8 +17,8 @@ class PaymentMethod(Resource):
         return Configuration.gateway().payment_method.update(payment_method_token, params)
 
     @staticmethod
-    def delete(payment_method_token):
-        return Configuration.gateway().payment_method.delete(payment_method_token)
+    def delete(payment_method_token, options={}):
+        return Configuration.gateway().payment_method.delete(payment_method_token, options)
 
     @staticmethod
     def create_signature():
@@ -98,3 +98,6 @@ class PaymentMethod(Resource):
         ]
         return signature
 
+    @staticmethod
+    def delete_signature():
+        return ["revoke_all_grants"]

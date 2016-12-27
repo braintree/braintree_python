@@ -252,7 +252,7 @@ class TestHelper(object):
             "account_holder_name": "Dan Schulman",
             "account_description": "PayPal Checking - 1234",
             "ach_mandate": {
-                "text": ""
+                "text": "cl mandate text"
             }
         }
         resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
@@ -266,6 +266,12 @@ class TestHelper(object):
             token += "_" + TestHelper.random_token_block('d')
         token += "_xxx"
         return token
+
+    @staticmethod
+    def generate_three_d_secure_nonce(gateway, params):
+        url = gateway.config.base_merchant_path() + "/three_d_secure/create_nonce/" + TestHelper.three_d_secure_merchant_account_id
+        response = gateway.config.http().post(url, params)
+        return response["payment_method_nonce"]["nonce"]
 
     @staticmethod
     def create_grant(gateway, params):

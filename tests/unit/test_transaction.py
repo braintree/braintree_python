@@ -1,6 +1,11 @@
 from tests.test_helper import *
+from braintree.test.credit_card_numbers import CreditCardNumbers
 from datetime import datetime
 from datetime import date
+if sys.version_info[0] == 2:
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 
 class TestTransaction(unittest.TestCase):
     @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
@@ -96,3 +101,59 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction(None, attributes)
 
         self.assertEqual(transaction.is_disbursed, False)
+
+    def test_sale_with_skip_advanced_fraud_checking_value_as_true(self):
+        attributes = {
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "skip_advanced_fraud_checking": True
+            }
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+        transaction_gateway.sale(attributes)
+        transaction_param = transaction_gateway._post.call_args[0][1]
+        self.assertTrue(transaction_param['transaction']['options']['skip_advanced_fraud_checking'])
+
+    def test_sale_with_skip_advanced_fraud_checking_value_as_false(self):
+        attributes = {
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "skip_advanced_fraud_checking": False
+            }
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+        transaction_gateway.sale(attributes)
+        transaction_param = transaction_gateway._post.call_args[0][1]
+        self.assertFalse(transaction_param['transaction']['options']['skip_advanced_fraud_checking'])
+
+    def test_sale_without_skip_advanced_fraud_checking_value_option(self):
+        attributes = {
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+        transaction_gateway.sale(attributes)
+        transaction_param = transaction_gateway._post.call_args[0][1]
+        self.assertTrue('skip_advanced_fraud_checking' not in transaction_param['transaction']['options'])
+
+    def setup_transaction_gateway_and_mock_post(self):
+        transaction_gateway = TransactionGateway(BraintreeGateway(None))
+        transaction_gateway._post = MagicMock(name='config.http.post')
+        return transaction_gateway

@@ -1,5 +1,9 @@
 from tests.test_helper import *
 from braintree.payment_method_gateway import PaymentMethodGateway
+if sys.version_info[0] == 2:
+    from mock import MagicMock
+else:
+    from unittest.mock import MagicMock
 
 class TestPaymentMethodGateway(unittest.TestCase):
     def test_parse_response_returns_a_credit_card(self):
@@ -136,3 +140,30 @@ class TestPaymentMethodGateway(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             payment_method_gateway.revoke(None)
+
+    def test_delete_with_revoke_all_grants_value_as_true(self):
+        payment_method_gateway, http_mock  = self.setup_payment_method_gateway_and_mock_http()
+        payment_method_gateway.delete("some_token", {"revoke_all_grants": True})
+        self.assertTrue("delete('/merchants/integration_merchant_id/payment_methods/any/some_token?revoke_all_grants=true')" in str(http_mock.mock_calls))
+
+    def test_delete_with_revoke_all_grants_value_as_false(self):
+        payment_method_gateway, http_mock  = self.setup_payment_method_gateway_and_mock_http()
+        payment_method_gateway.delete("some_token", {"revoke_all_grants": False})
+        self.assertTrue("delete('/merchants/integration_merchant_id/payment_methods/any/some_token?revoke_all_grants=false')" in str(http_mock.mock_calls))
+
+    def test_delete_without_revoke_all_grants(self):
+        payment_method_gateway, http_mock  = self.setup_payment_method_gateway_and_mock_http()
+        payment_method_gateway.delete("some_token")
+        self.assertTrue("delete('/merchants/integration_merchant_id/payment_methods/any/some_token')" in str(http_mock.mock_calls)) 
+
+    def test_delete_with_invalid_keys_to_raise_error(self):
+        payment_method_gateway, http_mock  = self.setup_payment_method_gateway_and_mock_http()
+        with self.assertRaises(KeyError):
+            payment_method_gateway.delete("some_token", {"invalid_keys": False})
+
+    def setup_payment_method_gateway_and_mock_http(self):
+        braintree_gateway = BraintreeGateway(Configuration.instantiate())
+        payment_method_gateway = PaymentMethodGateway(braintree_gateway)
+        http_mock = MagicMock(name='config.http.delete')
+        braintree_gateway.config.http = http_mock
+        return payment_method_gateway, http_mock

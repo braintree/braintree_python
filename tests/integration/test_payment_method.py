@@ -279,6 +279,9 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
+        self.assertEqual(us_bank_account.default, True)
+        self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
 
     def test_create_fails_with_invalid_us_bank_account_nonce(self):
         customer_id = Customer.create().customer.id
@@ -663,7 +666,7 @@ class TestPaymentMethod(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
 
-        delete_result = PaymentMethod.delete(result.payment_method.token)
+        delete_result = PaymentMethod.delete(result.payment_method.token, {"revoke_all_grants": False})
         self.assertTrue(delete_result.is_success)
         self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
 

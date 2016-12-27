@@ -382,3 +382,119 @@ class TestMerchantAccount(unittest.TestCase):
     @raises(NotFoundError)
     def test_find_404(self):
         MerchantAccount.find("not_a_real_id")
+
+    def test_merchant_account_create_for_currency(self):
+        self.gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        result = self.gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token,
+        )
+
+        result = gateway.merchant_account.create_for_currency({
+            "currency": "GBP",
+            "id": "custom_id"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.merchant_account.currency_iso_code, "GBP")
+        self.assertEqual(result.merchant_account.id, "custom_id")
+
+    def test_merchant_account_create_for_currency_handles_invalid_currency(self):
+        self.gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        result = self.gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token,
+        )
+
+        result = gateway.merchant_account.create_for_currency({
+            "currency": "DOES_NOT_COMPUTE"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("merchant").on("currency")[0].code, ErrorCodes.Merchant.CurrencyIsInvalid)
+
+    def test_merchant_account_create_for_currency_handles_currency_requirement(self):
+        self.gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        result = self.gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token,
+        )
+
+        result = gateway.merchant_account.create_for_currency({})
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("merchant").on("currency")[0].code, ErrorCodes.Merchant.CurrencyIsRequired)
+
+    def test_merchant_account_create_for_currency_merchant_account_already_existing_for_currency(self):
+        self.gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        result = self.gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token,
+        )
+
+        result = gateway.merchant_account.create_for_currency({
+            "currency": "USD",
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("merchant").on("currency")[0].code, ErrorCodes.Merchant.MerchantAccountExistsForCurrency)
+
+    def test_merchant_account_create_for_currency_merchant_account_already_existing_for_id(self):
+        self.gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        result = self.gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token,
+        )
+
+        result = gateway.merchant_account.create_for_currency({
+            "currency": "GBP",
+            "id": result.merchant.merchant_accounts[0].id
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("merchant").on("id")[0].code, ErrorCodes.Merchant.MerchantAccountExistsForId)

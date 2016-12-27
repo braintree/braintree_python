@@ -881,6 +881,23 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(venmo_account_details.username, "venmojoe")
         self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
 
+    def test_sale_with_advanced_fraud_checking_skipped(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "skip_advanced_fraud_checking": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsInstance(transaction.risk_data, RiskData)
+        self.assertEqual(transaction.risk_data.id, None)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -3083,6 +3100,7 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.payer_id)
         self.assertNotEqual(None, transaction.paypal_details.payer_first_name)
         self.assertNotEqual(None, transaction.paypal_details.payer_last_name)
+        self.assertNotEqual(None, transaction.paypal_details.payer_status)
         self.assertNotEqual(None, transaction.paypal_details.seller_protection_status)
         self.assertNotEqual(None, transaction.paypal_details.capture_id)
         #self.assertNotEqual(None, transaction.paypal_details.refund_id)
@@ -3181,6 +3199,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
+        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
 
     def test_us_bank_account_nonce_transactions_with_vaulted_token(self):
         result = Transaction.sale({
@@ -3200,6 +3220,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
+        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
         token = result.transaction.us_bank_account.token
 
         result = Transaction.sale({
@@ -3218,6 +3240,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
+        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
+        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
 
 
     def test_us_bank_account_token_transactions_not_found(self):
