@@ -82,6 +82,7 @@ class PaymentMethod(Resource):
                 "options": [
                     "make_default",
                     "verify_card",
+                    "verification_amount",
                     "verification_merchant_account_id",
                     "venmo_sdk_session",
                     {

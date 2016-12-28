@@ -830,6 +830,26 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(update_result.credit_card_verification.status == CreditCardVerification.Status.ProcessorDeclined)
         self.assertTrue(update_result.credit_card_verification.gateway_rejection_reason is None)
 
+    def test_update_can_pass_custom_verification_amount(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Card Holder",
+            "customer_id": customer_id,
+            "cvv": "123",
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2020"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "payment_method_nonce": Nonces.ProcessorDeclinedMasterCard,
+            "options": {
+                "verify_card": "true",
+                "verification_amount": "2.34"
+            }
+        })
+        self.assertFalse(update_result.is_success)
+        self.assertTrue(update_result.credit_card_verification.status == CreditCardVerification.Status.ProcessorDeclined)
+        self.assertTrue(update_result.credit_card_verification.gateway_rejection_reason is None)
+
     def test_update_can_update_the_billing_address(self):
         customer_id = Customer.create().customer.id
         credit_card_result = CreditCard.create({
