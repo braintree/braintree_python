@@ -23,7 +23,6 @@ class UsBankAccount(Resource):
             "routing_number",
             "last_4",
             "account_type",
-            "account_description",
             "account_holder_name",
             "token",
             "image_url",

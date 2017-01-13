@@ -379,6 +379,55 @@ class TestMerchantAccount(unittest.TestCase):
         merchant_account = MerchantAccount.find("sandbox_master_merchant_account")
         self.assertEqual(merchant_account.currency_iso_code, "USD")
 
+    def test_return_all_merchant_accounts(self):
+        gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        code = TestHelper.create_grant(gateway, {
+            "merchant_public_id": "integration_merchant_id",
+            "scope": "read_write"
+        })
+
+        result = gateway.oauth.create_token_from_code({
+            "code": code
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token,
+            environment=Environment.Development
+        )
+
+        result = gateway.merchant_account.all()
+        merchant_accounts = [ma for ma in result.merchant_accounts.items]
+        self.assertTrue(len(merchant_accounts) > 20)
+
+    def test_returns_merchant_account_with_correct_attributes(self):
+        gateway = BraintreeGateway(
+            client_id="client_id$development$integration_client_id",
+            client_secret="client_secret$development$integration_client_secret"
+        )
+
+        result = gateway.merchant.create({
+            "email": "name@email.com",
+            "country_code_alpha3": "USA",
+            "payment_methods": ["credit_card", "paypal"]
+        })
+
+        gateway = BraintreeGateway(
+            access_token=result.credentials.access_token
+        )
+
+        result = gateway.merchant_account.all()
+        merchant_accounts = [ma for ma in result.merchant_accounts.items]
+        self.assertEqual(len(merchant_accounts), 1)
+
+        merchant_account = merchant_accounts[0]
+        self.assertEqual(merchant_account.currency_iso_code, "USD")
+        self.assertEqual(merchant_account.status, MerchantAccount.Status.Active)
+        self.assertTrue(merchant_account.default)
+
     @raises(NotFoundError)
     def test_find_404(self):
         MerchantAccount.find("not_a_real_id")
