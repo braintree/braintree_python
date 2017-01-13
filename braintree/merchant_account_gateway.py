@@ -1,6 +1,9 @@
 from braintree.error_result import ErrorResult
 from braintree.merchant_account import MerchantAccount
+from braintree.paginated_collection import PaginatedCollection
+from braintree.paginated_result import PaginatedResult
 from braintree.resource import Resource
+from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
 
@@ -28,6 +31,16 @@ class MerchantAccountGateway(object):
 
     def create_for_currency(self, params={}):
         return self._post("/merchant_accounts/create_for_currency", {"merchant_account": params})
+
+    def all(self):
+        pc = PaginatedCollection(self._fetch_merchant_accounts)
+        return SuccessfulResult({"merchant_accounts": pc})
+
+    def _fetch_merchant_accounts(self, current_page):
+        response = self.config.http().get(self.config.base_merchant_path() + "/merchant_accounts/?page=" + str(current_page))
+        body = response["merchant_accounts"]
+        merchant_accounts = [MerchantAccount(self.gateway, merchant_account) for merchant_account in ResourceCollection._extract_as_array(body, "merchant_account")]
+        return PaginatedResult(body["total_items"], body["page_size"], merchant_accounts)
 
     def _post(self, url, params={}):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
