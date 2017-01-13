@@ -276,7 +276,6 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(us_bank_account.routing_number, "021000021")
         self.assertEqual(us_bank_account.last_4, "1234")
         self.assertEqual(us_bank_account.account_type, "checking")
-        self.assertEqual(us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
         self.assertEqual(us_bank_account.default, True)

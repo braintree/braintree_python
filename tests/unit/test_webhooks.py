@@ -164,7 +164,6 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(notification.transaction.us_bank_account.routing_number, "123456789")
         self.assertEqual(notification.transaction.us_bank_account.last_4, "1234")
         self.assertEqual(notification.transaction.us_bank_account.account_type, "checking")
-        self.assertEqual(notification.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(notification.transaction.us_bank_account.account_holder_name, "Dan Schulman")
 
     def test_builds_notification_for_settlement_declined_transactions(self):
@@ -182,7 +181,6 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(notification.transaction.us_bank_account.routing_number, "123456789")
         self.assertEqual(notification.transaction.us_bank_account.last_4, "1234")
         self.assertEqual(notification.transaction.us_bank_account.account_type, "checking")
-        self.assertEqual(notification.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(notification.transaction.us_bank_account.account_holder_name, "Dan Schulman")
 
     def test_builds_notification_for_disbursements(self):

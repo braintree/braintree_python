@@ -13,7 +13,6 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertEqual(found_account.routing_number, "021000021")
         self.assertEqual(found_account.last_4, "1234")
         self.assertEqual(found_account.account_type, "checking")
-        self.assertEqual(found_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(found_account.account_holder_name, "Dan Schulman")
         self.assertRegexpMatches(found_account.bank_name, r".*CHASE.*")
         self.assertEqual(found_account.default, True)
@@ -41,7 +40,6 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertEqual(result.transaction.us_bank_account.routing_number, "021000021")
         self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
         self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
-        self.assertEqual(result.transaction.us_bank_account.account_description, "PayPal Checking - 1234")
         self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
 
