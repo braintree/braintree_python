@@ -1,3 +1,7 @@
+##  3.34.0
+* Stop sending account_description field from us bank accounts
+* Add functionality to list all merchant accounts for a merchant with `merchantAcount.all`
+
 ## 3.33.0
 * Add option `skip_advanced_fraud_check` for transaction flows
 
