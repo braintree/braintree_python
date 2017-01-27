@@ -10,7 +10,9 @@ setup(
     package_data={"braintree": ["ssl/*"]},
     install_requires=["requests>=0.11.1,<3.0"],
     zip_safe=False,
+    license="MIT",
     classifiers = [
+        "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.3",
