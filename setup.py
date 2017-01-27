@@ -1,8 +1,13 @@
 from distutils.core import setup
+
 setup(
     name="braintree",
     version="3.34.0",
     description="Braintree Python Library",
+    long_description="""
+    For more information see our `documentation <https://developers.braintreepayments.com/python/sdk/server/overview>`_
+    or the `Github repo <https://github.com/braintree/braintree_python>`_.
+    """,
     author="Braintree",
     author_email="support@braintreepayments.com",
     url="https://developers.braintreepayments.com/python/sdk/server/overview",
