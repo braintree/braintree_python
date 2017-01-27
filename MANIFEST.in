@@ -1,1 +1,7 @@
-include braintree/ssl/*
+include CHANGELOG.rst
+include README.rst
+
+include braintree/ssl/api_braintreegateway_com.ca.crt
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
