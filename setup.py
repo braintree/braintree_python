@@ -1,8 +1,17 @@
 from distutils.core import setup
+
+long_description="""
+        The Braintree Python SDK provides integration access to the Braintree Gateway.
+
+        1. https://github.com/braintree/braintree_python - README and Samples
+        2. https://developers.braintreepayments.com/python/sdk/server/overview - API Reference
+      """
+
 setup(
     name="braintree",
     version="3.34.0",
     description="Braintree Python Library",
+    long_description=long_description,
     author="Braintree",
     author_email="support@braintreepayments.com",
     url="https://developers.braintreepayments.com/python/sdk/server/overview",
