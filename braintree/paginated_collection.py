@@ -26,7 +26,7 @@ class PaginatedCollection(object):
             for item in results.current_page:
                 yield item
 
-            if current_page * results.page_size > total_items:
+            if current_page * results.page_size >= total_items:
                 break
 
     def __iter__(self):
