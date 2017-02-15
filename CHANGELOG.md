@@ -1,6 +1,11 @@
+## 3.35.0
+* Add LICENSE metadata. Thanks graingert.
+* Allow custom verification amount on payment method updates.
+* Fix a bug where `merchant_account.all` would attempt to fetch too many pages of merchant accounts
+
 ##  3.34.0
 * Stop sending account_description field from us bank accounts
-* Add functionality to list all merchant accounts for a merchant with `merchantAcount.all`
+* Add functionality to list all merchant accounts for a merchant with `merchant_account.all`
 
 ## 3.33.0
 * Add option `skip_advanced_fraud_check` for transaction flows
