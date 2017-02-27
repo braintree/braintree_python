@@ -33,7 +33,7 @@ class UsBankAccount(Resource):
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
-        if "ach_mandate" in attributes:
+        if attributes.get("ach_mandate") is not None:
             self.ach_mandate = AchMandate(gateway, self.ach_mandate)
         else:
             self.ach_mandate = None
