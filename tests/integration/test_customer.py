@@ -211,6 +211,43 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(customer.paypal_accounts))
         self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
 
+    def test_create_with_paypal_order_payment_nonce(self):
+        http = ClientApiHttp.create()
+        status_code, payment_method_nonce = http.get_paypal_nonce({
+            "intent": "order",
+            "payment-token": "fake-paypal-payment-token",
+            "payer-id": "fake-paypal-payer-id"
+        })
+
+        result = Customer.create({"payment_method_nonce": payment_method_nonce})
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertEqual(1, len(customer.paypal_accounts))
+        self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
+
+    def test_create_with_paypal_order_payment_nonce_and_payee_email(self):
+        http = ClientApiHttp.create()
+        status_code, payment_method_nonce = http.get_paypal_nonce({
+            "intent": "order",
+            "payment-token": "fake-paypal-payment-token",
+            "payer-id": "fake-paypal-payer-id"
+        })
+
+        result = Customer.create({
+            "payment_method_nonce": payment_method_nonce,
+            "options": {
+                "paypal": {
+                    "payee_email": "payee@example.com",
+                },
+            },
+        })
+        self.assertTrue(result.is_success)
+
+        customer = result.customer
+        self.assertEqual(1, len(customer.paypal_accounts))
+        self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
+
     def test_create_with_paypal_one_time_nonce_fails(self):
         result = Customer.create({"payment_method_nonce": Nonces.PayPalOneTimePayment})
         self.assertFalse(result.is_success)

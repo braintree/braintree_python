@@ -37,7 +37,12 @@ class PaymentMethod(Resource):
                     "overwrite_brand",
                     "selected_brand"
                 ]
-            }
+            },
+            {
+                "paypal": [
+                    "payee_email",
+                ],
+            },
         ]
 
         signature = [
