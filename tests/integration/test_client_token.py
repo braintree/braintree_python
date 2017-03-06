@@ -164,12 +164,13 @@ class TestClientToken(unittest.TestCase):
         self.assertNotEqual(authorization_fingerprint, None)
 
     def test_can_pass_merchant_account_id(self):
+        expected_merchant_account_id = TestHelper.non_default_merchant_account_id
         client_token = TestHelper.generate_decoded_client_token({
-            "merchant_account_id": "my_merchant_account"
+            "merchant_account_id": expected_merchant_account_id
         })
         merchant_account_id = json.loads(client_token)["merchantAccountId"]
 
-        self.assertEqual("my_merchant_account", merchant_account_id)
+        self.assertEqual(expected_merchant_account_id, merchant_account_id)
 
     @raises_with_regexp(Exception, "'Invalid keys: merchant_id'")
     def test_required_data_cannot_be_overridden(self):
