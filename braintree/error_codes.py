@@ -521,6 +521,7 @@ class ErrorCodes(object):
         ThreeDSecureTransactionDataDoesntMatchVerify = "91570"
         ThreeDSecureEciFlagIsRequired = "915113"
         ThreeDSecureCavvIsRequired = "915116"
+        ThreeDSecureXidIsRequired = "915115"
         ThreeDSecureEciFlagIsInvalid = "915114"
         ThreeDSecureMerchantAccountDoesNotSupportCardType = "915131"
         TypeIsInvalid = "91523"
