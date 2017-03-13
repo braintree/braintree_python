@@ -19,6 +19,7 @@ from braintree.testing_gateway import TestingGateway
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.us_bank_account_gateway import UsBankAccountGateway
+from braintree.ideal_payment_gateway import IdealPaymentGateway
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing_gateway import WebhookTestingGateway
 import braintree.configuration
@@ -56,3 +57,4 @@ class BraintreeGateway(object):
         self.paypal_account = PayPalAccountGateway(self)
         self.testing = TestingGateway(self)
         self.us_bank_account = UsBankAccountGateway(self)
+        self.ideal_payment = IdealPaymentGateway(self)

@@ -286,6 +286,14 @@ class TestHelper(object):
         return respJson["data"]["id"]
 
     @staticmethod
+    def generate_invalid_ideal_payment_nonce():
+        token = "idealpayment"
+        for i in range(4):
+            token += "_" + TestHelper.random_token_block('d')
+        token += "_xxx"
+        return token
+
+    @staticmethod
     def generate_three_d_secure_nonce(gateway, params):
         url = gateway.config.base_merchant_path() + "/three_d_secure/create_nonce/" + TestHelper.three_d_secure_merchant_account_id
         response = gateway.config.http().post(url, params)
