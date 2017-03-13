@@ -1,8 +1,8 @@
 from tests.test_helper import *
 from datetime import date
-from braintree.ideal_payment_details import IdealPaymentDetails
+from braintree.ideal_payment import IdealPayment
 
-class TestIdealPaymentDetails(unittest.TestCase):
+class TestIdealPayment(unittest.TestCase):
     def test_constructor(self):
         attributes = {
                 "ideal_payment_id": "idealpayment_abc_123",
@@ -12,7 +12,7 @@ class TestIdealPaymentDetails(unittest.TestCase):
                 "bic": "http://www.example.com/ideal.png",
         }
 
-        ideal_payment_details = IdealPaymentDetails({}, attributes)
+        ideal_payment_details = IdealPayment({}, attributes)
         self.assertEqual(ideal_payment_details.ideal_payment_id, "idealpayment_abc_123")
         self.assertEqual(ideal_payment_details.ideal_transaction_id, "1150000008857321")
         self.assertEqual(ideal_payment_details.image_url, "12************7890")
