@@ -3488,12 +3488,12 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(result.transaction.customer_details.first_name, customer.first_name)
 
     def test_sale_transacts_ideal_payment(self):
-        valid_nonce = TestHelper.generate_valid_ideal_payment_nonce()
+        valid_id = TestHelper.generate_valid_ideal_payment_id()
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "order_id": "ABC123",
             "merchant_account_id": "ideal_merchant_account",
-            "payment_method_nonce": valid_nonce,
+            "payment_method_nonce": valid_id,
             "options": {
                 "submit_for_settlement": True,
             },
@@ -3513,12 +3513,12 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(result.transaction.ideal_payment_details.bic, None)
 
     def test_failed_sale_non_complete_ideal_payment(self):
-        non_complete_nonce = TestHelper.generate_valid_ideal_payment_nonce("3.00")
+        non_complete_id = TestHelper.generate_valid_ideal_payment_id("3.00")
         result = Transaction.sale({
             "amount": "3.00",
             "order_id": "ABC123",
             "merchant_account_id": "ideal_merchant_account",
-            "payment_method_nonce": non_complete_nonce,
+            "payment_method_nonce": non_complete_id,
             "options": {
                 "submit_for_settlement": True,
             },

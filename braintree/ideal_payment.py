@@ -6,13 +6,13 @@ from braintree.iban_bank_account import IbanBankAccount
 class IdealPayment(Resource):
 
     @staticmethod
-    def find(token):
-        return Configuration.gateway().ideal_payment.find(token)
+    def find(ideal_payment_id):
+        return Configuration.gateway().ideal_payment.find(ideal_payment_id)
 
     @staticmethod
-    def sale(nonce, transactionRequest):
+    def sale(ideal_payment_id, transactionRequest):
         request = transactionRequest.copy()
-        request["payment_method_nonce"] = nonce
+        request["payment_method_nonce"] = ideal_payment_id
         if not "options" in request:
             request["options"] = {}
         request["options"]["submit_for_settlement"] = True

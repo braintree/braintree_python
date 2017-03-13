@@ -5,7 +5,7 @@ from tests.test_helper import *
 
 class TestIdealPayment(unittest.TestCase):
     def test_creates_transaction_using_ideal_payment_token_and_returns_result_object(self):
-        ideal_payment_id = TestHelper.generate_valid_ideal_payment_nonce(amount=TransactionAmounts.Authorize)
+        ideal_payment_id = TestHelper.generate_valid_ideal_payment_id(amount=TransactionAmounts.Authorize)
 
         result = IdealPayment.sale(ideal_payment_id, {
             'order_id': 'ABC123',
@@ -25,14 +25,14 @@ class TestIdealPayment(unittest.TestCase):
         self.assertNotEqual(ideal_payment_details.bic, None)
 
     def test_doesnt_create_transaction_with_ideal_payment(self):
-        result = IdealPayment.sale('invalid_nonce', {
+        result = IdealPayment.sale('invalid_id', {
             'merchant_account_id': 'ideal_merchant_account',
             'amount': TransactionAmounts.Authorize,
         })
         self.assertFalse(result.is_success)
 
     def test_find_ideal_payment_by_id(self):
-        ideal_payment_id = TestHelper.generate_valid_ideal_payment_nonce(amount=TransactionAmounts.Authorize)
+        ideal_payment_id = TestHelper.generate_valid_ideal_payment_id(amount=TransactionAmounts.Authorize)
         ideal_payment = IdealPayment.find(ideal_payment_id)
 
         self.assertRegexpMatches(ideal_payment.id, r'^idealpayment_\w{6,}$')

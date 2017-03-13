@@ -267,7 +267,7 @@ class TestHelper(object):
         return token
 
     @staticmethod
-    def generate_valid_ideal_payment_nonce(amount=TransactionAmounts.Authorize):
+    def generate_valid_ideal_payment_id(amount=TransactionAmounts.Authorize):
         client_token = json.loads(TestHelper.generate_decoded_client_token())
         headers = {
             "Content-Type": "application/json",
@@ -284,14 +284,6 @@ class TestHelper(object):
         resp = requests.post(client_token["braintree_api"]["url"] + "/ideal-payments", headers=headers, data=json.dumps(payload) )
         respJson = json.loads(resp.text)
         return respJson["data"]["id"]
-
-    @staticmethod
-    def generate_invalid_ideal_payment_nonce():
-        token = "idealpayment"
-        for i in range(4):
-            token += "_" + TestHelper.random_token_block('d')
-        token += "_xxx"
-        return token
 
     @staticmethod
     def generate_three_d_secure_nonce(gateway, params):

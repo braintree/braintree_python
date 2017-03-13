@@ -1,7 +1,7 @@
 from tests.test_helper import *
 import braintree
 
-class TestSetup(unittest.TestCase):
+class TestExports(unittest.TestCase):
     def test_exports_properties(self):
         self.assertNotEqual(braintree.AchMandate, None)
         self.assertNotEqual(braintree.AddOn, None)

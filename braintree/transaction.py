@@ -631,7 +631,7 @@ class Transaction(Resource):
         if "us_bank_account" in attributes:
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
         if "ideal_payment" in attributes:
-            self.ideal_payment_details = IdealPaymentDetails(gateway, attributes.pop("ideal_payment"))
+            self.ideal_payment_details = IdealPayment(gateway, attributes.pop("ideal_payment"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
         if "coinbase_account" in attributes:
