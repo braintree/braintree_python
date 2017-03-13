@@ -464,6 +464,7 @@ class ErrorCodes(object):
         CustomerDoesNotHaveCreditCard = "91511"
         CustomerIdIsInvalid = "91510"
         HasAlreadyBeenRefunded = "91512"
+        IdealPaymentNotComplete = "815141"
         MerchantAccountDoesNotMatch3DSecureMerchantAccount = "91584"
         MerchantAccountDoesNotSupportMOTO = "91558"
         MerchantAccountDoesNotSupportRefunds = "91547"

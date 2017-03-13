@@ -267,6 +267,25 @@ class TestHelper(object):
         return token
 
     @staticmethod
+    def generate_valid_ideal_payment_nonce(amount=TransactionAmounts.Authorize):
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        headers = {
+            "Content-Type": "application/json",
+            "Braintree-Version": "2015-11-01",
+            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
+        }
+        payload = {
+            "issuer": "RABONL2U",
+            "order_id": "ABC123",
+            "amount": amount,
+            "currency": "EUR",
+            "redirect_url": "https://braintree-api.com",
+        }
+        resp = requests.post(client_token["braintree_api"]["url"] + "/ideal-payments", headers=headers, data=json.dumps(payload) )
+        respJson = json.loads(resp.text)
+        return respJson["data"]["id"]
+
+    @staticmethod
     def generate_three_d_secure_nonce(gateway, params):
         url = gateway.config.base_merchant_path() + "/three_d_secure/create_nonce/" + TestHelper.three_d_secure_merchant_account_id
         response = gateway.config.http().post(url, params)
