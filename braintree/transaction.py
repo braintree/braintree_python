@@ -28,7 +28,7 @@ from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.us_bank_account import UsBankAccount
-from braintree.ideal_payment_details import IdealPaymentDetails
+from braintree.ideal_payment import IdealPayment
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
