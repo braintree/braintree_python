@@ -1,3 +1,4 @@
+from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
 from braintree.configuration import Configuration
 from braintree.risk_data import RiskData
@@ -24,6 +25,9 @@ class CreditCardVerification(AttributeGetter):
 
     def __init__(self, gateway, attributes):
         AttributeGetter.__init__(self, attributes)
+
+        self.amount = Decimal(self.amount)
+
         if "processor_response_code" not in attributes:
             self.processor_response_code = None
         if "processor_response_text" not in attributes:
