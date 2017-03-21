@@ -28,6 +28,7 @@ from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.us_bank_account import UsBankAccount
+from braintree.ideal_payment import IdealPayment
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
@@ -629,6 +630,8 @@ class Transaction(Resource):
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "us_bank_account" in attributes:
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
+        if "ideal_payment" in attributes:
+            self.ideal_payment_details = IdealPayment(gateway, attributes.pop("ideal_payment"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
         if "coinbase_account" in attributes:

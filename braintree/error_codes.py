@@ -430,6 +430,7 @@ class ErrorCodes(object):
     class Transaction(object):
         AmountCannotBeNegative = "81501"
         AmountDoesNotMatch3DSecureAmount = "91585"
+        AmountDoesNotMatchIdealPaymentAmount = "915144"
         AmountIsInvalid = AmountFormatIsInvalid = "81503"
         AmountIsRequired = "81502"
         AmountIsTooLarge = "81528"
@@ -464,13 +465,17 @@ class ErrorCodes(object):
         CustomerDoesNotHaveCreditCard = "91511"
         CustomerIdIsInvalid = "91510"
         HasAlreadyBeenRefunded = "91512"
+        IdealPaymentNotComplete = "815141"
         MerchantAccountDoesNotMatch3DSecureMerchantAccount = "91584"
+        MerchantAccountDoesNotMatchIdealPaymentMerchantAccount = "915143"
         MerchantAccountDoesNotSupportMOTO = "91558"
         MerchantAccountDoesNotSupportRefunds = "91547"
         MerchantAccountIdIsInvalid = "91513"
         MerchantAccountIsSusped = "91514" # Deprecated
         MerchantAccountIsSuspended = "91514"
         MerchantAccountNameIsInvalid = "91513" # Deprecated
+        OrderIdDoesNotMatchIdealPaymentOrderId = "91503"
+        OrderIdIsRequiredWithIdealPayment = "91502"
         OrderIdIsTooLong = "91501"
         PayPalAuthExpired = "91579"
         PayPalNotEnabled = "91576"
