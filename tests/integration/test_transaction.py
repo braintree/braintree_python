@@ -898,6 +898,39 @@ class TestTransaction(unittest.TestCase):
         self.assertIsInstance(transaction.risk_data, RiskData)
         self.assertEqual(transaction.risk_data.id, None)
 
+    def test_sale_with_skip_cvv_option_set(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "skip_cvv": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(transaction.cvv_response_code, "B")
+
+    def test_sale_with_skip_avs_option_set(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "skip_avs": True
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(transaction.avs_error_response_code, None)
+        self.assertEqual(transaction.avs_street_address_response_code, "B")
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

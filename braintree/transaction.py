@@ -538,6 +538,8 @@ class Transaction(Resource):
                     "venmo_sdk_session",
                     "payee_email",
                     "skip_advanced_fraud_checking",
+                    "skip_avs",
+                    "skip_cvv",
                     {
                         "paypal": [
                             "payee_email",
