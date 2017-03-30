@@ -70,7 +70,12 @@ class TestPaymentMethodGateway(unittest.TestCase):
                             "overwrite_brand",
                             "selected_brand"
                         ]
-                    }
+                    },
+                    {
+                        "paypal":[
+                            "payee_email",
+                        ]
+                    },
                 ]
             }
         ]
