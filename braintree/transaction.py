@@ -29,6 +29,8 @@ from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.us_bank_account import UsBankAccount
 from braintree.ideal_payment import IdealPayment
+from braintree.visa_checkout_card import VisaCheckoutCard
+from braintree.masterpass_card import MasterpassCard
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
@@ -644,6 +646,10 @@ class Transaction(Resource):
             self.amex_express_checkout_card_details = AmexExpressCheckoutCard(gateway, attributes.pop("amex_express_checkout_card"))
         if "venmo_account" in attributes:
             self.venmo_account_details = VenmoAccount(gateway, attributes.pop("venmo_account"))
+        if "visa_checkout_card" in attributes:
+            self.visa_checkout_card_details = VisaCheckoutCard(gateway, attributes.pop("visa_checkout_card"))
+        if "masterpass_card" in attributes:
+            self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

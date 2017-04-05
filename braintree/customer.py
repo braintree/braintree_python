@@ -12,6 +12,8 @@ from braintree.europe_bank_account import EuropeBankAccount
 from braintree.us_bank_account import UsBankAccount
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.venmo_account import VenmoAccount
+from braintree.visa_checkout_card import VisaCheckoutCard
+from braintree.masterpass_card import MasterpassCard
 from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.ids_search import IdsSearch
@@ -248,3 +250,10 @@ class Customer(Resource):
             self.us_bank_accounts = [UsBankAccount(gateway, us_bank_account) for us_bank_account in self.us_bank_accounts]
             self.payment_methods += self.us_bank_accounts
 
+        if "visa_checkout_cards" in attributes:
+            self.visa_checkout_cards = [VisaCheckoutCard(gateway, visa_checkout_card) for visa_checkout_card in self.visa_checkout_cards]
+            self.payment_methods += self.visa_checkout_cards
+
+        if "masterpass_cards" in attributes:
+            self.masterpass_cards = [MasterpassCard(gateway, masterpass_card) for masterpass_card in self.masterpass_cards]
+            self.payment_methods += self.masterpass_cards
