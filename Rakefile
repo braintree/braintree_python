@@ -33,7 +33,7 @@ namespace :pypi do
 
   desc "Upload a new version to PyPI"
   task :upload => :clean do
-    sh "python setup.py sdist upload"
+    sh "python setup.py sdist bdist_wheel upload"
   end
 end
 
