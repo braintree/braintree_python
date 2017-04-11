@@ -268,7 +268,14 @@ class TestHelper(object):
 
     @staticmethod
     def generate_valid_ideal_payment_id(amount=TransactionAmounts.Authorize):
-        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        client_token = json.loads(TestHelper.generate_decoded_client_token({
+            "merchant_account_id": "ideal_merchant_account"
+        }))
+        client = ClientApiHttp(Configuration.instantiate(), {
+            "authorization_fingerprint": client_token["authorizationFingerprint"]
+        })
+        _, configuration = client.get_configuration()
+        route_id = json.loads(configuration)["ideal"]["routeId"]
         headers = {
             "Content-Type": "application/json",
             "Braintree-Version": "2015-11-01",
@@ -279,6 +286,7 @@ class TestHelper(object):
             "order_id": "ABC123",
             "amount": amount,
             "currency": "EUR",
+            "route_id": route_id,
             "redirect_url": "https://braintree-api.com",
         }
         resp = requests.post(client_token["braintree_api"]["url"] + "/ideal-payments", headers=headers, data=json.dumps(payload) )
@@ -377,6 +385,14 @@ class ClientApiHttp(Http):
 
     def set_authorization_fingerprint(self, authorization_fingerprint):
         self.options['authorization_fingerprint'] = authorization_fingerprint
+
+    def get_configuration(self):
+        encoded_fingerprint = quote_plus(self.options["authorization_fingerprint"])
+        url = "/merchants/%s/client_api/v1/configuration" % self.config.merchant_id
+        url += "?authorizationFingerprint=%s" % encoded_fingerprint
+        url += "&configVersion=3"
+
+        return self.get(url)
 
     def get_cards(self):
         encoded_fingerprint = quote_plus(self.options["authorization_fingerprint"])
