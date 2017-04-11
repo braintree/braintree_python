@@ -39,7 +39,7 @@ class Parser(object):
         return datetime.strptime(value, "%Y-%m-%d").date()
 
     def __convert_to_datetime(self, value):
-        return iso8601.parse_date(value)
+        return iso8601.parse_date(value).replace(tzinfo=None)
 
     def __convert_to_list(self, dict, key):
         val = dict[key]
