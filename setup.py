@@ -1,6 +1,9 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
-long_description="""
+long_description = """
         The Braintree Python SDK provides integration access to the Braintree Gateway.
 
         1. https://github.com/braintree/braintree_python - README and Samples
@@ -20,7 +23,7 @@ setup(
     install_requires=["requests>=0.11.1,<3.0"],
     zip_safe=False,
     license="MIT",
-    classifiers = [
+    classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
