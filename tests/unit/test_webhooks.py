@@ -296,6 +296,32 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("abc123", notification.partner_merchant.partner_merchant_id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
+    def test_builds_notification_for_connected_merchant_status_transitioned(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.ConnectedMerchantStatusTransitioned,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.ConnectedMerchantStatusTransitioned, notification.kind)
+        self.assertEqual("new_status", notification.connected_merchant_status_transitioned.status)
+        self.assertEqual("my_id", notification.connected_merchant_status_transitioned.merchant_public_id)
+        self.assertEqual("oauth_application_client_id", notification.connected_merchant_status_transitioned.oauth_application_client_id)
+
+    def test_builds_notification_for_connected_merchant_paypal_status_changed(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.ConnectedMerchantPayPalStatusChanged,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.ConnectedMerchantPayPalStatusChanged, notification.kind)
+        self.assertEqual("link", notification.connected_merchant_paypal_status_changed.action)
+        self.assertEqual("my_id", notification.connected_merchant_paypal_status_changed.merchant_public_id)
+        self.assertEqual("oauth_application_client_id", notification.connected_merchant_paypal_status_changed.oauth_application_client_id)
+
     def test_builds_notification_for_subscription_charged_successfully(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionChargedSuccessfully,
