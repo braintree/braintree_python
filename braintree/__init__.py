@@ -9,6 +9,8 @@ from braintree.apple_pay_card import ApplePayCard
 from braintree.braintree_gateway import BraintreeGateway
 from braintree.client_token import ClientToken
 from braintree.configuration import Configuration
+from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
+from braintree.connected_merchant_paypal_status_changed import ConnectedMerchantPayPalStatusChanged
 from braintree.credentials_parser import CredentialsParser
 from braintree.credit_card import CreditCard
 from braintree.credit_card_gateway import CreditCardGateway
