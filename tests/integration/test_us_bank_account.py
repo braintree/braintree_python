@@ -17,6 +17,7 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertRegexpMatches(found_account.bank_name, r".*CHASE.*")
         self.assertEqual(found_account.default, True)
         self.assertEqual(found_account.ach_mandate.text, "cl mandate text")
+        self.assertIsNotNone(found_account.ach_mandate.accepted_at)
         self.assertIsInstance(found_account.ach_mandate.accepted_at, datetime)
 
     def test_find_does_not_return_invalid_us_bank_account(self):
