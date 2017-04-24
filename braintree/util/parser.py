@@ -1,5 +1,6 @@
 from xml.dom import minidom
 from datetime import datetime
+from braintree.util.datetime_parser import parse_datetime
 import re
 import sys
 
@@ -38,7 +39,7 @@ class Parser(object):
         return datetime.strptime(value, "%Y-%m-%d").date()
 
     def __convert_to_datetime(self, value):
-        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
+        return parse_datetime(value)
 
     def __convert_to_list(self, dict, key):
         val = dict[key]
