@@ -561,7 +561,8 @@ class Transaction(Resource):
                         "venmo_merchant_data": [
                             "venmo_merchant_public_id",
                             "originating_transaction_id",
-                            "originating_merchant_id"
+                            "originating_merchant_id",
+                            "originating_merchant_kind"
                         ],
                     },
                     {

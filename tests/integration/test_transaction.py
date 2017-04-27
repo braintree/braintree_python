@@ -232,6 +232,7 @@ class TestTransaction(unittest.TestCase):
                     "venmo_merchant_public_id": "12345",
                     "originating_transaction_id": "abc123",
                     "originating_merchant_id": "xyz123",
+                    "originating_merchant_kind": "braintree",
                 }
             }
         })
