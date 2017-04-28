@@ -1,3 +1,6 @@
+## 3.36.0
+* Add ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
+
 ## 3.35.0
 * Add LICENSE metadata. Thanks graingert.
 * Allow custom verification amount on payment method updates.
