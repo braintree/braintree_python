@@ -1,5 +1,6 @@
 from xml.dom import minidom
 from datetime import datetime
+import iso8601
 import re
 import sys
 
@@ -38,7 +39,7 @@ class Parser(object):
         return datetime.strptime(value, "%Y-%m-%d").date()
 
     def __convert_to_datetime(self, value):
-        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
+        return iso8601.parse_date(value).replace(tzinfo=None)
 
     def __convert_to_list(self, dict, key):
         val = dict[key]

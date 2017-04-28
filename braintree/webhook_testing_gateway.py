@@ -188,6 +188,7 @@ class WebhookTestingGateway(object):
                 <amount>250.00</amount>
               </transaction>
               <date-opened type="date">2014-03-28</date-opened>
+              <created-at type="datetime">2017-04-11T14:03:40+00:00</created-at>
             </dispute>
         """ % (id, id)
 
