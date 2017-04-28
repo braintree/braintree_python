@@ -9,11 +9,15 @@ from braintree.dispute import Dispute
 from braintree.account_updater_daily_report import AccountUpdaterDailyReport
 from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
+from braintree.connected_merchant_paypal_status_changed import ConnectedMerchantPayPalStatusChanged
+from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
 
 class WebhookNotification(Resource):
     class Kind(object):
         AccountUpdaterDailyReport = "account_updater_daily_report"
         Check = "check"
+        ConnectedMerchantStatusTransitioned = "connected_merchant_status_transitioned"
+        ConnectedMerchantPayPalStatusChanged = "connected_merchant_paypal_status_changed"
         PartnerMerchantConnected = "partner_merchant_connected"
         PartnerMerchantDisconnected = "partner_merchant_disconnected"
         PartnerMerchantDeclined = "partner_merchant_declined"
@@ -57,6 +61,10 @@ class WebhookNotification(Resource):
             self.merchant_account = MerchantAccount(gateway, node_wrapper['merchant_account'])
         elif "transaction" in node_wrapper:
             self.transaction = Transaction(gateway, node_wrapper['transaction'])
+        elif "connected_merchant_status_transitioned" in node_wrapper:
+            self.connected_merchant_status_transitioned = ConnectedMerchantStatusTransitioned(gateway, node_wrapper['connected_merchant_status_transitioned'])
+        elif "connected_merchant_paypal_status_changed" in node_wrapper:
+            self.connected_merchant_paypal_status_changed = ConnectedMerchantPayPalStatusChanged(gateway, node_wrapper['connected_merchant_paypal_status_changed'])
         elif "partner_merchant" in node_wrapper:
             self.partner_merchant = PartnerMerchant(gateway, node_wrapper['partner_merchant'])
         elif "disbursement" in node_wrapper:

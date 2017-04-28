@@ -232,6 +232,7 @@ class TestTransaction(unittest.TestCase):
                     "venmo_merchant_public_id": "12345",
                     "originating_transaction_id": "abc123",
                     "originating_merchant_id": "xyz123",
+                    "originating_merchant_kind": "braintree",
                 }
             }
         })
@@ -2555,10 +2556,6 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.ThreeDSecureCavvIsRequired,
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv")[0].code
         )
-        self.assertEqual(
-            ErrorCodes.Transaction.ThreeDSecureXidIsRequired,
-            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("xid")[0].code
-        )
 
     def test_transaction_with_three_d_secure_pass_thru_with_invalid_eci_flag(self):
         result = Transaction.sale({
@@ -2785,7 +2782,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
@@ -2803,7 +2800,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.payee_email, "payee@example.com")
@@ -2823,7 +2820,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.payee_email, "payee@example.com")
@@ -2845,7 +2842,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.payee_email, "foo@paypal.com")
@@ -2867,7 +2864,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.custom_field, "custom field stuff")
@@ -2907,7 +2904,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
         self.assertEqual(transaction.paypal_details.description, "Product description")
@@ -2948,7 +2945,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'SALE-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
     def test_validation_failure_on_invalid_paypal_nonce(self):

@@ -28,6 +28,10 @@ class WebhookTestingGateway(object):
     def __subject_sample_xml(self, kind, id):
         if kind == WebhookNotification.Kind.Check:
             return self.__check_sample_xml()
+        if kind == WebhookNotification.Kind.ConnectedMerchantStatusTransitioned:
+            return self.__connected_merchant_status_transitioned_xml(id)
+        if kind == WebhookNotification.Kind.ConnectedMerchantPayPalStatusChanged:
+            return self.__connected_merchant_paypal_status_changed_xml(id)
         if kind == WebhookNotification.Kind.SubMerchantAccountApproved:
             return self.__merchant_account_approved_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubMerchantAccountDeclined:
@@ -308,6 +312,24 @@ class WebhookTestingGateway(object):
                 <partner-merchant-id>abc123</partner-merchant-id>
             </partner-merchant>
             """
+
+    def __connected_merchant_status_transitioned_xml(self, id):
+        return """
+            <connected-merchant-status-transitioned>
+                <status>new_status</status>
+                <merchant-public-id>%s</merchant-public-id>
+                <oauth-application-client-id>oauth_application_client_id</oauth-application-client-id>
+            </connected-merchant-status-transitioned>
+            """ % id
+
+    def __connected_merchant_paypal_status_changed_xml(self, id):
+        return """
+            <connected-merchant-paypal-status-changed>
+                <action>link</action>
+                <merchant-public-id>%s</merchant-public-id>
+                <oauth-application-client-id>oauth_application_client_id</oauth-application-client-id>
+            </connected-merchant-paypal-status-changed>
+            """ % id
 
     def __partner_merchant_declined_sample_xml(self):
         return """
