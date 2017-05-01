@@ -135,6 +135,7 @@ class Http(object):
             "Authorization": self.__authorization_header(),
             "Content-type": "application/xml",
             "User-Agent": "Braintree Python " + version.Version,
+            "Accept-Encoding": "gzip",
             "X-ApiVersion": braintree.configuration.Configuration.api_version()
         }
 
