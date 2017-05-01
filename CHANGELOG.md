@@ -1,3 +1,7 @@
+## 3.37.1
+* Add gzip support
+* Fix a bug in CreditCardVerifiation where `amount` and `currency_iso_code` were always expected
+
 ## 3.37.0
 * Fix a regression where `util/datetime_parser.py` was missing
 * Add support for Visa Checkout
