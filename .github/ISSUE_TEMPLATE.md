@@ -1,8 +1,8 @@
 ### General information
 
-* SDK/Library version: <!-- Example: 4.7.2 -->
+* SDK/Library version: <!-- Example: 3.37.0 -->
 * Environment: <!-- Is this issue in Sandbox or Production? -->
-* Language, language version, and OS: <!-- Example: Java 1.8.0_101-b13 on Ubuntu 16.10 -->
+* Language, language version, and OS: <!-- Example: Python 2.7.0 on Ubuntu 16.10 -->
 
 ### Issue description
 
