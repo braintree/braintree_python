@@ -26,7 +26,13 @@ class CreditCardVerification(AttributeGetter):
     def __init__(self, gateway, attributes):
         AttributeGetter.__init__(self, attributes)
 
-        self.amount = Decimal(self.amount)
+        if "amount" in attributes:
+            self.amount = Decimal(self.amount)
+        else:
+            self.amount = None
+
+        if "currency_iso_code" not in attributes:
+            self.currency_iso_code = None
 
         if "processor_response_code" not in attributes:
             self.processor_response_code = None
