@@ -12,6 +12,17 @@ class TestHttp(unittest.TestCase):
     def test_raise_exception_from_too_many_requests(self):
         Http.raise_exception_from_status(429)
 
+    def test_header_includes_gzip_accept_encoding(self):
+        config = AttributeGetter({
+                "base_url": (lambda: ""),
+                "has_access_token": (lambda: False),
+                "has_client_credentials": (lambda: False),
+                "public_key": "",
+                "private_key": ""})
+        headers = Http(config, "fake_environment")._Http__headers()
+        self.assertTrue('Accept-Encoding' in headers)
+        self.assertEqual('gzip', headers["Accept-Encoding"])
+
     def test_backtrace_preserved_when_not_wrapping_exceptions(self):
         class Error(Exception):
             pass
