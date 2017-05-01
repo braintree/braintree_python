@@ -23,6 +23,37 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
 
+    def test_create_with_paypal_order_payment_nonce_and_payee_email(self):
+        customer_id = Customer.create().customer.id
+
+        http = ClientApiHttp.create()
+        status_code, payment_method_nonce = http.get_paypal_nonce({
+            "intent": "order",
+            "payment-token": "fake-paypal-payment-token",
+            "payer-id": "fake-paypal-payer-id"
+        })
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": payment_method_nonce,
+            "options": {
+                "paypal": {
+                    "payee_email": "payee@example.com",
+                },
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        created_account = result.payment_method
+        self.assertEqual(PayPalAccount, created_account.__class__)
+        self.assertEqual("bt_buyer_us@paypal.com", created_account.email)
+        self.assertNotEqual(created_account.image_url, None)
+
+        found_account = PaymentMethod.find(result.payment_method.token)
+        self.assertNotEqual(None, found_account)
+        self.assertEqual(created_account.token, found_account.token)
+        self.assertEqual(created_account.customer_id, found_account.customer_id)
+
     def test_create_returns_validation_failures(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({

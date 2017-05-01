@@ -1,3 +1,11 @@
+## 3.37.0
+* Fix a regression where `util/datetime_parser.py` was missing
+* Add support for Visa Checkout
+* Improve setup.py
+* Verification response includes amount and currency iso code
+* Add support for payee_email with paypal intent=order
+* Add support for skip_avs & skip_cvs
+
 ## 3.36.0
 * Add ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
 

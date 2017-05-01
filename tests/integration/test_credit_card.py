@@ -204,6 +204,8 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(None, verification.avs_error_response_code)
         self.assertEqual("I", verification.avs_postal_code_response_code)
         self.assertEqual("I", verification.avs_street_address_response_code)
+        self.assertEqual(Decimal("0.00"), verification.amount)
+        self.assertEqual("USD", verification.currency_iso_code)
         self.assertEqual(TestHelper.default_merchant_account_id, verification.merchant_account_id)
 
     def test_create_with_card_verification_with_overridden_amount(self):
@@ -224,6 +226,8 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(None, verification.avs_error_response_code)
         self.assertEqual("I", verification.avs_postal_code_response_code)
         self.assertEqual("I", verification.avs_street_address_response_code)
+        self.assertEqual(Decimal("1.02"), verification.amount)
+        self.assertEqual("USD", verification.currency_iso_code)
         self.assertEqual(TestHelper.default_merchant_account_id, verification.merchant_account_id)
 
     def test_create_with_card_verification_and_non_default_merchant_account(self):
