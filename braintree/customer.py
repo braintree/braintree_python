@@ -197,7 +197,13 @@ class Customer(Resource):
             {"risk_data": ["customer_browser", "customer_ip"]},
             {"credit_card": CreditCard.create_signature()},
             {"custom_fields": ["__any_key__"]},
-            {"options": [{"paypal": ["payee_email"]}]},
+            {"options": [{"paypal": [
+                "payee_email",
+                "order_id",
+                "custom_field",
+                "description",
+                "amount",
+            ]}]},
         ]
 
     @staticmethod

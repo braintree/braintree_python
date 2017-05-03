@@ -23,7 +23,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
 
-    def test_create_with_paypal_order_payment_nonce_and_payee_email(self):
+    def test_create_with_paypal_order_payment_nonce_and_paypal_options(self):
         customer_id = Customer.create().customer.id
 
         http = ClientApiHttp.create()
@@ -39,6 +39,10 @@ class TestPaymentMethod(unittest.TestCase):
             "options": {
                 "paypal": {
                     "payee_email": "payee@example.com",
+                    "order_id": "merchant-order-id",
+                    "custom_field": "custom merchant field",
+                    "description": "merchant description",
+                    "amount": "1.23",
                 },
             },
         })
