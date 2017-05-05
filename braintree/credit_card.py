@@ -53,6 +53,7 @@ class CreditCard(Resource):
         * Braintree.CreditCard.Electron
         * Braintree.CreditCard.JCB
         * Braintree.CreditCard.Laser
+        * Braintree.CreditCard.UK_Maestro
         * Braintree.CreditCard.Maestro
         * Braintree.CreditCard.MasterCard
         * Braintree.CreditCard.Solo
@@ -69,6 +70,7 @@ class CreditCard(Resource):
         Electron = "Electron"
         JCB = "JCB"
         Laser = "Laser"
+        UK_Maestro = "UK Maestro"
         Maestro = "Maestro"
         MasterCard = "MasterCard"
         Solo = "Solo"
