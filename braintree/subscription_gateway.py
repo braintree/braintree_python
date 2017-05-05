@@ -14,7 +14,10 @@ class SubscriptionGateway(object):
         self.config = gateway.config
 
     def cancel(self, subscription_id):
-        response = self.config.http().put(self.config.base_merchant_path() + "/subscriptions/" + subscription_id + "/cancel")
+        try:
+            response = self.config.http().put("/subscriptions/" + subscription_id + "/cancel")
+        except NotFoundError:
+            raise NotFoundError("subscription with id " + subscription_id + " not found")
         if "subscription" in response:
             return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
         elif "api_error_response" in response:
