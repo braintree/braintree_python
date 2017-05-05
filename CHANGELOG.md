@@ -1,3 +1,8 @@
+## 3.37.2
+* Fix a bug where a null value for `amount` in `CreditCardVerification` would result in a `ValueError`
+* Add docstrings for AttributeGetter and Search. Thanks @sharma7n!
+* Add support for additional PayPal options when vaulting a PayPal Order
+
 ## 3.37.1
 * Add gzip support
 * Fix a bug in CreditCardVerification where `amount` and `currency_iso_code` were always expected
