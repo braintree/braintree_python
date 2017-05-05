@@ -1,5 +1,12 @@
 class Search:
+	"""
+	Collection of classes used to build search queries.
+	
+	Each Builder class defines one or more methods that returns a Node
+	object with the name of the field, the comparator, and the value.
+	"""
 	class IsNodeBuilder(object):
+		"""Builds a query for value equality."""
 		def __init__(self, name):
 			self.name = name
 
@@ -10,6 +17,7 @@ class Search:
 			return Search.Node(self.name, {"is": value})
 
 	class EqualityNodeBuilder(IsNodeBuilder):
+		"""Builds a query for value inequality."""
 		def __ne__(self, value):
 			return self.is_not_equal(value)
 
@@ -17,6 +25,7 @@ class Search:
 			return Search.Node(self.name, {"is_not": value})
 
 	class KeyValueNodeBuilder(object):
+		"""Builds a query based on a key-value map."""
 		def __init__(self, name):
 			self.name = name
 
@@ -33,6 +42,7 @@ class Search:
 			return Search.Node(self.name, not value)
 
 	class PartialMatchNodeBuilder(EqualityNodeBuilder):
+		"""Builds a query for matching parts of a sequence."""
 		def starts_with(self, value):
 			return Search.Node(self.name, {"starts_with": value})
 
@@ -40,10 +50,12 @@ class Search:
 			return Search.Node(self.name, {"ends_with": value})
 
 	class TextNodeBuilder(PartialMatchNodeBuilder):
+		"""Builds a query for matching any part of a sequence."""
 		def contains(self, value):
 			return Search.Node(self.name, {"contains": value})
 
 	class Node(object):
+		"""Container for part of a search query."""
 		def __init__(self, name, dict):
 			self.name = name
 			self.dict = dict
@@ -52,6 +64,7 @@ class Search:
 			return self.dict
 
 	class MultipleValueNodeBuilder(object):
+		"""Builds a query to check membership in a sequence."""
 		def __init__(self, name, whitelist = []):
 			self.name = name
 			self.whitelist = whitelist
@@ -70,10 +83,12 @@ class Search:
 			return self.in_list([value])
 
 	class MultipleValueOrTextNodeBuilder(TextNodeBuilder, MultipleValueNodeBuilder):
+		"""Builder node supporting contains and in_list."""
 		def __init__(self, name, whitelist = []):
 			Search.MultipleValueNodeBuilder.__init__(self, name, whitelist)
 
 	class RangeNodeBuilder(object):
+		"""Builds a query supporting <=, >=, or == value."""
 		def __init__(self, name):
 			self.name = name
 
