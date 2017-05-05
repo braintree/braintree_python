@@ -16,6 +16,14 @@ class TestCreditCardVerification(unittest.TestCase):
         self.assertEqual(verification.amount, Decimal('27.00'))
         self.assertEqual(verification.currency_iso_code, 'USD')
 
+    def test_constructor_with_bad_amount(self):
+        attributes = {
+            'amount': None
+        }
+        verification = CreditCardVerification(None, attributes)
+
+        self.assertEqual(verification.amount, None)
+
     def test_constructor_without_amount(self):
         verification = CreditCardVerification(None, {})
 

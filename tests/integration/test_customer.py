@@ -226,7 +226,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(customer.paypal_accounts))
         self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
 
-    def test_create_with_paypal_order_payment_nonce_and_payee_email(self):
+    def test_create_with_paypal_order_payment_nonce_and_paypal_options(self):
         http = ClientApiHttp.create()
         status_code, payment_method_nonce = http.get_paypal_nonce({
             "intent": "order",
@@ -239,6 +239,10 @@ class TestCustomer(unittest.TestCase):
             "options": {
                 "paypal": {
                     "payee_email": "payee@example.com",
+                    "order_id": "merchant-order-id",
+                    "custom_field": "custom merchant field",
+                    "description": "merchant description",
+                    "amount": "1.23",
                 },
             },
         })
