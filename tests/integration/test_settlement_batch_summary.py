@@ -25,6 +25,7 @@ class TestSettlementBatchSummary(unittest.TestCase):
                 "expiration_date": "05/2012",
                 "cardholder_name": "Sergio Ramos"
             },
+            "merchant_account_id": "sandbox_credit_card",
             "options": {"submit_for_settlement": True}
         })
 
@@ -33,7 +34,9 @@ class TestSettlementBatchSummary(unittest.TestCase):
 
         result = SettlementBatchSummary.generate(settlement_date)
         self.assertTrue(result.is_success)
-        visa_records = [row for row in result.settlement_batch_summary.records if row['card_type'] == 'Visa'][0]
+        visa_records = [row for row in result.settlement_batch_summary.records
+                if row['card_type'] == 'Visa'
+                and row['merchant_account_id'] == 'sandbox_credit_card'][0]
         count = int(visa_records['count'])
         self.assertGreaterEqual(count, 1)
         self.assertGreaterEqual(float(visa_records['amount_settled']), float(TransactionAmounts.Authorize))
