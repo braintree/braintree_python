@@ -39,7 +39,6 @@ class TestSettlementBatchSummary(unittest.TestCase):
                 and row['merchant_account_id'] == 'sandbox_credit_card'][0]
         count = int(visa_records['count'])
         self.assertGreaterEqual(count, 1)
-        self.assertGreaterEqual(float(visa_records['amount_settled']), float(TransactionAmounts.Authorize))
 
     def test_generate_can_be_grouped_by_a_custom_field(self):
         result = Transaction.sale({
