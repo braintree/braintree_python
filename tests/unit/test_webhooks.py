@@ -360,3 +360,49 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.AccountUpdaterDailyReport, notification.kind)
         self.assertEqual("link-to-csv-report", notification.account_updater_daily_report.report_url)
         self.assertEqual(date(2016, 1, 14), notification.account_updater_daily_report.report_date)
+
+    def test_ideal_payment_complete_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.IdealPaymentComplete,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+        ideal_payment = notification.ideal_payment
+
+        self.assertEqual(WebhookNotification.Kind.IdealPaymentComplete, notification.kind)
+        self.assertEqual("my_id", ideal_payment.id)
+        self.assertEqual("COMPLETE", ideal_payment.status);
+        self.assertEqual("ORDERABC", ideal_payment.order_id);
+        self.assertEqual("10.00", ideal_payment.amount);
+        self.assertEqual("https://example.com", ideal_payment.approval_url);
+        self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
+        self.assertEqual("DESCRIPTION ABC", ideal_payment.iban_bank_account.description);
+        self.assertEqual("XXXXNLXX", ideal_payment.iban_bank_account.bic);
+        self.assertEqual("11", ideal_payment.iban_bank_account.iban_country);
+        self.assertEqual("0000", ideal_payment.iban_bank_account.iban_account_number_last_4);
+        self.assertEqual("NL************0000", ideal_payment.iban_bank_account.masked_iban);
+        self.assertEqual("Account Holder", ideal_payment.iban_bank_account.account_holder_name);
+
+    def test_ideal_payment_failed_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.IdealPaymentFailed,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+        ideal_payment = notification.ideal_payment
+
+        self.assertEqual(WebhookNotification.Kind.IdealPaymentFailed, notification.kind)
+        self.assertEqual("my_id", ideal_payment.id)
+        self.assertEqual("FAILED", ideal_payment.status);
+        self.assertEqual("ORDERABC", ideal_payment.order_id);
+        self.assertEqual("10.00", ideal_payment.amount);
+        self.assertEqual("https://example.com", ideal_payment.approval_url);
+        self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
+        self.assertEqual("DESCRIPTION ABC", ideal_payment.iban_bank_account.description);
+        self.assertEqual("XXXXNLXX", ideal_payment.iban_bank_account.bic);
+        self.assertEqual("11", ideal_payment.iban_bank_account.iban_country);
+        self.assertEqual("0000", ideal_payment.iban_bank_account.iban_account_number_last_4);
+        self.assertEqual("NL************0000", ideal_payment.iban_bank_account.masked_iban);
+        self.assertEqual("Account Holder", ideal_payment.iban_bank_account.account_holder_name);
