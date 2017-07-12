@@ -377,12 +377,6 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("10.00", ideal_payment.amount);
         self.assertEqual("https://example.com", ideal_payment.approval_url);
         self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
-        self.assertEqual("DESCRIPTION ABC", ideal_payment.iban_bank_account.description);
-        self.assertEqual("XXXXNLXX", ideal_payment.iban_bank_account.bic);
-        self.assertEqual("11", ideal_payment.iban_bank_account.iban_country);
-        self.assertEqual("0000", ideal_payment.iban_bank_account.iban_account_number_last_4);
-        self.assertEqual("NL************0000", ideal_payment.iban_bank_account.masked_iban);
-        self.assertEqual("Account Holder", ideal_payment.iban_bank_account.account_holder_name);
 
     def test_ideal_payment_failed_webhook(self):
         sample_notification = WebhookTesting.sample_notification(
@@ -400,9 +394,3 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("10.00", ideal_payment.amount);
         self.assertEqual("https://example.com", ideal_payment.approval_url);
         self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
-        self.assertEqual("DESCRIPTION ABC", ideal_payment.iban_bank_account.description);
-        self.assertEqual("XXXXNLXX", ideal_payment.iban_bank_account.bic);
-        self.assertEqual("11", ideal_payment.iban_bank_account.iban_country);
-        self.assertEqual("0000", ideal_payment.iban_bank_account.iban_account_number_last_4);
-        self.assertEqual("NL************0000", ideal_payment.iban_bank_account.masked_iban);
-        self.assertEqual("Account Holder", ideal_payment.iban_bank_account.account_holder_name);
