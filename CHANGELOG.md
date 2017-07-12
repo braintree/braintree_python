@@ -1,3 +1,6 @@
+## Unreleased
+Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
+
 ## 3.37.2
 * Fix a bug where a null value for `amount` in `CreditCardVerification` would result in a `ValueError`
 * Add docstrings for AttributeGetter and Search. Thanks @sharma7n!
