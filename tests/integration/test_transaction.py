@@ -13,7 +13,8 @@ class TestTransaction(unittest.TestCase):
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
-            }
+            },
+            "device_session_id": "abc123",
         })
 
         self.assertTrue(result.is_success)
@@ -21,6 +22,7 @@ class TestTransaction(unittest.TestCase):
         self.assertIsInstance(transaction.risk_data, RiskData)
         self.assertEqual(transaction.risk_data.id, None)
         self.assertEqual(transaction.risk_data.decision, "Not Evaluated")
+        self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
 
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
