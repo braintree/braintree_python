@@ -62,6 +62,10 @@ class WebhookTestingGateway(object):
             return self.__subscription_charged_successfully_sample_xml(id)
         elif kind == WebhookNotification.Kind.AccountUpdaterDailyReport:
             return self.__account_updater_daily_report_sample_xml()
+        elif kind == WebhookNotification.Kind.IdealPaymentComplete:
+            return self.__ideal_payment_complete_sample_xml(id)
+        elif kind == WebhookNotification.Kind.IdealPaymentFailed:
+            return self.__ideal_payment_failed_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
 
@@ -345,3 +349,33 @@ class WebhookTestingGateway(object):
                 <report-url>link-to-csv-report</report-url>
             </account-updater-daily-report>
             """
+
+    def __ideal_payment_complete_sample_xml(self, id):
+        return """
+            <ideal-payment>
+                <id>%s</id>
+                <status>COMPLETE</status>
+                <issuer>ABCISSUER</issuer>
+                <order-id>ORDERABC</order-id>
+                <currency>EUR</currency>
+                <amount>10.00</amount>
+                <created-at>2016-11-29T23:27:34.547Z</created-at>
+                <approval-url>https://example.com</approval-url>
+                <ideal-transaction-id>1234567890</ideal-transaction-id>
+            </ideal-payment>
+            """ % id
+
+    def __ideal_payment_failed_sample_xml(self, id):
+        return """
+            <ideal-payment>
+                <id>%s</id>
+                <status>FAILED</status>
+                <issuer>ABCISSUER</issuer>
+                <order-id>ORDERABC</order-id>
+                <currency>EUR</currency>
+                <amount>10.00</amount>
+                <created-at>2016-11-29T23:27:34.547Z</created-at>
+                <approval-url>https://example.com</approval-url>
+                <ideal-transaction-id>1234567890</ideal-transaction-id>
+            </ideal-payment>
+            """ % id

@@ -1,4 +1,5 @@
 ## Unreleased
+* Add iDEAL webhook support
 Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
 
 ## 3.37.2
