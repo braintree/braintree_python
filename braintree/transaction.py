@@ -3,6 +3,7 @@ import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
+from braintree.authorization_adjustment import AuthorizationAdjustment
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
@@ -94,6 +95,7 @@ class Transaction(Resource):
         "id",
         "additional_processor_response",
         "amount",
+        "authorization_adjustments",
         "avs_error_response_code",
         "avs_postal_code_response_code",
         "avs_street_address_response_code",
@@ -669,6 +671,8 @@ class Transaction(Resource):
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
         if "disputes" in attributes:
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
+        if "authorization_adjustments" in attributes:
+            self.authorization_adjustments = [AuthorizationAdjustment(authorization_adjustment) for authorization_adjustment in self.authorization_adjustments]
         if "payment_instrument_type" in attributes:
             self.payment_instrument_type = attributes["payment_instrument_type"]
 

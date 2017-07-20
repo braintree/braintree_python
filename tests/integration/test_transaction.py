@@ -2762,6 +2762,14 @@ class TestTransaction(unittest.TestCase):
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
+    def test_find_exposes_authorization_adjustments(self):
+        transaction = Transaction.find("authadjustmenttransaction")
+        authorization_adjustment = transaction.authorization_adjustments[0]
+
+        self.assertEqual(datetime, type(authorization_adjustment.timestamp))
+        self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
+        self.assertEqual(True, authorization_adjustment.success)
+
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
         dispute = transaction.disputes[0]
