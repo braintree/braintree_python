@@ -948,9 +948,10 @@ class TestCustomer(unittest.TestCase):
             "apple_pay_cards": [{"token": "apple_pay_card"}],
             "android_pay_cards": [{"token": "android_pay_card"}],
             "europe_bank_accounts": [{"token": "europe_bank_account"}],
+            "coinbase_accounts": [{"token": "coinbase_account"}],
             "us_bank_accounts": [{"token": "us_bank_account"}]
             })
 
         payment_method_tokens = [ pm.token for pm in customer.payment_methods ]
 
-        self.assertEqual(sorted(payment_method_tokens), ["android_pay_card", "apple_pay_card", "credit_card", "europe_bank_account", "paypal_account", "us_bank_account"])
+        self.assertEqual(sorted(payment_method_tokens), ["android_pay_card", "apple_pay_card", "coinbase_account", "credit_card", "europe_bank_account", "paypal_account", "us_bank_account"])

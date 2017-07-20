@@ -1,7 +1,6 @@
 ## Unreleased
 * Add iDEAL webhook support
-* Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
-* Coinbase is no longer a supported payment method. `PaymentMethodNoLongerSupported` will be returned for Coinbase operations.
+Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
 
 ## 3.37.2
 * Fix a bug where a null value for `amount` in `CreditCardVerification` would result in a `ValueError`
