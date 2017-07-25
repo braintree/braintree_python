@@ -322,6 +322,7 @@ class ErrorCodes(object):
         PaymentMethodNonceConsumed = "93107"
         PaymentMethodNonceUnknown = "93108"
         PaymentMethodNonceLocked = "93109"
+        PaymentMethodNoLongerSupported = "93117"
         AuthExpired = "92911"
         CannotHaveFundingSourceWithoutAccessToken = "92912"
         InvalidFundingSourceSelection = "92913"
