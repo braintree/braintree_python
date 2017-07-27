@@ -32,6 +32,7 @@ from braintree.us_bank_account import UsBankAccount
 from braintree.ideal_payment import IdealPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
+from braintree.facilitated_details import FacilitatedDetails
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
@@ -684,6 +685,8 @@ class Transaction(Resource):
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
+        if "facilitated_details" in attributes:
+            self.facilitated_details = FacilitatedDetails(attributes.pop("facilitated_details"))
         if "facilitator_details" in attributes:
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
 
