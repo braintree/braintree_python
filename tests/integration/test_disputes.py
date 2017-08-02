@@ -1,3 +1,5 @@
+import re
+import datetime
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 
@@ -33,6 +35,42 @@ class TestDisputes(unittest.TestCase):
     def test_accept_raises_error_when_dispute_not_found(self):
         dispute = Dispute.accept("invalid-id")
 
+    def test_add_text_evidence_adds_text_evidence(self):
+        start_time = datetime.now()
+        dispute = self.create_sample_dispute()
+
+        result = Dispute.add_text_evidence(dispute.id, "text evidence")
+        evidence = result.evidence
+        end_time = datetime.now()
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(evidence.comment, "text evidence")
+        self.assertTrue(start_time <= evidence.created_at <= end_time)
+        self.assertTrue(re.match("^\w{16,}$", evidence.id))
+        self.assertIsNone(evidence.sent_to_processor_at)
+        self.assertIsNone(evidence.url)
+
+    @raises_with_regexp(NotFoundError, "dispute with id 'unknown_dispute_id' not found")
+    def test_add_text_evidence_raises_error_when_dispute_not_found(self):
+        dispute = Dispute.add_text_evidence("unknown_dispute_id", "text evidence")
+
+    def test_add_text_evidence_raises_error_when_dispute_not_open(self):
+        result = Dispute.add_text_evidence("wells_dispute", "text evidence")
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceToOpenDispute)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "Evidence can only be attached to disputes that are in an Open state")
+
+    def test_add_text_evidence_shows_new_record_in_find(self):
+        dispute = self.create_sample_dispute()
+
+        evidence = Dispute.add_text_evidence(dispute.id, "text evidence").evidence
+
+        refreshed_dispute = Dispute.find(dispute.id)
+
+        self.assertEqual(refreshed_dispute.evidence[0].id, evidence.id)
+        self.assertEqual(refreshed_dispute.evidence[0].comment, "text evidence")
+
     def test_finalize_changes_dispute_status_to_disputed(self):
         dispute = self.create_sample_dispute()
 
@@ -67,3 +105,26 @@ class TestDisputes(unittest.TestCase):
     @raises_with_regexp(NotFoundError, "dispute with id 'invalid-id' not found")
     def test_find_raises_error_when_dispute_not_found(self):
         dispute = Dispute.find("invalid-id")
+
+    def test_remove_evidence_removes_evidence_from_the_dispute(self):
+        dispute = self.create_sample_dispute()
+        evidence = Dispute.add_text_evidence(dispute.id, "text evidence").evidence
+        result = Dispute.remove_evidence(dispute.id, evidence.id)
+
+        self.assertTrue(result.is_success)
+
+    @raises_with_regexp(NotFoundError, "evidence with id 'unknown_evidence_id' for dispute with id 'unknown_dispute_id' not found")
+    def test_remove_evidence_raises_error_when_dispute_or_evidence_not_found(self):
+        Dispute.remove_evidence("unknown_dispute_id", "unknown_evidence_id")
+
+    def test_finalize_errors_when_dispute_not_open(self):
+        dispute = self.create_sample_dispute()
+        evidence = Dispute.add_text_evidence(dispute.id, "text evidence").evidence
+
+        Dispute.accept(dispute.id)
+
+        result = Dispute.remove_evidence(dispute.id, evidence.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyRemoveEvidenceFromOpenDispute)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "Evidence can only be removed from disputes that are in an Open state")

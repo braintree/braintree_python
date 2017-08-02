@@ -172,6 +172,22 @@ class TestDispute(unittest.TestCase):
     def test_accept_empty_id_raises_not_found_exception(self):
         Dispute.accept(" ")
 
+    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
+    def test_add_text_evidence_empty_id_raises_not_found_exception(self):
+        Dispute.add_text_evidence(" ", "evidence")
+
+    @raises_with_regexp(NotFoundError, "dispute with id None not found")
+    def test_add_text_evidence_none_id_raises_not_found_exception(self):
+        Dispute.add_text_evidence(None, "evidence")
+
+    @raises_with_regexp(ValueError, "content cannot be blank")
+    def test_add_text_evidence_empty_evidence_raises_value_exception(self):
+        Dispute.add_text_evidence("dispute_id", " ")
+
+    @raises_with_regexp(ValueError, "content cannot be blank")
+    def test_add_text_evidence_none_evidence_raises_value_exception(self):
+        Dispute.add_text_evidence("dispute_id", None)
+
     @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_finalize_none_raises_not_found_exception(self):
         Dispute.finalize(None)
@@ -187,3 +203,19 @@ class TestDispute(unittest.TestCase):
     @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_finding_empty_id_raises_not_found_exception(self):
         Dispute.find(" ")
+
+    @raises_with_regexp(NotFoundError, "evidence with id 'evidence' for dispute with id ' ' not found")
+    def test_remove_evidence_empty_dispute_id_raises_not_found_exception(self):
+        Dispute.remove_evidence(" ", "evidence")
+
+    @raises_with_regexp(NotFoundError, "evidence with id 'evidence' for dispute with id None not found")
+    def test_remove_evidence_none_dispute_id_raises_not_found_exception(self):
+        Dispute.remove_evidence(None, "evidence")
+
+    @raises_with_regexp(NotFoundError, "evidence with id None for dispute with id 'dispute_id' not found")
+    def test_remove_evidence_evidence_none_id_raises_not_found_exception(self):
+        Dispute.remove_evidence("dispute_id", None)
+
+    @raises_with_regexp(NotFoundError, "evidence with id ' ' for dispute with id 'dispute_id' not found")
+    def test_remove_evidence_empty_evidence_id_raises_value_exception(self):
+        Dispute.remove_evidence("dispute_id", " ")

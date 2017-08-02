@@ -75,6 +75,18 @@ class Dispute(AttributeGetter):
         return Configuration.gateway().dispute.accept(id)
 
     @staticmethod
+    def add_text_evidence(id, content):
+        """
+        Adds text evidence to a dispute, given a dispute_id.
+
+        This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided dispute_id
+        is not found. ::
+
+            result = braintree.Dispute.add_text_evidence("my_dispute_id", "my_evidence")
+        """
+        return Configuration.gateway().dispute.add_text_evidence(id, content)
+
+    @staticmethod
     def finalize(id):
         """
         Finalize a dispute, given a dispute_id.
@@ -97,6 +109,18 @@ class Dispute(AttributeGetter):
         """
 
         return Configuration.gateway().dispute.find(id)
+
+    @staticmethod
+    def remove_evidence(id, evidence_id):
+        """
+        Remove evidence on a dispute.
+        This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided dispute_id or evidence_id
+        is not found. ::
+
+            result = braintree.Dispute.remove_evidence("my_dispute_id", "my_evidence_id")
+        """
+
+        return Configuration.gateway().dispute.remove_evidence(id, evidence_id)
 
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)

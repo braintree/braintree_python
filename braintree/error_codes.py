@@ -173,6 +173,8 @@ class ErrorCodes(object):
         UrlFormatIsInvalid = "92206"
 
     class Dispute(object):
+        CanOnlyAddEvidenceToOpenDispute = "95701"
+        CanOnlyRemoveEvidenceFromOpenDispute = "95702"
         CanOnlyAcceptOpenDispute = "95704"
         CanOnlyFinalizeOpenDispute = "95705"
 
