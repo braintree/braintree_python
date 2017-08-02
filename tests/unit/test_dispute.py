@@ -165,6 +165,22 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.transaction.payment_instrument_subtype, "Visa")
 
     @raises_with_regexp(NotFoundError, "dispute with id None not found")
+    def test_accept_none_raises_not_found_exception(self):
+        Dispute.accept(None)
+
+    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
+    def test_accept_empty_id_raises_not_found_exception(self):
+        Dispute.accept(" ")
+
+    @raises_with_regexp(NotFoundError, "dispute with id None not found")
+    def test_finalize_none_raises_not_found_exception(self):
+        Dispute.finalize(None)
+
+    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
+    def test_finalize_empty_id_raises_not_found_exception(self):
+        Dispute.finalize(" ")
+
+    @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_finding_none_raises_not_found_exception(self):
         Dispute.find(None)
 

@@ -172,6 +172,10 @@ class ErrorCodes(object):
         PhoneFormatIsInvalid = "92202"
         UrlFormatIsInvalid = "92206"
 
+    class Dispute(object):
+        CanOnlyAcceptOpenDispute = "95704"
+        CanOnlyFinalizeOpenDispute = "95705"
+
     class Merchant(object):
         CountryCannotBeBlank = "83603"
         CountryCodeAlpha2IsInvalid = "93607"

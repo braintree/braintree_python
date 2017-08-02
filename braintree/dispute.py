@@ -9,10 +9,15 @@ class Dispute(AttributeGetter):
         """
         Constants representing dispute statuses. Available types are:
 
+        * braintree.Dispute.Status.Accepted
+        * braintree.Dispute.Status.Disputed
         * braintree.Dispute.Status.Open
         * braintree.Dispute.Status.Won
         * braintree.Dispute.Status.Lost
         """
+        Accepted = "accepted"
+        Disputed = "disputed"
+        Expired = "expired"
         Open  = "open"
         Won  = "won"
         Lost = "lost"
@@ -58,7 +63,39 @@ class Dispute(AttributeGetter):
         Retrieval      = "retrieval"
 
     @staticmethod
+    def accept(id):
+        """
+        Accept a dispute, given a dispute_id.
+        This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided dispute_id
+        is not found. ::
+
+            result = braintree.Dispute.accept("my_dispute_id")
+        """
+
+        return Configuration.gateway().dispute.accept(id)
+
+    @staticmethod
+    def finalize(id):
+        """
+        Finalize a dispute, given a dispute_id.
+        This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided dispute_id
+        is not found. ::
+
+            result = braintree.Dispute.finalize("my_dispute_id")
+        """
+
+        return Configuration.gateway().dispute.finalize(id)
+
+    @staticmethod
     def find(id):
+        """
+        Find an dispute, given a dispute_id.  This does not return a result
+        object.  This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided dispute_id
+        is not found. ::
+
+            dispute = braintree.Dispute.find("my_dispute_id")
+        """
+
         return Configuration.gateway().dispute.find(id)
 
     def __init__(self, attributes):
