@@ -5,6 +5,7 @@
 * Add facilitated details to Transaction if present
 * Add `submit_for_settlement` option to `Subscription.retry_charge`
 * Add `options` -> `paypal` -> `description` for creating and updating subscriptions
+* Add Braintree::Dispute.find
 
 ## 3.37.2
 * Fix a bug where a null value for `amount` in `CreditCardVerification` would result in a `ValueError`

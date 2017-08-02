@@ -23,6 +23,7 @@ from braintree.descriptor import Descriptor
 from braintree.disbursement import Disbursement
 from braintree.discount import Discount
 from braintree.discount_gateway import DiscountGateway
+from braintree.dispute import Dispute
 from braintree.environment import Environment
 from braintree.error_codes import ErrorCodes
 from braintree.error_result import ErrorResult
