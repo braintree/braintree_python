@@ -122,6 +122,21 @@ class Dispute(AttributeGetter):
 
         return Configuration.gateway().dispute.remove_evidence(id, evidence_id)
 
+    @staticmethod
+    def search(*query):
+        """
+        Searches for disputes, given a DisputeSearch query.
+
+            collection = braintree.Dispute.search(
+                braintree.DisputeSearch.id == "the_dispute_id"
+            )
+
+            for dispute in collection.items:
+                print dispute.id
+        """
+
+        return Configuration.gateway().dispute.search(*query)
+
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
 
