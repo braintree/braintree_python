@@ -7,11 +7,13 @@
 * Add `options` -> `paypal` -> `description` for creating and updating subscriptions
 * Add Braintree::Dispute.find
 * Add braintree.Dispute.accept
+* Add braintree.Dispute.add_file_evidence
 * Add braintree.Dispute.add_text_evidence
 * Add braintree.Dispute.finalize
 * Add braintree.Dispute.find
 * Add braintree.Dispute.remove_evidence
 * Add braintree.Dispute.search
+* Add braintree.DocumentUpload
 
 ## 3.37.2
 * Fix a bug where a null value for `amount` in `CreditCardVerification` would result in a `ValueError`

@@ -188,6 +188,22 @@ class TestDispute(unittest.TestCase):
     def test_add_text_evidence_none_evidence_raises_value_exception(self):
         Dispute.add_text_evidence("dispute_id", None)
 
+    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
+    def test_add_file_evidence_empty_id_raises_not_found_exception(self):
+        Dispute.add_file_evidence(" ", 1)
+
+    @raises_with_regexp(NotFoundError, "dispute with id None not found")
+    def test_add_file_evidence_none_id_raises_not_found_exception(self):
+        Dispute.add_file_evidence(None, 1)
+
+    @raises_with_regexp(ValueError, "document_id cannot be blank")
+    def test_add_file_evidence_empty_evidence_raises_value_exception(self):
+        Dispute.add_file_evidence("dispute_id", " ")
+
+    @raises_with_regexp(ValueError, "document_id cannot be blank")
+    def test_add_file_evidence_none_evidence_raises_value_exception(self):
+        Dispute.add_file_evidence("dispute_id", None)
+
     @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_finalize_none_raises_not_found_exception(self):
         Dispute.finalize(None)

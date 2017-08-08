@@ -28,6 +28,27 @@ class DisputeGateway(object):
         except NotFoundError:
             raise NotFoundError("dispute with id " + repr(dispute_id) + " not found")
 
+    def add_file_evidence(self, dispute_id, document_upload_id):
+        try:
+            if dispute_id is None or dispute_id.strip() == "":
+                raise NotFoundError()
+            if document_upload_id is None or document_upload_id.strip() == "":
+                raise ValueError("document_id cannot be blank")
+
+            response = self.config.http().post(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence", {
+                "document_upload_id": document_upload_id
+            })
+
+            if "evidence" in response:
+                return SuccessfulResult({
+                    "evidence": DisputeEvidence(response["evidence"])
+                })
+            elif "api_error_response" in response:
+                return ErrorResult(self.gateway, response["api_error_response"])
+
+        except NotFoundError:
+            raise NotFoundError("dispute with id " + repr(dispute_id) + " not found")
+
     def add_text_evidence(self, dispute_id, content):
         try:
             if dispute_id is None or dispute_id.strip() == "":
@@ -37,12 +58,12 @@ class DisputeGateway(object):
 
             response = self.config.http().post(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence", {
                 "comments": content
-                })
+            })
 
             if "evidence" in response:
                 return SuccessfulResult({
                     "evidence": DisputeEvidence(response["evidence"])
-                    })
+                })
             elif "api_error_response" in response:
                 return ErrorResult(self.gateway, response["api_error_response"])
         except NotFoundError:

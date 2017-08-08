@@ -175,6 +175,7 @@ class ErrorCodes(object):
     class Dispute(object):
         CanOnlyAddEvidenceToOpenDispute = "95701"
         CanOnlyRemoveEvidenceFromOpenDispute = "95702"
+        CanOnlyAddEvidenceDocumentToDispute = "95703"
         CanOnlyAcceptOpenDispute = "95704"
         CanOnlyFinalizeOpenDispute = "95705"
 

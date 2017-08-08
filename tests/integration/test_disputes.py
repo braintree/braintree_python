@@ -1,9 +1,19 @@
 import re
+import time
 import datetime
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 
 class TestDisputes(unittest.TestCase):
+    def create_evidence_document(self):
+        file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/bt_logo.png")
+        png_file = open(file_path, "rb")
+
+        return DocumentUpload.create({
+            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+            "file": png_file
+        }).document
+
     def create_sample_dispute(self):
         return Transaction.sale({
             "amount": "100.00",
@@ -35,17 +45,58 @@ class TestDisputes(unittest.TestCase):
     def test_accept_raises_error_when_dispute_not_found(self):
         dispute = Dispute.accept("invalid-id")
 
+    def test_add_file_evidence_adds_evidence(self):
+        dispute = self.create_sample_dispute()
+        document = self.create_evidence_document()
+
+        result = Dispute.add_file_evidence(dispute.id, document.id)
+
+        self.assertTrue(result.is_success)
+
+        updated_dispute = Dispute.find(dispute.id)
+
+        self.assertEqual(updated_dispute.evidence[0].id, result.evidence.id)
+
+    @raises_with_regexp(NotFoundError, "dispute with id 'unknown_dispute_id' not found")
+    def test_add_file_evidence_raises_error_when_dispute_not_found(self):
+        dispute = Dispute.add_file_evidence("unknown_dispute_id", "text evidence")
+
+    def test_add_file_evidence_raises_error_when_dispute_not_open(self):
+        dispute = self.create_sample_dispute()
+        document = self.create_evidence_document()
+
+        Dispute.accept(dispute.id)
+
+        result = Dispute.add_file_evidence(dispute.id, document.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceToOpenDispute)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "Evidence can only be attached to disputes that are in an Open state")
+
+    def test_add_file_evidence_returns_error_when_incorrect_document_kind(self):
+        dispute = self.create_sample_dispute()
+        file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/bt_logo.png")
+        png_file = open(file_path, "rb")
+
+        document = DocumentUpload.create({
+            "kind": braintree.DocumentUpload.Kind.IdentityDocument,
+            "file": png_file
+        }).document
+
+        result = Dispute.add_file_evidence(dispute.id, document.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceDocumentToDispute)
+
     def test_add_text_evidence_adds_text_evidence(self):
-        start_time = datetime.now()
         dispute = self.create_sample_dispute()
 
         result = Dispute.add_text_evidence(dispute.id, "text evidence")
         evidence = result.evidence
-        end_time = datetime.now()
 
         self.assertTrue(result.is_success)
         self.assertEqual(evidence.comment, "text evidence")
-        self.assertTrue(start_time <= evidence.created_at <= end_time)
+        self.assertIsNotNone(evidence.created_at)
         self.assertTrue(re.match("^\w{16,}$", evidence.id))
         self.assertIsNone(evidence.sent_to_processor_at)
         self.assertIsNone(evidence.url)
@@ -55,7 +106,10 @@ class TestDisputes(unittest.TestCase):
         dispute = Dispute.add_text_evidence("unknown_dispute_id", "text evidence")
 
     def test_add_text_evidence_raises_error_when_dispute_not_open(self):
-        result = Dispute.add_text_evidence("wells_dispute", "text evidence")
+        dispute = self.create_sample_dispute()
+
+        Dispute.accept(dispute.id)
+        result = Dispute.add_text_evidence(dispute.id, "text evidence")
 
         self.assertFalse(result.is_success)
         self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceToOpenDispute)

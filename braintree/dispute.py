@@ -75,6 +75,24 @@ class Dispute(AttributeGetter):
         return Configuration.gateway().dispute.accept(id)
 
     @staticmethod
+    def add_file_evidence(dispute_id, document_upload_id):
+        """
+        Adds file evidence to a dispute, given a dispute_id and a document_upload_id.
+
+        This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided dispute_id
+        is not found. ::
+
+            document = braintree.DocumentUpload.create({
+                "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+                "file": open("/path/to/evidence.pdf", "rb")
+            })
+
+            result = braintree.Dispute.add_file_evidence("my_dispute_id", document.id)
+        """
+
+        return Configuration.gateway().dispute.add_file_evidence(dispute_id, document_upload_id)
+
+    @staticmethod
     def add_text_evidence(id, content):
         """
         Adds text evidence to a dispute, given a dispute_id.
