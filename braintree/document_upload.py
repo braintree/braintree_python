@@ -16,11 +16,12 @@ class DocumentUpload(Resource):
             }
         )
 
-    For more information on DocumentUploads, see https://developers.braintreepayments.com/ios+python/reference/request/document_upload/create
+    For more information on DocumentUploads, see https://developers.braintreepayments.com/reference/request/document_upload/create
 
     """
 
     class Kind(object):
+        EvidenceDocument = "evidence_document"
         IdentityDocument = "identity_document"
 
     @staticmethod

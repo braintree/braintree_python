@@ -178,6 +178,12 @@ class ErrorCodes(object):
         CanOnlyAcceptOpenDispute = "95704"
         CanOnlyFinalizeOpenDispute = "95705"
 
+    class DocumentUpload(object):
+        KindIsInvalid = "84901"
+        FileIsTooLarge = "84902"
+        FileTypeIsInvalid = "84903"
+        FileIsMalformedOrEncrypted = "84904"
+
     class Merchant(object):
         CountryCannotBeBlank = "83603"
         CountryCodeAlpha2IsInvalid = "93607"
@@ -551,7 +557,7 @@ class ErrorCodes(object):
                 CustomFieldTooLong = "91580"
 
         class Industry(object):
-            IndustryTypeIsInvalid = "93401" 
+            IndustryTypeIsInvalid = "93401"
 
             class Lodging(object):
                 EmptyData = "93402"

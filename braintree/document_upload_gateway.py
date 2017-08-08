@@ -1,6 +1,7 @@
 import braintree
 import mimetypes
 from braintree.document_upload import DocumentUpload
+from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.successful_result import SuccessfulResult
 
@@ -14,7 +15,10 @@ class DocumentUploadGateway(object):
 
         response = self.config.http().post_multipart(self.config.base_merchant_path() + "/document_uploads", *self.__payload(params))
 
-        return SuccessfulResult()
+        if "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+        else:
+            return SuccessfulResult({"document": DocumentUpload(self, response["document_upload"])})
 
     def __file_name(self, file):
         return file.name.split("/")[-1]
@@ -27,5 +31,6 @@ class DocumentUploadGateway(object):
         files = {
             "file": (self.__file_name(file), file, self.__content_type(file))
         }
+        params["document_upload[kind]"] = params["kind"]
 
         return (files, params)
