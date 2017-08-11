@@ -107,7 +107,10 @@ class Subscription(Resource):
             {
                 "options": [
                     "do_not_inherit_add_ons_or_discounts",
-                    "start_immediately"
+                    "start_immediately",
+                    { 
+                        "paypal": [ "description" ] 
+                    }
                 ]
             }
         ] + Subscription._add_ons_discounts_signature()
@@ -200,7 +203,14 @@ class Subscription(Resource):
                 "descriptor": [ "name", "phone", "url" ]
             },
             {
-                "options": [ "prorate_charges", "replace_all_add_ons_and_discounts", "revert_subscription_on_proration_failure" ]
+                "options": [ 
+                    "prorate_charges", 
+                    "replace_all_add_ons_and_discounts", 
+                    "revert_subscription_on_proration_failure",
+                    {
+                        "paypal": [ "description" ]
+                    }
+                ]
             }
         ] + Subscription._add_ons_discounts_signature()
 
@@ -236,6 +246,8 @@ class Subscription(Resource):
             self.add_ons = [AddOn(gateway, add_on) for add_on in self.add_ons]
         if "descriptor" in attributes:
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
+        if "description" in attributes:
+            self.description = attributes["description"] 
         if "discounts" in attributes:
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
