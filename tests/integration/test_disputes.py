@@ -171,7 +171,7 @@ class TestDisputes(unittest.TestCase):
     def test_remove_evidence_raises_error_when_dispute_or_evidence_not_found(self):
         Dispute.remove_evidence("unknown_dispute_id", "unknown_evidence_id")
 
-    def test_finalize_errors_when_dispute_not_open(self):
+    def test_remove_evidence_errors_when_dispute_not_open(self):
         dispute = self.create_sample_dispute()
         evidence = Dispute.add_text_evidence(dispute.id, "text evidence").evidence
 
