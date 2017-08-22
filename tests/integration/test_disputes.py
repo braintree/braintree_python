@@ -73,21 +73,6 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceToOpenDispute)
         self.assertEqual(result.errors.for_object("dispute")[0].message, "Evidence can only be attached to disputes that are in an Open state")
 
-    def test_add_file_evidence_returns_error_when_incorrect_document_kind(self):
-        dispute = self.create_sample_dispute()
-        file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/bt_logo.png")
-        png_file = open(file_path, "rb")
-
-        document = DocumentUpload.create({
-            "kind": braintree.DocumentUpload.Kind.IdentityDocument,
-            "file": png_file
-        }).document_upload
-
-        result = Dispute.add_file_evidence(dispute.id, document.id)
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceDocumentToDispute)
-
     def test_add_text_evidence_adds_text_evidence(self):
         dispute = self.create_sample_dispute()
 

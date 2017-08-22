@@ -10,14 +10,14 @@ class TestDocumentUpload(unittest.TestCase):
 
     def test_create_returns_successful_result_if_valid(self):
         result = DocumentUpload.create({
-            "kind": braintree.DocumentUpload.Kind.IdentityDocument,
+            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
             "file": self.png_file
         })
 
         self.assertTrue(result.is_success)
         self.assertTrue(result.document_upload.id != None)
         self.assertEqual(result.document_upload.content_type, "image/png")
-        self.assertEqual(result.document_upload.kind, braintree.DocumentUpload.Kind.IdentityDocument)
+        self.assertEqual(result.document_upload.kind, braintree.DocumentUpload.Kind.EvidenceDocument)
         self.assertEqual(result.document_upload.name, "bt_logo.png")
         self.assertEqual(result.document_upload.size, 2443)
 

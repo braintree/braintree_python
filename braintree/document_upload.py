@@ -11,7 +11,7 @@ class DocumentUpload(Resource):
 
         result = braintree.DocumentUpload.create(
             {
-                "kind": braintree.DocumentUpload.Kind.IdentityDocument,
+                "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
                 "file": open("path/to/file", "rb"),
             }
         )
@@ -22,7 +22,6 @@ class DocumentUpload(Resource):
 
     class Kind(object):
         EvidenceDocument = "evidence_document"
-        IdentityDocument = "identity_document"
 
     @staticmethod
     def create(params={}):
@@ -33,7 +32,7 @@ class DocumentUpload(Resource):
 
             result = braintree.DocumentUpload.create(
                 {
-                    "kind": braintree.DocumentUpload.Kind.IdentityDocument,
+                    "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
                     "file": open("path/to/file", "rb"),
                 }
             )
