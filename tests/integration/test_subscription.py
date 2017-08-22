@@ -1294,7 +1294,6 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
-
     def test_retry_charge_with_amount(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -1311,6 +1310,40 @@ class TestSubscription(unittest.TestCase):
         self.assertNotEqual(None, transaction.processor_authorization_code)
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.Authorized, transaction.status)
+
+    def test_retry_charge_with_submit_for_settlement(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
+
+        result = Subscription.retry_charge(subscription.id, None, True)
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(subscription.price, transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
+
+    def test_retry_charge_with_submit_for_settlement_and_amount(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
+
+        result = Subscription.retry_charge(subscription.id, Decimal(TransactionAmounts.Authorize), True)
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
     def test_create_with_paypal_future_payment_method_token(self):
         http = ClientApiHttp.create()

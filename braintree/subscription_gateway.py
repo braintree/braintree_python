@@ -37,11 +37,12 @@ class SubscriptionGateway(object):
         except NotFoundError:
             raise NotFoundError("subscription with id " + subscription_id + " not found")
 
-    def retry_charge(self, subscription_id, amount=None):
+    def retry_charge(self, subscription_id, amount=None, submit_for_settlement=False):
         response = self.config.http().post(self.config.base_merchant_path() + "/transactions", {"transaction": {
             "amount": amount,
             "subscription_id": subscription_id,
-            "type": Transaction.Type.Sale
+            "type": Transaction.Type.Sale,
+            "options": {"submit_for_settlement": submit_for_settlement}
             }})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})

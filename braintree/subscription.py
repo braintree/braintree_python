@@ -130,8 +130,8 @@ class Subscription(Resource):
         return Subscription.retry_charge(subscription_id, amount)
 
     @staticmethod
-    def retry_charge(subscription_id, amount=None):
-        return Configuration.gateway().subscription.retry_charge(subscription_id, amount)
+    def retry_charge(subscription_id, amount=None, submit_for_settlement=False):
+        return Configuration.gateway().subscription.retry_charge(subscription_id, amount, submit_for_settlement)
 
     @staticmethod
     def update(subscription_id, params={}):
