@@ -18,7 +18,7 @@ class DocumentUploadGateway(object):
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
         else:
-            return SuccessfulResult({"document": DocumentUpload(self, response["document_upload"])})
+            return SuccessfulResult({"document_upload": DocumentUpload(self, response["document_upload"])})
 
     def __file_name(self, file):
         return file.name.split("/")[-1]

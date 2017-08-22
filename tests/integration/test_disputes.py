@@ -12,7 +12,7 @@ class TestDisputes(unittest.TestCase):
         return DocumentUpload.create({
             "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
             "file": png_file
-        }).document
+        }).document_upload
 
     def create_sample_dispute(self):
         return Transaction.sale({
@@ -81,7 +81,7 @@ class TestDisputes(unittest.TestCase):
         document = DocumentUpload.create({
             "kind": braintree.DocumentUpload.Kind.IdentityDocument,
             "file": png_file
-        }).document
+        }).document_upload
 
         result = Dispute.add_file_evidence(dispute.id, document.id)
 

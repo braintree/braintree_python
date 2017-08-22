@@ -15,11 +15,11 @@ class TestDocumentUpload(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(result.document.id != None)
-        self.assertEqual(result.document.content_type, "image/png")
-        self.assertEqual(result.document.kind, braintree.DocumentUpload.Kind.IdentityDocument)
-        self.assertEqual(result.document.name, "bt_logo.png")
-        self.assertEqual(result.document.size, 2443)
+        self.assertTrue(result.document_upload.id != None)
+        self.assertEqual(result.document_upload.content_type, "image/png")
+        self.assertEqual(result.document_upload.kind, braintree.DocumentUpload.Kind.IdentityDocument)
+        self.assertEqual(result.document_upload.name, "bt_logo.png")
+        self.assertEqual(result.document_upload.size, 2443)
 
     def test_create_returns_error_with_unsupported_file_type(self):
         file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/gif_extension_bt_logo.gif")
