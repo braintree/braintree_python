@@ -191,6 +191,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(result.is_success)
         apple_pay_card = result.payment_method
         self.assertIsInstance(apple_pay_card, ApplePayCard)
+        self.assertNotEqual(apple_pay_card.bin, None)
         self.assertNotEqual(apple_pay_card.token, None)
         self.assertEqual(apple_pay_card.customer_id, customer_id)
         self.assertEqual(ApplePayCard.CardType.MasterCard, apple_pay_card.card_type)
