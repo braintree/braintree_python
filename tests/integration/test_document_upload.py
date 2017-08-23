@@ -43,7 +43,6 @@ class TestDocumentUpload(unittest.TestCase):
 
         self.assertEqual(result.errors.for_object("document_upload")[0].code, ErrorCodes.DocumentUpload.FileIsMalformedOrEncrypted)
 
-
     def test_create_returns_error_with_invalid_kind(self):
         result = DocumentUpload.create({
             "kind": "invalid_kind",
@@ -83,4 +82,11 @@ class TestDocumentUpload(unittest.TestCase):
         result = DocumentUpload.create({
             "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
             "file": "not_a_file"
+        })
+
+    @raises_with_regexp(ValueError, "file must be a file handle")
+    def test_create_throws_error_when_none_file(self):
+        result = DocumentUpload.create({
+            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+            "file": None
         })
