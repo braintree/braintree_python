@@ -13,8 +13,8 @@ class DocumentUploadGateway(object):
     def create(self, params={}):
         Resource.verify_keys(params, DocumentUpload.create_signature())
 
-        if not isinstance(params['file'], file):
-            raise ValueError('file must be a file handle')
+        if "file" in params and not hasattr(params["file"], "read"):
+            raise ValueError("file must be a file handle")
 
         response = self.config.http().post_multipart(self.config.base_merchant_path() + "/document_uploads", *self.__payload(params))
 
