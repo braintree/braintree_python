@@ -30,3 +30,6 @@ class CreditCardNumbers(object):
         Success            = "371260714673002"
         IneligibleCard     = "378267515471109"
         InsufficientPoints = "371544868764018"
+
+    class Disputes(object):
+        Chargeback = "4023898493988028"

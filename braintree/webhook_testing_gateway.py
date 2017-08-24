@@ -177,6 +177,24 @@ class WebhookTestingGateway(object):
         """ % id
 
     def __dispute_opened_sample_xml(self, id):
+        if id == "legacy_dispute_id":
+            return self.__old_dispute_opened_sample_xml(id)
+        else:
+            return self.__new_dispute_opened_sample_xml(id)
+
+    def __dispute_lost_sample_xml(self, id):
+        if id == "legacy_dispute_id":
+            return self.__old_dispute_lost_sample_xml(id)
+        else:
+            return self.__new_dispute_lost_sample_xml(id)
+
+    def __dispute_won_sample_xml(self, id):
+        if id == "legacy_dispute_id":
+            return self.__old_dispute_won_sample_xml(id)
+        else:
+            return self.__new_dispute_won_sample_xml(id)
+
+    def __old_dispute_opened_sample_xml(self, id):
         return """
             <dispute>
               <amount>250.00</amount>
@@ -195,7 +213,7 @@ class WebhookTestingGateway(object):
             </dispute>
         """ % (id, id)
 
-    def __dispute_lost_sample_xml(self, id):
+    def __old_dispute_lost_sample_xml(self, id):
         return """
             <dispute>
               <amount>250.00</amount>
@@ -214,7 +232,7 @@ class WebhookTestingGateway(object):
             </dispute>
         """ % (id, id)
 
-    def __dispute_won_sample_xml(self, id):
+    def __old_dispute_won_sample_xml(self, id):
         return """
             <dispute>
               <amount>250.00</amount>
@@ -232,6 +250,168 @@ class WebhookTestingGateway(object):
               <date-opened type="date">2014-03-28</date-opened>
               <date-won type="date">2014-09-01</date-won>
             </dispute>
+        """ % (id, id)
+
+    def __new_dispute_opened_sample_xml(self, id):
+        return """
+        <dispute>
+          <id>%s</id>
+          <amount>100.00</amount>
+          <amount-disputed>100.00</amount-disputed>
+          <amount-won>95.00</amount-won>
+          <case-number>CASE-12345</case-number>
+          <created-at type="datetime">2017-06-16T20:44:41Z</created-at>
+          <currency-iso-code>USD</currency-iso-code>
+          <forwarded-comments nil="true"/>
+          <kind>chargeback</kind>
+          <merchant-account-id>ytnlulaloidoqwvzxjrdqputg</merchant-account-id>
+          <reason>fraud</reason>
+          <reason-code nil="true"/>
+          <reason-description nil="true"/>
+          <received-date type="date">2016-02-15</received-date>
+          <reference-number>REF-9876</reference-number>
+          <reply-by-date type="date">2016-02-22</reply-by-date>
+          <status>open</status>
+          <updated-at type="datetime">2017-06-16T20:44:41Z</updated-at>
+          <original-dispute-id>9qde5qgp</original-dispute-id>
+          <status-history type="array">
+            <status-history>
+              <status>open</status>
+              <timestamp type="datetime">2017-06-16T20:44:41Z</timestamp>
+            </status-history>
+          </status-history>
+          <evidence type="array"/>
+          <transaction>
+            <id>%s</id>
+            <amount>100.00</amount>
+            <created-at>2017-06-21T20:44:41Z</created-at>
+            <order-id nil="true"/>
+            <purchase-order-number nil="true"/>
+            <payment-instrument-subtype>Visa</payment-instrument-subtype>
+          </transaction>
+          <date-opened type=\"date\">2014-03-28</date-opened>
+        </dispute>
+        """ % (id, id)
+
+    def __new_dispute_lost_sample_xml(self, id):
+        return """
+        <dispute>
+          <id>%s</id>
+          <amount>100.00</amount>
+          <amount-disputed>100.00</amount-disputed>
+          <amount-won>95.00</amount-won>
+          <case-number>CASE-12345</case-number>
+          <created-at type="datetime">2017-06-16T20:44:41Z</created-at>
+          <currency-iso-code>USD</currency-iso-code>
+          <forwarded-comments nil="true"/>
+          <kind>chargeback</kind>
+          <merchant-account-id>ytnlulaloidoqwvzxjrdqputg</merchant-account-id>
+          <reason>fraud</reason>
+          <reason-code nil="true"/>
+          <reason-description nil="true"/>
+          <received-date type="date">2016-02-15</received-date>
+          <reference-number>REF-9876</reference-number>
+          <reply-by-date type="date">2016-02-22</reply-by-date>
+          <status>lost</status>
+          <updated-at type="datetime">2017-06-21T20:44:41Z</updated-at>
+          <original-dispute-id>9qde5qgp</original-dispute-id>
+          <status-history type="array">
+            <status-history>
+              <status>open</status>
+              <timestamp type="datetime">2017-06-16T20:44:41Z</timestamp>
+            </status-history>
+            <status-history>
+              <status>lost</status>
+              <timestamp type="datetime">2017-06-25T20:50:55Z</timestamp>
+            </status-history>
+          </status-history>
+          <evidence type="array">
+            <evidence>
+              <id>rxtngk9j5j93tsrq</id>
+              <comments nil="true"/>
+              <created-at type="datetime">2017-06-21T20:44:42Z</created-at>
+              <sent-to-processor-at nil="true"/>
+              <url>s3.amazonaws.com/foo.jpg</url>
+            </evidence>
+            <evidence>
+              <id>88cfb8dd</id>
+              <comments>text evidence</comments>
+              <created-at type="datetime">2017-06-21T20:44:42Z</created-at>
+              <sent-to-processor-at nil="true"/>
+              <url nil="true"/>
+            </evidence>
+          </evidence>
+          <transaction>
+            <id>%s</id>
+            <amount>100.00</amount>
+            <created-at>2017-06-21T20:44:41Z</created-at>
+            <order-id nil="true"/>
+            <purchase-order-number nil="true"/>
+            <payment-instrument-subtype>Visa</payment-instrument-subtype>
+          </transaction>
+          <date-opened type=\"date\">2014-03-28</date-opened>
+        </dispute>
+        """ % (id, id)
+
+    def __new_dispute_won_sample_xml(self, id):
+        return """
+        <dispute>
+          <id>%s</id>
+          <amount>100.00</amount>
+          <amount-disputed>100.00</amount-disputed>
+          <amount-won>95.00</amount-won>
+          <case-number>CASE-12345</case-number>
+          <created-at type="datetime">2017-06-16T20:44:41Z</created-at>
+          <currency-iso-code>USD</currency-iso-code>
+          <forwarded-comments nil="true"/>
+          <kind>chargeback</kind>
+          <merchant-account-id>ytnlulaloidoqwvzxjrdqputg</merchant-account-id>
+          <reason>fraud</reason>
+          <reason-code nil="true"/>
+          <reason-description nil="true"/>
+          <received-date type="date">2016-02-15</received-date>
+          <reference-number>REF-9876</reference-number>
+          <reply-by-date type="date">2016-02-22</reply-by-date>
+          <status>won</status>
+          <updated-at type="datetime">2017-06-21T20:44:41Z</updated-at>
+          <original-dispute-id>9qde5qgp</original-dispute-id>
+          <status-history type="array">
+            <status-history>
+              <status>open</status>
+              <timestamp type="datetime">2017-06-16T20:44:41Z</timestamp>
+            </status-history>
+            <status-history>
+              <status>won</status>
+              <timestamp type="datetime">2017-06-25T20:50:55Z</timestamp>
+            </status-history>
+          </status-history>
+          <evidence type="array">
+            <evidence>
+              <id>rxtngk9j5j93tsrq</id>
+              <comments nil="true"/>
+              <created-at type="datetime">2017-06-21T20:44:42Z</created-at>
+              <sent-to-processor-at nil="true"/>
+              <url>s3.amazonaws.com/foo.jpg</url>
+            </evidence>
+            <evidence>
+              <id>88cfb8dd</id>
+              <comments>text evidence</comments>
+              <created-at type="datetime">2017-06-21T20:44:42Z</created-at>
+              <sent-to-processor-at nil="true"/>
+              <url nil="true"/>
+            </evidence>
+          </evidence>
+          <transaction>
+            <id>%s</id>
+            <amount>100.00</amount>
+            <created-at>2017-06-21T20:44:41Z</created-at>
+            <order-id nil="true"/>
+            <purchase-order-number nil="true"/>
+            <payment-instrument-subtype>Visa</payment-instrument-subtype>
+          </transaction>
+          <date-opened type=\"date\">2014-03-28</date-opened>
+          <date-won type=\"date\">2014-09-01</date-won>
+        </dispute>
         """ % (id, id)
 
     def __subscription_sample_xml(self, id):
