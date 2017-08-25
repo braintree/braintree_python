@@ -1,11 +1,11 @@
-## Unreleased
+## 3.38.0
 * Add iDEAL webhook support
 * Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
-* Coinbase is no longer a supported payment method. `PaymentMethodNoLongerSupported` will be returned for Coinbase operations.
+* Coinbase is no longer a supported payment method. `PaymentMethodNoLongerSupported` will be returned for Coinbase operations
 * Add facilitated details to Transaction if present
 * Add `submit_for_settlement` option to `Subscription.retry_charge`
 * Add `options` -> `paypal` -> `description` for creating and updating subscriptions
-* Add Braintree::Dispute.find
+* Add Braintree.Dispute.find
 * Add braintree.Dispute.accept
 * Add braintree.Dispute.add_file_evidence
 * Add braintree.Dispute.add_text_evidence
