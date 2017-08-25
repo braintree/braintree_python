@@ -524,6 +524,37 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(1, len(phone_errors))
         self.assertEqual(ErrorCodes.Descriptor.PhoneFormatIsInvalid, phone_errors[0].code)
 
+    def test_description(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEqual(202, status_code)
+
+        payment_method_token = PaymentMethod.create({
+            "customer_id": Customer.create().customer.id,
+            "payment_method_nonce": nonce
+        }).payment_method.token
+
+        result = Subscription.create({
+            "payment_method_token": payment_method_token,
+            "plan_id": TestHelper.trialless_plan["id"],
+            "options": {
+                "paypal": {
+                    "description": "A great product"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        subscription = result.subscription
+        self.assertEqual("A great product", subscription.description)
+
+        transaction = subscription.transactions[0]
+        paypal_details = transaction.paypal_details
+        self.assertEqual("A great product", paypal_details.description)
+
     def test_find_with_valid_id(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -950,6 +981,41 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual("999*99", updated_subscription.descriptor.name)
         self.assertEqual("1234567890", updated_subscription.descriptor.phone)
 
+    def test_update_description(self):
+        http = ClientApiHttp.create()
+        status_code, nonce = http.get_paypal_nonce({
+            "consent-code": "consent-code",
+            "options": {"validate": False}
+        })
+        self.assertEqual(202, status_code)
+
+        payment_method_token = PaymentMethod.create({
+            "customer_id": Customer.create().customer.id,
+            "payment_method_nonce": nonce
+        }).payment_method.token
+
+        result = Subscription.create({
+            "payment_method_token": payment_method_token,
+            "plan_id": TestHelper.trialless_plan["id"],
+            "options": {
+                "paypal": {
+                    "description": "A great product"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        subscription = result.subscription
+        updated_subscription = Subscription.update(subscription.id, {
+            "options": {
+                "paypal": {
+                    "description": "An incredible product"
+                }
+            }
+        }).subscription
+
+        self.assertEqual("An incredible product", updated_subscription.description)
+
     def test_cancel_with_successful_response(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -1294,7 +1360,6 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.Authorized, transaction.status)
 
-
     def test_retry_charge_with_amount(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -1311,6 +1376,40 @@ class TestSubscription(unittest.TestCase):
         self.assertNotEqual(None, transaction.processor_authorization_code)
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.Authorized, transaction.status)
+
+    def test_retry_charge_with_submit_for_settlement(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
+
+        result = Subscription.retry_charge(subscription.id, None, True)
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(subscription.price, transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
+
+    def test_retry_charge_with_submit_for_settlement_and_amount(self):
+        subscription = Subscription.create({
+            "payment_method_token": self.credit_card.token,
+            "plan_id": TestHelper.trialless_plan["id"],
+        }).subscription
+        TestHelper.make_past_due(subscription)
+
+        result = Subscription.retry_charge(subscription.id, Decimal(TransactionAmounts.Authorize), True)
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
+        self.assertNotEqual(None, transaction.processor_authorization_code)
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
     def test_create_with_paypal_future_payment_method_token(self):
         http = ClientApiHttp.create()

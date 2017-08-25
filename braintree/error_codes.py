@@ -172,6 +172,19 @@ class ErrorCodes(object):
         PhoneFormatIsInvalid = "92202"
         UrlFormatIsInvalid = "92206"
 
+    class Dispute(object):
+        CanOnlyAddEvidenceToOpenDispute = "95701"
+        CanOnlyRemoveEvidenceFromOpenDispute = "95702"
+        CanOnlyAddEvidenceDocumentToDispute = "95703"
+        CanOnlyAcceptOpenDispute = "95704"
+        CanOnlyFinalizeOpenDispute = "95705"
+
+    class DocumentUpload(object):
+        KindIsInvalid = "84901"
+        FileIsTooLarge = "84902"
+        FileTypeIsInvalid = "84903"
+        FileIsMalformedOrEncrypted = "84904"
+
     class Merchant(object):
         CountryCannotBeBlank = "83603"
         CountryCodeAlpha2IsInvalid = "93607"
@@ -322,6 +335,7 @@ class ErrorCodes(object):
         PaymentMethodNonceConsumed = "93107"
         PaymentMethodNonceUnknown = "93108"
         PaymentMethodNonceLocked = "93109"
+        PaymentMethodNoLongerSupported = "93117"
         AuthExpired = "92911"
         CannotHaveFundingSourceWithoutAccessToken = "92912"
         InvalidFundingSourceSelection = "92913"
@@ -466,6 +480,7 @@ class ErrorCodes(object):
         CustomerIdIsInvalid = "91510"
         HasAlreadyBeenRefunded = "91512"
         IdealPaymentNotComplete = "815141"
+        IdealPaymentsCannotBeVaulted = "915150"
         MerchantAccountDoesNotMatch3DSecureMerchantAccount = "91584"
         MerchantAccountDoesNotMatchIdealPaymentMerchantAccount = "915143"
         MerchantAccountDoesNotSupportMOTO = "91558"
@@ -543,7 +558,7 @@ class ErrorCodes(object):
                 CustomFieldTooLong = "91580"
 
         class Industry(object):
-            IndustryTypeIsInvalid = "93401" 
+            IndustryTypeIsInvalid = "93401"
 
             class Lodging(object):
                 EmptyData = "93402"

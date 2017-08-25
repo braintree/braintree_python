@@ -213,7 +213,50 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("update_funding_information", notification.disbursement.follow_up_action)
         self.assertEqual(date(2014, 2, 9), notification.disbursement.disbursement_date)
 
-    def test_builds_notification_for_dispute_opened(self):
+    def test_builds_notification_for_old_dispute_opened(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeOpened,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeOpened, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Open, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+        self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
+
+    def test_builds_notification_for_old_dispute_lost(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeLost,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeLost, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Lost, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+        self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
+
+    def test_builds_notification_for_old_dispute_won(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeWon,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeWon, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Won, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+        self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
+        self.assertEqual(notification.dispute.date_won, date(2014, 9, 1))
+
+    def test_builds_notification_for_new_dispute_opened(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeOpened,
             "my_id"
@@ -227,7 +270,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
         self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
 
-    def test_builds_notification_for_dispute_lost(self):
+    def test_builds_notification_for_new_dispute_lost(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeLost,
             "my_id"
@@ -241,7 +284,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
         self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
 
-    def test_builds_notification_for_dispute_won(self):
+    def test_builds_notification_for_new_dispute_won(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeWon,
             "my_id"
@@ -360,3 +403,37 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.AccountUpdaterDailyReport, notification.kind)
         self.assertEqual("link-to-csv-report", notification.account_updater_daily_report.report_url)
         self.assertEqual(date(2016, 1, 14), notification.account_updater_daily_report.report_date)
+
+    def test_ideal_payment_complete_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.IdealPaymentComplete,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+        ideal_payment = notification.ideal_payment
+
+        self.assertEqual(WebhookNotification.Kind.IdealPaymentComplete, notification.kind)
+        self.assertEqual("my_id", ideal_payment.id)
+        self.assertEqual("COMPLETE", ideal_payment.status);
+        self.assertEqual("ORDERABC", ideal_payment.order_id);
+        self.assertEqual("10.00", ideal_payment.amount);
+        self.assertEqual("https://example.com", ideal_payment.approval_url);
+        self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
+
+    def test_ideal_payment_failed_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.IdealPaymentFailed,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+        ideal_payment = notification.ideal_payment
+
+        self.assertEqual(WebhookNotification.Kind.IdealPaymentFailed, notification.kind)
+        self.assertEqual("my_id", ideal_payment.id)
+        self.assertEqual("FAILED", ideal_payment.status);
+        self.assertEqual("ORDERABC", ideal_payment.order_id);
+        self.assertEqual("10.00", ideal_payment.amount);
+        self.assertEqual("https://example.com", ideal_payment.approval_url);
+        self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);

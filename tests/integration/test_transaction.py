@@ -2762,6 +2762,14 @@ class TestTransaction(unittest.TestCase):
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
+    def test_find_exposes_authorization_adjustments(self):
+        transaction = Transaction.find("authadjustmenttransaction")
+        authorization_adjustment = transaction.authorization_adjustments[0]
+
+        self.assertEqual(datetime, type(authorization_adjustment.timestamp))
+        self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
+        self.assertEqual(True, authorization_adjustment.success)
+
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
         dispute = transaction.disputes[0]
@@ -3445,14 +3453,19 @@ class TestTransaction(unittest.TestCase):
 
         Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params)
 
-    def test_transaction_facilitator(self):
+    def test_facilitated_transaction(self):
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()
         grant_result = granting_gateway.payment_method.grant(credit_card.token, False)
+        nonce = grant_result.payment_method_nonce.nonce
 
         result = Transaction.sale({
-            "payment_method_nonce": grant_result.payment_method_nonce.nonce,
+            "payment_method_nonce": nonce,
             "amount": TransactionAmounts.Authorize,
         })
+        self.assertNotEqual(result.transaction.facilitated_details, None)
+        self.assertEqual(result.transaction.facilitated_details.merchant_id, "integration_merchant_id")
+        self.assertEqual(result.transaction.facilitated_details.merchant_name, "14ladders")
+        self.assertEqual(result.transaction.facilitated_details.payment_method_nonce, nonce)
         self.assertTrue(result.transaction.facilitator_details is not None)
         self.assertEqual(result.transaction.facilitator_details.oauth_application_client_id, "client_id$development$integration_client_id")
         self.assertEqual(result.transaction.facilitator_details.oauth_application_name, "PseudoShop")

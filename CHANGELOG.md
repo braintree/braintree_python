@@ -1,3 +1,20 @@
+## 3.38.0
+* Add iDEAL webhook support
+* Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
+* Coinbase is no longer a supported payment method. `PaymentMethodNoLongerSupported` will be returned for Coinbase operations
+* Add facilitated details to Transaction if present
+* Add `submit_for_settlement` option to `Subscription.retry_charge`
+* Add `options` -> `paypal` -> `description` for creating and updating subscriptions
+* Add Braintree.Dispute.find
+* Add braintree.Dispute.accept
+* Add braintree.Dispute.add_file_evidence
+* Add braintree.Dispute.add_text_evidence
+* Add braintree.Dispute.finalize
+* Add braintree.Dispute.find
+* Add braintree.Dispute.remove_evidence
+* Add braintree.Dispute.search
+* Add braintree.DocumentUpload
+
 ## 3.37.2
 * Fix a bug where a null value for `amount` in `CreditCardVerification` would result in a `ValueError`
 * Add docstrings for AttributeGetter and Search. Thanks @sharma7n!

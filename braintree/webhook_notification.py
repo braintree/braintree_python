@@ -11,6 +11,7 @@ from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 from braintree.connected_merchant_paypal_status_changed import ConnectedMerchantPayPalStatusChanged
 from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
+from braintree.ideal_payment import IdealPayment
 
 class WebhookNotification(Resource):
     class Kind(object):
@@ -38,6 +39,8 @@ class WebhookNotification(Resource):
         DisputeOpened = "dispute_opened"
         DisputeLost = "dispute_lost"
         DisputeWon = "dispute_won"
+        IdealPaymentComplete = "ideal_payment_complete"
+        IdealPaymentFailed = "ideal_payment_failed"
 
     @staticmethod
     def parse(signature, payload):
@@ -73,6 +76,8 @@ class WebhookNotification(Resource):
             self.dispute = Dispute(node_wrapper['dispute'])
         elif "account_updater_daily_report" in node_wrapper:
             self.account_updater_daily_report = AccountUpdaterDailyReport(gateway, node_wrapper['account_updater_daily_report'])
+        elif "ideal_payment" in node_wrapper:
+            self.ideal_payment = IdealPayment(gateway, node_wrapper['ideal_payment'])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

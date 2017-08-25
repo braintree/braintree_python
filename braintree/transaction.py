@@ -3,6 +3,7 @@ import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
+from braintree.authorization_adjustment import AuthorizationAdjustment
 from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
@@ -31,6 +32,7 @@ from braintree.us_bank_account import UsBankAccount
 from braintree.ideal_payment import IdealPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
+from braintree.facilitated_details import FacilitatedDetails
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 
@@ -94,6 +96,7 @@ class Transaction(Resource):
         "id",
         "additional_processor_response",
         "amount",
+        "authorization_adjustments",
         "avs_error_response_code",
         "avs_postal_code_response_code",
         "avs_street_address_response_code",
@@ -669,6 +672,8 @@ class Transaction(Resource):
             self.disbursement_details = DisbursementDetail(attributes.pop("disbursement_details"))
         if "disputes" in attributes:
             self.disputes = [Dispute(dispute) for dispute in self.disputes]
+        if "authorization_adjustments" in attributes:
+            self.authorization_adjustments = [AuthorizationAdjustment(authorization_adjustment) for authorization_adjustment in self.authorization_adjustments]
         if "payment_instrument_type" in attributes:
             self.payment_instrument_type = attributes["payment_instrument_type"]
 
@@ -680,6 +685,8 @@ class Transaction(Resource):
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
+        if "facilitated_details" in attributes:
+            self.facilitated_details = FacilitatedDetails(attributes.pop("facilitated_details"))
         if "facilitator_details" in attributes:
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
 
