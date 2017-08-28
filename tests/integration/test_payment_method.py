@@ -58,6 +58,43 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
 
+    def test_create_with_paypal_refresh_token(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "paypal_refresh_token": "PAYPAL_REFRESH_TOKEN",
+        })
+
+        self.assertTrue(result.is_success)
+        created_account = result.payment_method
+        self.assertEqual(PayPalAccount, created_account.__class__)
+        self.assertEqual("B_FAKE_ID", created_account.billing_agreement_id)
+
+        found_account = PaymentMethod.find(result.payment_method.token)
+        self.assertNotEqual(None, found_account)
+        self.assertEqual(created_account.token, found_account.token)
+        self.assertEqual(created_account.customer_id, found_account.customer_id)
+        self.assertEqual(created_account.billing_agreement_id, found_account.billing_agreement_id)
+
+    def test_create_with_paypal_refresh_token_without_upgrade(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "paypal_refresh_token": "PAYPAL_REFRESH_TOKEN",
+            "paypal_vault_without_upgrade": True,
+        })
+
+        self.assertTrue(result.is_success)
+        created_account = result.payment_method
+        self.assertEqual(PayPalAccount, created_account.__class__)
+        self.assertEqual(created_account.billing_agreement_id, None)
+
+        found_account = PaymentMethod.find(result.payment_method.token)
+        self.assertNotEqual(None, found_account)
+        self.assertEqual(created_account.token, found_account.token)
+        self.assertEqual(created_account.customer_id, found_account.customer_id)
+        self.assertEqual(created_account.billing_agreement_id, found_account.billing_agreement_id)
+
     def test_create_returns_validation_failures(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({

@@ -55,6 +55,8 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "expiration_year",
             "number",
             "payment_method_nonce",
+            "paypal_refresh_token",
+            "paypal_vault_without_upgrade",
             "token",
             {
                 "billing_address": Address.create_signature()},

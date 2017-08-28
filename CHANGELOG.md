@@ -1,3 +1,6 @@
+## Unreleased
+Add support for upgrading a PayPal future payment refresh token to a billing agreement
+
 ## 3.38.0
 * Add iDEAL webhook support
 * Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction
