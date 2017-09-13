@@ -3074,7 +3074,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.status, Transaction.Status.Settling)
+        self.assertEqual(result.transaction.status, Transaction.Status.Settled)
 
     def test_voiding_a_paypal_transaction(self):
         sale_result = Transaction.sale({
