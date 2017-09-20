@@ -110,6 +110,9 @@ class DisputeGateway(object):
             raise NotFoundError("evidence with id " + repr(evidence_id) + " for dispute with id " + repr(dispute_id) + " not found")
 
     def search(self, *query):
+        if isinstance(query[0], list):
+            query = query[0]
+
         self.search_criteria = self.__criteria(query)
 
         pc = PaginatedCollection(self.__fetch_disputes)
@@ -124,6 +127,7 @@ class DisputeGateway(object):
 
     def __criteria(self, query):
         criteria = {}
+
         for term in query:
             if criteria.get(term.name):
                 criteria[term.name] = dict(list(criteria[term.name].items()) + list(term.to_param().items()))
