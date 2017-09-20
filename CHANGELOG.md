@@ -1,5 +1,6 @@
 ## Unreleased
-Add support for upgrading a PayPal future payment refresh token to a billing agreement
+* Add support for upgrading a PayPal future payment refresh token to a billing agreement
+* Fix braintree.Dispute.search to take a list of search criteria
 
 ## 3.38.0
 * Add iDEAL webhook support
