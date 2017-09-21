@@ -1,6 +1,10 @@
 from braintree.util.crypto import Crypto
 from braintree.webhook_notification import WebhookNotification
-import base64
+import sys
+if sys.version_info[0] == 2:
+    from base64 import encodestring as encodebytes
+else:
+    from base64 import encodebytes
 from datetime import datetime
 
 class WebhookTestingGateway(object):
@@ -9,7 +13,7 @@ class WebhookTestingGateway(object):
         self.config = gateway.config
 
     def sample_notification(self, kind, id):
-        payload = base64.encodestring(self.__sample_xml(kind, id))
+        payload = encodebytes(self.__sample_xml(kind, id))
         hmac_payload = Crypto.sha1_hmac_hash(self.gateway.config.private_key, payload)
         signature = "%s|%s" % (self.gateway.config.public_key, hmac_payload)
         return {'bt_signature': signature, 'bt_payload': payload}
