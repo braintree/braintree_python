@@ -70,6 +70,8 @@ class WebhookTestingGateway(object):
             return self.__ideal_payment_complete_sample_xml(id)
         elif kind == WebhookNotification.Kind.IdealPaymentFailed:
             return self.__ideal_payment_failed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.GrantedPaymentInstrumentUpdate:
+            return self.__granted_payment_instrument_update()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -563,3 +565,21 @@ class WebhookTestingGateway(object):
                 <ideal-transaction-id>1234567890</ideal-transaction-id>
             </ideal-payment>
             """ % id
+
+    def __granted_payment_instrument_update(self):
+        return """
+            <granted-payment-instrument-update>
+                <grant-owner-merchant-id>vczo7jqrpwrsi2px</grant-owner-merchant-id>
+                <grant-recipient-merchant-id>cf0i8wgarszuy6hc</grant-recipient-merchant-id>
+                <payment-method-nonce>
+                    <nonce>ee257d98-de40-47e8-96b3-a6954ea7a9a4</nonce>
+                    <consumed type="boolean">false</consumed>
+                    <locked type="boolean">false</locked>
+                </payment-method-nonce>
+                <token>abc123z</token>
+                <updated-fields type="array">
+                    <item>expiration-month</item>
+                    <item>expiration-year</item>
+                </updated-fields>
+            </granted-payment-instrument-update>
+            """
