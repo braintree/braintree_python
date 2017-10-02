@@ -157,8 +157,8 @@ class TestCreditCard(unittest.TestCase):
 
 
     def test_create_with_card_verification_returns_risk_data(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
+        customer = advanced_fraud_gateway().customer.create().customer
+        result = advanced_fraud_gateway().credit_card.create({
             "customer_id": customer.id,
             "number": "4000111111111115",
             "expiration_date": "05/2014",
@@ -169,26 +169,9 @@ class TestCreditCard(unittest.TestCase):
         self.assertFalse(result.is_success)
         verification = result.credit_card_verification
         self.assertIsInstance(verification.risk_data, RiskData)
-        self.assertTrue(hasattr(verification.risk_data, 'id'))
-        self.assertEqual("Not Evaluated", verification.risk_data.decision)
-        self.assertTrue(hasattr(verification.risk_data, 'device_data_captured'))
-
-    def test_successful_create_with_card_verification_returns_risk_data(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_date": "05/2014",
-            "options": {"verify_card": True},
-            "device_session_id": "abc123"
-        })
-
-        self.assertTrue(result.is_success)
-        verification = result.credit_card.verification
-        self.assertIsInstance(verification.risk_data, RiskData)
-        self.assertTrue(hasattr(verification.risk_data, 'id'))
-        self.assertEqual("Not Evaluated", verification.risk_data.decision)
-        self.assertTrue(hasattr(verification.risk_data, 'device_data_captured'))
+        self.assertTrue(hasattr(verification.risk_data, "id"))
+        self.assertEqual("Approve", verification.risk_data.decision)
+        self.assertEqual(verification.risk_data.device_data_captured, False)
 
     def test_create_with_card_verification(self):
         customer = Customer.create().customer

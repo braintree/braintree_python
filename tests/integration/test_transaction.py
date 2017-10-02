@@ -8,21 +8,21 @@ import braintree.test.venmo_sdk as venmo_sdk
 class TestTransaction(unittest.TestCase):
 
     def test_sale_returns_risk_data(self):
-        result = Transaction.sale({
+        result = advanced_fraud_gateway().transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
-            },
+                },
             "device_session_id": "abc123",
         })
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertIsInstance(transaction.risk_data, RiskData)
-        self.assertEqual(transaction.risk_data.id, None)
-        self.assertEqual(transaction.risk_data.decision, "Not Evaluated")
-        self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
+        self.assertTrue(hasattr(transaction.risk_data, "id"))
+        self.assertEqual("Approve", transaction.risk_data.decision)
+        self.assertEqual(transaction.risk_data.device_data_captured, False)
 
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
@@ -575,17 +575,17 @@ class TestTransaction(unittest.TestCase):
             Configuration.private_key = old_private_key
 
     def test_sale_with_gateway_rejected_with_fraud(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4000111111111511",
-                "expiration_date": "05/2017",
-                "cvv": "333"
-            }
-        })
+            result = advanced_fraud_gateway().transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4000111111111511",
+                    "expiration_date": "05/2017",
+                    "cvv": "333"
+                }
+            })
 
-        self.assertFalse(result.is_success)
-        self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_service_fee(self):
         result = Transaction.sale({
@@ -885,7 +885,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
 
     def test_sale_with_advanced_fraud_checking_skipped(self):
-        result = Transaction.sale({
+        result = advanced_fraud_gateway().transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": CreditCardNumbers.Visa,
