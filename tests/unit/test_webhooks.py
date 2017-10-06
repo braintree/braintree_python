@@ -437,3 +437,19 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("10.00", ideal_payment.amount);
         self.assertEqual("https://example.com", ideal_payment.approval_url);
         self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
+
+    def test_granted_payment_instrument_update_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.GrantedPaymentInstrumentUpdate,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        update = notification.granted_payment_instrument_update
+
+        self.assertEqual(WebhookNotification.Kind.GrantedPaymentInstrumentUpdate, notification.kind)
+        self.assertEqual("vczo7jqrpwrsi2px", update.grant_owner_merchant_id)
+        self.assertEqual("cf0i8wgarszuy6hc", update.grant_recipient_merchant_id)
+        self.assertEqual("ee257d98-de40-47e8-96b3-a6954ea7a9a4", update.payment_method_nonce)
+        self.assertEqual("abc123z", update.token)
+        self.assertEqual(["expiration-month", "expiration-year"], update.updated_fields)
