@@ -61,14 +61,6 @@ def reset_braintree_configuration():
     )
 reset_braintree_configuration()
 
-def advanced_fraud_gateway():
-    return braintree.BraintreeGateway(config=Configuration(
-        environment=Environment.Development,
-        merchant_id="advanced_fraud_integration_merchant_id",
-        public_key="advanced_fraud_integration_public_key",
-        private_key="advanced_fraud_integration_private_key",
-    ))
-
 def showwarning(*_):
     pass
 warnings.showwarning = showwarning
