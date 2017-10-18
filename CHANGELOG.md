@@ -3,6 +3,7 @@
 * Add logic to remove deprecation warnings for encodestring and decodestring when used with python 3 (#92)
 * Fix spec to expect PayPal transaction to settle immediately after successful capture
 * Add GrantedPaymentInstrumentUpdate webhook support
+* Add ability to create a transaction from a shared nonce
 
 ## 3.38.0
 * Add iDEAL webhook support
