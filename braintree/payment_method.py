@@ -45,6 +45,7 @@ class PaymentMethod(Resource):
                     "custom_field",
                     "description",
                     "amount",
+                    { "shipping": Address.create_signature() }
                 ],
             },
         ]

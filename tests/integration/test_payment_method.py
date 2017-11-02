@@ -43,6 +43,20 @@ class TestPaymentMethod(unittest.TestCase):
                     "custom_field": "custom merchant field",
                     "description": "merchant description",
                     "amount": "1.23",
+                    "shipping": {
+                        "first_name": "Andrew",
+                        "last_name": "Mason",
+                        "company": "Braintree",
+                        "street_address": "456 W Main St",
+                        "extended_address": "Apt 2F",
+                        "locality": "Bartlett",
+                        "region": "IL",
+                        "postal_code": "60103",
+                        "country_name": "Mexico",
+                        "country_code_alpha2": "MX",
+                        "country_code_alpha3": "MEX",
+                        "country_code_numeric": "484"
+                    },
                 },
             },
         })

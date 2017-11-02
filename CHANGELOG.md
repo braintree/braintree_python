@@ -4,6 +4,7 @@
 * Fix spec to expect PayPal transaction to settle immediately after successful capture
 * Add GrantedPaymentInstrumentUpdate webhook support
 * Add ability to create a transaction from a shared nonce
+* Add `options` -> `paypal` -> `shipping` for creating & updating customers as well as creating payment methods
 
 ## 3.38.0
 * Add iDEAL webhook support
