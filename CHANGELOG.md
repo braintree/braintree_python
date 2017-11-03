@@ -5,6 +5,7 @@
 * Add GrantedPaymentInstrumentUpdate webhook support
 * Add ability to create a transaction from a shared nonce
 * Add `options` -> `paypal` -> `shipping` for creating & updating customers as well as creating payment methods
+* Do not convert to Decimal if amount is None in AuthorizationAdjustement (#70)
 
 ## 3.38.0
 * Add iDEAL webhook support
