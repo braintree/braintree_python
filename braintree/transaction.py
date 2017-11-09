@@ -494,7 +494,7 @@ class Transaction(Resource):
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "transaction_source", "shipping_address_id",
             "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
-            "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id",
+            "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "risk_data": [

@@ -1,6 +1,10 @@
 from braintree.util.crypto import Crypto
 from braintree.webhook_notification import WebhookNotification
-import base64
+import sys
+if sys.version_info[0] == 2:
+    from base64 import encodestring as encodebytes
+else:
+    from base64 import encodebytes
 from datetime import datetime
 
 class WebhookTestingGateway(object):
@@ -9,7 +13,7 @@ class WebhookTestingGateway(object):
         self.config = gateway.config
 
     def sample_notification(self, kind, id):
-        payload = base64.encodestring(self.__sample_xml(kind, id))
+        payload = encodebytes(self.__sample_xml(kind, id))
         hmac_payload = Crypto.sha1_hmac_hash(self.gateway.config.private_key, payload)
         signature = "%s|%s" % (self.gateway.config.public_key, hmac_payload)
         return {'bt_signature': signature, 'bt_payload': payload}
@@ -66,6 +70,8 @@ class WebhookTestingGateway(object):
             return self.__ideal_payment_complete_sample_xml(id)
         elif kind == WebhookNotification.Kind.IdealPaymentFailed:
             return self.__ideal_payment_failed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.GrantedPaymentInstrumentUpdate:
+            return self.__granted_payment_instrument_update()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -559,3 +565,21 @@ class WebhookTestingGateway(object):
                 <ideal-transaction-id>1234567890</ideal-transaction-id>
             </ideal-payment>
             """ % id
+
+    def __granted_payment_instrument_update(self):
+        return """
+            <granted-payment-instrument-update>
+                <grant-owner-merchant-id>vczo7jqrpwrsi2px</grant-owner-merchant-id>
+                <grant-recipient-merchant-id>cf0i8wgarszuy6hc</grant-recipient-merchant-id>
+                <payment-method-nonce>
+                    <nonce>ee257d98-de40-47e8-96b3-a6954ea7a9a4</nonce>
+                    <consumed type="boolean">false</consumed>
+                    <locked type="boolean">false</locked>
+                </payment-method-nonce>
+                <token>abc123z</token>
+                <updated-fields type="array">
+                    <item>expiration-month</item>
+                    <item>expiration-year</item>
+                </updated-fields>
+            </granted-payment-instrument-update>
+            """

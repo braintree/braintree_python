@@ -243,6 +243,20 @@ class TestCustomer(unittest.TestCase):
                     "custom_field": "custom merchant field",
                     "description": "merchant description",
                     "amount": "1.23",
+                    "shipping": {
+                        "first_name": "Andrew",
+                        "last_name": "Mason",
+                        "company": "Braintree",
+                        "street_address": "456 W Main St",
+                        "extended_address": "Apt 2F",
+                        "locality": "Bartlett",
+                        "region": "IL",
+                        "postal_code": "60103",
+                        "country_name": "Mexico",
+                        "country_code_alpha2": "MX",
+                        "country_code_alpha3": "MEX",
+                        "country_code_numeric": "484"
+                    },
                 },
             },
         })
@@ -761,6 +775,50 @@ class TestCustomer(unittest.TestCase):
         paypal_account_errors = result.errors.for_object("customer").for_object("paypal_account").on("base")
         self.assertEqual(1, len(paypal_account_errors))
         self.assertEqual(ErrorCodes.PayPalAccount.CannotVaultOneTimeUsePayPalAccount, paypal_account_errors[0].code)
+
+
+    def test_update_with_paypal_order_nonce(self):
+        customer = Customer.create().customer
+
+        http = ClientApiHttp.create()
+        status_code, payment_method_nonce = http.get_paypal_nonce({
+            "intent": "order",
+            "payment-token": "fake-paypal-payment-token",
+            "payer-id": "fake-paypal-payer-id"
+        })
+
+        result = Customer.update(customer.id, {
+            "payment_method_nonce": payment_method_nonce,
+            "options": {
+                "paypal": {
+                    "payee_email": "payee@example.com",
+                    "order_id": "merchant-order-id",
+                    "custom_field": "custom merchant field",
+                    "description": "merchant description",
+                    "amount": "1.23",
+                    "shipping": {
+                        "first_name": "Andrew",
+                        "last_name": "Mason",
+                        "company": "Braintree",
+                        "street_address": "456 W Main St",
+                        "extended_address": "Apt 2F",
+                        "locality": "Bartlett",
+                        "region": "IL",
+                        "postal_code": "60103",
+                        "country_name": "Mexico",
+                        "country_code_alpha2": "MX",
+                        "country_code_alpha3": "MEX",
+                        "country_code_numeric": "484"
+                    },
+                },
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        customer = result.customer
+        self.assertNotEqual(None, customer.paypal_accounts[0])
+        self.assertEqual(1, len(customer.paypal_accounts))
+        self.assertIsInstance(customer.paypal_accounts[0], PayPalAccount)
 
     def test_update_with_nested_verification_amount(self):
         customer = Customer.create({

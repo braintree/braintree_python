@@ -80,6 +80,23 @@ class TestPaymentMethodGateway(unittest.TestCase):
                             "custom_field",
                             "description",
                             "amount",
+                            {
+                                "shipping":[
+                                    "company",
+                                    "country_code_alpha2",
+                                    "country_code_alpha3",
+                                    "country_code_numeric",
+                                    "country_name",
+                                    "customer_id",
+                                    "extended_address",
+                                    "first_name",
+                                    "last_name",
+                                    "locality",
+                                    "postal_code",
+                                    "region",
+                                    "street_address"
+                                ]
+                            },
                         ]
                     },
                 ]

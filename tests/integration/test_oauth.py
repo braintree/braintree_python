@@ -109,6 +109,7 @@ class TestOAuthGateway(unittest.TestCase):
              "scope": "read_write",
              "state": "baz_state",
              "landing_page": "login",
+             "login_only": "true",
              "user": {
                "country": "USA",
                "email": "foo@example.com",
@@ -152,6 +153,7 @@ class TestOAuthGateway(unittest.TestCase):
         self.assertEqual(params["scope"], ["read_write"])
         self.assertEqual(params["state"], ["baz_state"])
         self.assertEqual(params["landing_page"], ["login"])
+        self.assertEqual(params["login_only"], ["true"])
 
         self.assertEqual(params["user[country]"], ["USA"])
         self.assertEqual(params["business[name]"], ["14 Ladders"])

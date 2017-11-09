@@ -1,5 +1,9 @@
 import re
-import base64
+import sys
+if sys.version_info[0] == 2:
+    from base64 import decodestring as decodebytes
+else:
+    from base64 import decodebytes
 import sys
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
 from braintree.exceptions.invalid_challenge_error import InvalidChallengeError
@@ -23,7 +27,7 @@ class WebhookNotificationGateway(object):
         if re.search(b"[^A-Za-z0-9+=/\n]", payload):
             raise InvalidSignatureError("payload contains illegal characters")
         self.__validate_signature(signature, payload)
-        attributes = XmlUtil.dict_from_xml(base64.decodestring(payload))
+        attributes = XmlUtil.dict_from_xml(decodebytes(payload))
         return WebhookNotification(self.gateway, attributes['notification'])
 
     def verify(self, challenge):
