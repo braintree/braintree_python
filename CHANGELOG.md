@@ -1,5 +1,6 @@
 ## Unreleased
 * Add support for upgrading a PayPal future payment refresh token to a billing agreement
+* Fix braintree.Dispute.search to take a list of search criteria
 * Add logic to remove deprecation warnings for encodestring and decodestring when used with python 3 (#92)
 * Fix spec to expect PayPal transaction to settle immediately after successful capture
 * Add GrantedPaymentInstrumentUpdate webhook support

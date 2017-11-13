@@ -145,9 +145,9 @@ class Dispute(AttributeGetter):
         """
         Searches for disputes, given a DisputeSearch query.
 
-            collection = braintree.Dispute.search(
+            collection = braintree.Dispute.search([
                 braintree.DisputeSearch.id == "the_dispute_id"
-            )
+            ])
 
             for dispute in collection.items:
                 print dispute.id
