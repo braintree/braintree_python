@@ -45,6 +45,7 @@ class PaymentMethod(Resource):
                     "custom_field",
                     "description",
                     "amount",
+                    { "shipping": Address.create_signature() }
                 ],
             },
         ]
@@ -61,6 +62,8 @@ class PaymentMethod(Resource):
             "expiration_year",
             "number",
             "payment_method_nonce",
+            "paypal_refresh_token",
+            "paypal_vault_without_upgrade",
             "token",
             {
                 "billing_address": Address.create_signature()

@@ -55,6 +55,8 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "expiration_year",
             "number",
             "payment_method_nonce",
+            "paypal_refresh_token",
+            "paypal_vault_without_upgrade",
             "token",
             {
                 "billing_address": Address.create_signature()},
@@ -78,6 +80,23 @@ class TestPaymentMethodGateway(unittest.TestCase):
                             "custom_field",
                             "description",
                             "amount",
+                            {
+                                "shipping":[
+                                    "company",
+                                    "country_code_alpha2",
+                                    "country_code_alpha3",
+                                    "country_code_numeric",
+                                    "country_name",
+                                    "customer_id",
+                                    "extended_address",
+                                    "first_name",
+                                    "last_name",
+                                    "locality",
+                                    "postal_code",
+                                    "region",
+                                    "street_address"
+                                ]
+                            },
                         ]
                     },
                 ]

@@ -203,6 +203,7 @@ class Customer(Resource):
                 "custom_field",
                 "description",
                 "amount",
+                { "shipping": Address.create_signature() }
             ]}]},
         ]
 
@@ -211,7 +212,15 @@ class Customer(Resource):
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce", "default_payment_method_token",
             {"credit_card": CreditCard.signature("update_via_customer")},
-            {"custom_fields": ["__any_key__"]}
+            {"custom_fields": ["__any_key__"]},
+            {"options": [{"paypal": [
+                "payee_email",
+                "order_id",
+                "custom_field",
+                "description",
+                "amount",
+                { "shipping": Address.create_signature() }
+            ]}]},
         ]
 
     def __init__(self, gateway, attributes):

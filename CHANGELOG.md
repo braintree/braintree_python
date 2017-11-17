@@ -1,3 +1,15 @@
+## 3.39.0
+* Add support for upgrading a PayPal future payment refresh token to a billing agreement
+* Fix braintree.Dispute.search to take a list of search criteria
+* Add logic to remove deprecation warnings for encodestring and decodestring when used with python 3 (#92)
+* Fix spec to expect PayPal transaction to settle immediately after successful capture
+* Add GrantedPaymentInstrumentUpdate webhook support
+* Add ability to create a transaction from a shared nonce
+* Add `options` -> `paypal` -> `shipping` for creating & updating customers as well as creating payment methods
+* Do not convert to Decimal if amount is None in AuthorizationAdjustement (#70)
+* Add `device_data_captured` field to `risk_data`
+* Add `bin_data` to `payment_method_nonce`
+
 ## 3.38.0
 * Add iDEAL webhook support
 * Add AuthorizationAdjustment class and `authorization_adjustments` to Transaction

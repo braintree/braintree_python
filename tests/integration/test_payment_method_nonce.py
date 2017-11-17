@@ -62,3 +62,59 @@ class TestPaymentMethodNonce(unittest.TestCase):
 
     def test_find_raises_not_found_when_404(self):
         self.assertRaises(NotFoundError, PaymentMethodNonce.find, "not-a-nonce")
+
+    def test_bin_data_has_commercial(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-commercial-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.Commercial.Yes, bin_data.commercial)
+
+    def test_bin_data_has_country_of_issuance(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-country-of-issuance-cad-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual("CAN", bin_data.country_of_issuance)
+
+    def test_bin_data_debit(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-debit-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.Debit.Yes, bin_data.debit)
+
+    def test_bin_data_durbin_regulated(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-durbin-regulated-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.DurbinRegulated.Yes, bin_data.durbin_regulated)
+
+    def test_bin_data_issuing_bank(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-issuing-bank-network-only-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual("NETWORK ONLY", bin_data.issuing_bank)
+
+    def test_bin_data_payroll(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-payroll-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.Payroll.Yes, bin_data.payroll)
+
+    def test_bin_data_prepaid(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-prepaid-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.Prepaid.Yes, bin_data.prepaid)
+
+    def test_bin_data_unknown_values(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-unknown-indicators-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.Commercial.Unknown, bin_data.commercial)
+        self.assertEqual(CreditCard.CountryOfIssuance.Unknown, bin_data.country_of_issuance)
+        self.assertEqual(CreditCard.Debit.Unknown, bin_data.debit)
+        self.assertEqual(CreditCard.DurbinRegulated.Unknown, bin_data.durbin_regulated)
+        self.assertEqual(CreditCard.Healthcare.Unknown, bin_data.healthcare)
+        self.assertEqual(CreditCard.IssuingBank.Unknown, bin_data.issuing_bank)
+        self.assertEqual(CreditCard.Payroll.Unknown, bin_data.payroll)
+        self.assertEqual(CreditCard.Prepaid.Unknown, bin_data.prepaid)
+        self.assertEqual(CreditCard.ProductId.Unknown, bin_data.product_id)
