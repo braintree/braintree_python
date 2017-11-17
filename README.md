@@ -64,11 +64,31 @@ instructions above for upgrading from pycurl / httplib to requests.
             print("  code: " + error.code)
             print("  message: " + error.message)
 
+## Developing
+
+1. Create a [virtualenv](https://virtualenv.pypa.io/) called `venv`:
+
+   ```
+   virtualenv venv
+   ```
+
+2. Start the virtualenv:
+
+   ```
+   source venv/bin/activate
+   ```
+
+3. Install dependencies:
+
+   ```
+   pip install -r requirements.txt
+   ```
+
 ## Testing
 
 Our friends at [Venmo](https://venmo.com) have [an open source library](https://github.com/venmo/btnamespace) designed to simplify testing of applications using this library.
 
-The unit specs can be run by anyone on any system, but the integration specs are meant to be run against a local development server of our gateway code. These integration specs are not meant for public consumption and will likely fail if run on your system. To run unit tests use rake(`rake test:unit`) or nose(`nosetests tests/unit`).
+If you wish to run the tests, make sure you are set up for development (see instructions above). The unit specs can be run by anyone on any system, but the integration specs are meant to be run against a local development server of our gateway code. These integration specs are not meant for public consumption and will likely fail if run on your system. To run unit tests use rake (`rake test:unit`) or nose (`nosetests tests/unit`).
 
 ## License
 
