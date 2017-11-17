@@ -2,6 +2,7 @@ import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.bin_data import BinData
 
 class PaymentMethodNonce(Resource):
     @staticmethod
@@ -19,3 +20,8 @@ class PaymentMethodNonce(Resource):
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
+
+        if "bin_data" in attributes and not attributes["bin_data"] is None:
+            self.bin_data = BinData(attributes["bin_data"])
+        else:
+            self.bin_data = None
