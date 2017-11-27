@@ -3,7 +3,6 @@ from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.oauth_credentials import OAuthCredentials
-from braintree.util import Crypto
 
 import sys
 if sys.version_info[0] == 2:
@@ -47,8 +46,9 @@ class OAuthGateway(object):
         else:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def connect_url(self, params):
-        params["client_id"] = self.config.client_id
+    def connect_url(self, raw_params):
+        params = {"client_id": self.config.client_id}
+        params.update(raw_params)
         user_params = self._sub_query(params, "user")
         business_params = self._sub_query(params, "business")
 
@@ -63,9 +63,7 @@ class OAuthGateway(object):
         params = reduce(clean_values, params.items(), [])
         query = params + user_params + business_params
         query_string = "&".join(quote_plus(key) + "=" + quote_plus(value) for key, value in query)
-        url = self.config.environment.base_url + "/oauth/connect?" + query_string
-        signature = self._compute_signature(url)
-        return url + "&signature=" + signature + "&algorithm=SHA256"
+        return self.config.environment.base_url + "/oauth/connect?" + query_string
 
     def _sub_query(self, params, root):
         if root in params:
@@ -74,6 +72,3 @@ class OAuthGateway(object):
             sub_query = {}
         query = [(root + "[" + key + "]", str(value)) for key, value in sub_query.items()]
         return query
-
-    def _compute_signature(self, url):
-        return Crypto.sha256_hmac_hash(self.config.client_secret, url)
