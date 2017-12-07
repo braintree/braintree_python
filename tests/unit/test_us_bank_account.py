@@ -25,8 +25,8 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertEqual(us_bank_account.bank_name, "Chase")
         self.assertEqual(us_bank_account.ach_mandate, None)
 
-        attributes["ach_mandate"] = {"text":"Some mandate", "accepted_at": date(2013, 4, 10).strftime("%Y-%m-%dT%H:%M:%S.%fZ")}
+        attributes["ach_mandate"] = {"text":"Some mandate", "accepted_at": date(2013, 4, 10)}
         us_bank_account_mandated = UsBankAccount({}, attributes)
         self.assertEqual(us_bank_account_mandated.ach_mandate.text, "Some mandate")
-        self.assertEqual(us_bank_account_mandated.ach_mandate.accepted_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), date(2013, 4, 10).strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
+        self.assertEqual(us_bank_account_mandated.ach_mandate.accepted_at, date(2013, 4, 10))
 
