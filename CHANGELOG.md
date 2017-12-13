@@ -1,3 +1,8 @@
+## 3.39.1
+* Fix spec to expect PayPal transactions to move to settling rather than settled
+* Fix AchMandate.acceptedAt attribute parsing
+* Fix regression for `http_strategy.http_do`
+
 ## 3.39.0
 * Add support for upgrading a PayPal future payment refresh token to a billing agreement
 * Fix braintree.Dispute.search to take a list of search criteria

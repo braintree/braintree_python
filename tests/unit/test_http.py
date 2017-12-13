@@ -43,3 +43,68 @@ class TestHttp(unittest.TestCase):
         except Error:
             _, _, tb = sys.exc_info()
             self.assertEqual('raise_error', traceback.extract_tb(tb)[-1][2])
+
+    def test_request_body_returns_string_for_post(self):
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            self.assertTrue(isinstance(request_body, str))
+            self.assertEqual("<method>post</method>", request_body)
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.post("/some_path", {"method": "post"})
+
+    def test_request_body_returns_string_for_delete(self):
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            self.assertTrue(isinstance(request_body, str))
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.delete("/some_path")
+
+    def test_request_body_returns_string_for_get(self):
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            self.assertTrue(isinstance(request_body, str))
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.get("/some_path")
+
+    def test_request_body_returns_string_for_put(self):
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            self.assertTrue(isinstance(request_body, str))
+            self.assertEqual("<method>put</method>", request_body)
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.put("/some_path", {"method": "put"})
+
+    def test_request_body_returns_string_for_post_multipart_when_no_files(self):
+        params = {"method": "post_multipart"}
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            self.assertEqual(params, request_body)
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.post_multipart("/some_path", None, params)
+
+    def test_request_body_returns_tuple_for_post_multipart_when_files(self):
+        params = {"method": "post_multipart"}
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            self.assertEqual(params, request_body[0])
+            self.assertEqual("files", request_body[1])
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.post_multipart("/some_path", "files", params)
+
+    def setup_http_strategy(self, http_do):
+        config = AttributeGetter({
+                "base_url": (lambda: ""),
+                "has_access_token": (lambda: False),
+                "has_client_credentials": (lambda: False),
+                "http_strategy": (lambda: AttributeGetter({"http_do": http_do})),
+                "public_key": "",
+                "private_key": "",
+                "wrap_http_exceptions": False})
+
+        return Http(config, "fake_environment")
