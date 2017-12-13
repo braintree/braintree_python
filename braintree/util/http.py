@@ -69,11 +69,6 @@ class Http(object):
 
     def __http_do(self, http_verb, path, content_type, params=None, files=None):
         http_strategy = self.config.http_strategy()
-
-        # content_type = Http.ContentType.Xml
-        # if files != None:
-        #     content_type = Http.ContentType.Multipart
-
         headers = self.__headers(content_type)
         request_body = self.__request_body(content_type, params, files)
 
@@ -96,11 +91,18 @@ class Http(object):
                 return XmlUtil.dict_from_xml(response_body)
 
     def http_do(self, http_verb, path, headers, request_body):
+        data = request_body
+        files = None
+
+        if type(request_body) is tuple:
+            data = request_body[0]
+            files = request_body[1]
+
         response = self.__request_function(http_verb)(
             path if path.startswith(self.config.base_url()) else self.config.base_url() + path,
             headers=headers,
-            data=request_body[0],
-            files=request_body[1],
+            data=data,
+            files=files,
             verify=self.environment.ssl_certificate,
             timeout=self.config.timeout
         )
@@ -160,6 +162,8 @@ class Http(object):
     def __request_body(self, content_type, params, files):
         if content_type == Http.ContentType.Xml:
             request_body = XmlUtil.xml_from_dict(params) if params else ''
-            return (request_body, None)
+            return request_body
+        elif files == None:
+            return params
         else:
             return (params, files)
