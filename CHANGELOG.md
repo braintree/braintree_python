@@ -3,6 +3,7 @@
   * discount_amount
   * shipping_amount
   * ships_from_postal_code
+* Add support for transaction line items
 
 ## 3.39.1
 * Fix spec to expect PayPal transactions to move to settling rather than settled

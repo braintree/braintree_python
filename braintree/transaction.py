@@ -28,6 +28,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.transaction_line_item import TransactionLineItem
 from braintree.us_bank_account import UsBankAccount
 from braintree.ideal_payment import IdealPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
@@ -316,6 +317,13 @@ class Transaction(Resource):
         """
         return Configuration.gateway().transaction.find(transaction_id)
 
+    @staticmethod
+    def line_items(transaction_id):
+        """
+        Find a transaction's line items, given a transaction_id. This does not return
+        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided transaction_id is not found. ::
+        """
+        return Configuration.gateway().transaction_line_item.find_all(transaction_id)
 
     @staticmethod
     def hold_in_escrow(transaction_id):
@@ -592,8 +600,13 @@ class Transaction(Resource):
                             ]
                         }
                     ]
-                }
-            ]
+                },
+            {"line_items":
+                [
+                    "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "unit_of_measure", "product_code", "commodity_code", "url",
+                ]
+            },
+        ]
 
     @staticmethod
     def submit_for_settlement_signature():
@@ -733,3 +746,9 @@ class Transaction(Resource):
     def is_disbursed(self):
        return self.disbursement_details.is_valid
 
+    @property
+    def line_items(self):
+        """
+        The line items associated with this transaction
+        """
+        return self.gateway.transaction_line_item.find_all(self.id)
