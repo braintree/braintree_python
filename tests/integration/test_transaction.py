@@ -441,6 +441,145 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(1, len(purchase_order_number_errors))
         self.assertEqual(ErrorCodes.Transaction.PurchaseOrderNumberIsInvalid, purchase_order_number_errors[0].code)
 
+    def test_sale_with_level_3(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "purchase_order_number": "12345",
+            "discount_amount": Decimal("1.00"),
+            "shipping_amount": Decimal("2.00"),
+            "ships_from_postal_code": "12345",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Decimal("1.00"), transaction.discount_amount)
+        self.assertEqual(Decimal("2.00"), transaction.shipping_amount)
+        self.assertEqual("12345", transaction.ships_from_postal_code)
+
+    def test_create_with_discount_amount_invalid(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "discount_amount": "asdf",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("discount_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.DiscountAmountFormatIsInvalid, errors[0].code)
+
+    def test_create_with_discount_amount_negative(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "discount_amount": Decimal("-100"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("discount_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.DiscountAmountCannotBeNegative, errors[0].code)
+
+    def test_create_with_discount_amount_too_large(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "discount_amount": Decimal("999999999"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("discount_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.DiscountAmountIsTooLarge, errors[0].code)
+
+    def test_create_with_shipping_amount_invalid(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "shipping_amount": "asdf",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("shipping_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShippingAmountFormatIsInvalid, errors[0].code)
+
+    def test_create_with_shipping_amount_negative(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "shipping_amount": Decimal("-100"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("shipping_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShippingAmountCannotBeNegative, errors[0].code)
+
+    def test_create_with_shipping_amount_too_large(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "shipping_amount": Decimal("999999999"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("shipping_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShippingAmountIsTooLarge, errors[0].code)
+
+    def test_create_with_ships_from_postal_code_is_too_long(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "ships_from_postal_code": "0000000000",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("ships_from_postal_code")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShipsFromPostalCodeIsTooLong, errors[0].code)
+
+    def test_create_with_ships_from_postal_code_invalid_characters(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "ships_from_postal_code": "1$345",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("ships_from_postal_code")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShipsFromPostalCodeInvalidCharacters, errors[0].code)
+
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Decline,

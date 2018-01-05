@@ -1,3 +1,9 @@
+## Unreleased
+* Add level 3 fields to Transactions:
+  * discount_amount
+  * shipping_amount
+  * ships_from_postal_code
+
 ## 3.39.1
 * Fix spec to expect PayPal transactions to move to settling rather than settled
 * Fix AchMandate.acceptedAt attribute parsing

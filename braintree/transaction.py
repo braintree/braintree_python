@@ -106,6 +106,7 @@ class Transaction(Resource):
         "currency_iso_code",
         "customer_id",
         "cvv_response_code",
+        "discount_amount",
         "disputes",
         "escrow_status",
         "gateway_rejection_reason",
@@ -126,6 +127,8 @@ class Transaction(Resource):
         "refunded_transaction_id",
         "service_fee_amount",
         "settlement_batch_id",
+        "shipping_amount",
+        "ships_from_postal_code",
         "status",
         "status_history",
         "sub_merchant_account_id",
@@ -495,6 +498,7 @@ class Transaction(Resource):
             "payment_method_token", "purchase_order_number", "recurring", "transaction_source", "shipping_address_id",
             "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
+            "discount_amount", "shipping_amount", "ships_from_postal_code",
             "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "risk_data": [
@@ -628,6 +632,10 @@ class Transaction(Resource):
         self.amount = Decimal(self.amount)
         if self.tax_amount:
             self.tax_amount = Decimal(self.tax_amount)
+        if "discount_amount" in attributes and self.discount_amount:
+            self.discount_amount = Decimal(self.discount_amount)
+        if "shipping_amount" in attributes and self.shipping_amount:
+            self.shipping_amount = Decimal(self.shipping_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
