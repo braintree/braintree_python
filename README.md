@@ -84,6 +84,14 @@ instructions above for upgrading from pycurl / httplib to requests.
    pip install -r requirements.txt
    ```
 
+## Developing (Docker)
+
+The `Makefile` and `Dockerfile` will build an image containing the dependencies and drop you to a terminal where you can run tests.
+
+```
+make
+```
+
 ## Testing
 
 Our friends at [Venmo](https://venmo.com) have [an open source library](https://github.com/venmo/btnamespace) designed to simplify testing of applications using this library.
