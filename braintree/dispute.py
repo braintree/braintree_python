@@ -93,7 +93,7 @@ class Dispute(AttributeGetter):
         return Configuration.gateway().dispute.add_file_evidence(dispute_id, document_upload_id)
 
     @staticmethod
-    def add_text_evidence(id, content):
+    def add_text_evidence(id, content_or_request):
         """
         Adds text evidence to a dispute, given a dispute_id.
 
@@ -101,8 +101,12 @@ class Dispute(AttributeGetter):
         is not found. ::
 
             result = braintree.Dispute.add_text_evidence("my_dispute_id", "my_evidence")
+
+            or
+
+            result = braintree.Dispute.add_text_evidence("my_dispute_id", { "content": "UPS", "tag": "CARRIER_NAME", "sequence_number": "1" })
         """
-        return Configuration.gateway().dispute.add_text_evidence(id, content)
+        return Configuration.gateway().dispute.add_text_evidence(id, content_or_request)
 
     @staticmethod
     def finalize(id):

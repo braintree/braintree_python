@@ -49,15 +49,30 @@ class DisputeGateway(object):
         except NotFoundError:
             raise NotFoundError("dispute with id " + repr(dispute_id) + " not found")
 
-    def add_text_evidence(self, dispute_id, content):
-        try:
-            if dispute_id is None or dispute_id.strip() == "":
-                raise NotFoundError()
-            if content is None or content.strip() == "":
-                raise ValueError("content cannot be blank")
+    def add_text_evidence(self, dispute_id, content_or_request):
+        request = content_or_request if isinstance(content_or_request, dict) else { "content": content_or_request }
 
+        if dispute_id is None or dispute_id.strip() == "":
+            raise NotFoundError("dispute_id cannot be blank")
+        if request.get("content") is None or request["content"].strip() == "":
+            raise ValueError("content cannot be blank")
+
+        try:
+            if request.get("sequence_number") is not None:
+                request["sequence_number"] = int(request["sequence_number"])
+        except ValueError:
+            raise ValueError("sequence_number must be an integer")
+
+        if request.get("tag") is not None and not isinstance(request["tag"], str):
+            raise ValueError("tag must be a string")
+
+        try:
             response = self.config.http().post(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence", {
-                "comments": content
+                "evidence": {
+                    "comments": request.get("content"),
+                    "category": request.get("tag"),
+                    "sequence_number": request.get("sequence_number")
+                }
             })
 
             if "evidence" in response:
@@ -67,7 +82,7 @@ class DisputeGateway(object):
             elif "api_error_response" in response:
                 return ErrorResult(self.gateway, response["api_error_response"])
         except NotFoundError:
-            raise NotFoundError("dispute with id " + repr(dispute_id) + " not found")
+            raise NotFoundError("Dispute with ID " + repr(dispute_id) + " not found")
 
     def finalize(self, dispute_id):
         try:

@@ -167,11 +167,11 @@ class TestDispute(unittest.TestCase):
     def test_accept_empty_id_raises_not_found_exception(self):
         Dispute.accept(" ")
 
-    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
+    @raises_with_regexp(NotFoundError, "dispute_id cannot be blank")
     def test_add_text_evidence_empty_id_raises_not_found_exception(self):
         Dispute.add_text_evidence(" ", "evidence")
 
-    @raises_with_regexp(NotFoundError, "dispute with id None not found")
+    @raises_with_regexp(NotFoundError, "dispute_id cannot be blank")
     def test_add_text_evidence_none_id_raises_not_found_exception(self):
         Dispute.add_text_evidence(None, "evidence")
 
@@ -179,9 +179,17 @@ class TestDispute(unittest.TestCase):
     def test_add_text_evidence_empty_evidence_raises_value_exception(self):
         Dispute.add_text_evidence("dispute_id", " ")
 
-    @raises_with_regexp(ValueError, "content cannot be blank")
-    def test_add_text_evidence_none_evidence_raises_value_exception(self):
-        Dispute.add_text_evidence("dispute_id", None)
+    @raises_with_regexp(ValueError, "sequence_number must be an integer")
+    def test_add_text_evidence_sequence_number_not_number_evidence_raises_value_exception(self):
+        Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "a" })
+
+    @raises_with_regexp(ValueError, "sequence_number must be an integer")
+    def test_add_text_evidence_sequence_number_not_number_evidence_raises_value_exception(self):
+        Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "1abc" })
+
+    @raises_with_regexp(ValueError, "tag must be a string")
+    def test_add_text_evidence_tag_is_number_evidence_raises_value_exception(self):
+        Dispute.add_text_evidence("dispute_id", { "content": "content", "tag": 5 })
 
     @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_add_file_evidence_empty_id_raises_not_found_exception(self):

@@ -85,8 +85,35 @@ class TestDisputes(unittest.TestCase):
         self.assertTrue(re.match("^\w{16,}$", evidence.id))
         self.assertIsNone(evidence.sent_to_processor_at)
         self.assertIsNone(evidence.url)
+        self.assertIsNone(evidence.tag)
+        self.assertIsNone(evidence.sequence_number)
 
-    @raises_with_regexp(NotFoundError, "dispute with id 'unknown_dispute_id' not found")
+    def test_add_text_evidence_adds_tag_and_sequence_number_text_evidence(self):
+        dispute = self.create_sample_dispute()
+
+        result = Dispute.add_text_evidence(dispute.id, { "content": "PROOF_OF_FULFILLMENT", "tag": "EVIDENCE_TYPE" })
+        result_carrier_name = Dispute.add_text_evidence(dispute.id, { "content": "UPS", "tag": "CARRIER_NAME", "sequence_number": "0" })
+        result_tracking_number = Dispute.add_text_evidence(dispute.id, { "content": "UPS-1243", "tag": "TRACKING_NUMBER", "sequence_number": "0" })
+
+        self.assertTrue(result.is_success)
+        evidence = result.evidence
+        self.assertEqual(evidence.comment, "PROOF_OF_FULFILLMENT")
+        self.assertEqual(evidence.tag, "EVIDENCE_TYPE")
+        self.assertIsNone(evidence.sequence_number)
+
+        self.assertTrue(result_carrier_name.is_success)
+        evidence = result_carrier_name.evidence
+        self.assertEqual(evidence.comment, "UPS")
+        self.assertEqual(evidence.tag, "CARRIER_NAME")
+        self.assertEqual(evidence.sequence_number, 0)
+
+        self.assertTrue(result_tracking_number.is_success)
+        evidence = result_tracking_number.evidence
+        self.assertEqual(evidence.comment, "UPS-1243")
+        self.assertEqual(evidence.tag, "TRACKING_NUMBER")
+        self.assertEqual(evidence.sequence_number, 0)
+
+    @raises_with_regexp(NotFoundError, "Dispute with ID 'unknown_dispute_id' not found")
     def test_add_text_evidence_raises_error_when_dispute_not_found(self):
         dispute = Dispute.add_text_evidence("unknown_dispute_id", "text evidence")
 
