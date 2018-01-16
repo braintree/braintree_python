@@ -5,6 +5,7 @@
   * ships_from_postal_code
 * Add support for transaction line items
 * Add support for tagged evidence in DisputeGateway#add_text_evidence (Beta release)
+* Update https certificate bundle
 
 ## 3.39.1
 * Fix spec to expect PayPal transactions to move to settling rather than settled
