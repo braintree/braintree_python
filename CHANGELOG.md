@@ -1,4 +1,4 @@
-## Unreleased
+## 3.40.0
 * Add level 3 fields to Transactions:
   * discount_amount
   * shipping_amount
