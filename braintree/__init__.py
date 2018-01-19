@@ -61,6 +61,7 @@ from braintree.transaction import Transaction
 from braintree.transaction_amounts import TransactionAmounts
 from braintree.transaction_details import TransactionDetails
 from braintree.transaction_gateway import TransactionGateway
+from braintree.transaction_line_item import TransactionLineItem
 from braintree.transaction_search import TransactionSearch
 from braintree.transparent_redirect import TransparentRedirect
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway

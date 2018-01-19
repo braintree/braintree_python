@@ -28,6 +28,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
+from braintree.transaction_line_item import TransactionLineItem
 from braintree.us_bank_account import UsBankAccount
 from braintree.ideal_payment import IdealPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
@@ -106,6 +107,7 @@ class Transaction(Resource):
         "currency_iso_code",
         "customer_id",
         "cvv_response_code",
+        "discount_amount",
         "disputes",
         "escrow_status",
         "gateway_rejection_reason",
@@ -126,6 +128,8 @@ class Transaction(Resource):
         "refunded_transaction_id",
         "service_fee_amount",
         "settlement_batch_id",
+        "shipping_amount",
+        "ships_from_postal_code",
         "status",
         "status_history",
         "sub_merchant_account_id",
@@ -313,6 +317,13 @@ class Transaction(Resource):
         """
         return Configuration.gateway().transaction.find(transaction_id)
 
+    @staticmethod
+    def line_items(transaction_id):
+        """
+        Find a transaction's line items, given a transaction_id. This does not return
+        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided transaction_id is not found. ::
+        """
+        return Configuration.gateway().transaction_line_item.find_all(transaction_id)
 
     @staticmethod
     def hold_in_escrow(transaction_id):
@@ -495,6 +506,7 @@ class Transaction(Resource):
             "payment_method_token", "purchase_order_number", "recurring", "transaction_source", "shipping_address_id",
             "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
+            "discount_amount", "shipping_amount", "ships_from_postal_code",
             "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "risk_data": [
@@ -588,8 +600,13 @@ class Transaction(Resource):
                             ]
                         }
                     ]
-                }
-            ]
+                },
+            {"line_items":
+                [
+                    "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "unit_of_measure", "product_code", "commodity_code", "url",
+                ]
+            },
+        ]
 
     @staticmethod
     def submit_for_settlement_signature():
@@ -628,6 +645,10 @@ class Transaction(Resource):
         self.amount = Decimal(self.amount)
         if self.tax_amount:
             self.tax_amount = Decimal(self.tax_amount)
+        if "discount_amount" in attributes and self.discount_amount:
+            self.discount_amount = Decimal(self.discount_amount)
+        if "shipping_amount" in attributes and self.shipping_amount:
+            self.shipping_amount = Decimal(self.shipping_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
@@ -725,3 +746,9 @@ class Transaction(Resource):
     def is_disbursed(self):
        return self.disbursement_details.is_valid
 
+    @property
+    def line_items(self):
+        """
+        The line items associated with this transaction
+        """
+        return self.gateway.transaction_line_item.find_all(self.id)

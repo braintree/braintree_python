@@ -441,6 +441,145 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(1, len(purchase_order_number_errors))
         self.assertEqual(ErrorCodes.Transaction.PurchaseOrderNumberIsInvalid, purchase_order_number_errors[0].code)
 
+    def test_sale_with_level_3(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "purchase_order_number": "12345",
+            "discount_amount": Decimal("1.00"),
+            "shipping_amount": Decimal("2.00"),
+            "ships_from_postal_code": "12345",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Decimal("1.00"), transaction.discount_amount)
+        self.assertEqual(Decimal("2.00"), transaction.shipping_amount)
+        self.assertEqual("12345", transaction.ships_from_postal_code)
+
+    def test_create_with_discount_amount_invalid(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "discount_amount": "asdf",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("discount_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.DiscountAmountFormatIsInvalid, errors[0].code)
+
+    def test_create_with_discount_amount_negative(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "discount_amount": Decimal("-100"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("discount_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.DiscountAmountCannotBeNegative, errors[0].code)
+
+    def test_create_with_discount_amount_too_large(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "discount_amount": Decimal("999999999"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("discount_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.DiscountAmountIsTooLarge, errors[0].code)
+
+    def test_create_with_shipping_amount_invalid(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "shipping_amount": "asdf",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("shipping_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShippingAmountFormatIsInvalid, errors[0].code)
+
+    def test_create_with_shipping_amount_negative(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "shipping_amount": Decimal("-100"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("shipping_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShippingAmountCannotBeNegative, errors[0].code)
+
+    def test_create_with_shipping_amount_too_large(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "shipping_amount": Decimal("999999999"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("shipping_amount")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShippingAmountIsTooLarge, errors[0].code)
+
+    def test_create_with_ships_from_postal_code_is_too_long(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "ships_from_postal_code": "0000000000",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("ships_from_postal_code")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShipsFromPostalCodeIsTooLong, errors[0].code)
+
+    def test_create_with_ships_from_postal_code_invalid_characters(self):
+        result = Transaction.sale({
+            "amount": Decimal("100"),
+            "ships_from_postal_code": "1$345",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("transaction").on("ships_from_postal_code")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ShipsFromPostalCodeInvalidCharacters, errors[0].code)
+
     def test_sale_with_processor_declined(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Decline,
@@ -933,6 +1072,958 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(transaction.avs_error_response_code, None)
         self.assertEqual(transaction.avs_street_address_response_code, "B")
+
+    def test_sale_with_line_items_zero(self):
+        result = Transaction.sale({
+            "amount": "45.15",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+
+        line_items = transaction.line_items
+        self.assertEqual(0, len(line_items))
+
+    def test_sale_with_line_items_single_only_required_fields(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "total_amount": "45.15",
+            }]
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+
+        line_items = transaction.line_items
+        self.assertEqual(1, len(line_items))
+
+        lineItem = line_items[0]
+        self.assertEqual("1.0232", lineItem.quantity)
+        self.assertEqual("Name #1", lineItem.name)
+        self.assertEqual(TransactionLineItem.Kind.Debit, lineItem.kind)
+        self.assertEqual("45.1232", lineItem.unit_amount)
+        self.assertEqual("45.15", lineItem.total_amount)
+
+    def test_sale_with_line_items_single(self):
+        result = Transaction.sale({
+            "amount": "45.15",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "description": "Description #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_tax_amount": "1.23",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+                "url": "https://example.com/products/23434",
+            }]
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+
+        line_items = transaction.line_items
+        self.assertEqual(1, len(line_items))
+
+        lineItem = line_items[0]
+        self.assertEqual("1.0232", lineItem.quantity)
+        self.assertEqual("Name #1", lineItem.name)
+        self.assertEqual("Description #1", lineItem.description)
+        self.assertEqual(TransactionLineItem.Kind.Debit, lineItem.kind)
+        self.assertEqual("45.1232", lineItem.unit_amount)
+        self.assertEqual("1.23", lineItem.unit_tax_amount)
+        self.assertEqual("gallon", lineItem.unit_of_measure)
+        self.assertEqual("1.02", lineItem.discount_amount)
+        self.assertEqual("45.15", lineItem.total_amount)
+        self.assertEqual("23434", lineItem.product_code)
+        self.assertEqual("9SAASSD8724", lineItem.commodity_code)
+        self.assertEqual("https://example.com/products/23434", lineItem.url)
+
+    def test_sale_with_line_items_multiple(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "description": "Description #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "2.02",
+                "name": "Name #2",
+                "description": "Description #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "5",
+                "unit_of_measure": "gallon",
+                "total_amount": "45.15",
+            }]
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+
+        line_items = transaction.line_items
+        self.assertEqual(2, len(line_items))
+
+        line_item_1 = None
+        for line_item in line_items:
+            if line_item.name == "Name #1":
+                line_item_1 = line_item
+                break
+        if line_item_1 is None:
+            self.fail("TransactionLineItem with name \"Name #1\" not returned.")
+        self.assertEqual("1.0232", line_item_1.quantity)
+        self.assertEqual("Name #1", line_item_1.name)
+        self.assertEqual("Description #1", line_item_1.description)
+        self.assertEqual(TransactionLineItem.Kind.Debit, line_item_1.kind)
+        self.assertEqual("45.1232", line_item_1.unit_amount)
+        self.assertEqual("gallon", line_item_1.unit_of_measure)
+        self.assertEqual("1.02", line_item_1.discount_amount)
+        self.assertEqual("45.15", line_item_1.total_amount)
+        self.assertEqual("23434", line_item_1.product_code)
+        self.assertEqual("9SAASSD8724", line_item_1.commodity_code)
+
+        line_item_2 = None
+        for line_item in line_items:
+            if line_item.name == "Name #2":
+                line_item_2 = line_item
+                break
+        if line_item_2 is None:
+            self.fail("TransactionLineItem with name \"Name #2\" not returned.")
+        self.assertEqual("2.02", line_item_2.quantity)
+        self.assertEqual("Name #2", line_item_2.name)
+        self.assertEqual("Description #2", line_item_2.description)
+        self.assertEqual(TransactionLineItem.Kind.Credit, line_item_2.kind)
+        self.assertEqual("5", line_item_2.unit_amount)
+        self.assertEqual("gallon", line_item_2.unit_of_measure)
+        self.assertEqual("45.15", line_item_2.total_amount)
+        self.assertEqual(None, line_item_2.discount_amount)
+        self.assertEqual(None, line_item_2.product_code)
+        self.assertEqual(None, line_item_2.commodity_code)
+
+    def test_sale_with_line_items_validation_error_commodity_code_is_too_long(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "0123456789123",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.CommodityCodeIsTooLong,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("commodity_code")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_description_is_too_long(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "description": "This is a line item description which is far too long. Like, way too long to be practical. We don't like how long this line item description is.",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.DescriptionIsTooLong,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("description")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_discount_amount_is_too_large(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "2147483648",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.DiscountAmountIsTooLarge,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("discount_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_discount_amount_must_be_greater_than_zero(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "0",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.DiscountAmountMustBeGreaterThanZero,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("discount_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_kind_is_required(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.KindIsRequired,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("kind")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_name_is_required(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.NameIsRequired,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("name")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_name_is_too_long(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "123456789012345678901234567890123456",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.NameIsTooLong,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("name")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_product_code_is_too_long(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "123456789012345678901234567890123456",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.ProductCodeIsTooLong,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("product_code")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_quantity_is_required(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.QuantityIsRequired,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("quantity")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_quantity_is_too_large(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "2147483648",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.QuantityIsTooLarge,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("quantity")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_total_amount_is_required(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.TotalAmountIsRequired,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("total_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_total_amount_is_too_large(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "2147483648",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.TotalAmountIsTooLarge,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("total_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_total_amount_must_be_greater_than_zero(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "-2",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.TotalAmountMustBeGreaterThanZero,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("total_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_amount_is_required(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitAmountIsRequired,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_amount_is_too_large(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "2147483648",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitAmountIsTooLarge,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_amount_must_be_greater_than_zero(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "-2",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitAmountMustBeGreaterThanZero,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_of_measure_is_too_large(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.0232",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "1234567890123",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitOfMeasureIsTooLarge,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_of_measure")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_tax_amount_format_is_invalid(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.2322",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.2322",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.0122",
+                "unit_tax_amount": "2.012",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitTaxAmountFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_tax_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_tax_amount_is_too_large(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.2322",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_tax_amount": "1.23",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.2322",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.0122",
+                "unit_tax_amount": "2147483648",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitTaxAmountIsTooLarge,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_tax_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_unit_tax_amount_must_be_greater_than_zero(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.2322",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            },
+            {
+                "quantity": "1.2322",
+                "name": "Name #2",
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "45.0122",
+                "unit_tax_amount": "-1.23",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+            }]
+        })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.LineItem.UnitTaxAmountMustBeGreaterThanZero,
+            result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_tax_amount")[0].code
+        )
+
+    def test_sale_with_line_items_validation_error_too_many_live_items(self):
+        sale_params = {
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [],
+        }
+
+        for i in range(250):
+            sale_params["line_items"].append({
+                "quantity": "2.02",
+                "name": "Line item #" + str(i),
+                "kind": TransactionLineItem.Kind.Credit,
+                "unit_amount": "5",
+                "unit_of_measure": "gallon",
+                "total_amount": "10.1",
+            })
+
+        result = Transaction.sale(sale_params)
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+            ErrorCodes.Transaction.TooManyLineItems,
+            result.errors.for_object("transaction").on("line_items")[0].code
+        )
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({

@@ -1,3 +1,12 @@
+## 3.40.0
+* Add level 3 fields to Transactions:
+  * discount_amount
+  * shipping_amount
+  * ships_from_postal_code
+* Add support for transaction line items
+* Add support for tagged evidence in DisputeGateway#add_text_evidence (Beta release)
+* Update https certificate bundle
+
 ## 3.39.1
 * Fix spec to expect PayPal transactions to move to settling rather than settled
 * Fix AchMandate.acceptedAt attribute parsing
