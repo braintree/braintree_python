@@ -12,21 +12,27 @@ class WebhookTestingGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
-    def sample_notification(self, kind, id):
-        payload = encodebytes(self.__sample_xml(kind, id))
+    def sample_notification(self, kind, id, source_merchant_id=None):
+        payload = encodebytes(self.__sample_xml(kind, id, source_merchant_id))
         hmac_payload = Crypto.sha1_hmac_hash(self.gateway.config.private_key, payload)
         signature = "%s|%s" % (self.gateway.config.public_key, hmac_payload)
         return {'bt_signature': signature, 'bt_payload': payload}
 
-    def __sample_xml(self, kind, id):
+    def __sample_xml(self, kind, id, source_merchant_id):
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        source_merchant_id_xml = ''
+        if source_merchant_id is not None:
+            source_merchant_id_xml = '<source-merchant-id>%s</source-merchant-id>' % source_merchant_id
+
         sample_xml = """
             <notification>
                 <timestamp type="datetime">%s</timestamp>
                 <kind>%s</kind>
+                %s
                 <subject>%s</subject>
             </notification>
-        """ % (timestamp, kind, self.__subject_sample_xml(kind, id))
+        """ % (timestamp, kind, source_merchant_id_xml, self.__subject_sample_xml(kind, id))
         return sample_xml.encode('utf-8')
 
     def __subject_sample_xml(self, kind, id):

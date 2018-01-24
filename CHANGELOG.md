@@ -1,3 +1,6 @@
+## Unreleased
+* Add support for `source_merchant_id` on webhooks
+
 ## 3.40.0
 * Add level 3 fields to Transactions:
   * discount_amount

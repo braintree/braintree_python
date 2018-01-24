@@ -55,6 +55,9 @@ class WebhookNotification(Resource):
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
 
+        if "source_merchant_id" not in attributes:
+            self.source_merchant_id = None
+
         if "api_error_response" in attributes["subject"]:
             node_wrapper = attributes["subject"]["api_error_response"]
         else:

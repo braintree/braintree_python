@@ -14,6 +14,18 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.SubscriptionWentPastDue, notification.kind)
         self.assertEqual("my_id", notification.subscription.id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
+        self.assertIsNone(notification.source_merchant_id)
+
+    def test_sample_notification_with_source_merchant_id(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionWentPastDue,
+            'my_id',
+            'my_source_merchant_id'
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual('my_source_merchant_id', notification.source_merchant_id)
 
     @raises(InvalidSignatureError)
     def test_completely_invalid_signature(self):
