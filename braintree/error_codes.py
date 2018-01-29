@@ -615,3 +615,6 @@ class ErrorCodes(object):
             UnitTaxAmountFormatIsInvalid = "95824"
             UnitTaxAmountIsTooLarge = "95825"
             UnitTaxAmountMustBeGreaterThanZero = "95826"
+            TaxAmountFormatIsInvalid = "95827"
+            TaxAmountIsTooLarge = "95828"
+            TaxAmountMustBeGreaterThanZero = "95829"

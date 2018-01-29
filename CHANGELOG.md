@@ -1,4 +1,5 @@
 ## Unreleased
+* Add support for tax_amount field on transaction line_items
 * Add support for `source_merchant_id` on webhooks
 
 ## 3.40.0
