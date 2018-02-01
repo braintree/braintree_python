@@ -1240,6 +1240,36 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(None, line_item_2.product_code)
         self.assertEqual(None, line_item_2.commodity_code)
 
+    def test_sale_with_line_items_with_zero_amount_fields(self):
+        result = Transaction.sale({
+            "amount": "45.15",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "total_amount": "45.15",
+                "discount_amount": "0",
+                "unit_tax_amount": "0",
+                "tax_amount": "0",
+            }]
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction = result.transaction
+
+        line_items = transaction.line_items
+
+        lineItem = line_items[0]
+        self.assertEqual("0.00", lineItem.unit_tax_amount)
+        self.assertEqual("0.00", lineItem.discount_amount)
+        self.assertEqual("0.00", lineItem.tax_amount)
+
     def test_sale_with_line_items_validation_error_commodity_code_is_too_long(self):
         result = Transaction.sale({
             "amount": "35.05",
@@ -1355,7 +1385,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("discount_amount")[0].code
         )
 
-    def test_sale_with_line_items_validation_error_discount_amount_must_be_greater_than_zero(self):
+    def test_sale_with_line_items_validation_error_discount_amount_cannot_be_negative(self):
         result = Transaction.sale({
             "amount": "35.05",
             "credit_card": {
@@ -1379,7 +1409,7 @@ class TestTransaction(unittest.TestCase):
                 "kind": TransactionLineItem.Kind.Debit,
                 "unit_amount": "45.1232",
                 "unit_of_measure": "gallon",
-                "discount_amount": "0",
+                "discount_amount": "-1.23",
                 "total_amount": "45.15",
                 "product_code": "23434",
                 "commodity_code": "9SAASSD8724",
@@ -1389,7 +1419,7 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
 
         self.assertEqual(
-            ErrorCodes.Transaction.LineItem.DiscountAmountMustBeGreaterThanZero,
+            ErrorCodes.Transaction.LineItem.DiscountAmountCannotBeNegative,
             result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("discount_amount")[0].code
         )
 
@@ -1421,7 +1451,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("line_items").for_object("index_0").on("tax_amount")[0].code
         )
 
-    def test_sale_with_line_items_validation_error_tax_amount_must_be_greater_than_zero(self):
+    def test_sale_with_line_items_validation_error_tax_amount_cannot_be_negative(self):
         result = Transaction.sale({
             "amount": "35.05",
             "credit_card": {
@@ -1435,7 +1465,7 @@ class TestTransaction(unittest.TestCase):
                 "unit_amount": "45.1232",
                 "unit_of_measure": "gallon",
                 "discount_amount": "1.02",
-                "tax_amount": "0",
+                "tax_amount": "-1.23",
                 "total_amount": "45.15",
                 "product_code": "23434",
                 "commodity_code": "9SAASSD8724",
@@ -1445,7 +1475,7 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
 
         self.assertEqual(
-            ErrorCodes.Transaction.LineItem.TaxAmountMustBeGreaterThanZero,
+            ErrorCodes.Transaction.LineItem.TaxAmountCannotBeNegative,
             result.errors.for_object("transaction").for_object("line_items").for_object("index_0").on("tax_amount")[0].code
         )
 
@@ -2045,7 +2075,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_tax_amount")[0].code
         )
 
-    def test_sale_with_line_items_validation_error_unit_tax_amount_must_be_greater_than_zero(self):
+    def test_sale_with_line_items_validation_error_unit_tax_amount_cannot_be_negative(self):
         result = Transaction.sale({
             "amount": "35.05",
             "credit_card": {
@@ -2080,7 +2110,7 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
 
         self.assertEqual(
-            ErrorCodes.Transaction.LineItem.UnitTaxAmountMustBeGreaterThanZero,
+            ErrorCodes.Transaction.LineItem.UnitTaxAmountCannotBeNegative,
             result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_tax_amount")[0].code
         )
 

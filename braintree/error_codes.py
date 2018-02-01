@@ -594,7 +594,8 @@ class ErrorCodes(object):
             DescriptionIsTooLong = "95803"
             DiscountAmountFormatIsInvalid = "95804"
             DiscountAmountIsTooLarge = "95805"
-            DiscountAmountMustBeGreaterThanZero = "95806"
+            DiscountAmountMustBeGreaterThanZero = "95806" # Deprecated as the amount may be zero.
+            DiscountAmountCannotBeNegative = "95806"
             KindIsInvalid = "95807"
             KindIsRequired = "95808"
             NameIsRequired = "95822"
@@ -614,7 +615,8 @@ class ErrorCodes(object):
             UnitOfMeasureIsTooLarge = "95821"
             UnitTaxAmountFormatIsInvalid = "95824"
             UnitTaxAmountIsTooLarge = "95825"
-            UnitTaxAmountMustBeGreaterThanZero = "95826"
+            UnitTaxAmountMustBeGreaterThanZero = "95826" # Deprecated as the amount may be zero.
+            UnitTaxAmountCannotBeNegative = "95826"
             TaxAmountFormatIsInvalid = "95827"
             TaxAmountIsTooLarge = "95828"
-            TaxAmountMustBeGreaterThanZero = "95829"
+            TaxAmountCannotBeNegative = "95829"
