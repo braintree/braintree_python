@@ -22,6 +22,10 @@ class WebhookNotificationGateway(object):
         self.config = gateway.config
 
     def parse(self, signature, payload):
+        if signature is None:
+            raise InvalidSignatureError("signature cannot be blank")
+        if payload is None:
+            raise InvalidSignatureError("payload cannot be blank")
         if isinstance(payload, text_type):
             payload = payload.encode('ascii')
         if re.search(b"[^A-Za-z0-9+=/\n]", payload):

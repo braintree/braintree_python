@@ -70,7 +70,23 @@ class TestWebhooks(unittest.TestCase):
         else:
             self.assertFalse("raises exception")
 
-    def test_invalid_signature_when_contains_invalid_characters(self):
+    def test_parse_raise_exception_if_signature_is_blank(self):
+        try:
+            WebhookNotification.parse(None, "payload")
+        except InvalidSignatureError as e:
+            self.assertEqual("signature cannot be blank", str(e))
+        else:
+            self.assertFalse("raises exception")
+
+    def test_parse_raise_exception_if_payload_is_blank(self):
+        try:
+            WebhookNotification.parse("signature", None)
+        except InvalidSignatureError as e:
+            self.assertEqual("payload cannot be blank", str(e))
+        else:
+            self.assertFalse("raises exception")
+
+    def test_invalid_signature_when_bontains_invalid_characters(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
