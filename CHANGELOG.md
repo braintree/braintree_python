@@ -376,7 +376,7 @@
 ## 2.10.1
 
 * Enabled gzip encoding for HTTP requests
-* Fixed handling of long integers when generating xml (thanks [glencoates](http://github.com/glencoates))
+* Fixed handling of long integers when generating xml (thanks [glencoates](https://github.com/glencoates))
 * Added new error code
 
 ## 2.10.0
@@ -448,12 +448,12 @@
 
 ## 2.4.1
 
-* Added support for M2Crypto version 0.20.1, which is the default for Ubuntu Lucid (thanks [foresto](http://github.com/foresto))
+* Added support for M2Crypto version 0.20.1, which is the default for Ubuntu Lucid (thanks [foresto](https://github.com/foresto))
 
 ## 2.4.0
 
 * Added unified message to ErrorResult
-* Added ability to specify country using country_name, country_code_alpha2, country_code_alpha3, or country_code_numeric (see [ISO_3166-1](http://en.wikipedia.org/wiki/ISO_3166-1))
+* Added ability to specify country using country_name, country_code_alpha2, country_code_alpha3, or country_code_numeric (see [ISO_3166-1](https://en.wikipedia.org/wiki/ISO_3166-1))
 * Renamed Subscription retryCharge to retry_charge
 * Added gateway_rejection_reason to Transaction and Verification
 * Allow searching with date objects (in addition to datetime)
@@ -471,7 +471,7 @@
 
 ## 2.2.1
 
-* Use isinstance instead of type to cater to inheritance (thanks [danielgtaylor](http://github.com/danielgtaylor))
+* Use isinstance instead of type to cater to inheritance (thanks [danielgtaylor](https://github.com/danielgtaylor))
 
 ## 2.2.0
 
