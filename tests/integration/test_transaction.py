@@ -1023,6 +1023,20 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(venmo_account_details.username, "venmojoe")
         self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
 
+    def test_sale_with_fake_venmo_account_nonce_and_profile_id(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.VenmoAccount,
+            "merchant_account_id": TestHelper.fake_venmo_account_merchant_account_id,
+            "options": {
+                "venmo": {
+                    "profile_id": "integration_venmo_merchant_public_id",
+                    },
+                },
+            })
+
+        self.assertTrue(result.is_success)
+
     def test_sale_with_advanced_fraud_checking_skipped(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

@@ -579,6 +579,9 @@ class Transaction(Resource):
                             "originating_merchant_id",
                             "originating_merchant_kind"
                         ],
+                        "venmo": [
+                            "profile_id"
+                        ],
                     },
                     {
                         "adyen": [

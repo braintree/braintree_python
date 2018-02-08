@@ -4,6 +4,7 @@
 * Add support for `tax_amount` field on transaction `line_items`
 * Add support for `source_merchant_id` on webhooks
 * Add `find_all` static method to `TransactionLineItem` class
+* Add support for `profile_id` in Transaction#create options for VenmoAccounts
 
 ## 3.40.0
 * Add level 3 fields to Transactions:
