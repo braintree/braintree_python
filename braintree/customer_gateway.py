@@ -29,11 +29,16 @@ class CustomerGateway(object):
         self.config.http().delete(self.config.base_merchant_path() + "/customers/" + customer_id)
         return SuccessfulResult()
 
-    def find(self, customer_id):
+    def find(self, customer_id, association_filter_id=None):
         try:
             if customer_id is None or customer_id.strip() == "":
                 raise NotFoundError()
-            response = self.config.http().get(self.config.base_merchant_path() + "/customers/" + customer_id)
+
+            query_params = ""
+            if association_filter_id:
+                query_params = "?association_filter_id=" + association_filter_id
+
+            response = self.config.http().get(self.config.base_merchant_path() + "/customers/" + customer_id + query_params)
             return Customer(self.gateway, response["customer"])
         except NotFoundError:
             raise NotFoundError("customer with id " + repr(customer_id) + " not found")

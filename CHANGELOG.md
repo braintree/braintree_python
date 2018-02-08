@@ -1,3 +1,6 @@
+## Unreleased
+* Add support for `association_filter_id` in `Customer#find`
+
 ## 3.41.0
 * Deprecated `LineItem/DiscountAmountMustBeGreaterThanZero` error in favor of `DiscountAmountCannotBeNegative`
 * Deprecated `LineItem/UnitTaxAmountMustBeGreaterThanZero` error in favor of `UnitTaxAmountCannotBeNegative`
