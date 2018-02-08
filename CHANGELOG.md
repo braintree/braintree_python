@@ -3,6 +3,7 @@
 * Deprecated LineItem/UnitTaxAmountMustBeGreaterThanZero error in favor of UnitTaxAmountCannotBeNegative.
 * Add support for tax_amount field on transaction line_items
 * Add support for `source_merchant_id` on webhooks
+* Add `find_all` static method to TransactionLineItem class
 
 ## 3.40.0
 * Add level 3 fields to Transactions:
