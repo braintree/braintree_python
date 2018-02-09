@@ -46,17 +46,7 @@ class CreditCardGateway(object):
             raise NotFoundError("payment method with token " + repr(credit_card_token) + " not found")
 
     def forward(self, credit_card_token, receiving_merchant_id):
-        forwardParams = {
-            "payment_method": {
-                "payment_method_token": credit_card_token,
-                "receiving_merchant_id": receiving_merchant_id
-            }
-        }
-        response = self.config.http().post(self.config.base_merchant_path() + "/payment_methods/forward", forwardParams)
-        if "payment_method_nonce" in response:
-            return SuccessfulResult({"nonce": response["payment_method_nonce"]["nonce"]})
-        elif "api_error_response" in response:
-            return ErrorResult(self.gateway, response["api_error_response"])
+        raise NotFoundError("This method of forwarding payment methods is no longer supported. Please consider the Grant API for similar functionality.")
 
     def from_nonce(self, nonce):
         try:

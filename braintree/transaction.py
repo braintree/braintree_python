@@ -603,7 +603,7 @@ class Transaction(Resource):
                 },
             {"line_items":
                 [
-                    "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "unit_of_measure", "product_code", "commodity_code", "url",
+                    "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",
                 ]
             },
         ]

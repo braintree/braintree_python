@@ -1161,7 +1161,7 @@ class CreditCardForwardingTest(unittest.TestCase):
             "integration_private_key"
         )
 
-    def test_forward(self):
+    def test_forward_raises_exception(self):
         customer = Customer.create().customer
         credit_card_result = CreditCard.create({
             "customer_id": customer.id,
@@ -1171,29 +1171,7 @@ class CreditCardForwardingTest(unittest.TestCase):
         self.assertTrue(credit_card_result.is_success)
         source_merchant_card = credit_card_result.credit_card
 
-        forward_result = CreditCard.forward(
-            source_merchant_card.token,
-            "integration_merchant_id"
-        )
-        self.assertTrue(forward_result.is_success)
-
-        braintree.Configuration.configure(
-            braintree.Environment.Development,
-            "integration_merchant_id",
-            "integration_public_key",
-            "integration_private_key"
-        )
-        customer = Customer.create().customer
-        credit_card_result = CreditCard.create({
-            "customer_id": customer.id,
-            "payment_method_nonce": forward_result.nonce
-        })
-        self.assertTrue(credit_card_result.is_success)
-        receiving_merchant_card = credit_card_result.credit_card
-        self.assertEqual(source_merchant_card.bin, receiving_merchant_card.bin)
-        self.assertEqual(source_merchant_card.last_4, receiving_merchant_card.last_4)
-        self.assertEqual(source_merchant_card.expiration_month, receiving_merchant_card.expiration_month)
-        self.assertEqual(source_merchant_card.expiration_year, receiving_merchant_card.expiration_year)
+        self.assertRaises(NotFoundError, CreditCard.forward, source_merchant_card.token, "integration_merchant_id")
 
     def test_forward_invalid_token_raises_exception(self):
         self.assertRaises(NotFoundError, CreditCard.forward, "invalid", "integration_merchant_id")
