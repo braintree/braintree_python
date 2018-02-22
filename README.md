@@ -37,14 +37,16 @@ instructions above for upgrading from pycurl / httplib to requests.
 
     import braintree
 
-    braintree.Configuration.configure(
-        braintree.Environment.Sandbox,
-        "your_merchant_id",
-        "your_public_key",
-        "your_private_key"
+    gateway = braintree.BraintreeGateway(
+        braintree.Configuration(
+            environment=braintree.Environment.Sandbox
+            merchant_id="your_merchant_id",
+            public_key="your_public_key",
+            private_key="your_private_key",
+        )
     )
 
-    result = braintree.Transaction.sale({
+    result = gateway.transaction.sale({
         "amount": "1000.00",
         "payment_method_nonce": nonce_from_the_client,
         "options": {
