@@ -270,51 +270,6 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
         self.assertEqual(transaction.id, collection.first.id)
 
-    def test_advanced_search_with_payment_instrument_type_is_europe(self):
-        old_merchant_id = Configuration.merchant_id
-        old_public_key = Configuration.public_key
-        old_private_key = Configuration.private_key
-
-        try:
-            Configuration.merchant_id = "altpay_merchant"
-            Configuration.public_key = "altpay_merchant_public_key"
-            Configuration.private_key = "altpay_merchant_private_key"
-            customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
-            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-            config = Configuration.instantiate()
-            client_api = ClientApiHttp(config, {
-                "authorization_fingerprint": authorization_fingerprint,
-                "shared_customer_identifier": "fake_identifier",
-                "shared_customer_identifier_type": "testing"
-            })
-
-            nonce = client_api.get_europe_bank_account_nonce({
-                "locale": "de-DE",
-                "bic": "DEUTDEFF",
-                "iban": "DE89370400440532013000",
-                "accountHolderName": "Baron Von Holder",
-                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
-            })
-
-            transaction = Transaction.sale({
-                "merchant_account_id": "fake_sepa_ma",
-                "amount": "10.00",
-                "payment_method_nonce": nonce
-            }).transaction
-
-            collection = Transaction.search(
-                TransactionSearch.id == transaction.id,
-                TransactionSearch.payment_instrument_type == "EuropeBankAccountDetail"
-            )
-
-            self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.EuropeBankAccount)
-            self.assertEqual(transaction.id, collection.first.id)
-        finally:
-            Configuration.merchant_id = old_merchant_id
-            Configuration.public_key = old_public_key
-            Configuration.private_key = old_private_key
-
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1543,50 +1498,6 @@ class TestTransactionSearch(unittest.TestCase):
         ])
         self.assertEqual(1, collection.maximum_size)
         self.assertEqual(transaction.id, collection.first.id)
-
-    def test_advanced_search_can_search_on_sepa_iban(self):
-        old_merchant_id = Configuration.merchant_id
-        old_public_key = Configuration.public_key
-        old_private_key = Configuration.private_key
-
-        try:
-            Configuration.merchant_id = "altpay_merchant"
-            Configuration.public_key = "altpay_merchant_public_key"
-            Configuration.private_key = "altpay_merchant_private_key"
-            customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
-            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-            config = Configuration.instantiate()
-            client_api = ClientApiHttp(config, {
-                "authorization_fingerprint": authorization_fingerprint,
-                "shared_customer_identifier": "fake_identifier",
-                "shared_customer_identifier_type": "testing"
-            })
-            nonce = client_api.get_europe_bank_account_nonce({
-                "locale": "de-DE",
-                "bic": "DEUTDEFF",
-                "iban": "DE89370400440532013000",
-                "accountHolderName": "Baron Von Holder",
-                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
-            })
-
-            result = Transaction.sale({
-                "merchant_account_id": "fake_sepa_ma",
-                "amount": "10.00",
-                "payment_method_nonce": nonce
-            })
-
-            collection = Transaction.search([
-                TransactionSearch.europe_bank_account_iban == "DE89370400440532013000"
-            ])
-            self.assertTrue(collection.maximum_size >= 1)
-            ids = [transaction.id for transaction in collection.items]
-            self.assertIn(result.transaction.id, ids)
-        finally:
-            Configuration.merchant_id = old_merchant_id
-            Configuration.public_key = old_public_key
-            Configuration.private_key = old_private_key
-
 
     @raises(DownForMaintenanceError)
     def test_search_handles_a_search_timeout(self):
