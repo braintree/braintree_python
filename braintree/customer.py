@@ -134,7 +134,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.delete(customer_id)
 
     @staticmethod
-    def find(customer_id):
+    def find(customer_id, association_filter_id=None):
         """
         Find an customer, given a customer_id.  This does not return a result
         object.  This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided customer_id
@@ -143,7 +143,7 @@ class Customer(Resource):
             customer = braintree.Customer.find("my_customer_id")
         """
 
-        return Configuration.gateway().customer.find(customer_id)
+        return Configuration.gateway().customer.find(customer_id, association_filter_id)
 
     @staticmethod
     def search(*query):

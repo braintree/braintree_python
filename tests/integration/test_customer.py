@@ -563,6 +563,72 @@ class TestCustomer(unittest.TestCase):
     def test_find_with_invalid_customer(self):
         Customer.find("badid")
 
+    def test_find_customer_with_all_filterable_associations_filtered_out(self):
+        customer = Customer.create({
+            "custom_fields": {
+                "store_me": "custom value"
+            }
+        }).customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "billing_address": {
+                "street_address": "123 Abc Way",
+                "locality": "Chicago",
+                "region": "Illinois",
+                "postal_code": "60622",
+                "country_name": "United States of America"
+            }
+        }).credit_card
+        subscription_id = "id_" + str(random.randint(1, 1000000))
+        subscription = Subscription.create({
+            "id": subscription_id,
+            "plan_id": "integration_trialless_plan",
+            "payment_method_token": credit_card.token,
+            "price": Decimal("1.00")
+        }).subscription
+
+        found_customer = Customer.find(customer.id, "customernoassociations")
+        self.assertEqual(len(found_customer.credit_cards), 0)
+        self.assertEqual(len(found_customer.payment_methods), 0)
+        self.assertEqual(len(found_customer.addresses), 0)
+        self.assertEqual(len(found_customer.custom_fields), 0)
+
+    def test_find_customer_with_nested_filterable_associations_filtered_out(self):
+        customer = Customer.create({
+            "custom_fields": {
+                "store_me": "custom value"
+            }
+        }).customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "billing_address": {
+                "street_address": "123 Abc Way",
+                "locality": "Chicago",
+                "region": "Illinois",
+                "postal_code": "60622",
+                "country_name": "United States of America"
+            }
+        }).credit_card
+        subscription_id = "id_" + str(random.randint(1, 1000000))
+        subscription = Subscription.create({
+            "id": subscription_id,
+            "plan_id": "integration_trialless_plan",
+            "payment_method_token": credit_card.token,
+            "price": Decimal("1.00")
+        }).subscription
+
+        found_customer = Customer.find(customer.id, "customertoplevelassociations")
+        self.assertEqual(len(found_customer.credit_cards), 1)
+        self.assertEqual(len(found_customer.credit_cards[0].subscriptions), 0)
+        self.assertEqual(len(found_customer.payment_methods), 1)
+        self.assertEqual(len(found_customer.payment_methods[0].subscriptions), 0)
+        self.assertEqual(len(found_customer.addresses), 1)
+        self.assertEqual(len(found_customer.custom_fields), 1)
+
     def test_update_with_valid_options(self):
         customer = Customer.create({
             "first_name": "Joe",
