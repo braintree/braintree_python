@@ -4402,48 +4402,6 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
-    def test_europe_bank_account_details(self):
-        old_merchant_id = Configuration.merchant_id
-        old_public_key = Configuration.public_key
-        old_private_key = Configuration.private_key
-
-        try:
-            Configuration.merchant_id = "altpay_merchant"
-            Configuration.public_key = "altpay_merchant_public_key"
-            Configuration.private_key = "altpay_merchant_private_key"
-            customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
-            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-            config = Configuration.instantiate()
-            client_api = ClientApiHttp(config, {
-                "authorization_fingerprint": authorization_fingerprint,
-                "shared_customer_identifier": "fake_identifier",
-                "shared_customer_identifier_type": "testing"
-            })
-            nonce = client_api.get_europe_bank_account_nonce({
-                "locale": "de-DE",
-                "bic": "DEUTDEFF",
-                "iban": "DE89370400440532013000",
-                "accountHolderName": "Baron Von Holder",
-                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
-            })
-            result = Transaction.sale({
-                "merchant_account_id": "fake_sepa_ma",
-                "amount": "10.00",
-                "payment_method_nonce": nonce
-            })
-            self.assertTrue(result.is_success)
-            europe_bank_account_details = result.transaction.europe_bank_account_details
-            self.assertEqual(europe_bank_account_details.bic, "DEUTDEFF")
-            self.assertEqual(europe_bank_account_details.account_holder_name, "Baron Von Holder")
-            self.assertEqual(europe_bank_account_details.masked_iban[-4:], "3000")
-            self.assertNotEqual(europe_bank_account_details.image_url, None)
-            self.assertEqual(PaymentInstrumentType.EuropeBankAccount, result.transaction.payment_instrument_type)
-        finally:
-            Configuration.merchant_id = old_merchant_id
-            Configuration.public_key = old_public_key
-            Configuration.private_key = old_private_key
-
     def test_us_bank_account_nonce_transactions(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
