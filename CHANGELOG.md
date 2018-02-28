@@ -1,4 +1,4 @@
-## Unreleased
+## 3.42.0
 * Add support for `association_filter_id` in `Customer#find`
 
 ## 3.41.0
