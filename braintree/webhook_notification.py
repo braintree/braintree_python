@@ -4,6 +4,7 @@ from braintree.subscription import Subscription
 from braintree.merchant_account import MerchantAccount
 from braintree.transaction import Transaction
 from braintree.partner_merchant import PartnerMerchant
+from braintree.oauth_access_revocation import OAuthAccessRevocation
 from braintree.disbursement import Disbursement
 from braintree.dispute import Dispute
 from braintree.account_updater_daily_report import AccountUpdaterDailyReport
@@ -23,6 +24,7 @@ class WebhookNotification(Resource):
         PartnerMerchantConnected = "partner_merchant_connected"
         PartnerMerchantDisconnected = "partner_merchant_disconnected"
         PartnerMerchantDeclined = "partner_merchant_declined"
+        OAuthAccessRevoked = "oauth_access_revoked"
         SubscriptionCanceled = "subscription_canceled"
         SubscriptionChargedSuccessfully = "subscription_charged_successfully"
         SubscriptionChargedUnsuccessfully = "subscription_charged_unsuccessfully"
@@ -75,6 +77,8 @@ class WebhookNotification(Resource):
             self.connected_merchant_paypal_status_changed = ConnectedMerchantPayPalStatusChanged(gateway, node_wrapper['connected_merchant_paypal_status_changed'])
         elif "partner_merchant" in node_wrapper:
             self.partner_merchant = PartnerMerchant(gateway, node_wrapper['partner_merchant'])
+        elif "oauth_application_revocation" in node_wrapper:
+            self.oauth_access_revocation = OAuthAccessRevocation(node_wrapper["oauth_application_revocation"])
         elif "disbursement" in node_wrapper:
             self.disbursement = Disbursement(gateway, node_wrapper['disbursement'])
         elif "dispute" in node_wrapper:

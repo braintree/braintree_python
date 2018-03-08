@@ -1,3 +1,6 @@
+## Unreleased
+* Add `oauth_access_revocation` to `WebhookNotification`s
+
 ## 3.42.0
 * Add support for `association_filter_id` in `Customer#find`
 
