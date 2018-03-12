@@ -317,6 +317,13 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertRegexpMatches(venmo_account.image_url, r"\.png")
         self.assertEqual(customer_id, venmo_account.customer_id)
 
+    def test_payment_method_create_with_europe_bank_account_nonce_raises(self):
+        customer_id = Customer.create().customer.id
+        self.assertRaises(ServerError, PaymentMethod.create, {
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.Europe,
+        })
+
     def test_create_with_us_bank_account_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
