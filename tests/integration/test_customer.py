@@ -483,7 +483,7 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertTrue(result.customer.credit_cards[0].venmo_sdk)
+        self.assertFalse(result.customer.credit_cards[0].venmo_sdk)
 
     def test_create_with_venmo_sdk_payment_method_code(self):
         result = Customer.create({
