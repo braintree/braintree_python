@@ -6,6 +6,7 @@ import sys
 import unittest
 import warnings
 import subprocess
+import time
 
 if sys.version_info[0] == 2:
     from urllib import urlencode, quote_plus
@@ -26,6 +27,7 @@ from nose.tools import raises
 
 from braintree import *
 from braintree.exceptions import *
+from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 from braintree.testing_gateway import *
 from braintree.util import *
@@ -298,6 +300,33 @@ class TestHelper(object):
         url = gateway.config.base_merchant_path() + "/three_d_secure/create_nonce/" + TestHelper.three_d_secure_merchant_account_id
         response = gateway.config.http().post(url, params)
         return response["payment_method_nonce"]["nonce"]
+
+    @staticmethod
+    def create_disputed_transaction():
+        if hasattr(TestHelper, 'disputed_transaction'):
+            return TestHelper.disputed_transaction
+
+        disputed_transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": CreditCardNumbers.Disputes.Chargeback,
+                "expiration_date": "04/2018"
+                }
+            })
+
+        for _ in range(1, 60):
+            transactions = Transaction.search([
+                TransactionSearch.id == disputed_transaction.transaction.id,
+                TransactionSearch.dispute_date == datetime.today()
+            ])
+
+            if transactions.maximum_size == 1:
+                TestHelper.disputed_transaction = transactions.first
+                return TestHelper.disputed_transaction
+            else:
+                time.sleep(1)
+
+        raise(ValueError, 'Disputed transaction could not be found')
 
     @staticmethod
     def create_grant(gateway, params):
