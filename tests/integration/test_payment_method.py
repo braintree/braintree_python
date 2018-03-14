@@ -321,7 +321,10 @@ class TestPaymentMethod(unittest.TestCase):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "options": {
+                "verification_merchant_account_id": "us_bank_merchant_account"
+            }
         })
 
         self.assertTrue(result.is_success)
@@ -340,7 +343,10 @@ class TestPaymentMethod(unittest.TestCase):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce()
+            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce(),
+            "options": {
+                "verification_merchant_account_id": "us_bank_merchant_account"
+            }
         })
 
         self.assertFalse(result.is_success)

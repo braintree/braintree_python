@@ -196,7 +196,14 @@ class TestCustomer(unittest.TestCase):
         self.assertIsInstance(customer.venmo_accounts[0], VenmoAccount)
 
     def test_create_with_us_bank_account_nonce(self):
-        result = Customer.create({"payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()})
+        result = Customer.create({
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "credit_card": {
+                "options": {
+                    "verification_merchant_account_id": "us_bank_merchant_account"
+                }
+            }
+        })
         self.assertTrue(result.is_success)
 
         customer = result.customer
@@ -549,7 +556,12 @@ class TestCustomer(unittest.TestCase):
 
     def test_find_customer_with_us_bank_account(self):
         customer = Customer.create({
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "credit_card": {
+                "options": {
+                    "verification_merchant_account_id": "us_bank_merchant_account"
+                }
+            }
         }).customer
 
         found_customer = Customer.find(customer.id)
