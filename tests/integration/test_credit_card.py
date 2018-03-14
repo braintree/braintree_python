@@ -402,7 +402,7 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEqual("411111", result.credit_card.bin)
-        self.assertTrue(result.credit_card.venmo_sdk)
+        self.assertFalse(result.credit_card.venmo_sdk)
 
     def test_create_with_invalid_venmo_sdk_payment_method_code(self):
         customer = Customer.create().customer
@@ -458,7 +458,7 @@ class TestCreditCard(unittest.TestCase):
             }
         })
         self.assertTrue(result.is_success)
-        self.assertTrue(result.credit_card.venmo_sdk)
+        self.assertFalse(result.credit_card.venmo_sdk)
 
     def test_create_with_invalid_venmo_sdk_session(self):
         customer = Customer.create().customer
