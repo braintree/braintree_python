@@ -66,11 +66,13 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(PayPalAccount, created_account.__class__)
         self.assertEqual("bt_buyer_us@paypal.com", created_account.email)
         self.assertNotEqual(created_account.image_url, None)
+        self.assertNotEqual(created_account.payer_id, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
+        self.assertEqual(created_account.payer_id, found_account.payer_id)
 
     def test_create_with_paypal_refresh_token(self):
         customer_id = Customer.create().customer.id
@@ -83,12 +85,14 @@ class TestPaymentMethod(unittest.TestCase):
         created_account = result.payment_method
         self.assertEqual(PayPalAccount, created_account.__class__)
         self.assertEqual("B_FAKE_ID", created_account.billing_agreement_id)
+        self.assertNotEqual(created_account.payer_id, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
         self.assertEqual(created_account.billing_agreement_id, found_account.billing_agreement_id)
+        self.assertEqual(created_account.payer_id, found_account.payer_id)
 
     def test_create_with_paypal_refresh_token_without_upgrade(self):
         customer_id = Customer.create().customer.id
