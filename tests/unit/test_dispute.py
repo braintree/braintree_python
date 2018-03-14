@@ -57,6 +57,7 @@ class TestDispute(unittest.TestCase):
             "url": None,
         }],
         "status_history": [{
+            "disbursement_date": "2013-04-11",
             "effective_date": "2013-04-10",
             "status": "open",
             "timestamp": datetime(2013, 4, 10, 10, 50, 39),
@@ -126,6 +127,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.evidence[1].id, "evidence2")
         self.assertEqual(dispute.evidence[1].sent_to_processor_at, "2009-04-11")
         self.assertIsNone(dispute.evidence[1].url)
+        self.assertEqual(dispute.status_history[0].disbursement_date, "2013-04-11")
         self.assertEqual(dispute.status_history[0].effective_date, "2013-04-10")
         self.assertEqual(dispute.status_history[0].status, "open")
         self.assertEqual(dispute.status_history[0].timestamp, datetime(2013, 4, 10, 10, 50, 39))

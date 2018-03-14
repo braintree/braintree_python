@@ -1,5 +1,6 @@
 ## Unreleased
 * Add `oauth_access_revocation` to `WebhookNotification`s
+* Add support for `customer_id`, `disbursement_date` and `history_event_effective_date` in DisputeSearch
 
 ## 3.42.0
 * Add support for `association_filter_id` in `Customer#find`
