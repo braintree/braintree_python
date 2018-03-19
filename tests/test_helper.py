@@ -326,7 +326,7 @@ class TestHelper(object):
             else:
                 time.sleep(1)
 
-        raise(ValueError, 'Disputed transaction could not be found')
+        raise ValueError('Disputed transaction could not be found')
 
     @staticmethod
     def create_grant(gateway, params):
