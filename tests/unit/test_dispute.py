@@ -189,9 +189,9 @@ class TestDispute(unittest.TestCase):
     def test_add_text_evidence_sequence_number_not_number_evidence_raises_value_exception(self):
         Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "1abc" })
 
-    @raises_with_regexp(ValueError, "tag must be a string")
-    def test_add_text_evidence_tag_is_number_evidence_raises_value_exception(self):
-        Dispute.add_text_evidence("dispute_id", { "content": "content", "tag": 5 })
+    @raises_with_regexp(ValueError, "category must be a string")
+    def test_add_text_evidence_category_is_number_evidence_raises_value_exception(self):
+        Dispute.add_text_evidence("dispute_id", { "content": "content", "category": 5 })
 
     @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_add_file_evidence_empty_id_raises_not_found_exception(self):
@@ -208,6 +208,14 @@ class TestDispute(unittest.TestCase):
     @raises_with_regexp(ValueError, "document_id cannot be blank")
     def test_add_file_evidence_none_evidence_raises_value_exception(self):
         Dispute.add_file_evidence("dispute_id", None)
+
+    @raises_with_regexp(ValueError, "category must be a string")
+    def test_add_file_evidence_categorized_document_id_must_be_a_string(self):
+        Dispute.add_file_evidence("dispute_id", { "document_id": "213", "category": 5 })
+
+    @raises_with_regexp(ValueError, "document_id cannot be blank")
+    def test_add_file_evidence_empty_categorized_evidence_raises_value_exception(self):
+        Dispute.add_file_evidence("dispute_id", { "category": "DEVICE_ID" })
 
     @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_finalize_none_raises_not_found_exception(self):
