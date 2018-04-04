@@ -66,11 +66,13 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(PayPalAccount, created_account.__class__)
         self.assertEqual("bt_buyer_us@paypal.com", created_account.email)
         self.assertNotEqual(created_account.image_url, None)
+        self.assertNotEqual(created_account.payer_id, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
+        self.assertEqual(created_account.payer_id, found_account.payer_id)
 
     def test_create_with_paypal_refresh_token(self):
         customer_id = Customer.create().customer.id
@@ -83,12 +85,14 @@ class TestPaymentMethod(unittest.TestCase):
         created_account = result.payment_method
         self.assertEqual(PayPalAccount, created_account.__class__)
         self.assertEqual("B_FAKE_ID", created_account.billing_agreement_id)
+        self.assertNotEqual(created_account.payer_id, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
         self.assertEqual(created_account.token, found_account.token)
         self.assertEqual(created_account.customer_id, found_account.customer_id)
         self.assertEqual(created_account.billing_agreement_id, found_account.billing_agreement_id)
+        self.assertEqual(created_account.payer_id, found_account.payer_id)
 
     def test_create_with_paypal_refresh_token_without_upgrade(self):
         customer_id = Customer.create().customer.id
@@ -198,39 +202,6 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, found_credit_card)
         self.assertEqual(found_credit_card.token, created_credit_card.token)
         self.assertEqual(found_credit_card.customer_id, created_credit_card.customer_id)
-
-    def test_create_with_europe_bank_account_nonce(self):
-        config = Configuration.instantiate()
-        customer_id = Customer.create().customer.id
-        token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
-        authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-        client_api = ClientApiHttp(config, {
-            "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifier": "fake_identifier",
-            "shared_customer_identifier_type": "testing"
-        })
-        nonce = client_api.get_europe_bank_account_nonce({
-            "locale": "de-DE",
-            "bic": "DEUTDEFF",
-            "iban": "DE89370400440532013000",
-            "accountHolderName": "Baron Von Holder",
-            "billingAddress": {"region": "Hesse", "country_name": "Germany"}
-        })
-
-        self.assertNotEqual(nonce, None)
-        result = PaymentMethod.create({
-            "customer_id": customer_id,
-            "payment_method_nonce": nonce
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertNotEqual(result.payment_method.image_url, None)
-        self.assertEqual(customer_id, result.payment_method.customer_id)
-        found_bank_account = PaymentMethod.find(result.payment_method.token)
-
-        self.assertNotEqual(found_bank_account, None)
-        self.assertEqual("DEUTDEFF", found_bank_account.bic)
-        self.assertEqual(EuropeBankAccount, found_bank_account.__class__)
 
     def test_create_with_fake_apple_pay_nonce(self):
         customer_id = Customer.create().customer.id
@@ -350,11 +321,21 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertRegexpMatches(venmo_account.image_url, r"\.png")
         self.assertEqual(customer_id, venmo_account.customer_id)
 
+    def test_payment_method_create_with_europe_bank_account_nonce_raises(self):
+        customer_id = Customer.create().customer.id
+        self.assertRaises(ServerError, PaymentMethod.create, {
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.Europe,
+        })
+
     def test_create_with_us_bank_account_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce()
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "options": {
+                "verification_merchant_account_id": "us_bank_merchant_account"
+            }
         })
 
         self.assertTrue(result.is_success)
@@ -373,7 +354,10 @@ class TestPaymentMethod(unittest.TestCase):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce()
+            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce(),
+            "options": {
+                "verification_merchant_account_id": "us_bank_merchant_account"
+            }
         })
 
         self.assertFalse(result.is_success)

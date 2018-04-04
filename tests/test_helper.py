@@ -6,6 +6,7 @@ import sys
 import unittest
 import warnings
 import subprocess
+import time
 
 if sys.version_info[0] == 2:
     from urllib import urlencode, quote_plus
@@ -26,6 +27,7 @@ from nose.tools import raises
 
 from braintree import *
 from braintree.exceptions import *
+from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 from braintree.testing_gateway import *
 from braintree.util import *
@@ -300,6 +302,33 @@ class TestHelper(object):
         return response["payment_method_nonce"]["nonce"]
 
     @staticmethod
+    def create_disputed_transaction():
+        if hasattr(TestHelper, 'disputed_transaction'):
+            return TestHelper.disputed_transaction
+
+        disputed_transaction = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": CreditCardNumbers.Disputes.Chargeback,
+                "expiration_date": "04/2018"
+                }
+            })
+
+        for _ in range(1, 60):
+            transactions = Transaction.search([
+                TransactionSearch.id == disputed_transaction.transaction.id,
+                TransactionSearch.dispute_date == datetime.today()
+            ])
+
+            if transactions.maximum_size == 1:
+                TestHelper.disputed_transaction = transactions.first
+                return TestHelper.disputed_transaction
+            else:
+                time.sleep(1)
+
+        raise ValueError('Disputed transaction could not be found')
+
+    @staticmethod
     def create_grant(gateway, params):
         config = gateway.config
         response = config.http().post("/oauth_testing/grants", {
@@ -445,21 +474,6 @@ class ClientApiHttp(Http):
             nonce = json.loads(response)["creditCards"][0]["nonce"]
 
         return [status_code, nonce]
-
-    def get_europe_bank_account_nonce(self, europe_bank_account_params):
-        params = {"sepa_mandate": europe_bank_account_params}
-        url = "/merchants/%s/client_api/v1/sepa_mandates" % self.config.merchant_id
-        if 'authorization_fingerprint' in self.options:
-            params['authorizationFingerprint'] = self.options['authorization_fingerprint']
-
-        status_code, response = self.post(url, params)
-        json_body = json.loads(response)
-
-        nonce = None
-        if status_code == 201:
-            nonce = json_body["europeBankAccounts"][0]["nonce"]
-
-        return nonce
 
     def __headers(self):
         return {

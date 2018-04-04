@@ -367,6 +367,18 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("abc123", notification.partner_merchant.partner_merchant_id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
+    def test_builds_notification_for_oauth_access_revoked(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.OAuthAccessRevoked,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+
+        self.assertEqual(WebhookNotification.Kind.OAuthAccessRevoked, notification.kind)
+        self.assertEqual("abc123", notification.oauth_access_revocation.merchant_id)
+        self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
+
     def test_builds_notification_for_connected_merchant_status_transitioned(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.ConnectedMerchantStatusTransitioned,

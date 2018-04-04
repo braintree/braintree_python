@@ -57,6 +57,15 @@ class TestDisputes(unittest.TestCase):
 
         self.assertEqual(updated_dispute.evidence[0].id, result.evidence.id)
 
+    def test_add_file_evidence_adds_category_file_evidence(self):
+        dispute = self.create_sample_dispute()
+        document = self.create_evidence_document()
+
+        result = Dispute.add_file_evidence(dispute.id, { "document_id": document.id, "category": "GENERAL" })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.evidence.category, "GENERAL")
+
     @raises_with_regexp(NotFoundError, "dispute with id 'unknown_dispute_id' not found")
     def test_add_file_evidence_raises_error_when_dispute_not_found(self):
         dispute = Dispute.add_file_evidence("unknown_dispute_id", "text evidence")
@@ -73,6 +82,26 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAddEvidenceToOpenDispute)
         self.assertEqual(result.errors.for_object("dispute")[0].message, "Evidence can only be attached to disputes that are in an Open state")
 
+    def test_categorized_file_evidence_for_text_only_category(self):
+        dispute = self.create_sample_dispute()
+        document = self.create_evidence_document()
+
+        result = Dispute.add_file_evidence(dispute.id, { "document_id": document.id, "category": "DEVICE_ID" })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.EvidenceCategoryTextOnly)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "Only text evidence can be provided for this category")
+
+    def test_categorized_file_evidence_with_unsupported_category(self):
+        dispute = self.create_sample_dispute()
+        document = self.create_evidence_document()
+
+        result = Dispute.add_file_evidence(dispute.id, { "document_id": document.id, "category": "DOESNOTEXIST" })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyCreateEvidenceWithValidCategory)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "The category you supplied on the evidence record is not valid")
+
     def test_add_text_evidence_adds_text_evidence(self):
         dispute = self.create_sample_dispute()
 
@@ -85,7 +114,7 @@ class TestDisputes(unittest.TestCase):
         self.assertTrue(re.match("^\w{16,}$", evidence.id))
         self.assertIsNone(evidence.sent_to_processor_at)
         self.assertIsNone(evidence.url)
-        self.assertIsNone(evidence.tag)
+        self.assertIsNone(evidence.category)
         self.assertIsNone(evidence.sequence_number)
 
     def test_add_text_evidence_adds_tag_and_sequence_number_text_evidence(self):
@@ -113,6 +142,16 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(evidence.tag, "TRACKING_NUMBER")
         self.assertEqual(evidence.sequence_number, 0)
 
+    def test_add_text_evidence_adds_category_text_evidence(self):
+        dispute = self.create_sample_dispute()
+
+        result = Dispute.add_text_evidence(dispute.id, { "content": "device id" , "category": "DEVICE_ID" })
+
+        self.assertTrue(result.is_success)
+        evidence = result.evidence
+        self.assertEqual(evidence.comment, "device id")
+        self.assertEqual(evidence.category, "DEVICE_ID")
+
     @raises_with_regexp(NotFoundError, "Dispute with ID 'unknown_dispute_id' not found")
     def test_add_text_evidence_raises_error_when_dispute_not_found(self):
         dispute = Dispute.add_text_evidence("unknown_dispute_id", "text evidence")
@@ -137,6 +176,36 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(refreshed_dispute.evidence[0].id, evidence.id)
         self.assertEqual(refreshed_dispute.evidence[0].comment, "text evidence")
 
+    def test_categorized_text_evidence_with_unsupported_category(self):
+        dispute = self.create_sample_dispute()
+        result = Dispute.add_text_evidence(dispute.id, { "content": "evidence", "category": "DOESNOTEXIST" })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyCreateEvidenceWithValidCategory)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "The category you supplied on the evidence record is not valid")
+
+    def test_categorized_text_evidence_with_file_category(self):
+        dispute = self.create_sample_dispute()
+        result = Dispute.add_text_evidence(dispute.id, { "content": "evidence", "category": "MERCHANT_WEBSITE_OR_APP_ACCESS" })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.EvidenceCategoryDocumentOnly)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "Only document evidence can be provided for this category")
+
+    def test_categorized_text_evidence_with_invalid_date_time_format(self):
+        dispute = self.create_sample_dispute()
+        result = Dispute.add_text_evidence(dispute.id, { "content": "not a date", "category": "DOWNLOAD_DATE_TIME" })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.EvidenceContentDateInvalid)
+        self.assertEqual(result.errors.for_object("dispute")[0].message, "Categorized evidence for date time categories must be in the format YYYY-MM-DD HH:MM")
+
+    def test_categorized_text_evidence_with_valid_date_time_format(self):
+        dispute = self.create_sample_dispute()
+        result = Dispute.add_text_evidence(dispute.id, { "content": "2018-10-20T18:00:00-0500", "category": "DOWNLOAD_DATE_TIME" })
+
+        self.assertTrue(result.is_success)
+
     def test_finalize_changes_dispute_status_to_disputed(self):
         dispute = self.create_sample_dispute()
 
@@ -154,6 +223,33 @@ class TestDisputes(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyFinalizeOpenDispute)
         self.assertEqual(result.errors.for_object("dispute")[0].message, "Disputes can only be finalized when they are in an Open state")
+
+    def test_finalize_when_digital_goods_missing(self):
+        dispute = self.create_sample_dispute()
+        result = Dispute.add_text_evidence(dispute.id, { "content": "device_id", "category": "DEVICE_ID" })
+
+        self.assertTrue(result.is_success)
+
+        result = dispute.finalize(dispute.id)
+
+        self.assertFalse(result.is_success)
+
+        error_codes = [error.code for error in result.errors.for_object("dispute")]
+        self.assertIn(ErrorCodes.Dispute.DigitalGoodsMissingDownloadDate, error_codes)
+        self.assertIn(ErrorCodes.Dispute.DigitalGoodsMissingEvidence, error_codes)
+
+    def test_finalize_when_missing_non_disputed_payments_date(self):
+        dispute = self.create_sample_dispute()
+        result = Dispute.add_text_evidence(dispute.id, { "content": "123", "category": "PRIOR_NON_DISPUTED_TRANSACTION_ARN" })
+
+        self.assertTrue(result.is_success)
+
+        result = dispute.finalize(dispute.id)
+
+        self.assertFalse(result.is_success)
+
+        error_codes = [error.code for error in result.errors.for_object("dispute")]
+        self.assertIn(ErrorCodes.Dispute.NonDisputedPriorTransactionEvidenceMissingDate, error_codes)
 
     @raises_with_regexp(NotFoundError, "dispute with id 'invalid-id' not found")
     def test_finalize_raises_error_when_dispute_not_found(self):

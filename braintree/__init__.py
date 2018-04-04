@@ -37,6 +37,7 @@ from braintree.ideal_payment import IdealPayment
 from braintree.merchant import Merchant
 from braintree.merchant_account import MerchantAccount
 from braintree.merchant_account_gateway import MerchantAccountGateway
+from braintree.oauth_access_revocation import OAuthAccessRevocation
 from braintree.partner_merchant import PartnerMerchant
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.payment_method import PaymentMethod

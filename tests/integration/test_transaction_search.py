@@ -270,51 +270,6 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
         self.assertEqual(transaction.id, collection.first.id)
 
-    def test_advanced_search_with_payment_instrument_type_is_europe(self):
-        old_merchant_id = Configuration.merchant_id
-        old_public_key = Configuration.public_key
-        old_private_key = Configuration.private_key
-
-        try:
-            Configuration.merchant_id = "altpay_merchant"
-            Configuration.public_key = "altpay_merchant_public_key"
-            Configuration.private_key = "altpay_merchant_private_key"
-            customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
-            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-            config = Configuration.instantiate()
-            client_api = ClientApiHttp(config, {
-                "authorization_fingerprint": authorization_fingerprint,
-                "shared_customer_identifier": "fake_identifier",
-                "shared_customer_identifier_type": "testing"
-            })
-
-            nonce = client_api.get_europe_bank_account_nonce({
-                "locale": "de-DE",
-                "bic": "DEUTDEFF",
-                "iban": "DE89370400440532013000",
-                "accountHolderName": "Baron Von Holder",
-                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
-            })
-
-            transaction = Transaction.sale({
-                "merchant_account_id": "fake_sepa_ma",
-                "amount": "10.00",
-                "payment_method_nonce": nonce
-            }).transaction
-
-            collection = Transaction.search(
-                TransactionSearch.id == transaction.id,
-                TransactionSearch.payment_instrument_type == "EuropeBankAccountDetail"
-            )
-
-            self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.EuropeBankAccount)
-            self.assertEqual(transaction.id, collection.first.id)
-        finally:
-            Configuration.merchant_id = old_merchant_id
-            Configuration.public_key = old_public_key
-            Configuration.private_key = old_private_key
-
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1097,143 +1052,141 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction_id, collection.first.id)
 
     def test_advanced_search_range_node_disputed_date_less_than_or_equal_to(self):
-        transaction_id = "disputedtransaction"
-        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
-        past = disputed_time - timedelta(minutes=10)
+        disputed_transaction_id = TestHelper.create_disputed_transaction().id
+        disputed_time = datetime.now()
+        past = disputed_time - timedelta(days=1)
         future = disputed_time + timedelta(minutes=10)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date <= past
         ])
 
         self.assertEqual(0, collection.maximum_size)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date <= disputed_time
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date <= future
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
     def test_advanced_search_range_node_disputed_date_greater_than_or_equal_to(self):
-        transaction_id = "2disputetransaction"
-        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
+        disputed_transaction_id = TestHelper.create_disputed_transaction().id
+        disputed_time = datetime.now()
         past = disputed_time - timedelta(minutes=10)
         future = disputed_time + timedelta(days=1)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date >= past
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date >= disputed_time
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date >= future
         ])
 
-        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_disputed_date_between(self):
-        transaction_id = "disputedtransaction"
-        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
+        disputed_transaction_id = TestHelper.create_disputed_transaction().id
+        disputed_time = datetime.now()
         past = disputed_time - timedelta(days=1)
         future = disputed_time + timedelta(days=1)
         future2 = disputed_time + timedelta(days=2)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date.between(past, disputed_time)
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date.between(disputed_time, future)
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date.between(past, future)
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date.between(future, future2)
         ])
 
         self.assertEqual(0, collection.maximum_size)
 
     def test_advanced_search_range_node_disputed_date_is(self):
-        transaction_id = "disputedtransaction"
-        disputed_time = datetime(2014, 3, 1, 0, 0, 0)
-        past = disputed_time - timedelta(days=10)
-        now = disputed_time
-        future = disputed_time + timedelta(days=10)
+        disputed_transaction_id = TestHelper.create_disputed_transaction().id
+        disputed_date = datetime.today()
+        past = disputed_date - timedelta(days=10)
+        future = disputed_date + timedelta(days=10)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date == past
         ])
 
         self.assertEqual(0, collection.maximum_size)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
-            TransactionSearch.dispute_date == now
-        ])
-
-        self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
-
-        collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date == future
         ])
 
         self.assertEqual(0, collection.maximum_size)
 
+        collection = Transaction.search([
+            TransactionSearch.id == disputed_transaction_id,
+            TransactionSearch.dispute_date == disputed_date
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+
     def test_advanced_search_range_node_disputed_date_with_dates(self):
-        transaction_id = "disputedtransaction"
-        disputed_date = date(2014, 3, 1)
+        disputed_transaction_id = TestHelper.create_disputed_transaction().id
+        disputed_date = datetime.today()
         past = disputed_date - timedelta(days=1)
         future = disputed_date + timedelta(days=1)
 
         collection = Transaction.search([
-            TransactionSearch.id == transaction_id,
+            TransactionSearch.id == disputed_transaction_id,
             TransactionSearch.dispute_date.between(past, future)
         ])
 
         self.assertEqual(1, collection.maximum_size)
-        self.assertEqual(transaction_id, collection.first.id)
+        self.assertEqual(disputed_transaction_id, collection.first.id)
 
     def test_advanced_search_range_node_authorization_expired_at(self):
         two_days_ago = datetime.today() - timedelta(days=2)
@@ -1544,53 +1497,8 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(1, collection.maximum_size)
         self.assertEqual(transaction.id, collection.first.id)
 
-    def test_advanced_search_can_search_on_sepa_iban(self):
-        old_merchant_id = Configuration.merchant_id
-        old_public_key = Configuration.public_key
-        old_private_key = Configuration.private_key
-
-        try:
-            Configuration.merchant_id = "altpay_merchant"
-            Configuration.public_key = "altpay_merchant_public_key"
-            Configuration.private_key = "altpay_merchant_private_key"
-            customer_id = Customer.create().customer.id
-            token = TestHelper.generate_decoded_client_token({"customer_id": customer_id, "sepa_mandate_type": EuropeBankAccount.MandateType.Business})
-            authorization_fingerprint = json.loads(token)["authorizationFingerprint"]
-            config = Configuration.instantiate()
-            client_api = ClientApiHttp(config, {
-                "authorization_fingerprint": authorization_fingerprint,
-                "shared_customer_identifier": "fake_identifier",
-                "shared_customer_identifier_type": "testing"
-            })
-            nonce = client_api.get_europe_bank_account_nonce({
-                "locale": "de-DE",
-                "bic": "DEUTDEFF",
-                "iban": "DE89370400440532013000",
-                "accountHolderName": "Baron Von Holder",
-                "billingAddress": {"region": "Hesse", "country_name": "Germany"}
-            })
-
-            result = Transaction.sale({
-                "merchant_account_id": "fake_sepa_ma",
-                "amount": "10.00",
-                "payment_method_nonce": nonce
-            })
-
-            collection = Transaction.search([
-                TransactionSearch.europe_bank_account_iban == "DE89370400440532013000"
-            ])
-            self.assertTrue(collection.maximum_size >= 1)
-            ids = [transaction.id for transaction in collection.items]
-            self.assertIn(result.transaction.id, ids)
-        finally:
-            Configuration.merchant_id = old_merchant_id
-            Configuration.public_key = old_public_key
-            Configuration.private_key = old_private_key
-
-
     @raises(DownForMaintenanceError)
     def test_search_handles_a_search_timeout(self):
         Transaction.search([
             TransactionSearch.amount.between("-1100", "1600")
         ])
-

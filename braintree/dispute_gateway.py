@@ -1,5 +1,6 @@
 import braintree
 import re
+import warnings
 from braintree.dispute import Dispute
 from braintree.dispute_details import DisputeEvidence
 from braintree.error_result import ErrorResult
@@ -28,15 +29,24 @@ class DisputeGateway(object):
         except NotFoundError:
             raise NotFoundError("dispute with id " + repr(dispute_id) + " not found")
 
-    def add_file_evidence(self, dispute_id, document_upload_id):
+    def add_file_evidence(self, dispute_id, document_upload_id_or_request):
+        request = document_upload_id_or_request if isinstance(document_upload_id_or_request, dict) else { "document_id": document_upload_id_or_request }
+
         try:
             if dispute_id is None or dispute_id.strip() == "":
                 raise NotFoundError()
-            if document_upload_id is None or document_upload_id.strip() == "":
+
+            if request.get("category") is not None and not isinstance(request["category"], str):
+                raise ValueError("category must be a string")
+
+            if request.get("document_id") is None or request["document_id"].strip() == "":
                 raise ValueError("document_id cannot be blank")
 
             response = self.config.http().post(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence", {
-                "document_upload_id": document_upload_id
+                "evidence": {
+                    "document_upload_id": request.get("document_id"),
+                    "category": request.get("category")
+                    }
             })
 
             if "evidence" in response:
@@ -63,14 +73,19 @@ class DisputeGateway(object):
         except ValueError:
             raise ValueError("sequence_number must be an integer")
 
-        if request.get("tag") is not None and not isinstance(request["tag"], str):
-            raise ValueError("tag must be a string")
+        category = request.get("category", request.get("tag"))
+
+        if "tag" in request.keys():
+            warnings.warn("Please use category instead", DeprecationWarning)
+
+        if category is not None and not isinstance(category, str):
+            raise ValueError("category must be a string")
 
         try:
             response = self.config.http().post(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence", {
                 "evidence": {
                     "comments": request.get("content"),
-                    "category": request.get("tag"),
+                    "category": category,
                     "sequence_number": request.get("sequence_number")
                 }
             })

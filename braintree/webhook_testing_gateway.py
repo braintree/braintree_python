@@ -58,6 +58,8 @@ class WebhookTestingGateway(object):
             return self.__partner_merchant_disconnected_sample_xml()
         elif kind == WebhookNotification.Kind.PartnerMerchantDeclined:
             return self.__partner_merchant_declined_sample_xml()
+        elif kind == WebhookNotification.Kind.OAuthAccessRevoked:
+            return self.__oauth_access_revocation_sample_xml()
         elif kind == WebhookNotification.Kind.DisbursementException:
             return self.__disbursement_exception_sample_xml(id)
         elif kind == WebhookNotification.Kind.Disbursement:
@@ -532,6 +534,13 @@ class WebhookTestingGateway(object):
             <partner-merchant>
                 <partner-merchant-id>abc123</partner-merchant-id>
             </partner-merchant>
+            """
+
+    def __oauth_access_revocation_sample_xml(self):
+        return """
+            <oauth-application-revocation>
+                <merchant-id>abc123</merchant-id>
+            </oauth-application-revocation>
             """
 
     def __account_updater_daily_report_sample_xml(self):

@@ -17,6 +17,11 @@ class TestClientTokenGenerate(unittest.TestCase):
             "customer_id": "i_am_not_a_real_customer"
         })
 
+    def test_raise_error_for_sepa_params(self):
+        self.assertRaises(KeyError, ClientToken.generate, {
+            "sepa_mandate_type": EuropeBankAccount.MandateType.Business
+        })
+
 class TestClientToken(unittest.TestCase):
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
@@ -150,18 +155,6 @@ class TestClientToken(unittest.TestCase):
 
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(1, len(customer.credit_cards))
-
-    def test_can_pass_sepa_params(self):
-        result = braintree.Customer.create()
-        customer_id = result.customer.id
-
-        client_token = TestHelper.generate_decoded_client_token({
-            "customer_id": customer_id,
-            "sepa_mandate_acceptance_location": "Hamburg, Germany",
-            "sepa_mandate_type": EuropeBankAccount.MandateType.Business
-        })
-        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
-        self.assertNotEqual(authorization_fingerprint, None)
 
     def test_can_pass_merchant_account_id(self):
         expected_merchant_account_id = TestHelper.non_default_merchant_account_id
