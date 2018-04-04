@@ -1,4 +1,6 @@
 ## Unreleased
+
+## 3.43.0
 * Add `oauth_access_revocation` to `WebhookNotification`s
 * Add support for `customer_id`, `disbursement_date` and `history_event_effective_date` in DisputeSearch
 * Remove `sepa_mandate_type` and `sepa_mandate_acceptance_location` params from `ClientToken`
