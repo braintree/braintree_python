@@ -1,6 +1,9 @@
 from braintree.util.crypto import Crypto
 from braintree.webhook_notification import WebhookNotification
 import sys
+import random
+import string
+
 if sys.version_info[0] == 2:
     from base64 import encodestring as encodebytes
 else:
@@ -34,6 +37,9 @@ class WebhookTestingGateway(object):
             </notification>
         """ % (timestamp, kind, source_merchant_id_xml, self.__subject_sample_xml(kind, id))
         return sample_xml.encode('utf-8')
+
+    def fake_id(self):
+        return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
 
     def __subject_sample_xml(self, kind, id):
         if kind == WebhookNotification.Kind.Check:
@@ -444,6 +450,7 @@ class WebhookTestingGateway(object):
                 <id>%s</id>
                 <transactions type="array">
                     <transaction>
+                        <id>%s</id>
                         <status>submitted_for_settlement</status>
                         <amount>49.99</amount>
                         <tax_amount></tax_amount>
@@ -452,7 +459,7 @@ class WebhookTestingGateway(object):
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>
-        """ % id
+        """ % (id, self.fake_id())
 
     def __merchant_account_approved_sample_xml(self, id):
         return """
