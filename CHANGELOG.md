@@ -1,4 +1,6 @@
 ## Unreleased
+
+## 3.44.0
 * Add Dispute error ValidEvidenceRequiredToFinalize
 
 ## 3.43.0
