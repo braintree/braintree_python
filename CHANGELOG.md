@@ -1,4 +1,5 @@
 ## Unreleased
+* Add Dispute error ValidEvidenceRequiredToFinalize
 
 ## 3.43.0
 * Add `oauth_access_revocation` to `WebhookNotification`s
