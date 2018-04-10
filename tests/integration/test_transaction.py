@@ -3,6 +3,8 @@ from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 from braintree.dispute import Dispute
+from braintree.payment_instrument_type import PaymentInstrumentType
+
 import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
@@ -4401,81 +4403,6 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.CannotRefundUnlessSettled,
             result.errors.for_object("transaction").on("base")[0].code
         )
-
-    def test_us_bank_account_nonce_transactions(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "merchant_account_id": "us_bank_merchant_account",
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
-            "options": {
-                "submit_for_settlement": True,
-                "store_in_vault": True
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.us_bank_account.routing_number, "021000021")
-        self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
-        self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
-        self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
-        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
-        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
-
-    def test_us_bank_account_nonce_transactions_with_vaulted_token(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "merchant_account_id": "us_bank_merchant_account",
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
-            "options": {
-                "submit_for_settlement": True,
-                "store_in_vault": True
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.us_bank_account.routing_number, "021000021")
-        self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
-        self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
-        self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
-        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
-        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
-        token = result.transaction.us_bank_account.token
-
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "merchant_account_id": "us_bank_merchant_account",
-            "payment_method_token": token,
-            "options": {
-                "submit_for_settlement": True,
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.us_bank_account.routing_number, "021000021")
-        self.assertEqual(result.transaction.us_bank_account.last_4, "1234")
-        self.assertEqual(result.transaction.us_bank_account.account_type, "checking")
-        self.assertEqual(result.transaction.us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertTrue(re.match(r".*CHASE.*", result.transaction.us_bank_account.bank_name))
-        self.assertEqual(result.transaction.us_bank_account.ach_mandate.text, "cl mandate text")
-        self.assertIsInstance(result.transaction.us_bank_account.ach_mandate.accepted_at, datetime)
-
-
-    def test_us_bank_account_token_transactions_not_found(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "merchant_account_id": "us_bank_merchant_account",
-            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce(),
-            "options": {
-                "submit_for_settlement": True,
-                "store_in_vault": True
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
-        self.assertEqual(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
     def test_transaction_settlement_errors(self):
         sale_result = Transaction.sale({

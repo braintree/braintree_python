@@ -2,6 +2,7 @@ import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 from braintree.ach_mandate import AchMandate
+from braintree.us_bank_account_verification import UsBankAccountVerification
 
 class UsBankAccount(Resource):
 
@@ -37,3 +38,8 @@ class UsBankAccount(Resource):
             self.ach_mandate = AchMandate(gateway, self.ach_mandate)
         else:
             self.ach_mandate = None
+
+        if attributes.get("verifications") is not None:
+            self.verifications = [UsBankAccountVerification(gateway, v) for v in self.verifications]
+        else:
+            self.verifications = None
