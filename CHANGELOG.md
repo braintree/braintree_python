@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 3.44.0
+* Add Dispute error ValidEvidenceRequiredToFinalize
+
 ## 3.43.0
 * Add `oauth_access_revocation` to `WebhookNotification`s
 * Add support for `customer_id`, `disbursement_date` and `history_event_effective_date` in DisputeSearch

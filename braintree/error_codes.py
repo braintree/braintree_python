@@ -195,6 +195,7 @@ class ErrorCodes(object):
         NonDisputedPriorTransactionEvidenceMissingDate = "95723"
         RecurringTransactionEvidenceMissingDate = "95724"
         RecurringTransactionEvidenceMissingARN = "95725"
+        ValidEvidenceRequiredToFinalize = "95726"
 
     class DocumentUpload(object):
         KindIsInvalid = "84901"
