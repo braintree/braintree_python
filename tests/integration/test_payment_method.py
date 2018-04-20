@@ -328,42 +328,6 @@ class TestPaymentMethod(unittest.TestCase):
             "payment_method_nonce": Nonces.Europe,
         })
 
-    def test_create_with_us_bank_account_nonce(self):
-        customer_id = Customer.create().customer.id
-        result = PaymentMethod.create({
-            "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
-            "options": {
-                "verification_merchant_account_id": "us_bank_merchant_account"
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        us_bank_account = result.payment_method
-        self.assertIsInstance(us_bank_account, UsBankAccount)
-        self.assertEqual(us_bank_account.routing_number, "021000021")
-        self.assertEqual(us_bank_account.last_4, "1234")
-        self.assertEqual(us_bank_account.account_type, "checking")
-        self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
-        self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
-        self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
-        self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
-
-    def test_create_fails_with_invalid_us_bank_account_nonce(self):
-        customer_id = Customer.create().customer.id
-        result = PaymentMethod.create({
-            "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_invalid_us_bank_account_nonce(),
-            "options": {
-                "verification_merchant_account_id": "us_bank_merchant_account"
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        error_code = result.errors.for_object("payment_method").on("payment_method_nonce")[0].code
-        self.assertEqual(ErrorCodes.PaymentMethod.PaymentMethodNonceUnknown, error_code)
-
     def test_create_with_abstract_payment_method_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({

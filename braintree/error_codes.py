@@ -359,6 +359,9 @@ class ErrorCodes(object):
         InvalidFundingSourceSelection = "92913"
         CannotUpdatePayPalAccountUsingPaymentMethodNonce = "92914"
 
+        class Options(object):
+            UsBankAccountVerificationMethodIsInvalid = "93121"
+
     class PayPalAccount(object):
         CannotHaveBothAccessTokenAndConsentCode = "82903"
         CannotVaultOneTimeUsePayPalAccount = "82902"
@@ -579,6 +582,8 @@ class ErrorCodes(object):
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
         UnsupportedVoiceAuthorization = "91539"
+        UsBankAccountNonceMustBePlaidVerified = "915171"
+        UsBankAccountNotVerified = "915172"
 
         class Options(object):
             SubmitForSettlementIsRequiredForCloning = "91544"
@@ -638,3 +643,11 @@ class ErrorCodes(object):
             TaxAmountFormatIsInvalid = "95827"
             TaxAmountIsTooLarge = "95828"
             TaxAmountCannotBeNegative = "95829"
+
+    class UsBankAccountVerification(object):
+        NotConfirmable = "96101"
+        MustBeMicroTransfersVerification = "96102"
+        AmountsDoNotMatch = "96103"
+        TooManyConfirmationAttempts = "96104"
+        UnableToConfirmDepositAmounts = "96105"
+        InvalidDepositAmounts = "96106"

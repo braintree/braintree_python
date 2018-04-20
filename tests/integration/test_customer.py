@@ -200,7 +200,7 @@ class TestCustomer(unittest.TestCase):
             "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
             "credit_card": {
                 "options": {
-                    "verification_merchant_account_id": "us_bank_merchant_account"
+                    "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id
                 }
             }
         })
@@ -559,7 +559,7 @@ class TestCustomer(unittest.TestCase):
             "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
             "credit_card": {
                 "options": {
-                    "verification_merchant_account_id": "us_bank_merchant_account"
+                    "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id
                 }
             }
         }).customer

@@ -64,6 +64,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
                 "options": [
                     "fail_on_duplicate_payment_method",
                     "make_default",
+                    "us_bank_account_verification_method",
                     "verification_merchant_account_id",
                     "verify_card",
                     "verification_amount",
@@ -125,6 +126,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             {
                 "options": [
                     "make_default",
+                    "us_bank_account_verification_method",
                     "verify_card",
                     "verification_amount",
                     "verification_merchant_account_id",
