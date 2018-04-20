@@ -1,4 +1,5 @@
-## Unreleased
+## 3.45.0
+* Add support for US Bank Account verifications API
 
 ## 3.44.0
 * Add Dispute error ValidEvidenceRequiredToFinalize
