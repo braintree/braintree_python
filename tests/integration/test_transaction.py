@@ -2218,6 +2218,20 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
 
+    def test_create_can_set_transaction_source_flag_recurring_first(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "recurring_first"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(True, transaction.recurring)
+
     def test_create_can_set_transaction_source_flag_recurring(self):
         result = Transaction.sale({
             "amount": "100",
@@ -2236,6 +2250,20 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
 
+    def test_create_can_set_transaction_source_flag_merchant(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "merchant"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(False, transaction.recurring)
+
     def test_create_can_set_transaction_source_flag_moto(self):
         result = Transaction.sale({
             "amount": "100",
@@ -2253,6 +2281,22 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual(False, transaction.recurring)
+
+    def test_create_can_set_transaction_source_flag_invalid(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "invalid_value"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.TransactionSourceIsInvalid,
+            result.errors.for_object("transaction").on("transaction_source")[0].code
+        )
 
     def test_create_can_store_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({
