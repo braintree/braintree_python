@@ -2203,10 +2203,6 @@ class TestTransaction(unittest.TestCase):
     def test_create_can_set_recurring_flag(self):
         result = Transaction.sale({
             "amount": "100",
-            "customer": {
-                "first_name": "Adam",
-                "last_name": "Williams"
-            },
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -2235,10 +2231,6 @@ class TestTransaction(unittest.TestCase):
     def test_create_can_set_transaction_source_flag_recurring(self):
         result = Transaction.sale({
             "amount": "100",
-            "customer": {
-                "first_name": "Adam",
-                "last_name": "Williams"
-            },
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -2267,10 +2259,6 @@ class TestTransaction(unittest.TestCase):
     def test_create_can_set_transaction_source_flag_moto(self):
         result = Transaction.sale({
             "amount": "100",
-            "customer": {
-                "first_name": "Adam",
-                "last_name": "Williams"
-            },
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
