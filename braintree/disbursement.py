@@ -4,6 +4,13 @@ from braintree.transaction_search import TransactionSearch
 from braintree.merchant_account import MerchantAccount
 
 class Disbursement(Resource):
+    class Type(object):
+        """
+        """
+
+        Credit = "credit"
+        Debit = "debit"
+
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)
         self.amount = Decimal(self.amount)
@@ -16,4 +23,8 @@ class Disbursement(Resource):
     def transactions(self):
         return self.gateway.transaction.search([TransactionSearch.ids.in_list(self.transaction_ids)])
 
+    def is_credit(self):
+        return self.disbursement_type == Disbursement.Type.Credit
 
+    def is_debit(self):
+        return self.disbursement_type == Disbursement.Type.Debit
