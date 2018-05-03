@@ -68,13 +68,15 @@ def showwarning(*_):
 warnings.showwarning = showwarning
 
 class TestHelper(object):
-
     default_merchant_account_id = "sandbox_credit_card"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
     non_default_sub_merchant_account_id = "sandbox_sub_merchant_account"
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     fake_amex_direct_merchant_account_id = "fake_amex_direct_usd"
     fake_venmo_account_merchant_account_id = "fake_first_data_venmo_account"
+    us_bank_merchant_account_id = "us_bank_merchant_account"
+    another_us_bank_merchant_account_id = "another_us_bank_merchant_account"
+
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",
          "id": "integration_plan_with_add_ons_and_discounts",
@@ -233,11 +235,11 @@ class TestHelper(object):
         return string
 
     @staticmethod
-    def generate_valid_us_bank_account_nonce():
+    def generate_valid_us_bank_account_nonce(routing_number="021000021", account_number="567891234"):
         client_token = json.loads(TestHelper.generate_decoded_client_token())
         headers = {
             "Content-Type": "application/json",
-            "Braintree-Version": "2015-11-01",
+            "Braintree-Version": "2016-10-07",
             "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
         }
         payload = {
@@ -249,9 +251,39 @@ class TestHelper(object):
                 "postal_code": "94112"
             },
             "account_type": "checking",
-            "routing_number": "021000021",
-            "account_number": "567891234",
-            "account_holder_name": "Dan Schulman",
+            "ownership_type": "personal",
+            "routing_number": routing_number,
+            "account_number": account_number,
+            "first_name": "Dan",
+            "last_name": "Schulman",
+            "ach_mandate": {
+                "text": "cl mandate text"
+            }
+        }
+        resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
+        respJson = json.loads(resp.text)
+        return respJson["data"]["id"]
+
+    @staticmethod
+    def generate_plaid_us_bank_account_nonce():
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        headers = {
+            "Content-Type": "application/json",
+            "Braintree-Version": "2016-10-07",
+            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
+        }
+        payload = {
+            "type": "plaid_public_token",
+            "public_token": "good",
+            "account_id": "plaid_account_id",
+            "ownership_type": "business",
+            "business_name": "PayPal, Inc.",
+            "billing_address": {
+                "street_address": "123 Ave",
+                "region": "CA",
+                "locality": "San Francisco",
+                "postal_code": "94112"
+            },
             "ach_mandate": {
                 "text": "cl mandate text"
             }

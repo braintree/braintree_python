@@ -7,7 +7,7 @@ class TestUsBankAccount(unittest.TestCase):
             "customer_id": customer_id,
             "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
             "options": {
-                "verification_merchant_account_id": "us_bank_merchant_account"
+                "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id
             }
         })
         self.assertTrue(result.is_success)
@@ -32,14 +32,14 @@ class TestUsBankAccount(unittest.TestCase):
             "customer_id": customer_id,
             "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
             "options": {
-                "verification_merchant_account_id": "us_bank_merchant_account"
+                "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id
             }
         })
         self.assertTrue(result.is_success)
 
         params = {
             "amount": TransactionAmounts.Authorize,
-            "merchant_account_id": "us_bank_merchant_account",
+            "merchant_account_id": TestHelper.us_bank_merchant_account_id,
         }
         result = UsBankAccount.sale(result.payment_method.token, params)
 
