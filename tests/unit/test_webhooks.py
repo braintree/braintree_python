@@ -376,7 +376,8 @@ class TestWebhooks(unittest.TestCase):
         notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
 
         self.assertEqual(WebhookNotification.Kind.OAuthAccessRevoked, notification.kind)
-        self.assertEqual("abc123", notification.oauth_access_revocation.merchant_id)
+        self.assertEqual("my_id", notification.oauth_access_revocation.merchant_id)
+        self.assertEqual("oauth_application_client_id", notification.oauth_access_revocation.oauth_application_client_id)
         self.assertTrue((datetime.utcnow() - notification.timestamp).seconds < 10)
 
     def test_builds_notification_for_connected_merchant_status_transitioned(self):
@@ -390,6 +391,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.ConnectedMerchantStatusTransitioned, notification.kind)
         self.assertEqual("new_status", notification.connected_merchant_status_transitioned.status)
         self.assertEqual("my_id", notification.connected_merchant_status_transitioned.merchant_public_id)
+        self.assertEqual("my_id", notification.connected_merchant_status_transitioned.merchant_id)
         self.assertEqual("oauth_application_client_id", notification.connected_merchant_status_transitioned.oauth_application_client_id)
 
     def test_builds_notification_for_connected_merchant_paypal_status_changed(self):
@@ -403,6 +405,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.ConnectedMerchantPayPalStatusChanged, notification.kind)
         self.assertEqual("link", notification.connected_merchant_paypal_status_changed.action)
         self.assertEqual("my_id", notification.connected_merchant_paypal_status_changed.merchant_public_id)
+        self.assertEqual("my_id", notification.connected_merchant_paypal_status_changed.merchant_id)
         self.assertEqual("oauth_application_client_id", notification.connected_merchant_paypal_status_changed.oauth_application_client_id)
 
     def test_builds_notification_for_subscription_charged_successfully(self):
