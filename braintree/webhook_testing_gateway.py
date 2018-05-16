@@ -38,9 +38,6 @@ class WebhookTestingGateway(object):
         """ % (timestamp, kind, source_merchant_id_xml, self.__subject_sample_xml(kind, id))
         return sample_xml.encode('utf-8')
 
-    def fake_id(self):
-        return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
-
     def __subject_sample_xml(self, kind, id):
         if kind == WebhookNotification.Kind.Check:
             return self.__check_sample_xml()
@@ -461,7 +458,7 @@ class WebhookTestingGateway(object):
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>
-        """ % (id, self.fake_id())
+        """ % (id, id)
 
     def __subscription_charged_unsuccessfully_sample_xml(self, id):
         return """
@@ -478,7 +475,7 @@ class WebhookTestingGateway(object):
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>
-        """ % (id, self.fake_id())
+        """ % (id, id)
 
     def __merchant_account_approved_sample_xml(self, id):
         return """
