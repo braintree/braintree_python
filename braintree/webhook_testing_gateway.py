@@ -1,9 +1,6 @@
 from braintree.util.crypto import Crypto
 from braintree.webhook_notification import WebhookNotification
 import sys
-import random
-import string
-
 if sys.version_info[0] == 2:
     from base64 import encodestring as encodebytes
 else:
