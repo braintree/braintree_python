@@ -553,12 +553,14 @@ class Transaction(Resource):
                     "store_shipping_address_in_vault",
                     "submit_for_settlement",
                     "venmo_sdk_session",
+                    "payee_id",
                     "payee_email",
                     "skip_advanced_fraud_checking",
                     "skip_avs",
                     "skip_cvv",
                     {
                         "paypal": [
+                            "payee_id",
                             "payee_email",
                             "custom_field",
                             "description",
@@ -593,7 +595,7 @@ class Transaction(Resource):
             },
             {"custom_fields": ["__any_key__"]},
             {"descriptor": ["name", "phone", "url"]},
-            {"paypal_account": ["payee_email"]},
+            {"paypal_account": ["payee_id", "payee_email"]},
             {"industry":
                 [
                     "industry_type",

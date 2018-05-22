@@ -1,3 +1,7 @@
+## 3.46.0
+* Allow payee ID to be passed in options params for transaction create
+* Add `merchant_id` alias to ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
+
 ## 3.45.0
 * Add support for US Bank Account verifications API
 
