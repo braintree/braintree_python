@@ -1,4 +1,4 @@
-## Unreleased
+## 3.46.0
 * Allow payee ID to be passed in options params for transaction create
 * Add `merchant_id` alias to ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
 
