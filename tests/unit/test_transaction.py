@@ -2,6 +2,7 @@ from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
 from datetime import datetime
 from datetime import date
+from braintree.authorization_adjustment import AuthorizationAdjustment
 if sys.version_info[0] == 2:
     from mock import MagicMock
 else:
@@ -176,3 +177,45 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.ideal_payment_details.masked_iban, '12************7890')
         self.assertEqual(transaction.ideal_payment_details.bic, 'RABONL2U')
         self.assertEqual(transaction.ideal_payment_details.image_url, 'http://www.example.com/ideal.png')
+
+
+    def test_constructor_doesnt_includes_auth_adjustments(self):
+        attributes = {
+            'amount': '27.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'tax_amount': '1.00',
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertFalse(hasattr(transaction, 'authorization_adjustments'))
+
+    def test_constructor_includes_auth_adjustments(self):
+        attributes = {
+            'amount': '27.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'tax_amount': '1.00',
+            'authorization_adjustments': [{
+                "amount": "20.00",
+                "timestamp": datetime(2017, 7, 12, 1, 2, 3),
+                "success": True,
+                "processor_response_code": "1000",
+                "processor_response_text": "Approved",
+            }],
+        }
+
+        transaction = Transaction(None, attributes)
+        transaction_adjustment = transaction.authorization_adjustments[0]
+        self.assertEqual(transaction_adjustment.amount, Decimal("20.00"))
+        self.assertEqual(transaction_adjustment.timestamp, datetime(2017, 7, 12, 1, 2, 3))
+        self.assertEqual(transaction_adjustment.success, True)
+        self.assertEqual(transaction_adjustment.processor_response_code, "1000")
+        self.assertEqual(transaction_adjustment.processor_response_text, "Approved")
+

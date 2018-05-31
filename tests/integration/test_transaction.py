@@ -4028,6 +4028,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(datetime, type(authorization_adjustment.timestamp))
         self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
         self.assertEqual(True, authorization_adjustment.success)
+        self.assertEqual("1000", authorization_adjustment.processor_response_code)
+        self.assertEqual("Approved", authorization_adjustment.processor_response_text)
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
