@@ -127,6 +127,7 @@
 
 ## 3.29.0
 * Allow 'default_payment_method' option in Customer
+* Allow 'transaction_source' option in Transaction Sale
 
 ## 3.28.0
 * Expose resource collection ids
