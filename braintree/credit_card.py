@@ -51,6 +51,7 @@ class CreditCard(Resource):
         * Braintree.CreditCard.DinersClubInternational
         * Braintree.CreditCard.Discover
         * Braintree.CreditCard.Electron
+        * Braintree.CreditCard.Elo
         * Braintree.CreditCard.JCB
         * Braintree.CreditCard.Laser
         * Braintree.CreditCard.UK_Maestro
@@ -68,6 +69,7 @@ class CreditCard(Resource):
         DinersClubInternational = "Diners Club"
         Discover = "Discover"
         Electron = "Electron"
+        Elo = "Elo"
         JCB = "JCB"
         Laser = "Laser"
         UK_Maestro = "UK Maestro"
