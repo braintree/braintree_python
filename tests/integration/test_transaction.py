@@ -10,21 +10,22 @@ import braintree.test.venmo_sdk as venmo_sdk
 class TestTransaction(unittest.TestCase):
 
     def test_sale_returns_risk_data(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "device_session_id": "abc123",
-        })
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "device_session_id": "abc123",
+            })
 
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertIsInstance(transaction.risk_data, RiskData)
-        self.assertEqual(transaction.risk_data.id, None)
-        self.assertEqual(transaction.risk_data.decision, "Not Evaluated")
-        self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertIsInstance(transaction.risk_data, RiskData)
+            self.assertNotEqual(transaction.risk_data.id, None)
+            self.assertEqual(transaction.risk_data.decision, "Approve")
+            self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
 
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
@@ -1040,21 +1041,21 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
     def test_sale_with_advanced_fraud_checking_skipped(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.Visa,
-                "expiration_date": "05/2009"
-            },
-            "options": {
-                "skip_advanced_fraud_checking": True
-            }
-        })
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": CreditCardNumbers.Visa,
+                    "expiration_date": "05/2009"
+                },
+                "options": {
+                    "skip_advanced_fraud_checking": True
+                }
+            })
 
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertIsInstance(transaction.risk_data, RiskData)
-        self.assertEqual(transaction.risk_data.id, None)
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertEqual(transaction.risk_data, None)
 
     def test_sale_with_skip_cvv_option_set(self):
         result = Transaction.sale({
@@ -4028,6 +4029,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(datetime, type(authorization_adjustment.timestamp))
         self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
         self.assertEqual(True, authorization_adjustment.success)
+        self.assertEqual("1000", authorization_adjustment.processor_response_code)
+        self.assertEqual("Approved", authorization_adjustment.processor_response_text)
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")

@@ -36,6 +36,7 @@ from braintree.masterpass_card import MasterpassCard
 from braintree.facilitated_details import FacilitatedDetails
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
+from braintree.samsung_pay_card import SamsungPayCard
 
 class Transaction(Resource):
     """
@@ -680,6 +681,8 @@ class Transaction(Resource):
             self.visa_checkout_card_details = VisaCheckoutCard(gateway, attributes.pop("visa_checkout_card"))
         if "masterpass_card" in attributes:
             self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
+        if "samsung_pay_card" in attributes:
+            self.samsung_pay_card_details = SamsungPayCard(gateway, attributes.pop("samsung_pay_card"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:
