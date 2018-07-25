@@ -1,3 +1,7 @@
+## 3.47.0
+* Add processor respone code and processor response text to authorization adjustments subfield in transaction response.
+* Add support for Samsung Pay
+
 ## 3.46.0
 * Allow payee ID to be passed in options params for transaction create
 * Add `merchant_id` alias to ConnectedMerchantStatusTransitioned and ConnectedMerchantPayPalStatusChanged Auth webhooks
@@ -124,6 +128,7 @@
 
 ## 3.29.0
 * Allow 'default_payment_method' option in Customer
+* Allow 'transaction_source' option in Transaction Sale
 
 ## 3.28.0
 * Expose resource collection ids
