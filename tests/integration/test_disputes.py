@@ -198,7 +198,6 @@ class TestDisputes(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.EvidenceContentDateInvalid)
-        self.assertEqual(result.errors.for_object("dispute")[0].message, "Categorized evidence for date time categories must be in the format YYYY-MM-DD HH:MM")
 
     def test_categorized_text_evidence_with_valid_date_time_format(self):
         dispute = self.create_sample_dispute()

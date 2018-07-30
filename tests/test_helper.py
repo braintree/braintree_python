@@ -63,6 +63,18 @@ def reset_braintree_configuration():
     )
 reset_braintree_configuration()
 
+class AdvancedFraudIntegrationMerchant:
+    def __enter__(self):
+        Configuration.configure(
+            Environment.Development,
+            "advanced_fraud_integration_merchant_id",
+            "advanced_fraud_integration_public_key",
+            "advanced_fraud_integration_private_key"
+        )
+
+    def __exit__(self, type, value, trace):
+        reset_braintree_configuration()
+
 def showwarning(*_):
     pass
 warnings.showwarning = showwarning

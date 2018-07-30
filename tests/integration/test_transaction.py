@@ -10,21 +10,22 @@ import braintree.test.venmo_sdk as venmo_sdk
 class TestTransaction(unittest.TestCase):
 
     def test_sale_returns_risk_data(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "device_session_id": "abc123",
-        })
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "device_session_id": "abc123",
+            })
 
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertIsInstance(transaction.risk_data, RiskData)
-        self.assertEqual(transaction.risk_data.id, None)
-        self.assertEqual(transaction.risk_data.decision, "Not Evaluated")
-        self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertIsInstance(transaction.risk_data, RiskData)
+            self.assertNotEqual(transaction.risk_data.id, None)
+            self.assertEqual(transaction.risk_data.decision, "Approve")
+            self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
 
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
@@ -1040,21 +1041,21 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
     def test_sale_with_advanced_fraud_checking_skipped(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.Visa,
-                "expiration_date": "05/2009"
-            },
-            "options": {
-                "skip_advanced_fraud_checking": True
-            }
-        })
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": CreditCardNumbers.Visa,
+                    "expiration_date": "05/2009"
+                },
+                "options": {
+                    "skip_advanced_fraud_checking": True
+                }
+            })
 
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertIsInstance(transaction.risk_data, RiskData)
-        self.assertEqual(transaction.risk_data.id, None)
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertEqual(transaction.risk_data, None)
 
     def test_sale_with_skip_cvv_option_set(self):
         result = Transaction.sale({
@@ -2203,10 +2204,6 @@ class TestTransaction(unittest.TestCase):
     def test_create_can_set_recurring_flag(self):
         result = Transaction.sale({
             "amount": "100",
-            "customer": {
-                "first_name": "Adam",
-                "last_name": "Williams"
-            },
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -2218,13 +2215,23 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
 
+    def test_create_can_set_transaction_source_flag_recurring_first(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "recurring_first"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(True, transaction.recurring)
+
     def test_create_can_set_transaction_source_flag_recurring(self):
         result = Transaction.sale({
             "amount": "100",
-            "customer": {
-                "first_name": "Adam",
-                "last_name": "Williams"
-            },
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -2236,13 +2243,23 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
 
+    def test_create_can_set_transaction_source_flag_merchant(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "merchant"
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(False, transaction.recurring)
+
     def test_create_can_set_transaction_source_flag_moto(self):
         result = Transaction.sale({
             "amount": "100",
-            "customer": {
-                "first_name": "Adam",
-                "last_name": "Williams"
-            },
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"
@@ -2253,6 +2270,22 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual(False, transaction.recurring)
+
+    def test_create_can_set_transaction_source_flag_invalid(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "invalid_value"
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.TransactionSourceIsInvalid,
+            result.errors.for_object("transaction").on("transaction_source")[0].code
+        )
 
     def test_create_can_store_customer_and_credit_card_in_the_vault(self):
         result = Transaction.sale({
@@ -3996,6 +4029,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(datetime, type(authorization_adjustment.timestamp))
         self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
         self.assertEqual(True, authorization_adjustment.success)
+        self.assertEqual("1000", authorization_adjustment.processor_response_code)
+        self.assertEqual("Approved", authorization_adjustment.processor_response_text)
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
@@ -4053,6 +4088,67 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
+
+    def test_creating_paypal_transaction_with_payee_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {
+                "payee_id": "fake-payee-id"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertEqual(transaction.paypal_details.payee_id, "fake-payee-id")
+
+    def test_creating_paypal_transaction_with_payee_id_in_options_params(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {},
+            "options": {
+                "payee_id": "fake-payee-id"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertEqual(transaction.paypal_details.payee_id, "fake-payee-id")
+
+    def test_creating_paypal_transaction_with_payee_id_in_options_paypal_params(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {},
+            "options": {
+                "paypal": {
+                    "payee_id": "fake-payee-id"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertEqual(transaction.paypal_details.payee_id, "fake-payee-id")
 
     def test_creating_paypal_transaction_with_payee_email(self):
         result = Transaction.sale({

@@ -36,6 +36,7 @@ from braintree.masterpass_card import MasterpassCard
 from braintree.facilitated_details import FacilitatedDetails
 from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
+from braintree.samsung_pay_card import SamsungPayCard
 
 class Transaction(Resource):
     """
@@ -553,12 +554,14 @@ class Transaction(Resource):
                     "store_shipping_address_in_vault",
                     "submit_for_settlement",
                     "venmo_sdk_session",
+                    "payee_id",
                     "payee_email",
                     "skip_advanced_fraud_checking",
                     "skip_avs",
                     "skip_cvv",
                     {
                         "paypal": [
+                            "payee_id",
                             "payee_email",
                             "custom_field",
                             "description",
@@ -593,7 +596,7 @@ class Transaction(Resource):
             },
             {"custom_fields": ["__any_key__"]},
             {"descriptor": ["name", "phone", "url"]},
-            {"paypal_account": ["payee_email"]},
+            {"paypal_account": ["payee_id", "payee_email"]},
             {"industry":
                 [
                     "industry_type",
@@ -678,6 +681,8 @@ class Transaction(Resource):
             self.visa_checkout_card_details = VisaCheckoutCard(gateway, attributes.pop("visa_checkout_card"))
         if "masterpass_card" in attributes:
             self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
+        if "samsung_pay_card" in attributes:
+            self.samsung_pay_card_details = SamsungPayCard(gateway, attributes.pop("samsung_pay_card"))
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:

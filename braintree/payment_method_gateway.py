@@ -11,6 +11,7 @@ from braintree.venmo_account import VenmoAccount
 from braintree.us_bank_account import UsBankAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
+from braintree.samsung_pay_card import SamsungPayCard
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
@@ -154,6 +155,8 @@ class PaymentMethodGateway(object):
             return VisaCheckoutCard(self.gateway, response["visa_checkout_card"])
         elif "masterpass_card" in response:
             return MasterpassCard(self.gateway, response["masterpass_card"])
+        elif "samsung_pay_card" in response:
+            return SamsungPayCard(self.gateway, response["samsung_pay_card"])
         elif "payment_method_nonce" in response:
             return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])
         elif "success" in response:
