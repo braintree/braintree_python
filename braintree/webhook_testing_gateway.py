@@ -72,6 +72,8 @@ class WebhookTestingGateway(object):
             return self.__dispute_won_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
             return self.__subscription_charged_successfully_sample_xml(id)
+        elif kind == WebhookNotification.Kind.SubscriptionChargedUnsuccessfully:
+            return self.__subscription_charged_unsuccessfully_sample_xml(id)
         elif kind == WebhookNotification.Kind.AccountUpdaterDailyReport:
             return self.__account_updater_daily_report_sample_xml()
         elif kind == WebhookNotification.Kind.IdealPaymentComplete:
@@ -444,6 +446,7 @@ class WebhookTestingGateway(object):
                 <id>%s</id>
                 <transactions type="array">
                     <transaction>
+                        <id>%s</id>
                         <status>submitted_for_settlement</status>
                         <amount>49.99</amount>
                         <tax_amount></tax_amount>
@@ -452,7 +455,24 @@ class WebhookTestingGateway(object):
                 <add_ons type="array"></add_ons>
                 <discounts type="array"></discounts>
             </subscription>
-        """ % id
+        """ % (id, id)
+
+    def __subscription_charged_unsuccessfully_sample_xml(self, id):
+        return """
+            <subscription>
+                <id>%s</id>
+                <transactions type="array">
+                    <transaction>
+                        <id>%s</id>
+                        <status>failed</status>
+                        <amount>49.99</amount>
+                        <tax_amount></tax_amount>
+                    </transaction>
+                </transactions>
+                <add_ons type="array"></add_ons>
+                <discounts type="array"></discounts>
+            </subscription>
+        """ % (id, id)
 
     def __merchant_account_approved_sample_xml(self, id):
         return """
