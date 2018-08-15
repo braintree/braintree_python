@@ -34,6 +34,10 @@ class TestDisputes(unittest.TestCase):
 
         self.assertEqual(updated_dispute.status, Dispute.Status.Accepted)
 
+        dispute_from_transaction = Transaction.find(dispute.transaction.id).disputes[0]
+
+        self.assertEqual(dispute_from_transaction.status, Dispute.Status.Accepted)
+
     def test_accept_errors_when_dispute_not_open(self):
         result = Dispute.accept("wells_dispute")
 
