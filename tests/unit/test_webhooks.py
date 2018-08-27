@@ -425,6 +425,23 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("submitted_for_settlement", transaction.status)
         self.assertEqual(Decimal("49.99"), transaction.amount)
 
+    def test_builds_notification_for_subscription_charged_unsuccessfully(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionChargedUnsuccessfully,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.SubscriptionChargedUnsuccessfully, notification.kind)
+        self.assertEqual("my_id", notification.subscription.id)
+        self.assertTrue(len(notification.subscription.transactions) == 1)
+
+        transaction = notification.subscription.transactions.pop()
+
+        self.assertEqual("failed", transaction.status)
+        self.assertEqual(Decimal("49.99"), transaction.amount)
+
     def test_builds_notification_for_check(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.Check,
