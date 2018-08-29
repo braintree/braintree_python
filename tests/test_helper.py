@@ -88,6 +88,7 @@ class TestHelper(object):
     fake_venmo_account_merchant_account_id = "fake_first_data_venmo_account"
     us_bank_merchant_account_id = "us_bank_merchant_account"
     another_us_bank_merchant_account_id = "another_us_bank_merchant_account"
+    adyen_merchant_account_id = "adyen_ma"
 
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",

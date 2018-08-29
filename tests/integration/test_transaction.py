@@ -4838,3 +4838,19 @@ class TestTransaction(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertTrue(ErrorCodes.Transaction.IdealPaymentNotComplete in error_codes)
+
+    def test_sale_elo_card(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.adyen_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Elo,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(TestHelper.adyen_merchant_account_id, transaction.merchant_account_id)
+
