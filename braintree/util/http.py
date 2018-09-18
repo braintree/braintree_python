@@ -4,8 +4,10 @@ if sys.version_info[0] == 2:
     from base64 import encodestring as encodebytes
 else:
     from base64 import encodebytes
+import json
 import braintree
 from braintree import version
+from braintree.environment import Environment
 from braintree.util.xml_util import XmlUtil
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
@@ -13,7 +15,6 @@ from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceEr
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.too_many_requests_error import TooManyRequestsError
-from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.http.connection_error import ConnectionError
@@ -24,6 +25,7 @@ class Http(object):
     class ContentType(object):
         Xml = "application/xml"
         Multipart = "multipart/form-data"
+        Json = "application/json"
 
     @staticmethod
     def is_error_status(status):
@@ -52,27 +54,27 @@ class Http(object):
         self.config = config
         self.environment = environment or self.config.environment
 
-    def post(self, path, params={}):
-        return self.__http_do("POST", path, Http.ContentType.Xml, params)
+    def post(self, path, params=None):
+        return self._make_request("POST", path, Http.ContentType.Xml, params)
 
     def delete(self, path):
-        return self.__http_do("DELETE", path, Http.ContentType.Xml)
+        return self._make_request("DELETE", path, Http.ContentType.Xml)
 
     def get(self, path):
-        return self.__http_do("GET", path, Http.ContentType.Xml)
+        return self._make_request("GET", path, Http.ContentType.Xml)
 
-    def put(self, path, params={}):
-        return self.__http_do("PUT", path, Http.ContentType.Xml, params)
+    def put(self, path, params=None):
+        return self._make_request("PUT", path, Http.ContentType.Xml, params)
 
-    def post_multipart(self, path, files, params={}):
-        return self.__http_do("POST", path, Http.ContentType.Multipart, params, files)
+    def post_multipart(self, path, files, params=None):
+        return self._make_request("POST", path, Http.ContentType.Multipart, params, files)
 
-    def __http_do(self, http_verb, path, content_type, params=None, files=None):
+    def _make_request(self, http_verb, path, content_type, params=None, files=None, header_overrides=None):
         http_strategy = self.config.http_strategy()
-        headers = self.__headers(content_type)
+        headers = self.__headers(content_type, header_overrides)
         request_body = self.__request_body(content_type, params, files)
 
-        full_path = path if path.startswith(self.config.base_url()) else (self.config.base_url() + path)
+        full_path = path if path.startswith(self.config.base_url()) or path.startswith(self.config.graphql_base_url()) else (self.config.base_url() + path)
 
         try:
             status, response_body = http_strategy.http_do(http_verb, full_path, headers, request_body)
@@ -88,7 +90,10 @@ class Http(object):
             if len(response_body.strip()) == 0:
                 return {}
             else:
-                return XmlUtil.dict_from_xml(response_body)
+                if content_type == Http.ContentType.Json:
+                    return json.loads(response_body)
+                else:
+                    return XmlUtil.dict_from_xml(response_body)
 
     def http_do(self, http_verb, path, headers, request_body):
         data = request_body
@@ -98,12 +103,17 @@ class Http(object):
             data = request_body[0]
             files = request_body[1]
 
+        if (self.config.environment == Environment.Development):
+          verify = False
+        else:
+          verify = self.environment.ssl_certificate
+
         response = self.__request_function(http_verb)(
-            path if path.startswith(self.config.base_url()) else self.config.base_url() + path,
+            path if path.startswith(self.config.base_url()) or path.startswith(self.config.graphql_base_url()) else (self.config.base_url() + path),
             headers=headers,
             data=data,
             files=files,
-            verify=self.environment.ssl_certificate,
+            verify=verify,
             timeout=self.config.timeout
         )
 
@@ -145,7 +155,7 @@ class Http(object):
                         self.config.private_key.encode('ascii')
                     ).replace(b"\n", b"").strip()
 
-    def __headers(self, content_type):
+    def __headers(self, content_type, header_overrides=None):
         headers = {
             "Accept": "application/xml",
             "Authorization": self.__authorization_header(),
@@ -156,6 +166,8 @@ class Http(object):
 
         if content_type == Http.ContentType.Xml:
             headers["Content-type"] = Http.ContentType.Xml
+
+        headers.update(header_overrides or {})
 
         return headers
 

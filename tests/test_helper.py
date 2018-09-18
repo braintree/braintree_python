@@ -444,15 +444,15 @@ class ClientApiHttp(Http):
         })
 
     def get(self, path):
-        return self.__http_do("GET", path)
+        return self._make_request("GET", path)
 
     def post(self, path, params=None):
-        return self.__http_do("POST", path, params)
+        return self._make_request("POST", path, params)
 
     def put(self, path, params=None):
-        return self.__http_do("PUT", path, params)
+        return self._make_request("PUT", path, params)
 
-    def __http_do(self, http_verb, path, params=None):
+    def _make_request(self, http_verb, path, params=None):
         http_strategy = self.config.http_strategy()
         request_body = json.dumps(params) if params else None
         return http_strategy.http_do(http_verb, path, self.__headers(), request_body)
