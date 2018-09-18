@@ -219,3 +219,13 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction_adjustment.processor_response_code, "1000")
         self.assertEqual(transaction_adjustment.processor_response_text, "Approved")
 
+    def test_constructor_includes_network_transaction_id(self):
+        attributes = {
+            'amount': '27.00',
+            'tax_amount': '1.00',
+            'network_transaction_id': '123456789012345'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.network_transaction_id, "123456789012345")
+

@@ -505,6 +505,7 @@ class ErrorCodes(object):
         HasAlreadyBeenRefunded = "91512"
         IdealPaymentNotComplete = "815141"
         IdealPaymentsCannotBeVaulted = "915150"
+        PaymentInstrumentWithExternalVaultIsInvalid = "915176"
         DiscountAmountFormatIsInvalid = "915159"
         DiscountAmountCannotBeNegative = "915160"
         DiscountAmountIsTooLarge = "915161"
@@ -585,6 +586,12 @@ class ErrorCodes(object):
         UsBankAccountNonceMustBePlaidVerified = "915171"
         UsBankAccountNotVerified = "915172"
         TransactionSourceIsInvalid = "915133"
+
+        class ExternalVault(object):
+            StatusIsInvalid = "915175"
+            StatusWithPreviousNetworkTransactionIdIsInvalid = "915177"
+            CardTypeIsInvalid = "915178"
+            PreviousNetworkTransactionIdIsInvalid = "915179"
 
         class Options(object):
             SubmitForSettlementIsRequiredForCloning = "91544"

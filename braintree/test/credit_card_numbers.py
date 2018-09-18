@@ -20,6 +20,7 @@ class CreditCardNumbers(object):
     VisaInternational = "4009348888881881" # :nodoc:
     VisaPrepaid = "4500600000000061"
 
+    Discover = "6011111111111117"
     Elo = "5066991111111118"
 
     class FailsSandboxVerification(object):

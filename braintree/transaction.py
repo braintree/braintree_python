@@ -114,6 +114,7 @@ class Transaction(Resource):
         "gateway_rejection_reason",
         "master_merchant_account_id",
         "merchant_account_id",
+        "network_transaction_id",
         "order_id",
         "payment_instrument_type",
         "payment_method_token",
@@ -595,6 +596,7 @@ class Transaction(Resource):
                 ]
             },
             {"custom_fields": ["__any_key__"]},
+            {"external_vault": ["status", "previous_network_transaction_id"]},
             {"descriptor": ["name", "phone", "url"]},
             {"paypal_account": ["payee_id", "payee_email"]},
             {"industry":
@@ -718,6 +720,8 @@ class Transaction(Resource):
             self.facilitated_details = FacilitatedDetails(attributes.pop("facilitated_details"))
         if "facilitator_details" in attributes:
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
+        if "network_transaction_id" in attributes:
+            self.network_transaction_id = attributes["network_transaction_id"]
 
     @property
     def refund_id(self):
