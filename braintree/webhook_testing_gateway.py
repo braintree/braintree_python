@@ -82,6 +82,8 @@ class WebhookTestingGateway(object):
             return self.__ideal_payment_failed_sample_xml(id)
         elif kind == WebhookNotification.Kind.GrantedPaymentInstrumentUpdate:
             return self.__granted_payment_instrument_update()
+        elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
+            return self.__local_payment_completed()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -618,4 +620,12 @@ class WebhookTestingGateway(object):
                     <item>expiration-year</item>
                 </updated-fields>
             </granted-payment-instrument-update>
+            """
+
+    def __local_payment_completed(self):
+        return """
+            <local-payment>
+                <payment-id>a-payment-id</payment-id>
+                <payer-id>a-payer-id</payer-id>
+            </local-payment>
             """

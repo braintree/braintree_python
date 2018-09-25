@@ -513,3 +513,16 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("ee257d98-de40-47e8-96b3-a6954ea7a9a4", update.payment_method_nonce)
         self.assertEqual("abc123z", update.token)
         self.assertEqual(["expiration-month", "expiration-year"], update.updated_fields)
+
+    def test_local_payment_completed_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.LocalPaymentCompleted,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        local_payment = notification.local_payment
+
+        self.assertEqual(WebhookNotification.Kind.LocalPaymentCompleted, notification.kind)
+        self.assertEqual("a-payment-id", local_payment.payment_id)
+        self.assertEqual("a-payer-id", local_payment.payer_id)
