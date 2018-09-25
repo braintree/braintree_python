@@ -92,7 +92,7 @@ class WebhookNotification(Resource):
         elif "granted_payment_instrument_update" in node_wrapper:
             self.granted_payment_instrument_update = GrantedPaymentInstrumentUpdate(gateway, node_wrapper["granted_payment_instrument_update"])
         elif "local_payment" in node_wrapper:
-            self.local_payment = LocalPaymentCompleted(gateway, node_wrapper["local_payment"])
+            self.local_payment_completed = LocalPaymentCompleted(gateway, node_wrapper["local_payment"])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

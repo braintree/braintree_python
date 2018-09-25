@@ -521,8 +521,9 @@ class TestWebhooks(unittest.TestCase):
         )
 
         notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
-        local_payment = notification.local_payment
+        local_payment_completed = notification.local_payment_completed
 
         self.assertEqual(WebhookNotification.Kind.LocalPaymentCompleted, notification.kind)
-        self.assertEqual("a-payment-id", local_payment.payment_id)
-        self.assertEqual("a-payer-id", local_payment.payer_id)
+        self.assertEqual("a-payment-id", local_payment_completed.payment_id)
+        self.assertEqual("a-payer-id", local_payment_completed.payer_id)
+
