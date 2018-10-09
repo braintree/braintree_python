@@ -27,6 +27,198 @@ class TestTransaction(unittest.TestCase):
             self.assertEqual(transaction.risk_data.decision, "Approve")
             self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
 
+    def test_sale_receives_network_transaction_id_visa(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertTrue(len(result.transaction.network_transaction_id) > 0)
+
+    def test_sale_does_not_receive_network_transaction_id_non_visa(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.network_transaction_id, None)
+
+    def test_sale_accepts_external_vault_status_visa(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.transaction.network_transaction_id, "")
+
+    def test_sale_accepts_external_vault_status_non_visa(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.network_transaction_id, None)
+
+    def test_sale_accepts_blank_external_vault_previous_network_transaction_id_non_visa(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_network_transaction_id": ""
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.network_transaction_id, None)
+
+    def test_sale_accepts_external_vault_status_vaulted_without_previous_network_transaction_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.transaction.network_transaction_id, "")
+
+    def test_sale_accepts_external_vault_previous_network_transaction_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_network_transaction_id": "123456789012345"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.transaction.network_transaction_id, "")
+
+    def test_sale_with_external_vault_validation_error_unsupported_payment_instrument_type(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "external_vault": {
+                "status": "vaulted",
+                "previous_network_transaction_id": "123456789012345"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.PaymentInstrumentWithExternalVaultIsInvalid,
+            result.errors.for_object("transaction")[0].code
+        )
+
+    def test_sale_with_external_vault_validation_error_invalid_status(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "bad value"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ExternalVault.StatusIsInvalid,
+            result.errors.for_object("transaction").for_object("external_vault").on("status")[0].code
+        )
+
+    def test_sale_with_external_vault_validation_error_invalid_status_with_previous_network_transaction_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+                "previous_network_transaction_id": "123456789012345"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ExternalVault.StatusWithPreviousNetworkTransactionIdIsInvalid,
+            result.errors.for_object("transaction").for_object("external_vault").on("status")[0].code
+        )
+
+    def test_sale_with_external_vault_validation_error_invalid_previous_network_transaction_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_network_transaction_id": "bad value"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ExternalVault.PreviousNetworkTransactionIdIsInvalid,
+            result.errors.for_object("transaction").for_object("external_vault").on("previous_network_transaction_id")[0].code
+        )
+
+    def test_sale_with_external_vault_validation_error_invalid_card_type(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Discover,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_network_transaction_id": "123456789012345"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ExternalVault.CardTypeIsInvalid,
+            result.errors.for_object("transaction").for_object("external_vault").on("previous_network_transaction_id")[0].code
+        )
+
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

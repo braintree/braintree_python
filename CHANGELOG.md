@@ -1,3 +1,8 @@
+## 3.49.0
+* Add new field `network_transaction_id` in transaction response.
+* Add `external_vault` option to transaction sale.
+* Add `LocalPaymentCompleted` webhook.
+
 ## 3.48.0
 * Add ID to Transaction in SubscriptionChargedSuccessfully test webhook (#99, thanks @bjackson)
 * Fix dispute results in transactions not showing the correct status sometimes

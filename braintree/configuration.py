@@ -1,9 +1,9 @@
-import os
-import sys
 import braintree
-from braintree.exceptions.configuration_error import ConfigurationError
 from braintree.credentials_parser import CredentialsParser
 from braintree.environment import Environment
+from braintree.exceptions.configuration_error import ConfigurationError
+from braintree.util.graphql_client import GraphQLClient
+
 
 class Configuration(object):
     """
@@ -17,6 +17,7 @@ class Configuration(object):
             "your_private_key"
         )
     """
+
     @staticmethod
     def configure(environment, merchant_id, public_key, private_key, **kwargs):
         Configuration.environment = Environment.parse_environment(environment)
@@ -59,17 +60,22 @@ class Configuration(object):
     def api_version():
         return "5"
 
+    @staticmethod
+    def graphql_api_version():
+        return "2018-09-10"
+
     def __init__(self, environment=None, merchant_id=None, public_key=None, private_key=None,
-            client_id=None, client_secret=None, access_token=None, *args, **kwargs):
+                 client_id=None, client_secret=None, access_token=None, *args, **kwargs):
         if len(args) == 2:
             public_key, private_key = args
 
-        parser = CredentialsParser(client_id=client_id, client_secret=client_secret, access_token=access_token)
+        parser = CredentialsParser(client_id=client_id, client_secret=client_secret,
+                                   access_token=access_token)
         if parser.access_token is not None:
             parser.parse_access_token()
             self.environment = parser.environment
             self.merchant_id = parser.merchant_id
-        elif (parser.client_id is not None or parser.client_secret is not None):
+        elif parser.client_id is not None or parser.client_secret is not None:
             parser.parse_client_credentials()
             self.environment = parser.environment
             self.merchant_id = merchant_id
@@ -109,8 +115,14 @@ class Configuration(object):
     def base_url(self):
         return self.environment.protocol + self.environment.server_and_port
 
+    def graphql_base_url(self):
+        return self.environment.protocol + self.environment.graphql_server_and_port + "/graphql"
+
     def http(self):
         return braintree.util.http.Http(self)
+
+    def graphql_client(self):
+        return GraphQLClient(self)
 
     def http_strategy(self):
         return self._http_strategy
