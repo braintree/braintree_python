@@ -1,4 +1,4 @@
-## Unreleased
+## 3.49.0
 * Add new field `network_transaction_id` in transaction response.
 * Add `external_vault` option to transaction sale.
 * Add `LocalPaymentCompleted` webhook.
