@@ -9,6 +9,20 @@ import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
 
+    def test_sale(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+
     def test_sale_returns_risk_data(self):
         with AdvancedFraudIntegrationMerchant():
             result = Transaction.sale({
@@ -775,7 +789,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(1, len(errors))
         self.assertEqual(ErrorCodes.Transaction.ShipsFromPostalCodeInvalidCharacters, errors[0].code)
 
-    def test_sale_with_processor_declined(self):
+    def test_sale_with_soft_declined(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Decline,
             "credit_card": {
@@ -787,7 +801,23 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEqual(ProcessorResponseTypes.SoftDeclined, transaction.processor_response_type)
         self.assertEqual("2000 : Do Not Honor", transaction.additional_processor_response)
+
+    def test_sale_with_hard_declined(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.HardDecline,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEqual(ProcessorResponseTypes.HardDeclined, transaction.processor_response_type)
+        self.assertEqual("2015 : Transaction Not Allowed", transaction.additional_processor_response)
 
     def test_sale_with_gateway_rejected_with_incomplete_application(self):
         gateway = BraintreeGateway(
@@ -4223,6 +4253,29 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(True, authorization_adjustment.success)
         self.assertEqual("1000", authorization_adjustment.processor_response_code)
         self.assertEqual("Approved", authorization_adjustment.processor_response_text)
+        self.assertEqual(ProcessorResponseTypes.Approved, authorization_adjustment.processor_response_type)
+
+    def test_find_exposes_authorization_adjustments_soft_declined(self):
+        transaction = Transaction.find("authadjustmenttransactionsoftdeclined")
+        authorization_adjustment = transaction.authorization_adjustments[0]
+
+        self.assertEqual(datetime, type(authorization_adjustment.timestamp))
+        self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
+        self.assertEqual(False, authorization_adjustment.success)
+        self.assertEqual("3000", authorization_adjustment.processor_response_code)
+        self.assertEqual("Processor Network Unavailable - Try Again", authorization_adjustment.processor_response_text)
+        self.assertEqual(ProcessorResponseTypes.SoftDeclined, authorization_adjustment.processor_response_type)
+
+    def test_find_exposes_authorization_adjustments_hard_declined(self):
+        transaction = Transaction.find("authadjustmenttransactionharddeclined")
+        authorization_adjustment = transaction.authorization_adjustments[0]
+
+        self.assertEqual(datetime, type(authorization_adjustment.timestamp))
+        self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
+        self.assertEqual(False, authorization_adjustment.success)
+        self.assertEqual("2015", authorization_adjustment.processor_response_code)
+        self.assertEqual("Transaction Not Allowed", authorization_adjustment.processor_response_text)
+        self.assertEqual(ProcessorResponseTypes.HardDeclined, authorization_adjustment.processor_response_type)
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")

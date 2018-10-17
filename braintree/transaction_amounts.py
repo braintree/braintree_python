@@ -3,4 +3,5 @@ class TransactionAmounts(object):
 
     Authorize = "1000.00"
     Decline = "2000.00"
+    HardDecline = "2015.00"
     Fail = "3000.00"

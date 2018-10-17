@@ -45,6 +45,7 @@ from braintree.payment_method_nonce import PaymentMethodNonce
 from braintree.paypal_account import PayPalAccount
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
+from braintree.processor_response_types import ProcessorResponseTypes
 from braintree.resource_collection import ResourceCollection
 from braintree.risk_data import RiskData
 from braintree.samsung_pay_card import SamsungPayCard
