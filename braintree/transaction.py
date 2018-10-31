@@ -248,6 +248,7 @@ class Transaction(Resource):
     class IndustryType(object):
         Lodging = "lodging"
         TravelAndCruise = "travel_cruise"
+        TravelAndFlight = "travel_flight"
 
     @staticmethod
     def clone_transaction(transaction_id, params):
@@ -605,11 +606,19 @@ class Transaction(Resource):
                     "industry_type",
                     {
                         "data": [
-                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate"
-                            ]
-                        }
-                    ]
-                },
+                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate",
+                            "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "issued_date", "travel_agency_name", "travel_agency_code", "ticket_number",
+                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "tax_amount", "restricted_ticket",
+                            {
+                                "legs": [
+                                    "conjunction_ticket", "exchange_ticket", "coupon_number", "service_class", "carrier_code", "fare_basis_code", "flight_number", "departure_date", "departure_airport_code", "departure_time",
+                                    "arrival_airport_code", "arrival_time", "stopover_permitted", "fare_amount", "fee_amount", "tax_amount", "endorsement_or_restrictions"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
             {"line_items":
                 [
                     "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",

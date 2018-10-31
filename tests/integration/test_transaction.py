@@ -3761,6 +3761,102 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("industry").on("travel_package")[0].code
         )
 
+    def test_transactions_accept_travel_flight_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True},
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "passenger_first_name": "John",
+                    "passenger_last_name": "Doe",
+                    "passenger_middle_initial": "M",
+                    "passenger_title": "Mr.",
+                    "issued_date": date(2018, 1, 1),
+                    "travel_agency_name": "Expedia",
+                    "travel_agency_code": "12345678",
+                    "ticket_number": "ticket-number",
+                    "issuing_carrier_code": "AA",
+                    "customer_code": "customer-code",
+                    "fare_amount": "70.00",
+                    "fee_amount": "10.00",
+                    "tax_amount": "20.00",
+                    "restricted_ticket": False,
+                    "legs": [
+                        {
+                            "conjunction_ticket": "CJ0001",
+                            "exchange_ticket": "ET0001",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA100",
+                            "departure_date": date(2018, 1, 2),
+                            "departure_airport_code": "MDW",
+                            "departure_time": "08:00",
+                            "arrival_airport_code": "ATX",
+                            "arrival_time": "10:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        },
+                        {
+                            "conjunction_ticket": "CJ0002",
+                            "exchange_ticket": "ET0002",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA200",
+                            "departure_date": date(2018, 1, 3),
+                            "departure_airport_code": "ATX",
+                            "departure_time": "12:00",
+                            "arrival_airport_code": "MDW",
+                            "arrival_time": "14:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        }
+                    ]
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_transactions_return_validation_errors_on_travel_flight_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True},
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "fare_amount": "-1.23",
+                    "legs": [
+                        {
+                            "fare_amount": "-1.23"
+                        }
+                    ]
+                }
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.TravelFlight.FareAmountCannotBeNegative,
+            result.errors.for_object("transaction").for_object("industry").on("fare_amount")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.Leg.TravelFlight.FareAmountCannotBeNegative,
+            result.errors.for_object("transaction").for_object("industry").for_object("legs").for_object("index_0").on("fare_amount")[0].code
+        )
+
     def test_descriptors_accepts_name_phone_and_url(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
