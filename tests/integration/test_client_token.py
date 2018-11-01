@@ -17,11 +17,6 @@ class TestClientTokenGenerate(unittest.TestCase):
             "customer_id": "i_am_not_a_real_customer"
         })
 
-    def test_raise_error_for_sepa_params(self):
-        self.assertRaises(KeyError, ClientToken.generate, {
-            "sepa_mandate_type": EuropeBankAccount.MandateType.Business
-        })
-
 class TestClientToken(unittest.TestCase):
     def test_is_authorized_with_authorization_fingerprint(self):
         config = Configuration.instantiate()
