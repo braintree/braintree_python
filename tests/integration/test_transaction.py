@@ -345,6 +345,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("123", transaction.order_id)
         self.assertEqual("MyShoppingCartProvider", transaction.channel)
         self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(datetime, type(transaction.authorization_expires_at))
         self.assertEqual(datetime, type(transaction.created_at))
         self.assertEqual(datetime, type(transaction.updated_at))
         self.assertEqual("510510", transaction.credit_card_details.bin)

@@ -99,6 +99,7 @@ class Transaction(Resource):
         "additional_processor_response",
         "amount",
         "authorization_adjustments",
+        "authorization_expires_at",
         "avs_error_response_code",
         "avs_postal_code_response_code",
         "avs_street_address_response_code",
