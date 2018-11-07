@@ -519,6 +519,7 @@ class ErrorCodes(object):
         MerchantAccountDoesNotMatchIdealPaymentMerchantAccount = "915143"
         MerchantAccountDoesNotSupportMOTO = "91558"
         MerchantAccountDoesNotSupportRefunds = "91547"
+        MerchantAccountIdDoesNotMatchSubscription = "915180"
         MerchantAccountIdIsInvalid = "91513"
         MerchantAccountIsSusped = "91514" # Deprecated
         MerchantAccountIsSuspended = "91514"
