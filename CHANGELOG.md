@@ -1,5 +1,6 @@
 ## unreleased
 * Add `authorization_expires_at` to `Transaction`
+* Remove invalid transaction tests
 
 ## 3.49.0
 * Add new field `network_transaction_id` in transaction response.
