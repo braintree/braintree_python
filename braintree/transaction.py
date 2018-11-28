@@ -599,7 +599,7 @@ class Transaction(Resource):
             {"custom_fields": ["__any_key__"]},
             {"external_vault": ["status", "previous_network_transaction_id"]},
             {"descriptor": ["name", "phone", "url"]},
-            {"paypal_account": ["payee_id", "payee_email"]},
+            {"paypal_account": ["payee_id", "payee_email", "payer_id", "payment_id"]},
             {"industry":
                 [
                     "industry_type",

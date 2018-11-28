@@ -4335,6 +4335,24 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
+    def test_creating_paypal_transaction_with_local_payment_webhook_content(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "paypal_account": {
+                "payment_id": "PAY-1234",
+                "payer_id": "PAYER-1234",
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payment_id, "PAY-1234")
+        self.assertEqual(transaction.paypal_details.payer_id, "PAYER-1234")
+
     def test_creating_paypal_transaction_with_payee_id(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

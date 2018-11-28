@@ -1,6 +1,7 @@
 ## unreleased
 * Add `authorization_expires_at` to `Transaction`
 * Remove invalid transaction tests
+* Allow PayPal payment ID and payer ID to be passed during transaction create
 
 ## 3.49.0
 * Add new field `network_transaction_id` in transaction response.
