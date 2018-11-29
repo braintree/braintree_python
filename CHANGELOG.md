@@ -1,4 +1,5 @@
 ## unreleased
+* Add `fraud_service_provider` field to `risk_data`
 * Add `authorization_expires_at` to `Transaction`
 * Remove invalid transaction tests
 * Allow PayPal payment ID and payer ID to be passed during transaction create
