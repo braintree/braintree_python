@@ -27,6 +27,19 @@ class TestPaymentMethodNonce(unittest.TestCase):
         )
         gateway = BraintreeGateway(config)
 
+        nonce = PaymentMethodNonce.find("fake-valid-visa-nonce")
+
+        self.assertEqual("401288", nonce.details["bin"])
+
+    def test_find_nonce_shows_3ds_details(self):
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
+
         credit_card = {
             "credit_card": {
                 "number": "4111111111111111",

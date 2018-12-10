@@ -1,6 +1,7 @@
 ## unreleased
 * Add Hiper card type support
 * Add Hipercard card type support
+* Add `bin` to `PaymentMethodNonceDetails`
 
 ## 3.50.0
 * Add `fraud_service_provider` field to `risk_data`
