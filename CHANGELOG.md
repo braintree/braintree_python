@@ -4,6 +4,7 @@
 * Remove invalid transaction tests
 * Allow PayPal payment ID and payer ID to be passed during transaction create
 * Add `travel_flight` support to industry-specific data
+* Add `processor_response_type` to `Transaction`, `AuthorizationAdjustment`, and `CreditCardVerification`.
 
 ## 3.49.0
 * Add new field `network_transaction_id` in transaction response.
