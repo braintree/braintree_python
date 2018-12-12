@@ -12,6 +12,9 @@ class TestCreditCardVerfication(unittest.TestCase):
         }})
 
         self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
 
     def test_create_failure(self):
         result = CreditCardVerification.create({
@@ -21,6 +24,9 @@ class TestCreditCardVerfication(unittest.TestCase):
         }})
 
         self.assertFalse(result.is_success)
+        verification = result.credit_card_verification
+        self.assertEqual("2000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.SoftDeclined, verification.processor_response_type)
 
     def test_create_returns_validation_errors(self):
         result = CreditCardVerification.create({

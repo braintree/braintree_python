@@ -9,6 +9,20 @@ import braintree.test.venmo_sdk as venmo_sdk
 
 class TestTransaction(unittest.TestCase):
 
+    def test_sale(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+
     def test_sale_returns_risk_data(self):
         with AdvancedFraudIntegrationMerchant():
             result = Transaction.sale({
@@ -331,6 +345,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("123", transaction.order_id)
         self.assertEqual("MyShoppingCartProvider", transaction.channel)
         self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(datetime, type(transaction.authorization_expires_at))
         self.assertEqual(datetime, type(transaction.created_at))
         self.assertEqual(datetime, type(transaction.updated_at))
         self.assertEqual("510510", transaction.credit_card_details.bin)
@@ -775,7 +790,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(1, len(errors))
         self.assertEqual(ErrorCodes.Transaction.ShipsFromPostalCodeInvalidCharacters, errors[0].code)
 
-    def test_sale_with_processor_declined(self):
+    def test_sale_with_soft_declined(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Decline,
             "credit_card": {
@@ -787,7 +802,23 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEqual(ProcessorResponseTypes.SoftDeclined, transaction.processor_response_type)
         self.assertEqual("2000 : Do Not Honor", transaction.additional_processor_response)
+
+    def test_sale_with_hard_declined(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.HardDecline,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEqual(ProcessorResponseTypes.HardDeclined, transaction.processor_response_type)
+        self.assertEqual("2015 : Transaction Not Allowed", transaction.additional_processor_response)
 
     def test_sale_with_gateway_rejected_with_incomplete_application(self):
         gateway = BraintreeGateway(
@@ -3730,6 +3761,102 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("industry").on("travel_package")[0].code
         )
 
+    def test_transactions_accept_travel_flight_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True},
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "passenger_first_name": "John",
+                    "passenger_last_name": "Doe",
+                    "passenger_middle_initial": "M",
+                    "passenger_title": "Mr.",
+                    "issued_date": date(2018, 1, 1),
+                    "travel_agency_name": "Expedia",
+                    "travel_agency_code": "12345678",
+                    "ticket_number": "ticket-number",
+                    "issuing_carrier_code": "AA",
+                    "customer_code": "customer-code",
+                    "fare_amount": "70.00",
+                    "fee_amount": "10.00",
+                    "tax_amount": "20.00",
+                    "restricted_ticket": False,
+                    "legs": [
+                        {
+                            "conjunction_ticket": "CJ0001",
+                            "exchange_ticket": "ET0001",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA100",
+                            "departure_date": date(2018, 1, 2),
+                            "departure_airport_code": "MDW",
+                            "departure_time": "08:00",
+                            "arrival_airport_code": "ATX",
+                            "arrival_time": "10:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        },
+                        {
+                            "conjunction_ticket": "CJ0002",
+                            "exchange_ticket": "ET0002",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA200",
+                            "departure_date": date(2018, 1, 3),
+                            "departure_airport_code": "ATX",
+                            "departure_time": "12:00",
+                            "arrival_airport_code": "MDW",
+                            "arrival_time": "14:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        }
+                    ]
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_transactions_return_validation_errors_on_travel_flight_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {"submit_for_settlement": True},
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "fare_amount": "-1.23",
+                    "legs": [
+                        {
+                            "fare_amount": "-1.23"
+                        }
+                    ]
+                }
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.TravelFlight.FareAmountCannotBeNegative,
+            result.errors.for_object("transaction").for_object("industry").on("fare_amount")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.Leg.TravelFlight.FareAmountCannotBeNegative,
+            result.errors.for_object("transaction").for_object("industry").for_object("legs").for_object("index_0").on("fare_amount")[0].code
+        )
+
     def test_descriptors_accepts_name_phone_and_url(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -4223,6 +4350,29 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(True, authorization_adjustment.success)
         self.assertEqual("1000", authorization_adjustment.processor_response_code)
         self.assertEqual("Approved", authorization_adjustment.processor_response_text)
+        self.assertEqual(ProcessorResponseTypes.Approved, authorization_adjustment.processor_response_type)
+
+    def test_find_exposes_authorization_adjustments_soft_declined(self):
+        transaction = Transaction.find("authadjustmenttransactionsoftdeclined")
+        authorization_adjustment = transaction.authorization_adjustments[0]
+
+        self.assertEqual(datetime, type(authorization_adjustment.timestamp))
+        self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
+        self.assertEqual(False, authorization_adjustment.success)
+        self.assertEqual("3000", authorization_adjustment.processor_response_code)
+        self.assertEqual("Processor Network Unavailable - Try Again", authorization_adjustment.processor_response_text)
+        self.assertEqual(ProcessorResponseTypes.SoftDeclined, authorization_adjustment.processor_response_type)
+
+    def test_find_exposes_authorization_adjustments_hard_declined(self):
+        transaction = Transaction.find("authadjustmenttransactionharddeclined")
+        authorization_adjustment = transaction.authorization_adjustments[0]
+
+        self.assertEqual(datetime, type(authorization_adjustment.timestamp))
+        self.assertEqual(Decimal("-20.00"), authorization_adjustment.amount)
+        self.assertEqual(False, authorization_adjustment.success)
+        self.assertEqual("2015", authorization_adjustment.processor_response_code)
+        self.assertEqual("Transaction Not Allowed", authorization_adjustment.processor_response_text)
+        self.assertEqual(ProcessorResponseTypes.HardDeclined, authorization_adjustment.processor_response_type)
 
     def test_find_exposes_disputes(self):
         transaction = Transaction.find("disputedtransaction")
@@ -4281,54 +4431,30 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
+    def test_creating_paypal_transaction_with_local_payment_webhook_content(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "paypal_account": {
+                "payment_id": "PAY-1234",
+                "payer_id": "PAYER-1234",
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payment_id, "PAY-1234")
+        self.assertEqual(transaction.paypal_details.payer_id, "PAYER-1234")
+
     def test_creating_paypal_transaction_with_payee_id(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "payment_method_nonce": Nonces.PayPalOneTimePayment,
             "paypal_account": {
                 "payee_id": "fake-payee-id"
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-
-        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
-        self.assertNotEqual(None, transaction.paypal_details.image_url)
-        self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEqual(transaction.paypal_details.payee_id, "fake-payee-id")
-
-    def test_creating_paypal_transaction_with_payee_id_in_options_params(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": Nonces.PayPalOneTimePayment,
-            "paypal_account": {},
-            "options": {
-                "payee_id": "fake-payee-id"
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-
-        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
-        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
-        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
-        self.assertNotEqual(None, transaction.paypal_details.image_url)
-        self.assertNotEqual(None, transaction.paypal_details.debug_id)
-        self.assertEqual(transaction.paypal_details.payee_id, "fake-payee-id")
-
-    def test_creating_paypal_transaction_with_payee_id_in_options_paypal_params(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": Nonces.PayPalOneTimePayment,
-            "paypal_account": {},
-            "options": {
-                "paypal": {
-                    "payee_id": "fake-payee-id"
-                }
             }
         })
 
