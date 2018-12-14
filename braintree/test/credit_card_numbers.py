@@ -23,6 +23,9 @@ class CreditCardNumbers(object):
     Discover = "6011111111111117"
     Elo = "5066991111111118"
 
+    Hiper = "6370950000000005"
+    Hipercard = "6062820524845321"
+
     class FailsSandboxVerification(object):
         AmEx       = "378734493671000"
         Discover   = "6011000990139424"

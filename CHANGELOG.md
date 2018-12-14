@@ -1,3 +1,7 @@
+## unreleased
+* Add Hiper card type support
+* Add Hipercard card type support
+
 ## 3.50.0
 * Add `fraud_service_provider` field to `risk_data`
 * Add `authorization_expires_at` to `Transaction`

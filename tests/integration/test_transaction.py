@@ -5172,3 +5172,33 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(TestHelper.adyen_merchant_account_id, transaction.merchant_account_id)
 
+    def test_sale_hiper_card(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(CreditCard.CardType.Hiper, transaction.credit_card_details.card_type)
+
+    def test_sale_hipercard_card(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hipercard,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(CreditCard.CardType.Hipercard, transaction.credit_card_details.card_type)
+
