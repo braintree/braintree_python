@@ -70,6 +70,17 @@ class TestDocumentUpload(unittest.TestCase):
         finally:
             os.remove(file_path)
 
+    def test_create_returns_error_with_malformed_file(self):
+        file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/too_long.pdf")
+        too_long_pdf = open(file_path, "rb")
+
+        result = DocumentUpload.create({
+            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+            "file": too_long_pdf
+        })
+
+        self.assertEqual(result.errors.for_object("document_upload")[0].code, ErrorCodes.DocumentUpload.FileIsTooLong)
+
     @raises_with_regexp(KeyError, "'Invalid keys: invalid_key'")
     def test_create_returns_invalid_keys_errors_with_invalid_signature(self):
         result = DocumentUpload.create({
