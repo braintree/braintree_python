@@ -2,6 +2,7 @@
 * Add Hiper card type support
 * Add Hipercard card type support
 * Add `bin` to `PaymentMethodNonceDetails`
+* Clarify support for Python versions 3.6.x and 3.7.x
 
 ## 3.50.0
 * Add `fraud_service_provider` field to `risk_data`
