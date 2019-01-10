@@ -6,40 +6,6 @@ else:
     from unittest.mock import MagicMock
 
 class TestPaymentMethodGateway(unittest.TestCase):
-    def test_parse_response_returns_a_credit_card(self):
-        payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
-        credit_card = payment_method_gateway._parse_payment_method({
-            "credit_card": {"bin": "411111", "last_4": "1111"}
-        })
-
-        self.assertEqual(CreditCard, credit_card.__class__)
-        self.assertEqual("411111", credit_card.bin)
-        self.assertEqual("1111", credit_card.last_4)
-
-    def test_parse_response_returns_a_paypal_account(self):
-        payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
-        paypal_account = payment_method_gateway._parse_payment_method({
-            "paypal_account": {"token": "1234", "default": False}
-        })
-
-        self.assertEqual(PayPalAccount, paypal_account.__class__)
-        self.assertEqual("1234", paypal_account.token)
-        self.assertFalse(paypal_account.default)
-
-    def test_parse_response_returns_an_unknown_payment_method(self):
-        payment_method_gateway = PaymentMethodGateway(BraintreeGateway(None))
-        unknown_payment_method = payment_method_gateway._parse_payment_method({
-            "new_fancy_payment_method": {
-                "token": "1234",
-                "default": True,
-                "other_fancy_thing": "is-shiny"
-            }
-        })
-
-        self.assertEqual(UnknownPaymentMethod, unknown_payment_method.__class__)
-        self.assertEqual("1234", unknown_payment_method.token)
-        self.assertTrue(unknown_payment_method.default)
-
     def test_create_signature(self):
         actual_signature = PaymentMethod.signature("create")
 

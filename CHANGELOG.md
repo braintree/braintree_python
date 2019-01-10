@@ -4,6 +4,7 @@
 * Add `bin` to `PaymentMethodNonceDetails`
 * Clarify support for Python versions 3.6.x and 3.7.x
 * Add Error indicating pdf uploads too long for dispute evidence.
+* Add `GrantedPaymentMethodRevoked` webhook response objects
 
 ## 3.50.0
 * Add `fraud_service_provider` field to `risk_data`
