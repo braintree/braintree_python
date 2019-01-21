@@ -1,1 +1,3 @@
 include braintree/ssl/*
+include runtests.py
+graft tests
