@@ -52,6 +52,8 @@ class CreditCard(Resource):
         * Braintree.CreditCard.Discover
         * Braintree.CreditCard.Electron
         * Braintree.CreditCard.Elo
+        * Braintree.CreditCard.Hiper
+        * Braintree.CreditCard.Hipercard
         * Braintree.CreditCard.JCB
         * Braintree.CreditCard.Laser
         * Braintree.CreditCard.UK_Maestro
@@ -70,6 +72,8 @@ class CreditCard(Resource):
         Discover = "Discover"
         Electron = "Electron"
         Elo = "Elo"
+        Hiper = "Hiper"
+        Hipercard = "Hipercard"
         JCB = "JCB"
         Laser = "Laser"
         UK_Maestro = "UK Maestro"

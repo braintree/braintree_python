@@ -27,6 +27,19 @@ class TestPaymentMethodNonce(unittest.TestCase):
         )
         gateway = BraintreeGateway(config)
 
+        nonce = PaymentMethodNonce.find("fake-valid-visa-nonce")
+
+        self.assertEqual("401288", nonce.details["bin"])
+
+    def test_find_nonce_shows_3ds_details(self):
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
+
         credit_card = {
             "credit_card": {
                 "number": "4111111111111111",
@@ -45,6 +58,13 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
+
+    def test_find_nonce_shows_venmo_details(self):
+        found_nonce = PaymentMethodNonce.find("fake-venmo-account-nonce")
+
+        self.assertEquals("99", found_nonce.details["last_two"])
+        self.assertEquals("venmojoe", found_nonce.details["username"])
+        self.assertEquals("Venmo-Joe-1", found_nonce.details["venmo_user_id"])
 
     def test_exposes_null_3ds_info_if_none_exists(self):
         http = ClientApiHttp.create()

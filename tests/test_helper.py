@@ -11,9 +11,11 @@ import time
 if sys.version_info[0] == 2:
     from urllib import urlencode, quote_plus
     from httplib import HTTPConnection
+    from base64 import encodestring as encodebytes
 else:
     from urllib.parse import urlencode, quote_plus
     from http.client import HTTPConnection
+    from base64 import encodebytes
 import requests
 
 from base64 import b64decode
@@ -89,6 +91,7 @@ class TestHelper(object):
     us_bank_merchant_account_id = "us_bank_merchant_account"
     another_us_bank_merchant_account_id = "another_us_bank_merchant_account"
     adyen_merchant_account_id = "adyen_ma"
+    hiper_brl_merchant_account_id = "hiper_brl"
 
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",
@@ -425,6 +428,13 @@ class TestHelper(object):
 
         return (granting_gateway, credit_card)
 
+    @staticmethod
+    def sample_notification_from_xml(xml):
+        gateway = Configuration.gateway()
+        payload = encodebytes(xml)
+        hmac_payload = Crypto.sha1_hmac_hash(gateway.config.private_key, payload)
+        signature = "%s|%s" % (gateway.config.public_key, hmac_payload)
+        return {'bt_signature': signature, 'bt_payload': payload}
 
 class ClientApiHttp(Http):
     def __init__(self, config, options):

@@ -529,6 +529,46 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.id, collection.first.id)
         self.assertEqual(transaction.credit_card_details.card_type, collection.first.credit_card_details.card_type)
 
+    def test_advanced_search_hiper(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_card_type == transaction.credit_card_details.card_type
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(transaction.id, collection.first.id)
+        self.assertEqual(transaction.credit_card_details.card_type, collection.first.credit_card_details.card_type)
+
+    def test_advanced_search_hipercard(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hipercard,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_card_type == transaction.credit_card_details.card_type
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(transaction.id, collection.first.id)
+        self.assertEqual(transaction.credit_card_details.card_type, collection.first.credit_card_details.card_type)
+
     @raises_with_regexp(AttributeError,
             "Invalid argument\(s\) for credit_card_card_type: noSuchCreditCardCardType")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_card_type(self):

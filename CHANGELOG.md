@@ -1,3 +1,11 @@
+## 3.51.0
+* Add Hiper card type support
+* Add Hipercard card type support
+* Add `bin` to `PaymentMethodNonceDetails`
+* Clarify support for Python versions 3.6.x and 3.7.x
+* Add Error indicating pdf uploads too long for dispute evidence.
+* Add `GrantedPaymentMethodRevoked` webhook response objects
+
 ## 3.50.0
 * Add `fraud_service_provider` field to `risk_data`
 * Add `authorization_expires_at` to `Transaction`
@@ -10,6 +18,7 @@
 * Add new field `network_transaction_id` in transaction response.
 * Add `external_vault` option to transaction sale.
 * Add `LocalPaymentCompleted` webhook.
+* Add `processor_response_type` to `Transaction`, `AuthorizationAdjustment`, and `CreditCardVerification`.
 
 ## 3.48.0
 * Add ID to Transaction in SubscriptionChargedSuccessfully test webhook (#99, thanks @bjackson)

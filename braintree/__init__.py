@@ -42,6 +42,7 @@ from braintree.partner_merchant import PartnerMerchant
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.payment_method import PaymentMethod
 from braintree.payment_method_nonce import PaymentMethodNonce
+from braintree.payment_method_parser import parse_payment_method
 from braintree.paypal_account import PayPalAccount
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway

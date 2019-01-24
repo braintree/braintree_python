@@ -17,6 +17,7 @@ from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.ids_search import IdsSearch
 from braintree.payment_method_nonce import PaymentMethodNonce
+from braintree.payment_method_parser import parse_payment_method
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
@@ -42,7 +43,7 @@ class PaymentMethodGateway(object):
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
-            return self._parse_payment_method(response)
+            return parse_payment_method(self.gateway, response)
         except NotFoundError:
             raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
@@ -108,7 +109,7 @@ class PaymentMethodGateway(object):
                         "shared_payment_method_token": payment_method_token
                     }
                 },
-                None
+                "revoke"
             )
         except NotFoundError:
             raise NotFoundError("payment method with payment_method_token " + repr(payment_method_token) + " not found")
@@ -117,10 +118,13 @@ class PaymentMethodGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-        elif result_key is None:
+        elif result_key is "revoke" and response.get("success", False):
             return SuccessfulResult()
+        elif result_key is "payment_method_nonce":
+            payment_method_nonce = self._parse_payment_method_nonce(response)
+            return SuccessfulResult({result_key: payment_method_nonce})
         else:
-            payment_method = self._parse_payment_method(response)
+            payment_method = parse_payment_method(self.gateway, response)
             return SuccessfulResult({result_key: payment_method})
         return response
 
@@ -129,38 +133,10 @@ class PaymentMethodGateway(object):
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
         else:
-            payment_method = self._parse_payment_method(response)
+            payment_method = parse_payment_method(self.gateway, response)
             return SuccessfulResult({"payment_method": payment_method})
 
-    def _parse_payment_method(self, response):
-        if "paypal_account" in response:
-            return PayPalAccount(self.gateway, response["paypal_account"])
-        elif "credit_card" in response:
-            return CreditCard(self.gateway, response["credit_card"])
-        elif "europe_bank_account" in response:
-            return EuropeBankAccount(self.gateway, response["europe_bank_account"])
-        elif "apple_pay_card" in response:
-            return ApplePayCard(self.gateway, response["apple_pay_card"])
-        elif "android_pay_card" in response:
-            return AndroidPayCard(self.gateway, response["android_pay_card"])
-        elif "amex_express_checkout_card" in response:
-            return AmexExpressCheckoutCard(self.gateway, response["amex_express_checkout_card"])
-        elif "coinbase_account" in response:
-            return CoinbaseAccount(self.gateway, response["coinbase_account"])
-        elif "venmo_account" in response:
-            return VenmoAccount(self.gateway, response["venmo_account"])
-        elif "us_bank_account" in response:
-            return UsBankAccount(self.gateway, response["us_bank_account"])
-        elif "visa_checkout_card" in response:
-            return VisaCheckoutCard(self.gateway, response["visa_checkout_card"])
-        elif "masterpass_card" in response:
-            return MasterpassCard(self.gateway, response["masterpass_card"])
-        elif "samsung_pay_card" in response:
-            return SamsungPayCard(self.gateway, response["samsung_pay_card"])
-        elif "payment_method_nonce" in response:
+    def _parse_payment_method_nonce(self, response):
+        if "payment_method_nonce" in response:
             return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])
-        elif "success" in response:
-            return None
-        else:
-            name = list(response)[0]
-            return UnknownPaymentMethod(self.gateway, response[name])
+        raise ValueError("payment_method_nonce not present in response")

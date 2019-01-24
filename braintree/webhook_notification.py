@@ -14,6 +14,7 @@ from braintree.connected_merchant_paypal_status_changed import ConnectedMerchant
 from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
 from braintree.ideal_payment import IdealPayment
 from braintree.granted_payment_instrument_update import GrantedPaymentInstrumentUpdate
+from braintree.revoked_payment_method_metadata import RevokedPaymentMethodMetadata
 from braintree.local_payment_completed import LocalPaymentCompleted
 
 class WebhookNotification(Resource):
@@ -46,6 +47,7 @@ class WebhookNotification(Resource):
         IdealPaymentComplete = "ideal_payment_complete"
         IdealPaymentFailed = "ideal_payment_failed"
         GrantedPaymentInstrumentUpdate = "granted_payment_instrument_update"
+        GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
         LocalPaymentCompleted = "local_payment_completed"
 
     @staticmethod
@@ -91,6 +93,8 @@ class WebhookNotification(Resource):
             self.ideal_payment = IdealPayment(gateway, node_wrapper['ideal_payment'])
         elif "granted_payment_instrument_update" in node_wrapper:
             self.granted_payment_instrument_update = GrantedPaymentInstrumentUpdate(gateway, node_wrapper["granted_payment_instrument_update"])
+        elif WebhookNotification.Kind.GrantedPaymentMethodRevoked == attributes["kind"]:
+            self.revoked_payment_method_metadata = RevokedPaymentMethodMetadata(gateway, node_wrapper)
         elif "local_payment" in node_wrapper:
             self.local_payment_completed = LocalPaymentCompleted(gateway, node_wrapper["local_payment"])
 
