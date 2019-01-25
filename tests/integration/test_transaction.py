@@ -4786,18 +4786,6 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.transaction_fee_amount)
         self.assertNotEqual(None, transaction.paypal_details.transaction_fee_currency_iso_code)
 
-    def test_paypal_transaction_refund_already_refunded_transation_fails(self):
-        transaction = self.__create_paypal_transaction()
-
-        Transaction.refund(transaction.id)
-        result = Transaction.refund(transaction.id)
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.HasAlreadyBeenRefunded,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
-
     def test_paypal_transaction_refund_returns_an_error_if_unsettled(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
