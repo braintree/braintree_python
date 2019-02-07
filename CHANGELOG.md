@@ -1,3 +1,6 @@
+## unreleased
+* Deprecate `GrantedPaymentInstrumentUpdate` and add `GrantorUpdatedGrantedPaymentMethod` and `RecipientUpdatedGrantedPaymentMethod`
+
 ## 3.51.0
 * Add Hiper card type support
 * Add Hipercard card type support
