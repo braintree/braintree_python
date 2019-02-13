@@ -603,7 +603,10 @@ class ErrorCodes(object):
 
             class PayPal(object):
                 CustomFieldTooLong = "91580"
-
+            class CreditCard(object):
+                AccountTypeIsInvalid = "915184"
+                AccountTypeNotSupported = "915185"
+                AccountTypeDebitDoesNotSupportAuths = "915186"
         class Industry(object):
             IndustryTypeIsInvalid = "93401"
 
