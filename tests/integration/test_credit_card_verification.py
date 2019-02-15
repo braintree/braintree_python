@@ -43,6 +43,21 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(1, len(amount_errors))
         self.assertEqual(ErrorCodes.Verification.Options.AmountCannotBeNegative, amount_errors[0].code)
 
+    def test_create_with_account_type(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            },
+            "options": {
+                "account_type": "debit",
+            },
+        })
+
+        print(dir(result.errors))
+        self.assertTrue(result.is_success)
+
     def test_find_with_verification_id(self):
         customer = Customer.create({
             "credit_card": {

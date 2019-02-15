@@ -68,7 +68,10 @@ class CreditCardVerification(AttributeGetter):
                 "number", "cvv", "cardholder_name", "cvv", "expiration_date", "expiration_month",
                 "expiration_year", {"billing_address": billing_address_params}
             ]
-        return [{"credit_card": credit_card_params}, {"options": ["amount", "merchant_account_id"]}]
+        options_params = [
+                "account_type", "amount", "merchant_account_id"
+            ]
+        return [{"credit_card": credit_card_params}, {"options": options_params}]
 
     def __eq__(self, other):
         if not isinstance(other, CreditCardVerification):
