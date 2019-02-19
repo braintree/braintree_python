@@ -236,6 +236,7 @@ class CreditCard(Resource):
             "verification_merchant_account_id",
             "verify_card",
             "verification_amount",
+            "verification_account_type",
             "venmo_sdk_session",
             "fail_on_duplicate_payment_method",
             {

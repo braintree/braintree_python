@@ -614,6 +614,79 @@ class TestPaymentMethod(unittest.TestCase):
         found_paypal_account = PayPalAccount.find(token)
         self.assertFalse(found_paypal_account is None)
 
+    def test_create_with_account_type_debit(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Hiper,
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options": {
+                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_account_type": "debit",
+                "verify_card": True,
+            }
+        })
+        self.assertTrue(result.is_success)
+
+    def test_create_with_account_type_credit(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Hiper,
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options": {
+                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_account_type": "credit",
+                "verify_card": True,
+            }
+        })
+        self.assertTrue(result.is_success)
+
+    def test_create_with_usupported_merchant_account(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options": {
+                "verification_account_type": "debit",
+                "verify_card": True,
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("credit_card").for_object("options").on("verification_account_type")
+
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.CreditCard.VerificationAccountTypeNotSupported, errors[0].code)
+
+    def test_create_with_invalid_account_type(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Hiper,
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe",
+            "options": {
+                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_account_type": "invalid",
+                "verify_card": True,
+            }
+        })
+        self.assertFalse(result.is_success)
+
+        errors = result.errors.for_object("credit_card").for_object("options").on("verification_account_type")
+
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.CreditCard.VerificationAccountTypeIsInvald, errors[0].code)
+
     def test_find_returns_an_abstract_payment_method(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({

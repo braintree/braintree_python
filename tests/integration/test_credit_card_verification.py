@@ -43,7 +43,7 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(1, len(amount_errors))
         self.assertEqual(ErrorCodes.Verification.Options.AmountCannotBeNegative, amount_errors[0].code)
 
-    def test_create_with_account_type(self):
+    def test_create_with_account_type_debit(self):
         result = CreditCardVerification.create({
             "credit_card": {
                 "number": CreditCardNumbers.Hiper,
@@ -51,12 +51,65 @@ class TestCreditCardVerfication(unittest.TestCase):
                 "cvv": "737",
             },
             "options": {
+                "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
                 "account_type": "debit",
             },
         })
 
-        print(dir(result.errors))
         self.assertTrue(result.is_success)
+
+    def test_create_with_account_type_credit(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            },
+            "options": {
+                "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "account_type": "credit",
+            },
+        })
+
+        self.assertTrue(result.is_success)
+
+
+    def test_create_with_unsupported_account_type(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+            },
+            "options": {
+                "account_type": "debit",
+            },
+        })
+
+        self.assertFalse(result.is_success)
+
+        account_type_errors = result.errors.for_object("verification").for_object("options").on("account_type")
+        self.assertEqual(1, len(account_type_errors))
+        self.assertEqual(ErrorCodes.Verification.Options.AccountTypeNotSupported , account_type_errors[0].code)
+
+    def test_create_with_invalid_account_type(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            },
+            "options": {
+                "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "account_type": "invalid",
+            },
+        })
+
+        self.assertFalse(result.is_success)
+
+        account_type_errors = result.errors.for_object("verification").for_object("options").on("account_type")
+        self.assertEqual(1, len(account_type_errors))
+        self.assertEqual(ErrorCodes.Verification.Options.AccountTypeIsInvalid, account_type_errors[0].code)
 
     def test_find_with_verification_id(self):
         customer = Customer.create({
