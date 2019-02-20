@@ -96,6 +96,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
                     "verify_card",
                     "verification_amount",
                     "verification_merchant_account_id",
+                    "verification_account_type",
                     "venmo_sdk_session",
                     {
                         "adyen":[
