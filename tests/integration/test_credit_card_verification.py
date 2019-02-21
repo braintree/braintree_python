@@ -57,6 +57,7 @@ class TestCreditCardVerfication(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
+        self.assertEqual("debit", result.verification.credit_card["account_type"])
 
     def test_create_with_account_type_credit(self):
         result = CreditCardVerification.create({
@@ -72,6 +73,7 @@ class TestCreditCardVerfication(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
+        self.assertEqual("credit", result.verification.credit_card["account_type"])
 
 
     def test_create_with_unsupported_account_type(self):

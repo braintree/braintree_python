@@ -629,6 +629,7 @@ class TestPaymentMethod(unittest.TestCase):
             }
         })
         self.assertTrue(result.is_success)
+        self.assertEqual("debit", result.credit_card.verifications[0]["credit_card"]["account_type"])
 
     def test_create_with_account_type_credit(self):
         customer = Customer.create().customer
@@ -645,6 +646,7 @@ class TestPaymentMethod(unittest.TestCase):
             }
         })
         self.assertTrue(result.is_success)
+        self.assertEqual("credit", result.credit_card.verifications[0]["credit_card"]["account_type"])
 
     def test_create_with_usupported_merchant_account(self):
         customer = Customer.create().customer
@@ -813,6 +815,7 @@ class TestPaymentMethod(unittest.TestCase):
             }
         })
         self.assertTrue(update_result.is_success)
+        self.assertEqual("credit", update_result.payment_method.verification.credit_card["account_type"])
 
     def test_update_credit_cards_with_account_type_debit(self):
         customer = Customer.create().customer
@@ -835,6 +838,7 @@ class TestPaymentMethod(unittest.TestCase):
             }
         })
         self.assertTrue(update_result.is_success)
+        self.assertEqual("debit", update_result.payment_method.verification.credit_card["account_type"])
 
     def test_update_credit_cards_with_invalid_account_type(self):
         customer = Customer.create().customer
