@@ -48,7 +48,7 @@ class TestCreditCard(unittest.TestCase):
                     "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "verification_account_type", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
             ]},
             "customer_id"
         ]
@@ -65,7 +65,7 @@ class TestCreditCard(unittest.TestCase):
                     {"options": ["update_existing"]}
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
+            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "verification_account_type", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
             ]}
         ]
         self.assertEqual(expected, CreditCard.update_signature())
