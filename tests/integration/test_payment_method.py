@@ -614,7 +614,69 @@ class TestPaymentMethod(unittest.TestCase):
         found_paypal_account = PayPalAccount.find(token)
         self.assertFalse(found_paypal_account is None)
 
-    def test_create_with_account_type_debit(self):
+    def test_create_payment_method_with_account_type_debit(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing",
+        })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": CreditCardNumbers.Hiper,
+            "expirationMonth": "11",
+            "expirationYear": "2099",
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce,
+            "options": {
+                "verify_card": "true",
+                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_amount": "1.02",
+                "verification_account_type": "debit",
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual("debit", result.payment_method.verifications[0]["credit_card"]["account_type"])
+
+    def test_create_payment_method_with_account_type_credit(self):
+        config = Configuration.instantiate()
+        customer_id = Customer.create().customer.id
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing",
+        })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": CreditCardNumbers.Hiper,
+            "expirationMonth": "11",
+            "expirationYear": "2099",
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": nonce,
+            "options": {
+                "verify_card": "true",
+                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_amount": "1.02",
+                "verification_account_type": "credit",
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual("credit", result.payment_method.verifications[0]["credit_card"]["account_type"])
+
+    def test_create_credit_card_with_account_type_debit(self):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
@@ -631,7 +693,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEqual("debit", result.credit_card.verifications[0]["credit_card"]["account_type"])
 
-    def test_create_with_account_type_credit(self):
+    def test_create_credit_card_with_account_type_credit(self):
         customer = Customer.create().customer
         result = CreditCard.create({
             "customer_id": customer.id,
