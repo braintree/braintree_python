@@ -545,7 +545,10 @@ class Transaction(Resource):
                 "three_d_secure_pass_thru": [
                     "eci_flag",
                     "cavv",
-                    "xid"
+                    "xid",
+                    "authentication_response",
+                    "directory_response",
+                    "cavv_algorithm"
                 ]
             },
             {

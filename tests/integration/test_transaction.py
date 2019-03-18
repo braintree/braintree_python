@@ -4190,6 +4190,102 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
         )
 
+    def test_transaction_with_three_d_secure_adyen_pass_thru(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.adyen_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/2020",
+                "cvv": "737"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid",
+                "authentication_response": "Y",
+                "directory_response": "Y",
+                "cavv_algorithm": "2"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
+
+    def test_transaction_with_three_d_secure_adyen_pass_thru_missing_authentication_response(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.adyen_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/2020",
+                "cvv": "737"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid",
+                "authentication_response": "",
+                "directory_response": "Y",
+                "cavv_algorithm": "2"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureAuthenticationResponseIsInvalid,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("authentication_response")[0].code
+        )
+
+    def test_transaction_with_three_d_secure_adyen_pass_thru_missing_directory_response(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.adyen_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/2020",
+                "cvv": "737"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid",
+                "authentication_response": "Y",
+                "directory_response": "",
+                "cavv_algorithm": "2"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureDirectoryResponseIsInvalid,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("directory_response")[0].code
+        )
+
+    def test_transaction_with_three_d_secure_adyen_pass_thru_missing_cavv_algorithm(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.adyen_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "10/2020",
+                "cvv": "737"
+            },
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid",
+                "authentication_response": "Y",
+                "directory_response": "Y",
+                "cavv_algorithm": ""
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureCavvAlgorithmIsInvalid,
+            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv_algorithm")[0].code
+        )
 
     def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
