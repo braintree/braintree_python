@@ -97,6 +97,61 @@ class TestCustomer(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+
+    def test_create_and_update_with_verification_account_type(self):
+        result_with_account_type_credit = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "05/2010",
+                "options": {
+                    "verify_card": True,
+                    "verification_merchant_account_id": "hiper_brl",
+                    "verification_account_type": "credit",
+                    }
+                },
+            })
+
+        update_with_account_type_credit = Customer.update(result_with_account_type_credit.customer.id, {
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "05/2010",
+                "options": {
+                    "verification_account_type": "credit",
+                    }
+                },
+            })
+
+        result_with_account_type_debit = Customer.create({
+            "first_name": "Joe",
+            "last_name": "Brown",
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "05/2010",
+                "options": {
+                    "verify_card": True,
+                    "verification_merchant_account_id": "hiper_brl",
+                    "verification_account_type": "debit",
+                    }
+                },
+            })
+
+        update_with_account_type_debit = Customer.update(result_with_account_type_debit.customer.id, {
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "05/2010",
+                "options": {
+                    "verification_account_type": "debit",
+                    }
+                },
+            })
+
+        self.assertTrue(result_with_account_type_credit.is_success)
+        self.assertTrue(result_with_account_type_debit.is_success)
+        self.assertTrue(update_with_account_type_credit.is_success)
+        self.assertTrue(update_with_account_type_debit.is_success)
+
     def test_create_using_access_token(self):
         gateway = BraintreeGateway(
             client_id="client_id$development$integration_client_id",
