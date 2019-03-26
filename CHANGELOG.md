@@ -1,4 +1,4 @@
-## unreleased
+## 3.52.0
 * Deprecate `GrantedPaymentInstrumentUpdate` and add `GrantorUpdatedGrantedPaymentMethod` and `RecipientUpdatedGrantedPaymentMethod`
 * Add account_type support for transaction sale, verification, and payment_method create/update
 
