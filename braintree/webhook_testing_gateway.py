@@ -80,7 +80,12 @@ class WebhookTestingGateway(object):
             return self.__ideal_payment_complete_sample_xml(id)
         elif kind == WebhookNotification.Kind.IdealPaymentFailed:
             return self.__ideal_payment_failed_sample_xml(id)
+        # NEXT_MAJOR_VERSION remove GrantedPaymentInstrumentUpdate
         elif kind == WebhookNotification.Kind.GrantedPaymentInstrumentUpdate:
+            return self.__granted_payment_instrument_update()
+        elif kind == WebhookNotification.Kind.GrantorUpdatedGrantedPaymentMethod:
+            return self.__granted_payment_instrument_update()
+        elif kind == WebhookNotification.Kind.RecipientUpdatedGrantedPaymentMethod:
             return self.__granted_payment_instrument_update()
         elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
             return self.__local_payment_completed()

@@ -1,3 +1,7 @@
+## 3.52.0
+* Deprecate `GrantedPaymentInstrumentUpdate` and add `GrantorUpdatedGrantedPaymentMethod` and `RecipientUpdatedGrantedPaymentMethod`
+* Add account_type support for transaction sale, verification, and payment_method create/update
+
 ## 3.51.0
 * Add Hiper card type support
 * Add Hipercard card type support

@@ -46,7 +46,11 @@ class WebhookNotification(Resource):
         DisputeWon = "dispute_won"
         IdealPaymentComplete = "ideal_payment_complete"
         IdealPaymentFailed = "ideal_payment_failed"
+        # NEXT_MAJOR_VERSION remove GrantedPaymentInstrumentUpdate. Kind is not sent by Braintree Gateway.
+        # Kind will either be GrantorUpdatedGrantedPaymentMethod or RecipientUpdatedGrantedPaymentMethod.
         GrantedPaymentInstrumentUpdate = "granted_payment_instrument_update"
+        GrantorUpdatedGrantedPaymentMethod = "grantor_updated_granted_payment_method"
+        RecipientUpdatedGrantedPaymentMethod = "recipient_updated_granted_payment_method"
         GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
         LocalPaymentCompleted = "local_payment_completed"
 

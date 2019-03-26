@@ -4786,18 +4786,6 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.transaction_fee_amount)
         self.assertNotEqual(None, transaction.paypal_details.transaction_fee_currency_iso_code)
 
-    def test_paypal_transaction_refund_already_refunded_transation_fails(self):
-        transaction = self.__create_paypal_transaction()
-
-        Transaction.refund(transaction.id)
-        result = Transaction.refund(transaction.id)
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.HasAlreadyBeenRefunded,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
-
     def test_paypal_transaction_refund_returns_an_error_if_unsettled(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -5202,3 +5190,105 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(CreditCard.CardType.Hipercard, transaction.credit_card_details.card_type)
 
+    def test_account_type_credit(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hipercard,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            },
+            "options": {
+                "credit_card": {
+                    "account_type": "credit",
+                },
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("credit", transaction.credit_card_details.account_type)
+
+    def test_account_type_debit(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            },
+            "options": {
+                "submit_for_settlement": True,
+                "credit_card": {
+                    "account_type": "debit",
+                },
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("debit", transaction.credit_card_details.account_type)
+
+    def test_account_type_debit_error_does_not_support_auths(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            },
+            "options": {
+                "credit_card": {
+                    "account_type": "debit",
+                },
+            },
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.Options.CreditCard.AccountTypeDebitDoesNotSupportAuths,
+            result.errors.for_object("transaction").for_object("options").for_object("credit_card").on("account_type")[0].code
+            )
+
+    def test_account_type_debit_error_account_type_is_invalid(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+                },
+            "options": {
+                "credit_card": {
+                    "account_type": "invalid",
+                    },
+                },
+            })
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+          ErrorCodes.Transaction.Options.CreditCard.AccountTypeIsInvalid,
+          result.errors.for_object("transaction").for_object("options").for_object("credit_card").on("account_type")[0].code
+        )
+
+    def test_account_type_debit_error_account_type_not_supported(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "credit_card": {
+                    "account_type": "debit",
+                    },
+                },
+            })
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+          ErrorCodes.Transaction.Options.CreditCard.AccountTypeNotSupported,
+          result.errors.for_object("transaction").for_object("options").for_object("credit_card").on("account_type")[0].code
+        )

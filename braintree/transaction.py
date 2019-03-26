@@ -563,6 +563,9 @@ class Transaction(Resource):
                     "skip_avs",
                     "skip_cvv",
                     {
+                        "credit_card": [
+                            "account_type"
+                        ],
                         "paypal": [
                             "payee_id",
                             "payee_email",

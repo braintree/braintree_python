@@ -129,6 +129,8 @@ class ErrorCodes(object):
         TokenIsTooLong = "91720"
         VenmoSDKPaymentMethodCodeCardTypeIsNotAccepted = "91726"
         VerificationNotSupportedOnThisMerchantAccount = "91730"
+        VerificationAccountTypeIsInvald = "91757"
+        VerificationAccountTypeNotSupported = "91758"
 
         class Options(object):
             UpdateExistingTokenIsInvalid = "91723"
@@ -343,6 +345,8 @@ class ErrorCodes(object):
             MerchantAccountIsSuspended = "94205"
             MerchantAccountIsForbidden = "94206"
             MerchantAccountCannotBeSubMerchantAccount = "94208"
+            AccountTypeIsInvalid = "942184"
+            AccountTypeNotSupported = "942185"
 
     class PaymentMethod(object):
         CannotForwardPaymentMethodType = "93106"
@@ -603,7 +607,10 @@ class ErrorCodes(object):
 
             class PayPal(object):
                 CustomFieldTooLong = "91580"
-
+            class CreditCard(object):
+                AccountTypeIsInvalid = "915184"
+                AccountTypeNotSupported = "915185"
+                AccountTypeDebitDoesNotSupportAuths = "915186"
         class Industry(object):
             IndustryTypeIsInvalid = "93401"
 

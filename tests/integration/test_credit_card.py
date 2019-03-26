@@ -1286,3 +1286,85 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
         self.assertEqual(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
         self.assertEquals(CreditCard.ProductId.Unknown, credit_card.product_id)
+
+    def test_card_with_account_type_debit(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Hiper,
+            "expiration_date": "05/2014",
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "hiper_brl",
+                "verification_account_type": "debit"
+            }
+        })
+
+        self.assertEqual(result.is_success, True)
+        self.assertEqual("debit", result.credit_card.verifications[0]["credit_card"]["account_type"])
+
+        updated_result = CreditCard.update(result.credit_card.token, {
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "hiper_brl",
+                "verification_account_type": "debit"
+            }
+        })
+
+        self.assertEqual(updated_result.is_success, True)
+        self.assertEqual("debit", updated_result.credit_card.verifications[1]["credit_card"]["account_type"])
+
+    def test_card_with_account_type_credit(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Hiper,
+            "expiration_date": "05/2014",
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "hiper_brl",
+                "verification_account_type": "credit"
+            }
+        })
+
+        self.assertEqual(result.is_success, True)
+        self.assertEqual("credit", result.credit_card.verifications[0]["credit_card"]["account_type"])
+
+        updated_result = CreditCard.update(result.credit_card.token, {
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "hiper_brl",
+                "verification_account_type": "credit"
+            }
+        })
+
+        self.assertEqual(updated_result.is_success, True)
+        self.assertEqual("credit", updated_result.credit_card.verifications[0]["credit_card"]["account_type"])
+
+    def test_card_with_account_type_credit_debit(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.Hiper,
+            "expiration_date": "05/2014",
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "hiper_brl",
+                "verification_account_type": "credit"
+            }
+        })
+
+        self.assertEqual(result.is_success, True)
+        self.assertEqual("credit", result.credit_card.verifications[0]["credit_card"]["account_type"])
+
+        updated_result = CreditCard.update(result.credit_card.token, {
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "hiper_brl",
+                "verification_account_type": "debit"
+            }
+        })
+
+        self.assertEqual(updated_result.is_success, True)
+        self.assertEqual("debit", updated_result.credit_card.verifications[0]["credit_card"]["account_type"])
+        self.assertEqual("credit", updated_result.credit_card.verifications[1]["credit_card"]["account_type"])

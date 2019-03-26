@@ -33,6 +33,7 @@ class PaymentMethod(Resource):
             "verification_merchant_account_id",
             "verify_card",
             "verification_amount",
+            "verification_account_type",
             {
                 "adyen": [
                     "overwrite_brand",
@@ -98,6 +99,7 @@ class PaymentMethod(Resource):
                     "verify_card",
                     "verification_amount",
                     "verification_merchant_account_id",
+                    "verification_account_type",
                     "venmo_sdk_session",
                     {
                         "adyen": [
