@@ -4107,7 +4107,7 @@ class TestTransaction(unittest.TestCase):
 
     def test_transaction_with_three_d_secure_pass_thru_with_invalid_processor_settings(self):
         result = Transaction.sale({
-            "merchant_account_id": "adyen_ma",
+            "merchant_account_id": "heartland_ma",
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
