@@ -4501,6 +4501,13 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(None, three_d_secure_info)
 
+    def test_find_exposes_refund_from_transaction_fee(self):
+        transaction = Transaction.find("settledtransaction")
+        paypal_details = transaction.paypal_details
+
+        self.assertNotEqual(None, paypal_details.refund_from_transaction_fee_amount)
+        self.assertNotEqual(None, paypal_details.refund_from_transaction_fee_currency_iso_code)
+
     def test_find_exposes_retrievals(self):
         transaction = Transaction.find("retrievaltransaction")
         dispute = transaction.disputes[0]
