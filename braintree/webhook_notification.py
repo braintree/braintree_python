@@ -12,6 +12,8 @@ from braintree.error_result import ErrorResult
 from braintree.validation_error_collection import ValidationErrorCollection
 from braintree.connected_merchant_paypal_status_changed import ConnectedMerchantPayPalStatusChanged
 from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
+# NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+# DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
 from braintree.ideal_payment import IdealPayment
 from braintree.granted_payment_instrument_update import GrantedPaymentInstrumentUpdate
 from braintree.revoked_payment_method_metadata import RevokedPaymentMethodMetadata
@@ -44,6 +46,8 @@ class WebhookNotification(Resource):
         DisputeOpened = "dispute_opened"
         DisputeLost = "dispute_lost"
         DisputeWon = "dispute_won"
+        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
         IdealPaymentComplete = "ideal_payment_complete"
         IdealPaymentFailed = "ideal_payment_failed"
         # NEXT_MAJOR_VERSION remove GrantedPaymentInstrumentUpdate. Kind is not sent by Braintree Gateway.
@@ -93,6 +97,8 @@ class WebhookNotification(Resource):
             self.dispute = Dispute(node_wrapper['dispute'])
         elif "account_updater_daily_report" in node_wrapper:
             self.account_updater_daily_report = AccountUpdaterDailyReport(gateway, node_wrapper['account_updater_daily_report'])
+        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
         elif "ideal_payment" in node_wrapper:
             self.ideal_payment = IdealPayment(gateway, node_wrapper['ideal_payment'])
         elif "granted_payment_instrument_update" in node_wrapper:

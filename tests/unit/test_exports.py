@@ -31,6 +31,8 @@ class TestExports(unittest.TestCase):
         self.assertNotEqual(braintree.ErrorResult, None)
         self.assertNotEqual(braintree.Errors, None)
         self.assertNotEqual(braintree.EuropeBankAccount, None)
+        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
         self.assertNotEqual(braintree.IdealPayment, None)
         self.assertNotEqual(braintree.Merchant, None)
         self.assertNotEqual(braintree.MerchantAccount, None)

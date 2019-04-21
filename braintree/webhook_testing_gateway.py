@@ -76,8 +76,12 @@ class WebhookTestingGateway(object):
             return self.__subscription_charged_unsuccessfully_sample_xml(id)
         elif kind == WebhookNotification.Kind.AccountUpdaterDailyReport:
             return self.__account_updater_daily_report_sample_xml()
+        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
         elif kind == WebhookNotification.Kind.IdealPaymentComplete:
             return self.__ideal_payment_complete_sample_xml(id)
+        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
         elif kind == WebhookNotification.Kind.IdealPaymentFailed:
             return self.__ideal_payment_failed_sample_xml(id)
         # NEXT_MAJOR_VERSION remove GrantedPaymentInstrumentUpdate
@@ -579,6 +583,8 @@ class WebhookTestingGateway(object):
             </account-updater-daily-report>
             """
 
+    # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+    # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
     def __ideal_payment_complete_sample_xml(self, id):
         return """
             <ideal-payment>
@@ -594,6 +600,8 @@ class WebhookTestingGateway(object):
             </ideal-payment>
             """ % id
 
+    # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+    # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
     def __ideal_payment_failed_sample_xml(self, id):
         return """
             <ideal-payment>
