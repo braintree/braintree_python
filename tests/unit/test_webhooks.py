@@ -614,6 +614,20 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("venmo_token", metadata.token)
         self.assertTrue(isinstance(metadata.revoked_payment_method, VenmoAccount))
 
+    def test_payment_method_revoked_by_customer_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.PaymentMethodRevokedByCustomer,
+            "my_payment_method_token"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        metadata = notification.revoked_payment_method_metadata
+
+        self.assertEqual(WebhookNotification.Kind.PaymentMethodRevokedByCustomer, notification.kind)
+        self.assertEqual("my_payment_method_token", metadata.token)
+        self.assertTrue(isinstance(metadata.revoked_payment_method, PayPalAccount))
+        self.assertNotEqual(None, metadata.revoked_payment_method.revoked_at)
+
     def test_local_payment_completed_webhook(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.LocalPaymentCompleted,

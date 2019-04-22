@@ -91,6 +91,8 @@ class WebhookTestingGateway(object):
             return self.__granted_payment_instrument_update()
         elif kind == WebhookNotification.Kind.RecipientUpdatedGrantedPaymentMethod:
             return self.__granted_payment_instrument_update()
+        elif kind == WebhookNotification.Kind.PaymentMethodRevokedByCustomer:
+            return self.__payment_method_revoked_by_customer(id)
         elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
             return self.__local_payment_completed()
         else:
@@ -634,6 +636,27 @@ class WebhookTestingGateway(object):
                 </updated-fields>
             </granted-payment-instrument-update>
             """
+
+    def __payment_method_revoked_by_customer(self, id):
+        return """
+            <paypal-account>
+                <billing-agreement-id>a-billing-agreement-id</billing-agreement-id>
+                <created-at type="datetime">2019-01-01T12:00:00Z</created-at>
+                <customer-id>a-customer-id</customer-id>
+                <default type="boolean">true</default>
+                <email>name@email.com</email>
+                <global-id>cGF5bWVudG1ldGhvZF9jaDZieXNz</global-id>
+                <image-url>https://assets.braintreegateway.com/payment_method_logo/paypal.png?environment=test</image-url>
+                <subscriptions type="array"/>
+                <token>%s</token>
+                <updated-at type="datetime">2019-01-02T12:00:00Z</updated-at>
+                <is-channel-initiated nil="true"/>
+                <payer-id>a-payer-id</payer-id>
+                <payer-info nil="true"/>
+                <limited-use-order-id nil="true"/>
+                <revoked-at type="datetime">2019-01-02T12:00:00Z</revoked-at>
+            </paypal-account>
+        """ % id
 
     def __local_payment_completed(self):
         return """
