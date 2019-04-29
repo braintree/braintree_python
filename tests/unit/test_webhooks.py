@@ -467,40 +467,6 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("link-to-csv-report", notification.account_updater_daily_report.report_url)
         self.assertEqual(date(2016, 1, 14), notification.account_updater_daily_report.report_date)
 
-    def test_ideal_payment_complete_webhook(self):
-        sample_notification = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.IdealPaymentComplete,
-            "my_id"
-        )
-
-        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
-        ideal_payment = notification.ideal_payment
-
-        self.assertEqual(WebhookNotification.Kind.IdealPaymentComplete, notification.kind)
-        self.assertEqual("my_id", ideal_payment.id)
-        self.assertEqual("COMPLETE", ideal_payment.status);
-        self.assertEqual("ORDERABC", ideal_payment.order_id);
-        self.assertEqual("10.00", ideal_payment.amount);
-        self.assertEqual("https://example.com", ideal_payment.approval_url);
-        self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
-
-    def test_ideal_payment_failed_webhook(self):
-        sample_notification = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.IdealPaymentFailed,
-            "my_id"
-        )
-
-        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
-        ideal_payment = notification.ideal_payment
-
-        self.assertEqual(WebhookNotification.Kind.IdealPaymentFailed, notification.kind)
-        self.assertEqual("my_id", ideal_payment.id)
-        self.assertEqual("FAILED", ideal_payment.status);
-        self.assertEqual("ORDERABC", ideal_payment.order_id);
-        self.assertEqual("10.00", ideal_payment.amount);
-        self.assertEqual("https://example.com", ideal_payment.approval_url);
-        self.assertEqual("1234567890", ideal_payment.ideal_transaction_id);
-
     def test_grantor_updated_granted_payment_method_webhook(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.GrantorUpdatedGrantedPaymentMethod,

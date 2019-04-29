@@ -1,3 +1,7 @@
+## 3.53.0
+* Add `refund_from_transaction_fee_amount` field to paypal_details
+* Add `refund_from_transaction_fee_currency_iso_code` field to paypal_details
+
 ## 3.52.0
 * Deprecate `GrantedPaymentInstrumentUpdate` and add `GrantorUpdatedGrantedPaymentMethod` and `RecipientUpdatedGrantedPaymentMethod`
 * Add account_type support for transaction sale, verification, and payment_method create/update

@@ -30,6 +30,8 @@ from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.us_bank_account import UsBankAccount
+# NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+# DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
 from braintree.ideal_payment import IdealPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
@@ -545,7 +547,10 @@ class Transaction(Resource):
                 "three_d_secure_pass_thru": [
                     "eci_flag",
                     "cavv",
-                    "xid"
+                    "xid",
+                    "authentication_response",
+                    "directory_response",
+                    "cavv_algorithm"
                 ]
             },
             {
@@ -680,6 +685,8 @@ class Transaction(Resource):
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "us_bank_account" in attributes:
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
+        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
+        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
         if "ideal_payment" in attributes:
             self.ideal_payment_details = IdealPayment(gateway, attributes.pop("ideal_payment"))
         if "apple_pay" in attributes:
