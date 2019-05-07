@@ -1,3 +1,6 @@
+## Unreleased
+* Add `LocalPaymentDetails` to transactions
+
 ## 3.53.0
 * Add `refund_from_transaction_fee_amount` field to paypal_details
 * Add `refund_from_transaction_fee_currency_iso_code` field to paypal_details
