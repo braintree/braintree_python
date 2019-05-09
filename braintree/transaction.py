@@ -670,7 +670,7 @@ class Transaction(Resource):
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
-        if self.tax_amount:
+        if "tax_amount" in attributes and self.tax_amount:
             self.tax_amount = Decimal(self.tax_amount)
         if "discount_amount" in attributes and self.discount_amount:
             self.discount_amount = Decimal(self.discount_amount)

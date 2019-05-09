@@ -640,4 +640,6 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.LocalPaymentCompleted, notification.kind)
         self.assertEqual("a-payment-id", local_payment_completed.payment_id)
         self.assertEqual("a-payer-id", local_payment_completed.payer_id)
+        self.assertEqual("ee257d98-de40-47e8-96b3-a6954ea7a9a4", local_payment_completed.payment_method_nonce)
+        self.assertTrue(isinstance(local_payment_completed.transaction, Transaction))
 
