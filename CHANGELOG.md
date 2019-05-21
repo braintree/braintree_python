@@ -1,4 +1,4 @@
-## Unreleased
+## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook
 * Add `transaction` field to `LocalPaymentCompleted` webhook
 * Add `LocalPaymentDetails` to transactions
