@@ -33,6 +33,7 @@ from braintree.us_bank_account import UsBankAccount
 # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
 # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
 from braintree.ideal_payment import IdealPayment
+from braintree.local_payment import LocalPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
 from braintree.facilitated_details import FacilitatedDetails
@@ -669,7 +670,7 @@ class Transaction(Resource):
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
-        if self.tax_amount:
+        if "tax_amount" in attributes and self.tax_amount:
             self.tax_amount = Decimal(self.tax_amount)
         if "discount_amount" in attributes and self.discount_amount:
             self.discount_amount = Decimal(self.discount_amount)
@@ -681,6 +682,8 @@ class Transaction(Resource):
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
         if "paypal" in attributes:
             self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
+        if "local_payment" in attributes:
+            self.local_payment_details = LocalPayment(gateway, attributes.pop("local_payment"))
         if "europe_bank_account" in attributes:
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "us_bank_account" in attributes:

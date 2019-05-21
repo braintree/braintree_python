@@ -4534,6 +4534,22 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
+    def test_creating_paypal_transaction_with_local_payment_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.LocalPayment,
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertNotEqual(None, transaction.local_payment_details.payment_id)
+        self.assertNotEqual(None, transaction.local_payment_details.payer_id)
+        self.assertNotEqual(None, transaction.local_payment_details.funding_source)
+
     def test_creating_paypal_transaction_with_local_payment_webhook_content(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

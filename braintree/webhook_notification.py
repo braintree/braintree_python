@@ -56,6 +56,7 @@ class WebhookNotification(Resource):
         GrantorUpdatedGrantedPaymentMethod = "grantor_updated_granted_payment_method"
         RecipientUpdatedGrantedPaymentMethod = "recipient_updated_granted_payment_method"
         GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
+        PaymentMethodRevokedByCustomer = "payment_method_revoked_by_customer"
         LocalPaymentCompleted = "local_payment_completed"
 
     @staticmethod
@@ -103,7 +104,7 @@ class WebhookNotification(Resource):
             self.ideal_payment = IdealPayment(gateway, node_wrapper['ideal_payment'])
         elif "granted_payment_instrument_update" in node_wrapper:
             self.granted_payment_instrument_update = GrantedPaymentInstrumentUpdate(gateway, node_wrapper["granted_payment_instrument_update"])
-        elif WebhookNotification.Kind.GrantedPaymentMethodRevoked == attributes["kind"]:
+        elif attributes["kind"] in [WebhookNotification.Kind.GrantedPaymentMethodRevoked, WebhookNotification.Kind.PaymentMethodRevokedByCustomer]:
             self.revoked_payment_method_metadata = RevokedPaymentMethodMetadata(gateway, node_wrapper)
         elif "local_payment" in node_wrapper:
             self.local_payment_completed = LocalPaymentCompleted(gateway, node_wrapper["local_payment"])

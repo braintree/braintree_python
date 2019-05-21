@@ -256,6 +256,23 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.PayPalAccount)
         self.assertEqual(transaction.id, collection.first.id)
 
+    def test_advanced_search_with_payment_instrument_type_is_local_payment(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.LocalPayment
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.payment_instrument_type == "LocalPaymentDetail"
+        )
+
+        self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.LocalPayment)
+        self.assertEqual(transaction.id, collection.first.id)
+
     def test_advanced_search_with_payment_instrument_type_is_apple_pay(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

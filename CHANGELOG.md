@@ -1,6 +1,13 @@
+## 3.54.0
+* Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook
+* Add `transaction` field to `LocalPaymentCompleted` webhook
+* Add `LocalPaymentDetails` to transactions
+
 ## 3.53.0
 * Add `refund_from_transaction_fee_amount` field to paypal_details
 * Add `refund_from_transaction_fee_currency_iso_code` field to paypal_details
+* Add `revoked_at` field to paypal_account
+* Add support for `PaymentMethodRevokedByCustomer` webhook
 
 ## 3.52.0
 * Deprecate `GrantedPaymentInstrumentUpdate` and add `GrantorUpdatedGrantedPaymentMethod` and `RecipientUpdatedGrantedPaymentMethod`

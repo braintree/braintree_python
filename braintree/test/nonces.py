@@ -40,6 +40,7 @@ class Nonces(object):
     ProcessorDeclinedAmEx = "fake-processor-declined-amex-nonce"
     ProcessorDeclinedDiscover = "fake-processor-declined-discover-nonce"
     ProcessorFailureJCB = "fake-processor-failure-jcb-nonce"
+    LocalPayment = "fake-local-payment-nonce"
     LuhnInvalid = "fake-luhn-invalid-nonce"
     PayPalFuturePaymentRefreshToken = "fake-paypal-future-refresh-token-nonce"
     SEPA = "fake-sepa-bank-account-nonce"
