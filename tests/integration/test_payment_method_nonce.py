@@ -58,6 +58,10 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("test_cavv", three_d_secure_info.cavv)
+        self.assertEqual("test_xid", three_d_secure_info.xid)
+        self.assertEqual("test_eci", three_d_secure_info.eci_flag)
+        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
 
     def test_find_nonce_shows_venmo_details(self):
         found_nonce = PaymentMethodNonce.find("fake-venmo-account-nonce")

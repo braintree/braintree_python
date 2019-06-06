@@ -4502,6 +4502,11 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("somebase64value", three_d_secure_info.cavv)
+        self.assertEqual("xidvalue", three_d_secure_info.xid)
+        self.assertEqual("dstxnid", three_d_secure_info.ds_transaction_id)
+        self.assertEqual("07", three_d_secure_info.eci_flag)
+        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
 
     def test_find_exposes_none_for_null_three_d_secure_info(self):
         transaction = Transaction.find("settledtransaction")
