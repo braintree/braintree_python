@@ -209,16 +209,18 @@ class Transaction(Resource):
         """
         Constants representing transaction statuses. Available statuses are:
 
+        * braintree.Transaction.Status.AuthorizationExpired
         * braintree.Transaction.Status.Authorized
         * braintree.Transaction.Status.Authorizing
+        * braintree.Transaction.Status.SettlementPending
+        * braintree.Transaction.Status.SettlementDeclined
         * braintree.Transaction.Status.Failed
         * braintree.Transaction.Status.GatewayRejected
         * braintree.Transaction.Status.ProcessorDeclined
         * braintree.Transaction.Status.Settled
-        * braintree.Transaction.Status.SettlementFailed
         * braintree.Transaction.Status.Settling
         * braintree.Transaction.Status.SubmittedForSettlement
-        * braintree.Transaction.Status.Void
+        * braintree.Transaction.Status.Voided
         """
 
         AuthorizationExpired   = "authorization_expired"
@@ -235,6 +237,7 @@ class Transaction(Resource):
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
+        # NEXT_MAJOR_VERSION this is never used and should be removed
         Unrecognized           = "unrecognized"
 
     class Type(object):
