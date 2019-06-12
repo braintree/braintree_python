@@ -4205,7 +4205,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "Y",
                 "directory_response": "Y",
-                "cavv_algorithm": "2"
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4227,7 +4229,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "",
                 "directory_response": "Y",
-                "cavv_algorithm": "2"
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4252,7 +4256,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "Y",
                 "directory_response": "",
-                "cavv_algorithm": "2"
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4277,7 +4283,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "Y",
                 "directory_response": "Y",
-                "cavv_algorithm": ""
+                "cavv_algorithm": "",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 

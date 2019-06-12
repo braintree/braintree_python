@@ -554,7 +554,9 @@ class Transaction(Resource):
                     "xid",
                     "authentication_response",
                     "directory_response",
-                    "cavv_algorithm"
+                    "cavv_algorithm",
+                    "ds_transaction_id",
+                    "three_d_secure_version"
                 ]
             },
             {

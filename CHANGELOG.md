@@ -1,3 +1,6 @@
+## Unreleased
+* Add `ds_transaction_id` and `three_d_secure_version` to 3DS pass thru fields
+
 ## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook
 * Add `transaction` field to `LocalPaymentCompleted` webhook
