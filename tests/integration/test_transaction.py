@@ -4547,7 +4547,7 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
-    def test_creating_paypal_transaction_with_local_payment_nonce(self):
+    def test_creating_local_payment_transaction_with_local_payment_nonce(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "options": {
@@ -4562,8 +4562,36 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.local_payment_details.payment_id)
         self.assertNotEqual(None, transaction.local_payment_details.payer_id)
         self.assertNotEqual(None, transaction.local_payment_details.funding_source)
+        self.assertNotEqual(None, transaction.local_payment_details.capture_id)
+        self.assertNotEqual(None, transaction.local_payment_details.debug_id)
+        self.assertNotEqual(None, transaction.local_payment_details.transaction_fee_amount)
+        self.assertNotEqual(None, transaction.local_payment_details.transaction_fee_currency_iso_code)
 
-    def test_creating_paypal_transaction_with_local_payment_webhook_content(self):
+    def test_refunding_local_payment_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.LocalPayment,
+        })
+
+        self.assertTrue(result.is_success)
+
+        result = Transaction.refund(result.transaction.id)
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertNotEqual(None, transaction.local_payment_details.payment_id)
+        self.assertNotEqual(None, transaction.local_payment_details.payer_id)
+        self.assertNotEqual(None, transaction.local_payment_details.funding_source)
+        self.assertNotEqual(None, transaction.local_payment_details.refund_id)
+        self.assertNotEqual(None, transaction.local_payment_details.debug_id)
+        self.assertNotEqual(None, transaction.local_payment_details.refund_from_transaction_fee_amount)
+        self.assertNotEqual(None, transaction.local_payment_details.refund_from_transaction_fee_currency_iso_code)
+
+    def test_creating_local_payment_transaction_with_local_payment_webhook_content(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "options": {
