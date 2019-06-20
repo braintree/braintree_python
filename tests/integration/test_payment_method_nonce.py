@@ -63,6 +63,14 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("test_eci", three_d_secure_info.eci_flag)
         self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
 
+    def test_find_nonce_shows_paypal_details(self):
+        found_nonce = PaymentMethodNonce.find("fake-google-pay-paypal-nonce")
+
+        self.assertNotEqual(None, found_nonce.details["payer_info"]["first_name"])
+        self.assertNotEqual(None, found_nonce.details["payer_info"]["last_name"])
+        self.assertNotEqual(None, found_nonce.details["payer_info"]["email"])
+        self.assertNotEqual(None, found_nonce.details["payer_info"]["payer_id"])
+
     def test_find_nonce_shows_venmo_details(self):
         found_nonce = PaymentMethodNonce.find("fake-venmo-account-nonce")
 
