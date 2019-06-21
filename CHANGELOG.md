@@ -7,7 +7,6 @@
 * Add `refundFromTransactionFeeAmount` field to local_payment_details
 * Add `refundFromTransactionFeeCurrencyIsoCode` field to local_payment_details
 * Add `ds_transaction_id` and `three_d_secure_version` to 3DS pass thru fields
-* Add `cavv`, `xid`, `ds_transaction_id`, `eci_flag`, and `three_d_secure_version`, to `three_d_secure_info`
 * Add `payer_info` field to payment_method_nonce details
 
 ## 3.54.0
