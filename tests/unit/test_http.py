@@ -1,6 +1,7 @@
 import traceback
 
 from tests.test_helper import *
+from braintree.exceptions.http.timeout_error import *
 from braintree.attribute_getter import AttributeGetter
 
 class TestHttp(unittest.TestCase):
@@ -108,3 +109,19 @@ class TestHttp(unittest.TestCase):
                 "wrap_http_exceptions": False})
 
         return Http(config, "fake_environment")
+
+    @raises(ReadTimeoutError)
+    def test_raise_read_timeout_error(self):
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.handle_exception(requests.exceptions.ReadTimeout())
+
+    @raises(ConnectTimeoutError)
+    def test_raise_read_timeout_error(self):
+        def test_http_do_strategy(http_verb, path, headers, request_body):
+            return (200, "")
+
+        http = self.setup_http_strategy(test_http_do_strategy)
+        http.handle_exception(requests.exceptions.ConnectTimeout())

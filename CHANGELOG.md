@@ -1,3 +1,8 @@
+## unreleased
+* Add `braintree.exceptions.http.timeout_error.ConnectTimeoutError`
+* Add `braintree.exceptions.http.timeout_error.ReadTimeoutError`
+* Raise introduced exceptions while allowing for backwards compatibility through inheritance.
+
 ## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook
 * Add `transaction` field to `LocalPaymentCompleted` webhook
