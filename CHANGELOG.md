@@ -8,6 +8,9 @@
 * Add `refundFromTransactionFeeCurrencyIsoCode` field to local_payment_details
 * Add `ds_transaction_id` and `three_d_secure_version` to 3DS pass thru fields
 * Add `payer_info` field to payment_method_nonce details
+* Add more specific timeout errors: (#105 thanks @bhargavrpatel)
+  - Add `braintree.exceptions.http.timeout_error.ConnectTimeoutError` (child class of TimeoutError)
+  - Add `braintree.exceptions.http.timeout_error.ReadTimeoutError` (child class of TimeoutError)
 
 ## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook

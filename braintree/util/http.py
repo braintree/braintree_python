@@ -20,6 +20,8 @@ from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.http.connection_error import ConnectionError
 from braintree.exceptions.http.invalid_response_error import InvalidResponseError
 from braintree.exceptions.http.timeout_error import TimeoutError
+from braintree.exceptions.http.timeout_error import ConnectTimeoutError
+from braintree.exceptions.http.timeout_error import ReadTimeoutError
 
 class Http(object):
     class ContentType(object):
@@ -120,7 +122,11 @@ class Http(object):
         return [response.status_code, response.text]
 
     def handle_exception(self, exception):
-        if isinstance(exception, requests.exceptions.ConnectionError):
+        if isinstance(exception, requests.exceptions.ReadTimeout):
+            raise ReadTimeoutError(exception)
+        elif isinstance(exception, requests.exceptions.ConnectTimeout):
+            raise ConnectTimeoutError(exception)
+        elif isinstance(exception, requests.exceptions.ConnectionError):
             raise ConnectionError(exception)
         elif isinstance(exception, requests.exceptions.HTTPError):
             raise InvalidResponseError(exception)
