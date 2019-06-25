@@ -11,6 +11,12 @@
 * Add more specific timeout errors: (#105 thanks @bhargavrpatel)
   - Add `braintree.exceptions.http.timeout_error.ConnectTimeoutError` (child class of TimeoutError)
   - Add `braintree.exceptions.http.timeout_error.ReadTimeoutError` (child class of TimeoutError)
+* Add `room_tax` support for transaction sale
+* Add `no_show` support for transaction sale
+* Add `advanced_deposit` support for transaction sale
+* Add `fire_safe` support for transaction sale
+* Add `property_phone` support for transaction sale
+* Add `additional_charges` support for transaction sale
 
 ## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook

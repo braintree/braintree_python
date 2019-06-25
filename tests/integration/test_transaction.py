@@ -3683,11 +3683,26 @@ class TestTransaction(unittest.TestCase):
                 "data": {
                     "folio_number": "aaa",
                     "check_in_date": "2014-07-07",
-                    "check_out_date": "2014-08-08",
-                    "room_rate": "239.00",
+                    "check_out_date": "2014-07-11",
+                    "room_rate": "170.00",
+                    "room_tax": "30.00",
+                    "no_show": False,
+                    "advanced_deposit": False,
+                    "fire_safe": True,
+                    "property_phone": "1112223345",
+                    "additional_charges": [
+                            {
+                                "kind": Transaction.AdditionalCharge.Restaurant,
+                                "amount": "50.00"
+                            },
+                            {
+                                "kind": Transaction.AdditionalCharge.Other,
+                                "amount": "150.00"
+                            }
+                        ]
+                    }
                 }
-            }
-        })
+            })
 
         self.assertTrue(result.is_success)
 
@@ -3705,6 +3720,12 @@ class TestTransaction(unittest.TestCase):
                     "check_in_date": "2014-07-07",
                     "check_out_date": "2014-06-06",
                     "room_rate": "asdfsdf",
+                    "additional_charges": [
+                        {
+                            "kind": "unknown",
+                            "amount": "20.00"
+                        }
+                    ]
                 }
             }
         })
@@ -3713,6 +3734,14 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             ErrorCodes.Transaction.Industry.Lodging.CheckOutDateMustFollowCheckInDate,
             result.errors.for_object("transaction").for_object("industry").on("check_out_date")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.Lodging.RoomRateFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("industry").on("room_rate")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.AdditionalCharge.KindIsInvalid,
+            result.errors.for_object("transaction").for_object("industry").for_object("additional_charges").for_object("index_0").on("kind")[0].code
         )
 
     def test_transactions_accept_travel_cruise_industry_data(self):
