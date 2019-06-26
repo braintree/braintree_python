@@ -32,6 +32,7 @@ class ErrorCodes(object):
         PostalCodeInvalidCharacters = "81813"
         PostalCodeIsInvalid = "91826"
         PostalCodeIsRequired = "81808"
+        PostalCodeIsRequiredForCardBrandAndProcessor = "81828"
         PostalCodeIsTooLong = "81809"
         RegionIsInvalid = "91825"
         RegionIsTooLong = "81810"

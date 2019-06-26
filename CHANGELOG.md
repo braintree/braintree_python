@@ -17,6 +17,7 @@
 * Add `fire_safe` support for transaction sale
 * Add `property_phone` support for transaction sale
 * Add `additional_charges` support for transaction sale
+* Add `PostalCodeIsRequiredForCardBrandAndProcessor` to validation errors
 
 ## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook
