@@ -209,16 +209,18 @@ class Transaction(Resource):
         """
         Constants representing transaction statuses. Available statuses are:
 
+        * braintree.Transaction.Status.AuthorizationExpired
         * braintree.Transaction.Status.Authorized
         * braintree.Transaction.Status.Authorizing
+        * braintree.Transaction.Status.SettlementPending
+        * braintree.Transaction.Status.SettlementDeclined
         * braintree.Transaction.Status.Failed
         * braintree.Transaction.Status.GatewayRejected
         * braintree.Transaction.Status.ProcessorDeclined
         * braintree.Transaction.Status.Settled
-        * braintree.Transaction.Status.SettlementFailed
         * braintree.Transaction.Status.Settling
         * braintree.Transaction.Status.SubmittedForSettlement
-        * braintree.Transaction.Status.Void
+        * braintree.Transaction.Status.Voided
         """
 
         AuthorizationExpired   = "authorization_expired"
@@ -235,6 +237,7 @@ class Transaction(Resource):
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
+        # NEXT_MAJOR_VERSION this is never used and should be removed
         Unrecognized           = "unrecognized"
 
     class Type(object):
@@ -252,6 +255,14 @@ class Transaction(Resource):
         Lodging = "lodging"
         TravelAndCruise = "travel_cruise"
         TravelAndFlight = "travel_flight"
+
+    class AdditionalCharge(object):
+        Restaurant = "restaurant"
+        GiftShop = "gift_shop"
+        MiniBar = "mini_bar"
+        Telephone = "telephone"
+        Laundry = "laundry"
+        Other = "other"
 
     @staticmethod
     def clone_transaction(transaction_id, params):
@@ -551,7 +562,9 @@ class Transaction(Resource):
                     "xid",
                     "authentication_response",
                     "directory_response",
-                    "cavv_algorithm"
+                    "cavv_algorithm",
+                    "ds_transaction_id",
+                    "three_d_secure_version"
                 ]
             },
             {
@@ -617,12 +630,17 @@ class Transaction(Resource):
                         "data": [
                             "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate",
                             "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "issued_date", "travel_agency_name", "travel_agency_code", "ticket_number",
-                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "tax_amount", "restricted_ticket",
+                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "room_tax", "tax_amount", "restricted_ticket", "no_show", "advanced_deposit", "fire_safe", "property_phone",
                             {
                                 "legs": [
                                     "conjunction_ticket", "exchange_ticket", "coupon_number", "service_class", "carrier_code", "fare_basis_code", "flight_number", "departure_date", "departure_airport_code", "departure_time",
                                     "arrival_airport_code", "arrival_time", "stopover_permitted", "fare_amount", "fee_amount", "tax_amount", "endorsement_or_restrictions"
                                 ]
+                            },
+                            {
+                                "additional_charges": [
+                                  "kind", "amount"
+                                ],
                             }
                         ]
                     }

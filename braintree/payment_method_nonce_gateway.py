@@ -21,14 +21,17 @@ class PaymentMethodNonceGateway(object):
                 payment_method_nonce = self._parse_payment_method_nonce(response)
                 return SuccessfulResult({"payment_method_nonce": payment_method_nonce})
         except NotFoundError:
-            raise NotFoundError("payment method with token " + payment_method_token + " not found")
+            raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
     def find(self, payment_method_nonce):
         try:
+            if payment_method_nonce is None or payment_method_nonce.strip() == "":
+                raise NotFoundError()
+
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_method_nonces/" + payment_method_nonce)
             return self._parse_payment_method_nonce(response)
         except NotFoundError:
-            raise NotFoundError("payment method nonce with id " + payment_method_nonce + " not found")
+            raise NotFoundError("payment method nonce with id " + repr(payment_method_nonce) + " not found")
 
     def _parse_payment_method_nonce(self, response):
         return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])

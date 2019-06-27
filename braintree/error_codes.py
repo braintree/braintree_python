@@ -32,6 +32,7 @@ class ErrorCodes(object):
         PostalCodeInvalidCharacters = "81813"
         PostalCodeIsInvalid = "91826"
         PostalCodeIsRequired = "81808"
+        PostalCodeIsRequiredForCardBrandAndProcessor = "81828"
         PostalCodeIsTooLong = "81809"
         RegionIsInvalid = "91825"
         RegionIsTooLong = "81810"
@@ -624,6 +625,17 @@ class ErrorCodes(object):
                 CheckOutDateIsInvalid = "93405"
                 CheckOutDateMustFollowCheckInDate = "93406"
                 UnknownDataField = "93407"
+                RoomRateMustBeGreaterThanZero = "93433"
+                RoomRateFormatIsInvalid = "93434"
+                RoomRateIsTooLarge = "93435"
+                RoomTaxMustBeGreaterThanZero = "93436"
+                RoomTaxFormatIsInvalid = "93437"
+                RoomTaxIsTooLarge = "93438"
+                NoShowIndicatorIsInvalid = "93439"
+                AdvancedDepositIndicatorIsInvalid = "93440"
+                FireSafetyIndicatorIsInvalid = "93441"
+                PropertyPhoneIsInvalid = "93442"
+
             class TravelCruise(object):
                 EmptyData = "93408"
                 UnknownDataField = "93409"
@@ -674,6 +686,14 @@ class ErrorCodes(object):
                     TaxAmountFormatIsInvalid = "96318"
                     TaxAmountIsTooLarge = "96319"
                     TicketNumberIsTooLong = "96320"
+
+            class AdditionalCharge(object):
+                KindIsInvalid = "96601"
+                KindMustBeUnique = "96602"
+                AmountMustBeGreaterThanZero = "96603"
+                AmountFormatIsInvalid = "96604"
+                AmountIsTooLarge = "96605"
+                AmountIsRequired = "96606"
 
         class LineItem(object):
             CommodityCodeIsTooLong = "95801"

@@ -1109,9 +1109,7 @@ class TestCreditCard(unittest.TestCase):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",
-                "expiration_date": "05/2014",
-                "cvv": "100",
-                "cardholder_name": "John Doe"
+                "expiration_date": "01/2015"
             })
 
         collection = CreditCard.expired()

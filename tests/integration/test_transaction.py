@@ -3683,11 +3683,26 @@ class TestTransaction(unittest.TestCase):
                 "data": {
                     "folio_number": "aaa",
                     "check_in_date": "2014-07-07",
-                    "check_out_date": "2014-08-08",
-                    "room_rate": "239.00",
+                    "check_out_date": "2014-07-11",
+                    "room_rate": "170.00",
+                    "room_tax": "30.00",
+                    "no_show": False,
+                    "advanced_deposit": False,
+                    "fire_safe": True,
+                    "property_phone": "1112223345",
+                    "additional_charges": [
+                            {
+                                "kind": Transaction.AdditionalCharge.Restaurant,
+                                "amount": "50.00"
+                            },
+                            {
+                                "kind": Transaction.AdditionalCharge.Other,
+                                "amount": "150.00"
+                            }
+                        ]
+                    }
                 }
-            }
-        })
+            })
 
         self.assertTrue(result.is_success)
 
@@ -3705,6 +3720,12 @@ class TestTransaction(unittest.TestCase):
                     "check_in_date": "2014-07-07",
                     "check_out_date": "2014-06-06",
                     "room_rate": "asdfsdf",
+                    "additional_charges": [
+                        {
+                            "kind": "unknown",
+                            "amount": "20.00"
+                        }
+                    ]
                 }
             }
         })
@@ -3713,6 +3734,14 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             ErrorCodes.Transaction.Industry.Lodging.CheckOutDateMustFollowCheckInDate,
             result.errors.for_object("transaction").for_object("industry").on("check_out_date")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.Lodging.RoomRateFormatIsInvalid,
+            result.errors.for_object("transaction").for_object("industry").on("room_rate")[0].code
+        )
+        self.assertEqual(
+            ErrorCodes.Transaction.Industry.AdditionalCharge.KindIsInvalid,
+            result.errors.for_object("transaction").for_object("industry").for_object("additional_charges").for_object("index_0").on("kind")[0].code
         )
 
     def test_transactions_accept_travel_cruise_industry_data(self):
@@ -4205,7 +4234,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "Y",
                 "directory_response": "Y",
-                "cavv_algorithm": "2"
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4227,7 +4258,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "",
                 "directory_response": "Y",
-                "cavv_algorithm": "2"
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4252,7 +4285,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "Y",
                 "directory_response": "",
-                "cavv_algorithm": "2"
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4277,7 +4312,9 @@ class TestTransaction(unittest.TestCase):
                 "xid": "some-xid",
                 "authentication_response": "Y",
                 "directory_response": "Y",
-                "cavv_algorithm": ""
+                "cavv_algorithm": "",
+                "ds_transaction_id": "dstrxid-present",
+                "three_d_secure_version": "1.0.2",
             }
         })
 
@@ -4534,7 +4571,7 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.image_url)
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
-    def test_creating_paypal_transaction_with_local_payment_nonce(self):
+    def test_creating_local_payment_transaction_with_local_payment_nonce(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "options": {
@@ -4549,8 +4586,36 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.local_payment_details.payment_id)
         self.assertNotEqual(None, transaction.local_payment_details.payer_id)
         self.assertNotEqual(None, transaction.local_payment_details.funding_source)
+        self.assertNotEqual(None, transaction.local_payment_details.capture_id)
+        self.assertNotEqual(None, transaction.local_payment_details.debug_id)
+        self.assertNotEqual(None, transaction.local_payment_details.transaction_fee_amount)
+        self.assertNotEqual(None, transaction.local_payment_details.transaction_fee_currency_iso_code)
 
-    def test_creating_paypal_transaction_with_local_payment_webhook_content(self):
+    def test_refunding_local_payment_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.LocalPayment,
+        })
+
+        self.assertTrue(result.is_success)
+
+        result = Transaction.refund(result.transaction.id)
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertNotEqual(None, transaction.local_payment_details.payment_id)
+        self.assertNotEqual(None, transaction.local_payment_details.payer_id)
+        self.assertNotEqual(None, transaction.local_payment_details.funding_source)
+        self.assertNotEqual(None, transaction.local_payment_details.refund_id)
+        self.assertNotEqual(None, transaction.local_payment_details.debug_id)
+        self.assertNotEqual(None, transaction.local_payment_details.refund_from_transaction_fee_amount)
+        self.assertNotEqual(None, transaction.local_payment_details.refund_from_transaction_fee_currency_iso_code)
+
+    def test_creating_local_payment_transaction_with_local_payment_webhook_content(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "options": {
