@@ -18,6 +18,7 @@
 * Add `property_phone` support for transaction sale
 * Add `additional_charges` support for transaction sale
 * Add `PostalCodeIsRequiredForCardBrandAndProcessor` to validation errors
+* Fix issue where not found error could choke on `None` values (#109)
 
 ## 3.54.0
 * Add `payment_method_nonce` field to `LocalPaymentCompleted` webhook

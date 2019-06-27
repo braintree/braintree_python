@@ -12,3 +12,7 @@ class TestSubscription(unittest.TestCase):
     @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
         Subscription.find(" ")
+
+    @raises(NotFoundError)
+    def test_finding_None_id_raises_not_found_exception(self):
+        Subscription.find(None)

@@ -55,7 +55,7 @@ class CreditCardGateway(object):
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/from_nonce/" + nonce)
             return CreditCard(self.gateway, response["credit_card"])
         except NotFoundError:
-            raise NotFoundError("payment method with nonce " + nonce + " locked, consumed or not found")
+            raise NotFoundError("payment method with nonce " + repr(nonce) + " locked, consumed or not found")
 
     def tr_data_for_create(self, tr_data, redirect_url):
         Resource.verify_keys(tr_data, [{"credit_card": CreditCard.create_signature()}])

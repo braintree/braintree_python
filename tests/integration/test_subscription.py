@@ -564,7 +564,7 @@ class TestSubscription(unittest.TestCase):
         found_subscription = Subscription.find(subscription.id)
         self.assertEqual(subscription.id, found_subscription.id)
 
-    @raises_with_regexp(NotFoundError, "subscription with id bad_token not found")
+    @raises_with_regexp(NotFoundError, "subscription with id 'bad_token' not found")
     def test_find_with_invalid_token(self):
         Subscription.find("bad_token")
 

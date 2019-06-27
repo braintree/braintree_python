@@ -78,6 +78,14 @@ class TestCreditCard(unittest.TestCase):
     def test_finding_none_raises_not_found_exception(self):
         CreditCard.find(None)
 
+    @raises(NotFoundError)
+    def test_from_nonce_empty_id_raises_not_found_exception(self):
+        CreditCard.from_nonce(" ")
+
+    @raises(NotFoundError)
+    def test_from_nonce_none_raises_not_found_exception(self):
+        CreditCard.from_nonce(None)
+
     def test_multiple_verifications_sort(self):
         verification1 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 20), "id": 123, "amount": "0.00"}
         verification2 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 21), "id": 456, "amount": "1.00"}
