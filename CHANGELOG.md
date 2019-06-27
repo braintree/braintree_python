@@ -1,4 +1,4 @@
-## Unreleased
+## 3.55.0
 * Add `captureId` field to local_payment_details
 * Add `refundId` field to local_payment_details
 * Add `debugId` field to local_payment_details
@@ -9,8 +9,8 @@
 * Add `ds_transaction_id` and `three_d_secure_version` to 3DS pass thru fields
 * Add `payer_info` field to payment_method_nonce details
 * Add more specific timeout errors: (#105 thanks @bhargavrpatel)
-  - Add `braintree.exceptions.http.timeout_error.ConnectTimeoutError` (child class of TimeoutError)
-  - Add `braintree.exceptions.http.timeout_error.ReadTimeoutError` (child class of TimeoutError)
+* Add `braintree.exceptions.http.timeout_error.ConnectTimeoutError` (child class of TimeoutError)
+* Add `braintree.exceptions.http.timeout_error.ReadTimeoutError` (child class of TimeoutError)
 * Add `room_tax` support for transaction sale
 * Add `no_show` support for transaction sale
 * Add `advanced_deposit` support for transaction sale
