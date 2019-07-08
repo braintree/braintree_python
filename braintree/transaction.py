@@ -119,6 +119,8 @@ class Transaction(Resource):
         "gateway_rejection_reason",
         "master_merchant_account_id",
         "merchant_account_id",
+        "network_response_code",
+        "network_response_text",
         "network_transaction_id",
         "order_id",
         "payment_instrument_type",

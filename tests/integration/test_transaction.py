@@ -5463,3 +5463,19 @@ class TestTransaction(unittest.TestCase):
 
         details = result.paypal_here_details
         self.assertIsNotNone(details.refund_id)
+
+    def test_sale_network_response_code_text(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual("XX", transaction.network_response_code)
+        self.assertEqual("sample network response text", transaction.network_response_text)

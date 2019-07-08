@@ -151,3 +151,19 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(CreditCard.IssuingBank.Unknown, found_verifications.first.credit_card['issuing_bank'])
         self.assertEqual(CreditCard.CountryOfIssuance.Unknown, found_verifications.first.credit_card['country_of_issuance'])
         self.assertEqual(CreditCard.ProductId.Unknown, found_verifications.first.credit_card['product_id'])
+
+    def test_create_success_network_response_code_text(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+        }})
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+        self.assertEqual("XX", verification.network_response_code)
+        self.assertEqual("sample network response text", verification.network_response_text)
+

@@ -229,3 +229,15 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.network_transaction_id, "123456789012345")
 
+    def test_constructor_includes_network_transaction_id(self):
+        attributes = {
+            'amount': '27.00',
+            'tax_amount': '1.00',
+            'network_response_code': '00',
+            'network_response_text': 'Successful approval/completion or V.I.P. PIN verification is successful'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.network_response_code, "00")
+        self.assertEqual(transaction.network_response_text, "Successful approval/completion or V.I.P. PIN verification is successful")
+

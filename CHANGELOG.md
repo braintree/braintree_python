@@ -1,5 +1,6 @@
-## unreleased
+## Unreleased
 * Add PayPalHere details
+* Add `networkResponseCode` and `networkResponseText` to transactions and verifications
 
 ## 3.55.0
 * Add `captureId` field to local_payment_details
