@@ -1,6 +1,7 @@
 
 class PaymentInstrumentType():
     PayPalAccount = "paypal_account"
+    PayPalHere = "paypal_here"
     EuropeBankAccount = "europe_bank_account"
     CreditCard = "credit_card"
     CoinbaseAccount = "coinbase_account"

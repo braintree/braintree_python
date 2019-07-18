@@ -1,3 +1,6 @@
+## unreleased
+* Add PayPalHere details
+
 ## 3.55.0
 * Add `captureId` field to local_payment_details
 * Add `refundId` field to local_payment_details

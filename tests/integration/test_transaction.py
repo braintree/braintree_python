@@ -5433,3 +5433,33 @@ class TestTransaction(unittest.TestCase):
           ErrorCodes.Transaction.Options.CreditCard.AccountTypeNotSupported,
           result.errors.for_object("transaction").for_object("options").for_object("credit_card").on("account_type")[0].code
         )
+
+    def test_paypal_here_details_auth_capture(self):
+        result = Transaction.find('paypal_here_auth_capture_id')
+        self.assertIsNotNone(result.paypal_here_details)
+        self.assertEqual(PaymentInstrumentType.PayPalHere, result.payment_instrument_type)
+
+        details = result.paypal_here_details
+        self.assertIsNotNone(details.authorization_id)
+        self.assertIsNotNone(details.capture_id)
+        self.assertIsNotNone(details.invoice_id)
+        self.assertIsNotNone(details.last_4)
+        self.assertIsNotNone(details.payment_type)
+        self.assertIsNotNone(details.transaction_fee_amount)
+        self.assertIsNotNone(details.transaction_fee_currency_iso_code)
+        self.assertIsNotNone(details.transaction_initiation_date)
+        self.assertIsNotNone(details.transaction_updated_date)
+
+    def test_paypal_here_details_sale(self):
+        result = Transaction.find('paypal_here_sale_id')
+        self.assertIsNotNone(result.paypal_here_details)
+
+        details = result.paypal_here_details
+        self.assertIsNotNone(details.payment_id)
+
+    def test_paypal_here_details_refund(self):
+        result = Transaction.find('paypal_here_refund_id')
+        self.assertIsNotNone(result.paypal_here_details)
+
+        details = result.paypal_here_details
+        self.assertIsNotNone(details.refund_id)
