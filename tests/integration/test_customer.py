@@ -218,6 +218,30 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(customer.apple_pay_cards))
         self.assertIsInstance(customer.apple_pay_cards[0], ApplePayCard)
 
+    def test_create_with_three_d_secure_nonce(self):
+        result = Customer.create({
+            "payment_method_nonce": Nonces.ThreeDSecureVisaFullAuthentication,
+            "credit_card": {
+                "options": {
+                    "verify_card": True,
+                    },
+            },
+        })
+
+        self.assertTrue(result.is_success)
+
+        three_d_secure_info = result.customer.payment_methods[0].verification.three_d_secure_info
+
+        self.assertEqual("Y", three_d_secure_info.enrolled)
+        self.assertEqual("authenticate_successful", three_d_secure_info.status)
+        self.assertEqual(True, three_d_secure_info.liability_shifted)
+        self.assertEqual(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("cavv_value", three_d_secure_info.cavv)
+        self.assertEqual("xid_value", three_d_secure_info.xid)
+        self.assertEqual(None, three_d_secure_info.ds_transaction_id)
+        self.assertEqual("05", three_d_secure_info.eci_flag)
+        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
+
     def test_create_with_android_pay_proxy_card_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCardDiscover})
         self.assertTrue(result.is_success)

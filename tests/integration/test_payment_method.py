@@ -5,6 +5,30 @@ from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 
 class TestPaymentMethod(unittest.TestCase):
+    def test_create_with_three_d_secure_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.ThreeDSecureVisaFullAuthentication,
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        three_d_secure_info = result.payment_method.verification.three_d_secure_info
+
+        self.assertEqual("Y", three_d_secure_info.enrolled)
+        self.assertEqual("authenticate_successful", three_d_secure_info.status)
+        self.assertEqual(True, three_d_secure_info.liability_shifted)
+        self.assertEqual(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("cavv_value", three_d_secure_info.cavv)
+        self.assertEqual("xid_value", three_d_secure_info.xid)
+        self.assertEqual(None, three_d_secure_info.ds_transaction_id)
+        self.assertEqual("05", three_d_secure_info.eci_flag)
+        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
+
     def test_create_with_paypal_future_payments_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({

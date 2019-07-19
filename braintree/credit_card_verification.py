@@ -2,6 +2,7 @@ from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
 from braintree.configuration import Configuration
 from braintree.risk_data import RiskData
+from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.resource import Resource
 
 class CreditCardVerification(AttributeGetter):
@@ -48,6 +49,11 @@ class CreditCardVerification(AttributeGetter):
             self.risk_data = RiskData(attributes["risk_data"])
         else:
             self.risk_data = None
+
+        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] is None:
+            self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
+        else:
+            self.three_d_secure_info = None
 
     @staticmethod
     def find(verification_id):
