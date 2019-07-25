@@ -158,7 +158,8 @@ class TestCreditCardVerfication(unittest.TestCase):
                 "number": CreditCardNumbers.Visa,
                 "cardholder_name": "John Smith",
                 "expiration_date": "05/2012"
-        }})
+            },
+        })
 
         self.assertTrue(result.is_success)
         verification = result.verification
