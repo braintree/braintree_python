@@ -1,4 +1,4 @@
-## Unreleased
+# 3.56.0
 * Add PayPalHere details
 * Add `networkResponseCode` and `networkResponseText` to transactions and verifications
 * Add `cavv`, `xid`, `ds_transaction_id`, `eci_flag`, and `three_d_secure_version`, to `three_d_secure_info`
