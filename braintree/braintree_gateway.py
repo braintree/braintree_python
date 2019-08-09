@@ -23,11 +23,11 @@ from braintree.transaction_line_item_gateway import TransactionLineItemGateway
 from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.us_bank_account_gateway import UsBankAccountGateway
 from braintree.us_bank_account_verification_gateway import UsBankAccountVerificationGateway
+from braintree.webhook_notification_gateway import WebhookNotificationGateway
+from braintree.webhook_testing_gateway import WebhookTestingGateway
 # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
 # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
 from braintree.ideal_payment_gateway import IdealPaymentGateway
-from braintree.webhook_notification_gateway import WebhookNotificationGateway
-from braintree.webhook_testing_gateway import WebhookTestingGateway
 import braintree.configuration
 
 class BraintreeGateway(object):
@@ -41,6 +41,7 @@ class BraintreeGateway(object):
                 access_token=kwargs.get("access_token"),
                 http_strategy=kwargs.get("http_strategy")
             )
+        self.graphql_client = self.config.graphql_client()
         self.add_on = AddOnGateway(self)
         self.address = AddressGateway(self)
         self.client_token = ClientTokenGateway(self)

@@ -17,6 +17,7 @@ class Nonces(object):
     AndroidPayCardAmEx = "fake-android-pay-amex-nonce"
     AmexExpressCheckoutCard = "fake-amex-express-checkout-nonce"
     VenmoAccount = "fake-venmo-account-nonce"
+    ThreeDSecureVisaFullAuthentication = "fake-three-d-secure-visa-full-authentication-nonce"
     TransactableVisa = "fake-valid-visa-nonce"
     TransactableAmEx = "fake-valid-amex-nonce"
     TransactableMasterCard = "fake-valid-mastercard-nonce"

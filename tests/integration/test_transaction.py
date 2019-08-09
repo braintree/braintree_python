@@ -4531,6 +4531,11 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
+        self.assertEqual("somebase64value", three_d_secure_info.cavv)
+        self.assertEqual("xidvalue", three_d_secure_info.xid)
+        self.assertEqual("dstxnid", three_d_secure_info.ds_transaction_id)
+        self.assertEqual("07", three_d_secure_info.eci_flag)
+        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
 
     def test_find_exposes_none_for_null_three_d_secure_info(self):
         transaction = Transaction.find("settledtransaction")
@@ -5433,3 +5438,49 @@ class TestTransaction(unittest.TestCase):
           ErrorCodes.Transaction.Options.CreditCard.AccountTypeNotSupported,
           result.errors.for_object("transaction").for_object("options").for_object("credit_card").on("account_type")[0].code
         )
+
+    def test_paypal_here_details_auth_capture(self):
+        result = Transaction.find('paypal_here_auth_capture_id')
+        self.assertIsNotNone(result.paypal_here_details)
+        self.assertEqual(PaymentInstrumentType.PayPalHere, result.payment_instrument_type)
+
+        details = result.paypal_here_details
+        self.assertIsNotNone(details.authorization_id)
+        self.assertIsNotNone(details.capture_id)
+        self.assertIsNotNone(details.invoice_id)
+        self.assertIsNotNone(details.last_4)
+        self.assertIsNotNone(details.payment_type)
+        self.assertIsNotNone(details.transaction_fee_amount)
+        self.assertIsNotNone(details.transaction_fee_currency_iso_code)
+        self.assertIsNotNone(details.transaction_initiation_date)
+        self.assertIsNotNone(details.transaction_updated_date)
+
+    def test_paypal_here_details_sale(self):
+        result = Transaction.find('paypal_here_sale_id')
+        self.assertIsNotNone(result.paypal_here_details)
+
+        details = result.paypal_here_details
+        self.assertIsNotNone(details.payment_id)
+
+    def test_paypal_here_details_refund(self):
+        result = Transaction.find('paypal_here_refund_id')
+        self.assertIsNotNone(result.paypal_here_details)
+
+        details = result.paypal_here_details
+        self.assertIsNotNone(details.refund_id)
+
+    def test_sale_network_response_code_text(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual("XX", transaction.network_response_code)
+        self.assertEqual("sample network response text", transaction.network_response_text)

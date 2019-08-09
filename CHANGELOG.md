@@ -1,3 +1,10 @@
+# 3.56.0
+* Add PayPalHere details
+* Add `networkResponseCode` and `networkResponseText` to transactions and verifications
+* Add `cavv`, `xid`, `ds_transaction_id`, `eci_flag`, and `three_d_secure_version`, to `three_d_secure_info`
+* Add `three_d_secure_info` to credit_card_verification
+* Add `GraphQLClient` to `BraintreeGateway` class
+
 ## 3.55.0
 * Add `captureId` field to local_payment_details
 * Add `refundId` field to local_payment_details

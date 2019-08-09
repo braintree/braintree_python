@@ -20,6 +20,7 @@ from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
 from braintree.paypal_account import PayPalAccount
+from braintree.paypal_here import PayPalHere
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
@@ -118,6 +119,8 @@ class Transaction(Resource):
         "gateway_rejection_reason",
         "master_merchant_account_id",
         "merchant_account_id",
+        "network_response_code",
+        "network_response_text",
         "network_transaction_id",
         "order_id",
         "payment_instrument_type",
@@ -700,6 +703,8 @@ class Transaction(Resource):
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
         if "paypal" in attributes:
             self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
+        if "paypal_here" in attributes:
+            self.paypal_here_details = PayPalHere(gateway, attributes.pop("paypal_here"))
         if "local_payment" in attributes:
             self.local_payment_details = LocalPayment(gateway, attributes.pop("local_payment"))
         if "europe_bank_account" in attributes:
