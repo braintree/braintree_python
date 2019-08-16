@@ -2198,6 +2198,23 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_amount")[0].code
         )
 
+    def test_sale_with_amount_not_supported_by_processor(self):
+        result = Transaction.sale({
+            "amount": "0.2",
+            "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Hiper,
+                "expiration_date": "10/2020",
+                "cvv": "737",
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.AmountNotSupportedByProcessor,
+            result.errors.for_object("transaction")[0].code
+        )
+
     def test_sale_with_line_items_validation_error_unit_of_measure_is_too_large(self):
         result = Transaction.sale({
             "amount": "35.05",
