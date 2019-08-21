@@ -1,3 +1,6 @@
+## unreleased
+* Forward `processor_comments` to `forwarded_comments`
+
 # 3.56.0
 * Add PayPalHere details
 * Add `networkResponseCode` and `networkResponseText` to transactions and verifications
