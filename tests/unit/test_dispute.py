@@ -31,6 +31,7 @@ class TestDispute(unittest.TestCase):
         "date_opened": date(2013, 4, 1),
         "date_won": date(2013, 4, 2),
         "forwarded_comments": "Forwarded comments",
+        "processor_comments": "Processor comments",
         "id": "123456",
         "kind": "chargeback",
         "merchant_account_id": "abc123",
@@ -111,6 +112,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.case_number, "CB123456")
         self.assertEqual(dispute.created_at, datetime(2013, 4, 10, 10, 50, 39))
         self.assertEqual(dispute.forwarded_comments, "Forwarded comments")
+        self.assertEqual(dispute.processor_comments, "Processor comments")
         self.assertEqual(dispute.merchant_account_id, "abc123")
         self.assertEqual(dispute.original_dispute_id, "original_dispute_id")
         self.assertEqual(dispute.reason_code, "83")

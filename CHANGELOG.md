@@ -1,3 +1,6 @@
+# 3.57.0
+* Add `processor_comments` to `Dispute`
+
 # 3.56.0
 * Add PayPalHere details
 * Add `networkResponseCode` and `networkResponseText` to transactions and verifications
