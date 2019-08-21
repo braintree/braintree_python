@@ -175,3 +175,5 @@ class Dispute(AttributeGetter):
             self.evidence = [DisputeEvidence(evidence) for evidence in self.evidence]
         if "status_history" in attributes and self.status_history is not None:
             self.status_history = [DisputeStatusHistory(status_history) for status_history in self.status_history]
+        if "processor_comments" in attributes and self.processor_comments is not None:
+            self.forwarded_comments = self.processor_comments
