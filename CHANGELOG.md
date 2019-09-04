@@ -1,6 +1,6 @@
 ## unreleased
 * Forward `processor_comments` to `forwarded_comments`
-* Add 'TokenIssuance' gateway rejection reason
+* Add Venmo 'TokenIssuance' gateway rejection reason
 
 # 3.56.0
 * Add PayPalHere details
