@@ -952,6 +952,16 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
+    def test_sale_with_gateway_rejected_token_issuance(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.fake_venmo_account_merchant_account_id,
+            "payment_method_nonce": Nonces.VenmoAccountTokenIssuanceError
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(Transaction.GatewayRejectionReason.TokenIssuance, result.transaction.gateway_rejection_reason)
+
     def test_sale_with_service_fee(self):
         result = Transaction.sale({
             "amount": "10.00",

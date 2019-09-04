@@ -182,6 +182,7 @@ class Transaction(Resource):
         Duplicate             = "duplicate"
         Fraud                 = "fraud"
         ThreeDSecure          = "three_d_secure"
+        TokenIssuance         = "token_issuance"
         Unrecognized          = "unrecognized"
 
     class Source(object):
