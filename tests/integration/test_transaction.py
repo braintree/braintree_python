@@ -53,7 +53,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertTrue(len(result.transaction.network_transaction_id) > 0)
 
-    def test_sale_does_not_receive_network_transaction_id_non_visa(self):
+    def test_case_accepts_previous_network_transaction_id_mastercard(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -63,7 +63,19 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.network_transaction_id, None)
+        self.assertTrue(len(result.transaction.network_transaction_id) > 0)
+
+    def test_sale_does_not_accept_previous_network_transaction_id_elo(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Elo,
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.transaction, None)
 
     def test_sale_accepts_external_vault_status_visa(self):
         result = Transaction.sale({
@@ -80,7 +92,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertNotEqual(result.transaction.network_transaction_id, "")
 
-    def test_sale_accepts_external_vault_status_non_visa(self):
+    def test_sale_accepts_external_vault_status_mastercard(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
@@ -93,7 +105,23 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.network_transaction_id, None)
+        self.assertTrue(len(result.transaction.network_transaction_id) > 0)
+
+    def test_sale_does_not_accept_external_vault_status_elo(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Elo,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(result.transaction, None)
+
 
     def test_sale_accepts_blank_external_vault_previous_network_transaction_id_non_visa(self):
         result = Transaction.sale({
@@ -109,7 +137,7 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-        self.assertEqual(result.transaction.network_transaction_id, None)
+        self.assertTrue(len(result.transaction.network_transaction_id) > 0)
 
     def test_sale_accepts_external_vault_status_vaulted_without_previous_network_transaction_id(self):
         result = Transaction.sale({
@@ -195,30 +223,26 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("external_vault").on("status")[0].code
         )
 
-    def test_sale_with_external_vault_validation_error_invalid_previous_network_transaction_id(self):
+    def test_sale_with_external_vault_discover_success(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": CreditCardNumbers.Visa,
+                "number": CreditCardNumbers.Discover,
                 "expiration_date": "05/2009"
             },
             "external_vault": {
                 "status": "vaulted",
-                "previous_network_transaction_id": "bad value"
+                "previous_network_transaction_id": "123456789012345"
             }
         })
 
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ExternalVault.PreviousNetworkTransactionIdIsInvalid,
-            result.errors.for_object("transaction").for_object("external_vault").on("previous_network_transaction_id")[0].code
-        )
+        self.assertTrue(result.is_success)
 
     def test_sale_with_external_vault_validation_error_invalid_card_type(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": CreditCardNumbers.Discover,
+                "number": CreditCardNumbers.Elo,
                 "expiration_date": "05/2009"
             },
             "external_vault": {
