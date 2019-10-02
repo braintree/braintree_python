@@ -12,7 +12,7 @@ long_description = """
 
 setup(
     name="braintree",
-    version="3.56.0",
+    version="3.57.1",
     description="Braintree Python Library",
     long_description=long_description,
     author="Braintree",
