@@ -1,3 +1,6 @@
+## Unreleased
+* Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
+
 ## 3.57.1
 * Set correct version for PyPi
 
