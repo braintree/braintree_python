@@ -1,5 +1,7 @@
 ## Unreleased
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
+* Add `three_d_secure_authentication_id` to `three_d_secure_info`
+* Add `three_d_secure_authentication_id` support for transaction sale
 
 ## 3.57.1
 * Set correct version for PyPi
