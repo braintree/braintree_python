@@ -38,7 +38,7 @@ class TestingGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/three_d_secure/create_verification/" + merchant_account_id, {
             "three_d_secure_verification": params
         })
-        return response["three_d_secure_verification"]["three_d_secure_authentication_id"]
+        return response["three_d_secure_verification"]["three_d_secure_token"]
 
     def __create_result(self, response):
         if "transaction" in response:

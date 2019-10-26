@@ -62,7 +62,6 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("test_xid", three_d_secure_info.xid)
         self.assertEqual("test_eci", three_d_secure_info.eci_flag)
         self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
-        self.assertIsNotNone(three_d_secure_info.three_d_secure_authentication_id)
 
     def test_find_nonce_shows_paypal_details(self):
         found_nonce = PaymentMethodNonce.find("fake-google-pay-paypal-nonce")
