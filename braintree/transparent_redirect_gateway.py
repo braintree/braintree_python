@@ -1,4 +1,7 @@
-import cgi
+try:
+    from urllib.parse import parse_qs
+except ImportError:
+    from cgi import parse_qs
 from datetime import datetime
 import braintree
 from braintree.util.crypto import Crypto
@@ -49,7 +52,7 @@ class TransparentRedirectGateway(object):
         return self.config.base_url() + self.config.base_merchant_path() + "/transparent_redirect_requests"
 
     def _parse_and_validate_query_string(self, query_string):
-        query_params = cgi.parse_qs(query_string)
+        query_params = parse_qs(query_string)
         http_status = int(query_params["http_status"][0])
         message = query_params.get("bt_message")
         if message is not None:
