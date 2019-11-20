@@ -1235,6 +1235,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(CreditCard.CardType.Discover, android_pay_card_details.card_type)
         self.assertTrue(int(android_pay_card_details.expiration_month) > 0)
         self.assertTrue(int(android_pay_card_details.expiration_year) > 0)
+        self.assertFalse(android_pay_card_details.is_network_tokenized)
 
     def test_sale_with_fake_android_pay_network_token_nonce(self):
         result = Transaction.sale({
@@ -1250,6 +1251,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(CreditCard.CardType.MasterCard, android_pay_card_details.card_type)
         self.assertTrue(int(android_pay_card_details.expiration_month) > 0)
         self.assertTrue(int(android_pay_card_details.expiration_year) > 0)
+        self.assertTrue(android_pay_card_details.is_network_tokenized)
 
     def test_sale_with_fake_amex_express_checkout_card_nonce(self):
         result = Transaction.sale({
