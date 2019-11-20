@@ -275,6 +275,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertIsInstance(android_pay_card.updated_at, datetime)
         self.assertEqual("601111", android_pay_card.bin)
         self.assertEqual("google_transaction_id", android_pay_card.google_transaction_id)
+        self.assertFalse(android_pay_card.is_network_tokenized)
 
     def test_create_with_fake_android_pay_network_token_nonce(self):
         customer_id = Customer.create().customer.id
@@ -303,6 +304,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertIsInstance(android_pay_card.updated_at, datetime)
         self.assertEqual("555555", android_pay_card.bin)
         self.assertEqual("google_transaction_id", android_pay_card.google_transaction_id)
+        self.assertTrue(android_pay_card.is_network_tokenized)
 
     def test_create_with_fake_amex_express_checkout_card_nonce(self):
         customer_id = Customer.create().customer.id
