@@ -1,6 +1,5 @@
 ## Unreleased
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
-* Add `graphql_id` to `CreditCardVerification`, `Customer`, `Disputes`, and `Transaction`
 
 ## 3.57.1
 * Set correct version for PyPi

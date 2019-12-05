@@ -74,7 +74,6 @@ class Customer(Resource):
     def __repr__(self):
         detail_list = [
             "id",
-            "graphql_id",
             "company",
             "created_at",
             "email",
@@ -278,5 +277,3 @@ class Customer(Resource):
         if "samsung_pay_cards" in attributes:
             self.samsung_pay_cards = [SamsungPayCard(gateway, samsung_pay_card) for samsung_pay_card in self.samsung_pay_cards]
             self.payment_methods += self.samsung_pay_cards
-        if "global_id" in attributes:
-            self.graphql_id = attributes["global_id"]

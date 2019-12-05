@@ -117,7 +117,6 @@ class Transaction(Resource):
         "disputes",
         "escrow_status",
         "gateway_rejection_reason",
-        "graphql_id",
         "master_merchant_account_id",
         "merchant_account_id",
         "network_response_code",
@@ -770,8 +769,6 @@ class Transaction(Resource):
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
         if "network_transaction_id" in attributes:
             self.network_transaction_id = attributes["network_transaction_id"]
-        if "global_id" in attributes:
-            self.graphql_id = attributes["global_id"]
 
     @property
     def refund_id(self):
