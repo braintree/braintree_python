@@ -35,6 +35,9 @@ class CreditCardVerification(AttributeGetter):
         if "currency_iso_code" not in attributes:
             self.currency_iso_code = None
 
+        if "global_id" in attributes:
+            self.graphql_id = attributes["global_id"]
+
         if "processor_response_code" not in attributes:
             self.processor_response_code = None
         if "processor_response_text" not in attributes:

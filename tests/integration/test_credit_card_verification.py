@@ -125,6 +125,7 @@ class TestCreditCardVerfication(unittest.TestCase):
         created_verification = customer.credit_card_verification
         found_verification = CreditCardVerification.find(created_verification.id)
         self.assertEqual(created_verification, found_verification)
+        self.assertNotEqual(None, found_verification.graphql_id)
 
     def test_verification_not_found(self):
         self.assertRaises(NotFoundError, CreditCardVerification.find,

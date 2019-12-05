@@ -177,3 +177,5 @@ class Dispute(AttributeGetter):
             self.status_history = [DisputeStatusHistory(status_history) for status_history in self.status_history]
         if "processor_comments" in attributes and self.processor_comments is not None:
             self.forwarded_comments = self.processor_comments
+        if "global_id" in attributes:
+            self.graphql_id = attributes["global_id"]
