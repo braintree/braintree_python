@@ -74,6 +74,7 @@ class Customer(Resource):
     def __repr__(self):
         detail_list = [
             "id",
+            "graphql_id",
             "company",
             "created_at",
             "email",

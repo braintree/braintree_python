@@ -2990,6 +2990,7 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
         found_transaction = Transaction.find(transaction.id)
         self.assertEqual(transaction.id, found_transaction.id)
+        self.assertNotEqual(None, transaction.graphql_id)
 
     @raises_with_regexp(NotFoundError, "transaction with id 'notreal' not found")
     def test_find_for_bad_transaction_raises_not_found_error(self):
