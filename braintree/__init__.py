@@ -6,6 +6,7 @@ from braintree.address_gateway import AddressGateway
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.android_pay_card import AndroidPayCard
 from braintree.apple_pay_card import ApplePayCard
+from braintree.apple_pay_gateway import ApplePayGateway
 from braintree.braintree_gateway import BraintreeGateway
 from braintree.client_token import ClientToken
 from braintree.configuration import Configuration

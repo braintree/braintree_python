@@ -31,7 +31,7 @@ class Http(object):
 
     @staticmethod
     def is_error_status(status):
-        return status not in [200, 201, 422]
+        return status not in [200, 201, 204, 422]
 
     @staticmethod
     def raise_exception_from_status(status, message=None):
