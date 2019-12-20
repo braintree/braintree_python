@@ -22,8 +22,6 @@ class ApplePayGateway(object):
         self.config.http().delete(self.config.base_merchant_path() + "/processing/apple_pay/unregister_domain?url=" + cgi.escape(domain))
         return SuccessfulResult()
 
-        return ErrorResult(self.gateway, 'An unexpected error occurred.')
-
     def registered_domains(self):
         response = self.config.http().get(self.config.base_merchant_path() + "/processing/apple_pay/registered_domains")
 
