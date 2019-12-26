@@ -1,4 +1,5 @@
 ## Unreleased
+* Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
 * Add Graphql ID to `CreditCardVerification`, `Customer`, `Dispute`, and `Transaction`
 

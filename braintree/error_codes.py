@@ -563,6 +563,8 @@ class ErrorCodes(object):
         PurchaseOrderNumberIsInvalid = "91548"
         PurchaseOrderNumberIsTooLong = "91537"
         RefundAmountIsTooLarge = "91521"
+        RefundAuthHardDeclined = "915200"
+        RefundAuthSoftDeclined = "915201"
         ServiceFeeAmountCannotBeNegative = "91554"
         ServiceFeeAmountFormatIsInvalid = "91555"
         ServiceFeeAmountIsTooLarge = "91556"
