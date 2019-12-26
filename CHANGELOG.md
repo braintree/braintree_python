@@ -1,3 +1,6 @@
+## Unreleased - Major
+* Upgrade API version to retreive declined refund transactions
+
 ## Unreleased
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors

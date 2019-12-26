@@ -58,7 +58,7 @@ class Configuration(object):
 
     @staticmethod
     def api_version():
-        return "5"
+        return "6"
 
     @staticmethod
     def graphql_api_version():
