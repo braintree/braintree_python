@@ -554,6 +554,7 @@ class ErrorCodes(object):
         ProcessorAuthorizationCodeIsInvalid = "81520"
         ProcessorDoesNotSupportAuths = "915104"
         ProcessorDoesNotSupportCredits = "91546"
+        ProcessorDoesNotSupportMotoForCardType = "915195"
         ProcessorDoesNotSupportPartialSettlement = "915102"
         ProcessorDoesNotSupportUpdatingOrderId = "915107"
         ProcessorDoesNotSupportUpdatingDescriptor = "915108"

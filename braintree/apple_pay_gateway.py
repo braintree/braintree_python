@@ -4,7 +4,6 @@ from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.unexpected_error import UnexpectedError
 
-
 class ApplePayGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
