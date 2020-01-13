@@ -632,6 +632,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(customer.id, found_customer.id)
         self.assertEqual(customer.first_name, found_customer.first_name)
         self.assertEqual(customer.last_name, found_customer.last_name)
+        self.assertNotEqual(None, customer.graphql_id)
 
     def test_find_customer_with_us_bank_account(self):
         customer = Customer.create({
