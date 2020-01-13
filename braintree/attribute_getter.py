@@ -18,6 +18,9 @@ class AttributeGetter(object):
         for key, val in attributes.items():
             setattr(self, key, val)
             self._setattrs.append(key)
+            if key == "global_id":
+                setattr(self, "graphql_id", val)
+                self._setattrs.append("graphql_id")
 
     def __repr__(self, detail_list=None):
         if detail_list is None:

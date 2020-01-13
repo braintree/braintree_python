@@ -71,7 +71,7 @@ class TestDisputeSearch(unittest.TestCase):
         ])
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(2, len(disputes))
+        self.assertGreaterEqual(len(disputes), 2)
 
     def test_advanced_search_returns_disputes_by_date_range(self):
         collection = Dispute.search([

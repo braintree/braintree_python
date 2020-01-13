@@ -100,6 +100,7 @@ class Transaction(Resource):
     def __repr__(self):
       detail_list = [
         "id",
+        "graphql_id",
         "additional_processor_response",
         "amount",
         "authorization_adjustments",

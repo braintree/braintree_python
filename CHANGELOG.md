@@ -1,5 +1,7 @@
-## unreleased
+## Unreleased
 * Add support for managing Apple Pay domains
+* Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
+* Add Graphql ID to `CreditCardVerification`, `Customer`, `Dispute`, and `Transaction`
 
 ## 3.57.1
 * Set correct version for PyPi
