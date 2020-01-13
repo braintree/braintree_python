@@ -118,9 +118,9 @@ class PaymentMethodGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-        elif result_key is "revoke" and response.get("success", False):
+        elif result_key == "revoke" and response.get("success", False):
             return SuccessfulResult()
-        elif result_key is "payment_method_nonce":
+        elif result_key == "payment_method_nonce":
             payment_method_nonce = self._parse_payment_method_nonce(response)
             return SuccessfulResult({result_key: payment_method_nonce})
         else:
