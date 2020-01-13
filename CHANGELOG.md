@@ -1,7 +1,10 @@
+## unreleased
+* Add support for managing Apple Pay domains
+
 ## 3.57.1
 * Set correct version for PyPi
 
-## 3.57.0 
+## 3.57.0
 * Forward `processor_comments` to `forwarded_comments`
 * Add Venmo 'TokenIssuance' gateway rejection reason
 * Add `AmountNotSupportedByProcessor` to validation error

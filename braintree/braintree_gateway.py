@@ -1,5 +1,6 @@
 from braintree.add_on_gateway import AddOnGateway
 from braintree.address_gateway import AddressGateway
+from braintree.apple_pay_gateway import ApplePayGateway
 from braintree.client_token_gateway import ClientTokenGateway
 from braintree.configuration import Configuration
 from braintree.credit_card_gateway import CreditCardGateway
@@ -44,6 +45,7 @@ class BraintreeGateway(object):
         self.graphql_client = self.config.graphql_client()
         self.add_on = AddOnGateway(self)
         self.address = AddressGateway(self)
+        self.apple_pay = ApplePayGateway(self)
         self.client_token = ClientTokenGateway(self)
         self.credit_card = CreditCardGateway(self)
         self.customer = CustomerGateway(self)
