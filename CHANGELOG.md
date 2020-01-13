@@ -1,11 +1,13 @@
 ## Unreleased
+* Add support for managing Apple Pay domains (thanks @ethier #117)
+* Fix error when running against Python 3.8 (thanks @felixonmars #114)
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
 * Add Graphql ID to `CreditCardVerification`, `Customer`, `Dispute`, and `Transaction`
 
 ## 3.57.1
 * Set correct version for PyPi
 
-## 3.57.0 
+## 3.57.0
 * Forward `processor_comments` to `forwarded_comments`
 * Add Venmo 'TokenIssuance' gateway rejection reason
 * Add `AmountNotSupportedByProcessor` to validation error
