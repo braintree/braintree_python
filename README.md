@@ -9,7 +9,7 @@ The Braintree Python library provides integration access to the Braintree Gatewa
 
 * [requests](http://docs.python-requests.org/en/latest/)
 
-The Braintree Python SDK is tested against Python versions 2.7.9, 3.3.5 and 3.7.0.
+The Braintree Python SDK is tested against Python versions 2.7.9, 3.3.5 and 3.8.0.
 
 ## Upgrading from 2.x.x to 3.x.x
 
