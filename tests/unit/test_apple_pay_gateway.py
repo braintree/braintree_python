@@ -8,7 +8,7 @@ else:
 
 class TestApplePayGateway(unittest.TestCase):
     @staticmethod
-    def setup_apple_pay_gateway_and_mock_http(self):
+    def setup_apple_pay_gateway_and_mock_http():
         braintree_gateway = BraintreeGateway(Configuration.instantiate())
         apple_pay_gateway = ApplePayGateway(braintree_gateway)
         http_mock = MagicMock(name='config.http')
