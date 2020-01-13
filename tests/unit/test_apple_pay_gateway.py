@@ -7,6 +7,14 @@ else:
 
 
 class TestApplePayGateway(unittest.TestCase):
+    @staticmethod
+    def setup_apple_pay_gateway_and_mock_http():
+        braintree_gateway = BraintreeGateway(Configuration.instantiate())
+        apple_pay_gateway = ApplePayGateway(braintree_gateway)
+        http_mock = MagicMock(name='config.http')
+        braintree_gateway.config.http = http_mock
+        return apple_pay_gateway, http_mock
+
     def test_registered_domains(self):
         apple_pay_gateway, http_mock = self.setup_apple_pay_gateway_and_mock_http()
         apple_pay_gateway.registered_domains()
@@ -21,10 +29,3 @@ class TestApplePayGateway(unittest.TestCase):
         apple_pay_gateway, http_mock = self.setup_apple_pay_gateway_and_mock_http()
         apple_pay_gateway.unregister_domain('test.example.com')
         self.assertTrue("delete('/merchants/integration_merchant_id/processing/apple_pay/unregister_domain?url=test.example.com')" in str(http_mock.mock_calls))
-
-    def setup_apple_pay_gateway_and_mock_http(self):
-        braintree_gateway = BraintreeGateway(Configuration.instantiate())
-        apple_pay_gateway = ApplePayGateway(braintree_gateway)
-        http_mock = MagicMock(name='config.http')
-        braintree_gateway.config.http = http_mock
-        return apple_pay_gateway, http_mock
