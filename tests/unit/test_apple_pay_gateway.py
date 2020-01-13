@@ -5,7 +5,6 @@ if sys.version_info[0] == 2:
 else:
     from unittest.mock import MagicMock
 
-
 class TestApplePayGateway(unittest.TestCase):
     @staticmethod
     def setup_apple_pay_gateway_and_mock_http():
