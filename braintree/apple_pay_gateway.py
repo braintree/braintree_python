@@ -24,6 +24,9 @@ class ApplePayGateway(object):
     def registered_domains(self):
         response = self.config.http().get(self.config.base_merchant_path() + "/processing/apple_pay/registered_domains")
 
+        # NEXT_MAJOR_VERSION consider making this method align with the Ruby SDK
+        # in the Ruby SDK, this is returned as an apple_pay_options object
+        # https://github.com/braintree/braintree_ruby/blob/989b8f5acc42ab4fe634c818d692aec1d56daa36/lib/braintree/apple_pay_gateway.rb#L29
         if "response" in response:
             response = response["response"]
 
