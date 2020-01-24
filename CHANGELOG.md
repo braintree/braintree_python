@@ -1,3 +1,6 @@
+## unreleased
+* Fix issue where managing Apple Pay domains would fail in Python 3.8+
+
 ## 3.58.0
 * Add support for managing Apple Pay domains (thanks @ethier #117)
 * Fix error when running against Python 3.8 (thanks @felixonmars #114)

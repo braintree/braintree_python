@@ -1,4 +1,7 @@
-import cgi
+try:
+    from html import escape
+except ImportError:
+    from cgi import escape
 
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
@@ -18,7 +21,7 @@ class ApplePayGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def unregister_domain(self, domain):
-        self.config.http().delete(self.config.base_merchant_path() + "/processing/apple_pay/unregister_domain?url=" + cgi.escape(domain))
+        self.config.http().delete(self.config.base_merchant_path() + "/processing/apple_pay/unregister_domain?url=" + escape(domain))
         return SuccessfulResult()
 
     def registered_domains(self):
