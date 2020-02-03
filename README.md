@@ -36,36 +36,38 @@ instructions above for upgrading from pycurl / httplib to requests.
 
 ## Quick Start Example
 
-    import braintree
+```python
+import braintree
 
-    gateway = braintree.BraintreeGateway(
-        braintree.Configuration(
-            environment=braintree.Environment.Sandbox
-            merchant_id="your_merchant_id",
-            public_key="your_public_key",
-            private_key="your_private_key",
-        )
+gateway = braintree.BraintreeGateway(
+    braintree.Configuration(
+        environment=braintree.Environment.Sandbox
+        merchant_id="your_merchant_id",
+        public_key="your_public_key",
+        private_key="your_private_key",
     )
+)
 
-    result = gateway.transaction.sale({
-        "amount": "1000.00",
-        "payment_method_nonce": nonce_from_the_client,
-        "options": {
-            "submit_for_settlement": True
-        }
-    })
+result = gateway.transaction.sale({
+    "amount": "1000.00",
+    "payment_method_nonce": nonce_from_the_client,
+    "options": {
+        "submit_for_settlement": True
+    }
+})
 
-    if result.is_success:
-        print("success!: " + result.transaction.id)
-    elif result.transaction:
-        print("Error processing transaction:")
-        print("  code: " + result.transaction.processor_response_code)
-        print("  text: " + result.transaction.processor_response_text)
-    else:
-        for error in result.errors.deep_errors:
-            print("attribute: " + error.attribute)
-            print("  code: " + error.code)
-            print("  message: " + error.message)
+if result.is_success:
+    print("success!: " + result.transaction.id)
+elif result.transaction:
+    print("Error processing transaction:")
+    print("  code: " + result.transaction.processor_response_code)
+    print("  text: " + result.transaction.processor_response_text)
+else:
+    for error in result.errors.deep_errors:
+        print("attribute: " + error.attribute)
+        print("  code: " + error.code)
+        print("  message: " + error.message)
+```
 
 ## Developing
 
