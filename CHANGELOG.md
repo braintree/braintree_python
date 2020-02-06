@@ -1,4 +1,5 @@
 ## unreleased
+* Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
 * Fix issue where managing Apple Pay domains would fail in Python 3.8+
 * Add level 2 processing options `purchase_order_number`, `tax_amount`, and `tax_exempt` to `Transaction.submit_for_settlement`
 

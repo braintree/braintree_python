@@ -3623,6 +3623,48 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
+    def test_refund_returns_an_error_if_soft_declined(self):
+        transaction = Transaction.sale({
+            "amount": Decimal("9000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, Decimal("2046.00"))
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.RefundAuthSoftDeclined,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_refund_returns_an_error_if_hard_declined(self):
+        transaction = Transaction.sale({
+            "amount": Decimal("9000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, Decimal("2009.00"))
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.RefundAuthHardDeclined,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
     @staticmethod
     def __create_transaction_to_refund():
         transaction = Transaction.sale({
