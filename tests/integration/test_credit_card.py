@@ -1,3 +1,4 @@
+import datetime
 from tests.test_helper import *
 from braintree.test.credit_card_defaults import CreditCardDefaults
 from braintree.test.credit_card_numbers import CreditCardNumbers
@@ -1127,13 +1128,14 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(ErrorCodes.CreditCard.TokenInvalid, credit_card_token_errors[0].code)
 
     def test_expired_can_iterate_over_all_items(self):
+        year = datetime.now().year - 3
         customer_id = Customer.all().first.id
 
         for _ in range(110 - CreditCard.expired().maximum_size):
             CreditCard.create({
                 "customer_id": customer_id,
                 "number": "4111111111111111",
-                "expiration_date": "01/2015"
+                "expiration_date": "01/" + str(year)
             })
 
         collection = CreditCard.expired()

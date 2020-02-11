@@ -3251,6 +3251,47 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("3334445555", submitted_transaction.descriptor.phone)
         self.assertEqual("ebay.com", submitted_transaction.descriptor.url)
 
+    def test_submit_for_settlement_with_level_2_data(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {"purchase_order_number": "123456", "tax_amount": "2.00", "tax_exempt": False}
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
+    def test_submit_for_settlement_with_level_3_data(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+                "discount_amount": "12.33",
+                "shipping_amount": "5.00",
+                "ships_from_postal_code": "90210",
+                "line_items": [{
+                    "quantity": "1.0232",
+                    "name": "Name #1",
+                    "kind": TransactionLineItem.Kind.Debit,
+                    "unit_amount": "45.1232",
+                    "total_amount": "45.15",
+                    }]
+                }
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
     @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
@@ -3605,6 +3646,48 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual(
             ErrorCodes.Transaction.CannotRefundUnlessSettled,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_refund_returns_an_error_if_soft_declined(self):
+        transaction = Transaction.sale({
+            "amount": Decimal("9000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, Decimal("2046.00"))
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.RefundAuthSoftDeclined,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_refund_returns_an_error_if_hard_declined(self):
+        transaction = Transaction.sale({
+            "amount": Decimal("9000.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, Decimal("2009.00"))
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.RefundAuthHardDeclined,
             result.errors.for_object("transaction").on("base")[0].code
         )
 

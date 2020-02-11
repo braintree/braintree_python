@@ -660,7 +660,21 @@ class Transaction(Resource):
 
     @staticmethod
     def submit_for_settlement_signature():
-        return ["order_id", {"descriptor": ["name", "phone", "url"]}]
+        return [
+                "order_id",
+                {"descriptor": ["name", "phone", "url"]},
+                "purchase_order_number",
+                "tax_amount",
+                "tax_exempt",
+                "discount_amount",
+                "shipping_amount",
+                "ships_from_postal_code",
+                {"line_items":
+                    [
+                        "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",
+                    ]
+                },
+            ]
 
     @staticmethod
     def update_details_signature():
