@@ -4285,21 +4285,31 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
 
-    def test_sale_with_three_d_secure_authentication_id_with_credit_card(self):
-        three_d_secure_authentication_id = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
-            "number": "4111111111111111",
-            "expiration_month": "05",
-            "expiration_year": "2009",
-        })
+    def test_sale_with_three_d_secure_authentication_id_with_nonce(self):
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
+        credit_card = {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "12",
+                "expiration_year": "2020"
+            }
+        }
+        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+
+        found_nonce = PaymentMethodNonce.find(nonce)
+        three_d_secure_info = found_nonce.three_d_secure_info
 
         result = Transaction.sale({
             "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "three_d_secure_authentication_id": three_d_secure_authentication_id
+            "payment_method_nonce": nonce,
+            "three_d_secure_authentication_id": three_d_secure_info.three_d_secure_authentication_id
         })
 
         self.assertTrue(result.is_success)
