@@ -128,11 +128,6 @@ class Subscription(Resource):
         return Configuration.gateway().subscription.find(subscription_id)
 
     @staticmethod
-    def retryCharge(subscription_id, amount=None):
-        warnings.warn("Please use Subscription.retry_charge instead", DeprecationWarning)
-        return Subscription.retry_charge(subscription_id, amount)
-
-    @staticmethod
     def retry_charge(subscription_id, amount=None, submit_for_settlement=False):
         return Configuration.gateway().subscription.retry_charge(subscription_id, amount, submit_for_settlement)
 

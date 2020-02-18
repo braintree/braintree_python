@@ -62,8 +62,6 @@ class TestExports(unittest.TestCase):
         self.assertNotEqual(braintree.TransactionDetails, None)
         self.assertNotEqual(braintree.TransactionGateway, None)
         self.assertNotEqual(braintree.TransactionSearch, None)
-        self.assertNotEqual(braintree.TransparentRedirect, None)
-        self.assertNotEqual(braintree.TransparentRedirectGateway, None)
         self.assertNotEqual(braintree.UnknownPaymentMethod, None)
         self.assertNotEqual(braintree.UsBankAccount, None)
         self.assertNotEqual(braintree.ValidationErrorCollection, None)

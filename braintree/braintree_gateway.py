@@ -21,7 +21,6 @@ from braintree.subscription_gateway import SubscriptionGateway
 from braintree.testing_gateway import TestingGateway
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_line_item_gateway import TransactionLineItemGateway
-from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.us_bank_account_gateway import UsBankAccountGateway
 from braintree.us_bank_account_verification_gateway import UsBankAccountVerificationGateway
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
@@ -60,7 +59,6 @@ class BraintreeGateway(object):
         self.subscription = SubscriptionGateway(self)
         self.transaction = TransactionGateway(self)
         self.transaction_line_item = TransactionLineItemGateway(self)
-        self.transparent_redirect = TransparentRedirectGateway(self)
         self.verification = CreditCardVerificationGateway(self)
         self.webhook_notification = WebhookNotificationGateway(self)
         self.webhook_testing = WebhookTestingGateway(self)

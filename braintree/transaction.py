@@ -24,7 +24,6 @@ from braintree.paypal_here import PayPalHere
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
-from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
@@ -287,18 +286,6 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.cancel_release(transaction_id)
 
     @staticmethod
-    def confirm_transparent_redirect(query_string):
-        """
-        Confirms a transparent redirect request. It expects the query string from the
-        redirect request. The query string should _not_ include the leading "?" character. ::
-
-            result = braintree.Transaction.confirm_transparent_redirect_request("foo=bar&id=12345")
-        """
-
-        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        return Configuration.gateway().transaction.confirm_transparent_redirect(query_string)
-
-    @staticmethod
     def credit(params={}):
         """
         Creates a transaction of type Credit.
@@ -452,29 +439,6 @@ class Transaction(Resource):
         """
 
         return Configuration.gateway().transaction.update_details(transaction_id, params)
-
-    @staticmethod
-    def tr_data_for_credit(tr_data, redirect_url):
-        """
-        Builds tr_data for a Transaction of type Credit
-        """
-        return Configuration.gateway().transaction.tr_data_for_credit(tr_data, redirect_url)
-
-    @staticmethod
-    def tr_data_for_sale(tr_data, redirect_url):
-        """
-        Builds tr_data for a Transaction of type Sale
-        """
-        return Configuration.gateway().transaction.tr_data_for_sale(tr_data, redirect_url)
-
-    @staticmethod
-    def transparent_redirect_create_url():
-        """
-        Returns the url to be used for creating Transactions through transparent redirect.
-        """
-
-        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.gateway().transaction.transparent_redirect_create_url()
 
     @staticmethod
     def void(transaction_id):

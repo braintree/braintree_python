@@ -17,14 +17,6 @@ class TestCustomer(unittest.TestCase):
     def test_update_raise_exception_with_bad_nested_keys(self):
         Customer.update("id", {"credit_card": {"bad_key": "value"}})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
-    def test_tr_data_for_create_raises_error_with_bad_keys(self):
-        Customer.tr_data_for_create({"bad_key": "value"}, "http://example.com")
-
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
-    def test_tr_data_for_update_raises_error_with_bad_keys(self):
-        Customer.tr_data_for_update({"bad_key": "value"}, "http://example.com")
-
     @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
         Customer.find(" ")

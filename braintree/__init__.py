@@ -68,8 +68,6 @@ from braintree.transaction_details import TransactionDetails
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.transaction_search import TransactionSearch
-from braintree.transparent_redirect import TransparentRedirect
-from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.validation_error_collection import ValidationErrorCollection
 from braintree.venmo_account import VenmoAccount

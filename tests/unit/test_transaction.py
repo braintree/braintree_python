@@ -21,10 +21,6 @@ class TestTransaction(unittest.TestCase):
     def test_sale_raises_exception_with_nested_bad_keys(self):
         Transaction.sale({"credit_card": {"bad_key": "value"}})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
-    def test_tr_data_for_sale_raises_error_with_bad_keys(self):
-        Transaction.tr_data_for_sale({"bad_key": "value"}, "http://example.com")
-
     @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
         Transaction.find(" ")

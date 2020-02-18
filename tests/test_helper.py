@@ -154,16 +154,6 @@ class TestHelper(object):
         return Configuration.gateway().testing.settlement_pending_transaction(transaction_id)
 
     @staticmethod
-    def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
-        form_data = urlencode(post_params)
-        conn = HTTPConnection(Configuration.environment.server_and_port)
-        conn.request("POST", url, form_data, TestHelper.__headers())
-        response = conn.getresponse()
-        query_string = response.getheader("location").split("?", 1)[1]
-        conn.close()
-        return query_string
-
-    @staticmethod
     def create_3ds_verification(merchant_account_id, params):
         return Configuration.gateway().testing.create_3ds_verification(merchant_account_id, params)
 
