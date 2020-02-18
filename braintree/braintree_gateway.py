@@ -6,9 +6,9 @@ from braintree.configuration import Configuration
 from braintree.credit_card_gateway import CreditCardGateway
 from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
 from braintree.customer_gateway import CustomerGateway
-from braintree.document_upload_gateway import DocumentUploadGateway
 from braintree.discount_gateway import DiscountGateway
 from braintree.dispute_gateway import DisputeGateway
+from braintree.document_upload_gateway import DocumentUploadGateway
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.merchant_gateway import MerchantGateway
 from braintree.oauth_gateway import OAuthGateway
@@ -25,9 +25,6 @@ from braintree.us_bank_account_gateway import UsBankAccountGateway
 from braintree.us_bank_account_verification_gateway import UsBankAccountVerificationGateway
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing_gateway import WebhookTestingGateway
-# NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
-# DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
-from braintree.ideal_payment_gateway import IdealPaymentGateway
 import braintree.configuration
 
 class BraintreeGateway(object):
@@ -41,33 +38,30 @@ class BraintreeGateway(object):
                 access_token=kwargs.get("access_token"),
                 http_strategy=kwargs.get("http_strategy")
             )
-        self.graphql_client = self.config.graphql_client()
         self.add_on = AddOnGateway(self)
         self.address = AddressGateway(self)
         self.apple_pay = ApplePayGateway(self)
         self.client_token = ClientTokenGateway(self)
         self.credit_card = CreditCardGateway(self)
         self.customer = CustomerGateway(self)
-        self.document_upload = DocumentUploadGateway(self)
         self.discount = DiscountGateway(self)
         self.dispute = DisputeGateway(self)
-        self.merchant_account = MerchantAccountGateway(self)
+        self.document_upload = DocumentUploadGateway(self)
+        self.graphql_client = self.config.graphql_client()
         self.merchant = MerchantGateway(self)
+        self.merchant_account = MerchantAccountGateway(self)
         self.oauth = OAuthGateway(self)
-        self.plan = PlanGateway(self)
-        self.settlement_batch_summary = SettlementBatchSummaryGateway(self)
-        self.subscription = SubscriptionGateway(self)
-        self.transaction = TransactionGateway(self)
-        self.transaction_line_item = TransactionLineItemGateway(self)
-        self.verification = CreditCardVerificationGateway(self)
-        self.webhook_notification = WebhookNotificationGateway(self)
-        self.webhook_testing = WebhookTestingGateway(self)
         self.payment_method = PaymentMethodGateway(self)
         self.payment_method_nonce = PaymentMethodNonceGateway(self)
         self.paypal_account = PayPalAccountGateway(self)
+        self.plan = PlanGateway(self)
+        self.settlement_batch_summary = SettlementBatchSummaryGateway(self)
+        self.subscription = SubscriptionGateway(self)
         self.testing = TestingGateway(self)
+        self.transaction = TransactionGateway(self)
+        self.transaction_line_item = TransactionLineItemGateway(self)
         self.us_bank_account = UsBankAccountGateway(self)
         self.us_bank_account_verification = UsBankAccountVerificationGateway(self)
-        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
-        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
-        self.ideal_payment = IdealPaymentGateway(self)
+        self.verification = CreditCardVerificationGateway(self)
+        self.webhook_notification = WebhookNotificationGateway(self)
+        self.webhook_testing = WebhookTestingGateway(self)

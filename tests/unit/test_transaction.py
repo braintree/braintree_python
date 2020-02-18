@@ -155,26 +155,6 @@ class TestTransaction(unittest.TestCase):
         transaction_gateway._post = MagicMock(name='config.http.post')
         return transaction_gateway
 
-    def test_ideal_payment_details(self):
-        attributes = {
-            'amount': '27.00',
-            'tax_amount': '1.00',
-            'ideal_payment': {
-                'ideal_payment_id': 'idealpayment_abc_123',
-                'masked_iban': '12************7890',
-                'bic': 'RABONL2U',
-                'image_url': 'http://www.example.com/ideal.png',
-            },
-        }
-
-        transaction = Transaction(None, attributes)
-
-        self.assertEqual(transaction.ideal_payment_details.ideal_payment_id, 'idealpayment_abc_123')
-        self.assertEqual(transaction.ideal_payment_details.masked_iban, '12************7890')
-        self.assertEqual(transaction.ideal_payment_details.bic, 'RABONL2U')
-        self.assertEqual(transaction.ideal_payment_details.image_url, 'http://www.example.com/ideal.png')
-
-
     def test_constructor_doesnt_includes_auth_adjustments(self):
         attributes = {
             'amount': '27.00',
