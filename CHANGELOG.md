@@ -2,6 +2,7 @@
 * Remove deprecated Transparent Redirect
 * Remove deprecated iDeal payment method
 * Apple Pay register_domains returns an ApplePayOptions object
+* Remove `unrecognized` status from Transaction, Subscription, and CreditCardVerification
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors

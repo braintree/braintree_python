@@ -50,7 +50,6 @@ class Subscription(Resource):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
-        Unrecognized = "unrecognized"
 
     class Status(object):
         """

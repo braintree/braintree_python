@@ -14,14 +14,12 @@ class CreditCardVerification(AttributeGetter):
         * braintree.CreditCardVerification.Status.Failed
         * braintree.CreditCardVerification.Status.GatewayRejected
         * braintree.CreditCardVerification.Status.ProcessorDeclined
-        * braintree.CreditCardVerification.Status.Unrecognized
         * braintree.CreditCardVerification.Status.Verified
         """
 
         Failed                 = "failed"
         GatewayRejected        = "gateway_rejected"
         ProcessorDeclined      = "processor_declined"
-        Unrecognized           = "unrecognized"
         Verified               = "verified"
 
     def __init__(self, gateway, attributes):

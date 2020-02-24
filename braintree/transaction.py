@@ -159,7 +159,6 @@ class Transaction(Resource):
 
         FullInformation = "full_information"
         Token           = "token"
-        Unrecognized    = "unrecognized"
 
     class GatewayRejectionReason(object):
         """
@@ -180,13 +179,11 @@ class Transaction(Resource):
         Fraud                 = "fraud"
         ThreeDSecure          = "three_d_secure"
         TokenIssuance         = "token_issuance"
-        Unrecognized          = "unrecognized"
 
     class Source(object):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
-        Unrecognized = "unrecognized"
 
     class EscrowStatus(object):
         """
@@ -204,7 +201,6 @@ class Transaction(Resource):
         ReleasePending = "release_pending"
         Released       = "released"
         Refunded       = "refunded"
-        Unrecognized   = "unrecognized"
 
     class Status(object):
         """
@@ -238,8 +234,6 @@ class Transaction(Resource):
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
-        # NEXT_MAJOR_VERSION this is never used and should be removed
-        Unrecognized           = "unrecognized"
 
     class Type(object):
         """
