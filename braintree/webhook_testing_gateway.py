@@ -76,9 +76,6 @@ class WebhookTestingGateway(object):
             return self.__subscription_charged_unsuccessfully_sample_xml(id)
         elif kind == WebhookNotification.Kind.AccountUpdaterDailyReport:
             return self.__account_updater_daily_report_sample_xml()
-        # NEXT_MAJOR_VERSION remove GrantedPaymentInstrumentUpdate
-        elif kind == WebhookNotification.Kind.GrantedPaymentInstrumentUpdate:
-            return self.__granted_payment_instrument_update()
         elif kind == WebhookNotification.Kind.GrantorUpdatedGrantedPaymentMethod:
             return self.__granted_payment_instrument_update()
         elif kind == WebhookNotification.Kind.RecipientUpdatedGrantedPaymentMethod:
