@@ -73,19 +73,14 @@ class DisputeGateway(object):
         except ValueError:
             raise ValueError("sequence_number must be an integer")
 
-        category = request.get("category", request.get("tag"))
-
-        if "tag" in request.keys():
-            warnings.warn("Please use category instead", DeprecationWarning)
-
-        if category is not None and not isinstance(category, str):
+        if request.get("category") is not None and not isinstance(request.get("category"), str):
             raise ValueError("category must be a string")
 
         try:
             response = self.config.http().post(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence", {
                 "evidence": {
                     "comments": request.get("content"),
-                    "category": category,
+                    "category": request.get("category"),
                     "sequence_number": request.get("sequence_number")
                 }
             })
