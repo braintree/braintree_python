@@ -4,7 +4,6 @@ class PaymentInstrumentType():
     PayPalHere = "paypal_here"
     EuropeBankAccount = "europe_bank_account"
     CreditCard = "credit_card"
-    CoinbaseAccount = "coinbase_account"
     ApplePayCard = "apple_pay_card"
     AndroidPayCard = "android_pay_card"
     AmexExpressCheckoutCard = "amex_express_checkout_card"

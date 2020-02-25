@@ -10,7 +10,6 @@ from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.us_bank_account import UsBankAccount
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.venmo_account import VenmoAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
@@ -215,10 +214,6 @@ class Customer(Resource):
         if "europe_bank_accounts" in attributes:
             self.europe_bank_accounts = [EuropeBankAccount(gateway, europe_bank_account) for europe_bank_account in self.europe_bank_accounts]
             self.payment_methods += self.europe_bank_accounts
-
-        if "coinbase_accounts" in attributes:
-            self.coinbase_accounts = [CoinbaseAccount(gateway, coinbase_account) for coinbase_account in self.coinbase_accounts]
-            self.payment_methods += self.coinbase_accounts
 
         if "venmo_accounts" in attributes:
             self.venmo_accounts = [VenmoAccount(gateway, venmo_account) for venmo_account in self.venmo_accounts]

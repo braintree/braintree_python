@@ -4,7 +4,6 @@ from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.venmo_account import VenmoAccount

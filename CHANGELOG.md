@@ -4,6 +4,7 @@
 * Apple Pay register_domains returns an ApplePayOptions object
 * Remove `unrecognized` status from Transaction, Subscription, and CreditCardVerification
 * Remove `GrantedPaymentInstrumentUpdate` kind from Webhook
+* Remove Coinbase references
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors

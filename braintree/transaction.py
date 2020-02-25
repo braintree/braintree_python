@@ -4,7 +4,6 @@ from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
 from braintree.authorization_adjustment import AuthorizationAdjustment
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.venmo_account import VenmoAccount
@@ -684,8 +683,6 @@ class Transaction(Resource):
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
-        if "coinbase_account" in attributes:
-            self.coinbase_details = CoinbaseAccount(gateway, attributes.pop("coinbase_account"))
         if "android_pay_card" in attributes:
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         if "amex_express_checkout_card" in attributes:
