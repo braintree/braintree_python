@@ -652,12 +652,6 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount, params)
 
     def __init__(self, gateway, attributes):
-        if "refund_id" in attributes:
-            self._refund_id = attributes["refund_id"]
-            del(attributes["refund_id"])
-        else:
-            self._refund_id = None
-
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
@@ -732,11 +726,6 @@ class Transaction(Resource):
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
         if "network_transaction_id" in attributes:
             self.network_transaction_id = attributes["network_transaction_id"]
-
-    @property
-    def refund_id(self):
-        warnings.warn("Please use Transaction.refund_ids instead", DeprecationWarning)
-        return self._refund_id
 
     @property
     def vault_billing_address(self):
