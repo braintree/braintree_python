@@ -11,7 +11,7 @@ from braintree.environment import Environment
 from braintree.util.xml_util import XmlUtil
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
+from braintree.exceptions.gateway_timeout_error import GatewayTimeoutError
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.too_many_requests_error import TooManyRequestsError
@@ -47,8 +47,8 @@ class Http(object):
             raise TooManyRequestsError()
         elif status == 500:
             raise ServerError()
-        elif status == 503:
-            raise DownForMaintenanceError()
+        elif status == 504:
+            raise GatewayTimeoutError()
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 

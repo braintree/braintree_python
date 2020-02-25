@@ -13,6 +13,10 @@ class TestHttp(unittest.TestCase):
     def test_raise_exception_from_too_many_requests(self):
         Http.raise_exception_from_status(429)
 
+    @raises(GatewayTimeoutError)
+    def test_raise_exception_from_gateway_timeout(self):
+        Http.raise_exception_from_status(504)
+
     def test_header_includes_gzip_accept_encoding(self):
         config = AttributeGetter({
                 "base_url": (lambda: ""),
