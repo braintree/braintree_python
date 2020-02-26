@@ -18,6 +18,7 @@ class TransactionLineItemGateway(object):
             response = self.config.http().get(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/line_items")
             if "line_items" in response:
                 return [TransactionLineItem(item) for item in ResourceCollection._extract_as_array(response, "line_items")]
+            # TODO ServiceUnavailable or UnknownException?
             else:
                 raise DownForMaintenanceError()
         except NotFoundError:

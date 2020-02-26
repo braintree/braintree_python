@@ -1,6 +1,6 @@
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
+from braintree.exceptions.service_unavailable_error import ServiceUnavailableError
 from braintree.exceptions.invalid_challenge_error import InvalidChallengeError
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
 from braintree.exceptions.not_found_error import NotFoundError

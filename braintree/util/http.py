@@ -14,6 +14,7 @@ from braintree.exceptions.authorization_error import AuthorizationError
 from braintree.exceptions.gateway_timeout_error import GatewayTimeoutError
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
+from braintree.exceptions.service_unavailable_error import ServiceUnavailableError
 from braintree.exceptions.too_many_requests_error import TooManyRequestsError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 from braintree.exceptions.unexpected_error import UnexpectedError
@@ -47,6 +48,8 @@ class Http(object):
             raise TooManyRequestsError()
         elif status == 500:
             raise ServerError()
+        elif status == 503:
+            raise ServiceUnavailable()
         elif status == 504:
             raise GatewayTimeoutError()
         else:

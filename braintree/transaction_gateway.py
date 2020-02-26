@@ -5,7 +5,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
+from braintree.exceptions.service_unavailable_error import ServiceUnavailableError
 
 class TransactionGateway(object):
     def __init__(self, gateway):
@@ -79,6 +79,7 @@ class TransactionGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/transactions/advanced_search_ids", {"search": self.__criteria(query)})
         if "search_results" in response:
             return ResourceCollection(query, response, self.__fetch)
+        # TODO ServiceUnavailable or UnknownError here?
         else:
             raise DownForMaintenanceError("search timeout")
 
@@ -133,6 +134,7 @@ class TransactionGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/transactions/advanced_search", {"search": criteria})
         if "credit_card_transactions" in response:
             return [Transaction(self.gateway, item) for item in ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
+        # TODO error choice... ServiceUnavailable or UnknownError?
         else:
             raise DownForMaintenanceError("search timeout")
 
