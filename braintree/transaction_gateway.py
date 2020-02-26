@@ -5,7 +5,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.exceptions.timeout_error import TimeoutError
+from braintree.exceptions.request_timeout_error import RequestTimeoutError
 
 class TransactionGateway(object):
     def __init__(self, gateway):
@@ -80,7 +80,7 @@ class TransactionGateway(object):
         if "search_results" in response:
             return ResourceCollection(query, response, self.__fetch)
         else:
-            raise TimeoutError("search timeout")
+            raise RequestTimeoutError("search timeout")
 
     def release_from_escrow(self, transaction_id):
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/release_from_escrow", {})
@@ -134,7 +134,7 @@ class TransactionGateway(object):
         if "credit_card_transactions" in response:
             return [Transaction(self.gateway, item) for item in ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
         else:
-            raise TimeoutError("search timeout")
+            raise RequestTimeoutError("search timeout")
 
     def __criteria(self, query):
         criteria = {}

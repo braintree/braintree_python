@@ -5,7 +5,7 @@
 * Remove `unrecognized` status from Transaction, Subscription, and CreditCardVerification
 * Remove `GrantedPaymentInstrumentUpdate` kind from Webhook
 * Remove Coinbase references
-* Add GatewayTimeoutError, RequestTimeoutError, and TimeoutError exceptions
+* Add GatewayTimeoutError, RequestTimeoutError exceptions
 * Rename DownForMaintenanceError exception to ServiceUnavailableError
 
 ## 3.59.0
