@@ -5,6 +5,10 @@ from braintree.exceptions.http.timeout_error import *
 from braintree.attribute_getter import AttributeGetter
 
 class TestHttp(unittest.TestCase):
+    @raises(RequestTimeoutError)
+    def test_raise_exception_from_request_timeout(self):
+        Http.raise_exception_from_status(408)
+
     @raises(UpgradeRequiredError)
     def test_raise_exception_from_status_for_upgrade_required(self):
         Http.raise_exception_from_status(426)
@@ -12,6 +16,10 @@ class TestHttp(unittest.TestCase):
     @raises(TooManyRequestsError)
     def test_raise_exception_from_too_many_requests(self):
         Http.raise_exception_from_status(429)
+
+    @raises(ServiceUnavailableError)
+    def test_raise_exception_from_service_unavailable(self):
+        Http.raise_exception_from_status(503)
 
     @raises(GatewayTimeoutError)
     def test_raise_exception_from_gateway_timeout(self):

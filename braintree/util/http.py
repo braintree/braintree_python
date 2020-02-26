@@ -12,17 +12,18 @@ from braintree.util.xml_util import XmlUtil
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
 from braintree.exceptions.gateway_timeout_error import GatewayTimeoutError
+from braintree.exceptions.http.connection_error import ConnectionError
+from braintree.exceptions.http.invalid_response_error import InvalidResponseError
+from braintree.exceptions.http.timeout_error import ConnectTimeoutError
+from braintree.exceptions.http.timeout_error import ReadTimeoutError
+from braintree.exceptions.http.timeout_error import TimeoutError
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.exceptions.request_timeout_error import RequestTimeoutError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.service_unavailable_error import ServiceUnavailableError
 from braintree.exceptions.too_many_requests_error import TooManyRequestsError
-from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 from braintree.exceptions.unexpected_error import UnexpectedError
-from braintree.exceptions.http.connection_error import ConnectionError
-from braintree.exceptions.http.invalid_response_error import InvalidResponseError
-from braintree.exceptions.http.timeout_error import TimeoutError
-from braintree.exceptions.http.timeout_error import ConnectTimeoutError
-from braintree.exceptions.http.timeout_error import ReadTimeoutError
+from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 
 class Http(object):
     class ContentType(object):
@@ -42,6 +43,8 @@ class Http(object):
             raise AuthorizationError(message)
         elif status == 404:
             raise NotFoundError()
+        elif status == 408:
+            raise RequestTimeoutError()
         elif status == 426:
             raise UpgradeRequiredError()
         elif status == 429:
@@ -49,7 +52,7 @@ class Http(object):
         elif status == 500:
             raise ServerError()
         elif status == 503:
-            raise ServiceUnavailable()
+            raise ServiceUnavailableError()
         elif status == 504:
             raise GatewayTimeoutError()
         else:
