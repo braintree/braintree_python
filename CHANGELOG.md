@@ -1,4 +1,6 @@
 ## unreleased
+* Breaking Changes
+  * Require Python 3.5+
 * Remove deprecated Transparent Redirect
 * Remove deprecated iDeal payment method
 * Apple Pay register_domains returns an ApplePayOptions object
