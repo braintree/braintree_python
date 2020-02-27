@@ -1,10 +1,7 @@
 from braintree.util.crypto import Crypto
 from braintree.webhook_notification import WebhookNotification
 import sys
-if sys.version_info[0] == 2:
-    from base64 import encodestring as encodebytes
-else:
-    from base64 import encodebytes
+from base64 import encodebytes
 from datetime import datetime
 
 class WebhookTestingGateway(object):

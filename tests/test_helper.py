@@ -126,8 +126,8 @@ class TestHelper(object):
     }
 
     valid_token_characters = list("bcdfghjkmnpqrstvwxyz23456789")
-    text_type = unicode if sys.version_info[0] == 2 else str
-    raw_type = str if sys.version_info[0] == 2 else bytes
+    text_type = str
+    raw_type = bytes
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):

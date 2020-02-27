@@ -22,10 +22,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 
 import sys
-if sys.version_info[0] == 2:
-    from urllib import urlencode
-else:
-    from urllib.parse import urlencode
+from urllib.parse import urlencode
 
 class PaymentMethodGateway(object):
     def __init__(self, gateway):

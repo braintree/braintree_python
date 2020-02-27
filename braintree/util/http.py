@@ -1,9 +1,6 @@
 import sys
 import requests
-if sys.version_info[0] == 2:
-    from base64 import encodestring as encodebytes
-else:
-    from base64 import encodebytes
+from base64 import encodebytes
 import json
 import braintree
 from braintree import version
