@@ -31,7 +31,6 @@ class TestSubscription(unittest.TestCase):
         subscription = result.subscription
         self.assertNotEqual(None, re.search(r"\A\w{6}\Z", subscription.id))
         self.assertEqual(Decimal("12.34"), subscription.price)
-        self.assertEqual(Decimal("12.34"), subscription.next_bill_amount)
         self.assertEqual(Decimal("12.34"), subscription.next_billing_period_amount)
         self.assertEqual(Subscription.Status.Active, subscription.status)
         self.assertEqual("integration_trialless_plan", subscription.plan_id)
