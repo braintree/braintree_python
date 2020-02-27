@@ -1,5 +1,7 @@
 ## Unreleased
 * Split development and deployments requirements files out
+* Add ThreeDSecure test payment method nonces
+* Add test `AuthenticationId`s
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
