@@ -215,7 +215,7 @@ class CreditCard(Resource):
         return CreditCard.signature("update")
 
     @staticmethod
-    def signature(type):
+    def signature(type_):
         billing_address_params = [
             "company",
             "country_code_alpha2",
@@ -269,11 +269,11 @@ class CreditCard(Resource):
             }
         ]
 
-        if type == "create":
+        if type_ == "create":
             signature.append("customer_id")
-        elif type == "update":
+        elif type_ == "update":
             billing_address_params.append({"options": ["update_existing"]})
-        elif type == "update_via_customer":
+        elif type_ == "update_via_customer":
             options.append("update_existing_token")
             billing_address_params.append({"options": ["update_existing"]})
         else:
