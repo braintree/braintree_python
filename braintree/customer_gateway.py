@@ -18,10 +18,12 @@ class CustomerGateway(object):
         return ResourceCollection({}, response, self.__fetch)
 
     def confirm_transparent_redirect(self, query_string):
-        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
-        return self._post("/customers/all/confirm_transparent_redirect_request", {"id": id})
+        id_ = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
+        return self._post("/customers/all/confirm_transparent_redirect_request", {"id": id_})
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Customer.create_signature())
         return self._post("/customers", {"customer": params})
 
@@ -66,7 +68,9 @@ class CustomerGateway(object):
     def transparent_redirect_update_url(self):
         return self.config.base_url() + self.config.base_merchant_path() + "/customers/all/update_via_transparent_redirect_request"
 
-    def update(self, customer_id, params={}):
+    def update(self, customer_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Customer.update_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/customers/" + customer_id, {"customer": params})
         if "customer" in response:
@@ -89,7 +93,9 @@ class CustomerGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search", {"search": criteria})
         return [Customer(self.gateway, item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})
@@ -97,4 +103,3 @@ class CustomerGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
         else:
             pass
-

@@ -5,7 +5,9 @@ from braintree.configuration import Configuration
 
 class PaymentMethod(Resource):
     @staticmethod
-    def create(params={}):
+    def create(params=None):
+        if params is None:
+            params = {}
         return Configuration.gateway().payment_method.create(params)
 
     @staticmethod
@@ -17,7 +19,9 @@ class PaymentMethod(Resource):
         return Configuration.gateway().payment_method.update(payment_method_token, params)
 
     @staticmethod
-    def delete(payment_method_token, options={}):
+    def delete(payment_method_token, options=None):
+        if options is None:
+            options = {}
         return Configuration.gateway().payment_method.delete(payment_method_token, options)
 
     @staticmethod

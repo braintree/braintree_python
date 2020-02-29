@@ -12,7 +12,9 @@ class PayPalAccount(Resource):
         return Configuration.gateway().paypal_account.delete(paypal_account_token)
 
     @staticmethod
-    def update(paypal_account_token, params={}):
+    def update(paypal_account_token, params=None):
+        if params is None:
+            params = {}
         return Configuration.gateway().paypal_account.update(paypal_account_token, params)
 
     @staticmethod

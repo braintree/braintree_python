@@ -14,7 +14,9 @@ class MerchantGateway(object):
     def create(self, params):
         return self.__create_merchant(params)
 
-    def __create_merchant(self, params={}):
+    def __create_merchant(self, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post("/merchants/create_via_api", {
             "merchant": params
         })

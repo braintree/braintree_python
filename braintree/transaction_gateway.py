@@ -25,8 +25,8 @@ class TransactionGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def confirm_transparent_redirect(self, query_string):
-        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
-        return self._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
+        id_ = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
+        return self._post("/transactions/all/confirm_transparent_redirect_request", {"id": id_})
 
     def create(self, params):
         Resource.verify_keys(params, Transaction.create_signature())
@@ -94,7 +94,9 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def submit_for_settlement(self, transaction_id, amount=None, params={}):
+    def submit_for_settlement(self, transaction_id, amount=None, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
         transaction_params = {"amount": amount}
         transaction_params.update(params)
@@ -105,7 +107,9 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def update_details(self, transaction_id, params={}):
+    def update_details(self, transaction_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Transaction.update_details_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/update_details",
                 {"transaction": params})
@@ -114,7 +118,9 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def submit_for_partial_settlement(self, transaction_id, amount, params={}):
+    def submit_for_partial_settlement(self, transaction_id, amount, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
         transaction_params = {"amount": amount}
         transaction_params.update(params)
@@ -169,10 +175,11 @@ class TransactionGateway(object):
                 criteria[term.name] = term.to_param()
         return criteria
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-

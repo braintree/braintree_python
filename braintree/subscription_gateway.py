@@ -20,7 +20,9 @@ class SubscriptionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Subscription.create_signature())
         response = self.config.http().post(self.config.base_merchant_path() + "/subscriptions", {"subscription": params})
         if "subscription" in response:
@@ -56,7 +58,9 @@ class SubscriptionGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/subscriptions/advanced_search_ids", {"search": self.__criteria(query)})
         return ResourceCollection(query, response, self.__fetch)
 
-    def update(self, subscription_id, params={}):
+    def update(self, subscription_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Subscription.update_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/subscriptions/" + subscription_id, {"subscription": params})
         if "subscription" in response:
@@ -78,4 +82,3 @@ class SubscriptionGateway(object):
         criteria["ids"] = braintree.subscription_search.SubscriptionSearch.ids.in_list(ids).to_param()
         response = self.config.http().post(self.config.base_merchant_path() + "/subscriptions/advanced_search", {"search": criteria})
         return [Subscription(self.gateway, item) for item in ResourceCollection._extract_as_array(response["subscriptions"], "subscription")]
-

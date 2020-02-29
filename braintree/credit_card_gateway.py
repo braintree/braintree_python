@@ -14,10 +14,12 @@ class CreditCardGateway(object):
         self.config = gateway.config
 
     def confirm_transparent_redirect(self, query_string):
-        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
-        return self._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id})
+        id_ = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
+        return self._post("/payment_methods/all/confirm_transparent_redirect_request", {"id": id_})
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, CreditCard.create_signature())
         return self._post("/payment_methods", {"credit_card": params})
 
@@ -73,7 +75,9 @@ class CreditCardGateway(object):
     def transparent_redirect_update_url(self):
         return self.config.base_url() + self.config.base_merchant_path() + "/payment_methods/all/update_via_transparent_redirect_request"
 
-    def update(self, credit_card_token, params={}):
+    def update(self, credit_card_token, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, CreditCard.update_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/payment_methods/credit_card/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
@@ -93,10 +97,11 @@ class CreditCardGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/payment_methods/all/expiring?" + query, {"search": criteria})
         return [CreditCard(self.gateway, item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-

@@ -107,7 +107,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.confirm_transparent_redirect(query_string)
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create a Customer
 
@@ -119,7 +119,8 @@ class Customer(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().customer.create(params)
 
     @staticmethod
@@ -178,7 +179,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.transparent_redirect_update_url()
 
     @staticmethod
-    def update(customer_id, params={}):
+    def update(customer_id, params=None):
         """
         Update an existing Customer
 
@@ -189,7 +190,8 @@ class Customer(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().customer.update(customer_id, params)
 
     @staticmethod

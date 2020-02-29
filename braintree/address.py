@@ -47,7 +47,7 @@ class Address(Resource):
 
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create an Address.
 
@@ -61,7 +61,8 @@ class Address(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().address.create(params)
 
     @staticmethod
@@ -89,7 +90,7 @@ class Address(Resource):
         return Configuration.gateway().address.find(customer_id, address_id)
 
     @staticmethod
-    def update(customer_id, address_id, params={}):
+    def update(customer_id, address_id, params=None):
         """
         Update an existing Address.
 
@@ -100,7 +101,8 @@ class Address(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().address.update(customer_id, address_id, params)
 
     @staticmethod

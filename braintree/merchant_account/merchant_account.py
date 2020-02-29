@@ -37,7 +37,9 @@ class MerchantAccount(Resource):
         return super(MerchantAccount, self).__repr__(detail_list)
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
+        if params is None:
+            params = {}
         return Configuration.gateway().merchant_account.create(params)
 
     @staticmethod

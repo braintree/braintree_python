@@ -1,19 +1,21 @@
 class AttributeGetter(object):
     """
-    Helper class for objects that define their attributes from dictionaries 
+    Helper class for objects that define their attributes from dictionaries
     passed in during instantiation.
-    
+
     Example:
-    
+
     a = AttributeGetter({'foo': 'bar', 'baz': 5})
     a.foo
     >> 'bar'
     a.baz
     >> 5
-    
+
     Typically inherited by subclasses instead of directly instantiated.
     """
-    def __init__(self, attributes={}):
+    def __init__(self, attributes=None):
+        if attributes is None:
+            attributes = {}
         self._setattrs = []
         for key, val in attributes.items():
             setattr(self, key, val)

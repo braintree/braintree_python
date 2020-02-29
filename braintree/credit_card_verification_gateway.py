@@ -51,8 +51,8 @@ class CreditCardVerificationGateway(object):
         return [CreditCardVerification(self.gateway, item) for item in ResourceCollection._extract_as_array(response["credit_card_verifications"], "verification")]
 
     def create(self, params):
-       response = self.config.http().post(self.config.base_merchant_path() + "/verifications", {"verification": params})
-       if "verification" in response:
-           return SuccessfulResult({"verification": CreditCardVerification(self.gateway, response["verification"])})
-       elif "api_error_response" in response:
-           return ErrorResult(self.gateway, response["api_error_response"])
+        response = self.config.http().post(self.config.base_merchant_path() + "/verifications", {"verification": params})
+        if "verification" in response:
+            return SuccessfulResult({"verification": CreditCardVerification(self.gateway, response["verification"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
