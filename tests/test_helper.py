@@ -8,14 +8,9 @@ import warnings
 import subprocess
 import time
 
-if sys.version_info[0] == 2:
-    from urllib import urlencode, quote_plus
-    from httplib import HTTPConnection
-    from base64 import encodestring as encodebytes
-else:
-    from urllib.parse import urlencode, quote_plus
-    from http.client import HTTPConnection
-    from base64 import encodebytes
+from urllib.parse import urlencode, quote_plus
+from http.client import HTTPConnection
+from base64 import encodebytes
 import requests
 
 from base64 import b64decode
@@ -265,6 +260,7 @@ class TestHelper(object):
             "ach_mandate": {
                 "text": "cl mandate text"
             }
+
         }
         resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
         respJson = json.loads(resp.text)
@@ -496,6 +492,6 @@ class ClientApiHttp(Http):
     def __headers(self):
         return {
             "Content-type": "application/json",
-            "User-Agent": "Braintree Python " + version.Version,
+            "User-Agent": "Braintree Python " + version.Version, #pylint: disable=E0602
             "X-ApiVersion": Configuration.api_version()
         }

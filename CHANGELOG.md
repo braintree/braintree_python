@@ -1,14 +1,15 @@
 ## unreleased
 * Breaking Changes
   * Require Python 3.5+
-* Remove deprecated Transparent Redirect
-* Remove deprecated iDeal payment method
-* Apple Pay register_domains returns an ApplePayOptions object
-* Remove `unrecognized` status from Transaction, Subscription, and CreditCardVerification
-* Remove `GrantedPaymentInstrumentUpdate` kind from Webhook
-* Remove Coinbase references
-* Add GatewayTimeoutError, RequestTimeoutError exceptions
-* Rename DownForMaintenanceError exception to ServiceUnavailableError
+  * Remove deprecated Transparent Redirect
+  * Remove deprecated iDeal payment method
+  * Apple Pay register_domains returns an ApplePayOptions object
+  * Remove `unrecognized` status from Transaction, Subscription, and CreditCardVerification
+  * Remove `GrantedPaymentInstrumentUpdate` kind from Webhook
+  * Remove Coinbase references
+  * Add GatewayTimeoutError, RequestTimeoutError exceptions
+  * Rename DownForMaintenanceError exception to ServiceUnavailableError
+  * Transaction `line_items` only returns the line items for a transaction response object. Use TransactionLineItem `find_all` to search all line items on a transaction, given a transaction_id.
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors

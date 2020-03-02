@@ -5,9 +5,9 @@ class DisbursementDetail(AttributeGetter):
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
 
-        if self.settlement_amount is not None:
+        if self.settlement_amount is not None: #pylint: disable=E0203
             self.settlement_amount = Decimal(self.settlement_amount)
-        if self.settlement_currency_exchange_rate is not None:
+        if self.settlement_currency_exchange_rate is not None: #pylint: disable=E0203
             self.settlement_currency_exchange_rate = Decimal(self.settlement_currency_exchange_rate)
 
     @property

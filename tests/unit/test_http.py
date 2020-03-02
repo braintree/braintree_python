@@ -131,7 +131,7 @@ class TestHttp(unittest.TestCase):
         http.handle_exception(requests.exceptions.ReadTimeout())
 
     @raises(ConnectTimeoutError)
-    def test_raise_read_timeout_error(self):
+    def test_raise_connect_timeout_error(self):
         def test_http_do_strategy(http_verb, path, headers, request_body):
             return (200, "")
 

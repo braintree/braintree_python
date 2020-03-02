@@ -318,14 +318,6 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.find(transaction_id)
 
     @staticmethod
-    def line_items(transaction_id):
-        """
-        Find a transaction's line items, given a transaction_id. This does not return
-        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided transaction_id is not found. ::
-        """
-        return Configuration.gateway().transaction_line_item.find_all(transaction_id)
-
-    @staticmethod
     def hold_in_escrow(transaction_id):
         """
         Holds an existing submerchant transaction for escrow.
@@ -655,11 +647,11 @@ class Transaction(Resource):
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
-        if "tax_amount" in attributes and self.tax_amount:
+        if "tax_amount" in attributes and self.tax_amount: #pylint: disable=E0203
             self.tax_amount = Decimal(self.tax_amount)
-        if "discount_amount" in attributes and self.discount_amount:
+        if "discount_amount" in attributes and self.discount_amount: #pylint: disable=E0203
             self.discount_amount = Decimal(self.discount_amount)
-        if "shipping_amount" in attributes and self.shipping_amount:
+        if "shipping_amount" in attributes and self.shipping_amount: #pylint: disable=E0203
             self.shipping_amount = Decimal(self.shipping_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))

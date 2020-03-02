@@ -124,7 +124,7 @@ class TestDisputes(unittest.TestCase):
     def test_add_text_evidence_adds_category_and_sequence_number_text_evidence(self):
         dispute = self.create_sample_dispute()
 
-        result = Dispute.add_text_evidence(dispute.id, { "content": "PROOF_OF_FULFILLMENT", "category": "DEVICE_ID" "sequence_number": "0" })
+        result = Dispute.add_text_evidence(dispute.id, { "content": "PROOF_OF_FULFILLMENT", "category": "DEVICE_ID", "sequence_number": "0" })
 
         self.assertTrue(result.is_success)
         evidence = result.evidence
