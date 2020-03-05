@@ -76,7 +76,7 @@ else:
 3. Install dependencies:
 
    ```
-   pip3 install -r requirements.txt
+   pip3 install -r dev_requirements.txt
    ```
 
 ## Developing (Docker)
