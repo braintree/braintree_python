@@ -1,6 +1,12 @@
 from tests.test_helper import *
 
 class TestPaymentMethodNonce(unittest.TestCase):
+    indian_payment_token = "india_visa_credit"
+    european_payment_token = "european_visa_credit"
+    indian_merchant_token = "india_three_d_secure_merchant_account"
+    european_merchant_token = "european_three_d_secure_merchant_account"
+    amount_threshold_for_rbi = 2000
+
     def test_create_nonce_from_payment_method(self):
         customer_id = Customer.create().customer.id
         credit_card_result = CreditCard.create({
@@ -14,6 +20,51 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertNotEqual(None, result.payment_method_nonce)
         self.assertNotEqual(None, result.payment_method_nonce.nonce)
+
+    def test_create_nonce_from_payment_method_with_invalid_params(self):
+        nonce_request = {
+            "merchant_account_id": self.indian_merchant_token,
+            "authentication_insight": True,
+            "invalid_keys": "foo"
+        }
+        params = {"payment_method_nonce": nonce_request}
+
+        with self.assertRaises(KeyError):
+            PaymentMethodNonce.create(self.indian_payment_token, params)
+
+    def test_create_nonce_with_auth_insight_regulation_environment_unavailable(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+        })
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, credit_card_result.credit_card.token)
+        self.assertEqual("unavailable", auth_insight_result["regulation_environment"])
+
+    def test_create_nonce_with_auth_insight_regulation_environment_unregulated(self):
+        auth_insight_result = self._request_authentication_insights(self.european_merchant_token, self.indian_payment_token)
+        self.assertEqual("unregulated", auth_insight_result["regulation_environment"])
+
+    def test_create_nonce_with_auth_insight_regulation_environment_psd2(self):
+        auth_insight_result = self._request_authentication_insights(self.european_merchant_token, self.european_payment_token)
+        self.assertEqual("psd2", auth_insight_result["regulation_environment"])
+
+    def test_create_nonce_with_auth_insight_regulation_environment_rbi(self):
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token, self.amount_threshold_for_rbi)
+        self.assertEqual("rbi", auth_insight_result["regulation_environment"])
+
+    def test_create_nonce_with_auth_insight_sca_indicator_unavailable(self):
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token)
+        self.assertEqual("unavailable", auth_insight_result["sca_indicator"])
+
+    def test_create_nonce_with_auth_insight_sca_indicator_sca_required(self):
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token, self.amount_threshold_for_rbi + 1)
+        self.assertEqual("sca_required", auth_insight_result["sca_indicator"])
+
+    def test_create_nonce_with_auth_insight_sca_indicator_sca_optional(self):
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token, self.amount_threshold_for_rbi)
+        self.assertEqual("sca_optional", auth_insight_result["sca_indicator"])
 
     def test_create_raises_not_found_when_404(self):
         self.assertRaises(NotFoundError, PaymentMethodNonce.create, "not-a-token")
@@ -150,3 +201,12 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual(CreditCard.Payroll.Unknown, bin_data.payroll)
         self.assertEqual(CreditCard.Prepaid.Unknown, bin_data.prepaid)
         self.assertEqual(CreditCard.ProductId.Unknown, bin_data.product_id)
+
+    def _request_authentication_insights(self, merchant_account_id, payment_method_token, amount = None):
+        nonce_request = {
+            "merchant_account_id": merchant_account_id,
+            "authentication_insight": True,
+            "amount": amount
+        }
+        result = PaymentMethodNonce.create(payment_method_token, {"payment_method_nonce": nonce_request})
+        return result.payment_method_nonce.authentication_insight

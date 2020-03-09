@@ -1,5 +1,6 @@
 ## Unreleased
 * Split development and deployments requirements files out
+* Add `Authentication Insight` on payment method nonce create
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
