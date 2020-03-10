@@ -25,7 +25,7 @@ class CreditCardVerification(AttributeGetter):
     def __init__(self, gateway, attributes):
         AttributeGetter.__init__(self, attributes)
 
-        if "amount" in attributes and self.amount: #pylint: disable=E0203
+        if "amount" in attributes and getattr(self, "amount", None):
             self.amount = Decimal(self.amount)
         else:
             self.amount = None

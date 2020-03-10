@@ -162,18 +162,18 @@ class Dispute(AttributeGetter):
     def __init__(self, attributes):
         AttributeGetter.__init__(self, attributes)
 
-        if "amount" in attributes and self.amount is not None: #pylint: disable=E0203
+        if "amount" in attributes and getattr(self, "amount", None) is not None:
             self.amount = Decimal(self.amount)
-        if "amount_disputed" in attributes and self.amount_disputed is not None: #pylint: disable=E0203
+        if "amount_disputed" in attributes and getattr(self, "amount_disputed", None) is not None:
             self.amount_disputed = Decimal(self.amount_disputed)
-        if "amount_won" in attributes and self.amount_won is not None: #pylint: disable=E0203
+        if "amount_won" in attributes and getattr(self, "amount_won", None) is not None:
             self.amount_won = Decimal(self.amount_won)
         if "transaction" in attributes:
             self.transaction_details = TransactionDetails(attributes.pop("transaction"))
             self.transaction = self.transaction_details
-        if "evidence" in attributes and self.evidence is not None: #pylint: disable=E0203
+        if "evidence" in attributes and getattr(self, "evidence", None) is not None:
             self.evidence = [DisputeEvidence(evidence) for evidence in self.evidence]
-        if "status_history" in attributes and self.status_history is not None: #pylint: disable=E0203
+        if "status_history" in attributes and getattr(self, "status_history", None) is not None:
             self.status_history = [DisputeStatusHistory(status_history) for status_history in self.status_history]
         if "processor_comments" in attributes and self.processor_comments is not None:
             self.forwarded_comments = self.processor_comments

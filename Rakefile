@@ -34,6 +34,8 @@ namespace :pypi do
 end
 
 namespace :lint do
+  # We are only checking linting errors (for now),
+  # so we use --disable to skip refactor(R), convention(C), and warning(W) messages
   desc "Evaluate test code quality using pylintrc file"
   task :tests do
     puts `pylint --disable=R,C,W tests --rcfile=.pylintrc --disable=R0801 --disable=W0232`

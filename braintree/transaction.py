@@ -647,11 +647,11 @@ class Transaction(Resource):
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
-        if "tax_amount" in attributes and self.tax_amount: #pylint: disable=E0203
+        if "tax_amount" in attributes and getattr(self, "tax_amount", None):
             self.tax_amount = Decimal(self.tax_amount)
-        if "discount_amount" in attributes and self.discount_amount: #pylint: disable=E0203
+        if "discount_amount" in attributes and getattr(self, "discount_amount", None):
             self.discount_amount = Decimal(self.discount_amount)
-        if "shipping_amount" in attributes and self.shipping_amount: #pylint: disable=E0203
+        if "shipping_amount" in attributes and getattr(self, "shipping_amount", None):
             self.shipping_amount = Decimal(self.shipping_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
