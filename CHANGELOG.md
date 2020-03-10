@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## unreleased
 * Breaking Changes
   * Require Python 3.5+
