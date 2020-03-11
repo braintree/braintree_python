@@ -1,4 +1,5 @@
 ## unreleased
+* Split development and deployments requirements files out
 * Breaking Changes
   * Require Python 3.5+
   * Remove deprecated Transparent Redirect
@@ -10,7 +11,6 @@
   * Add GatewayTimeoutError, RequestTimeoutError exceptions
   * Rename DownForMaintenanceError exception to ServiceUnavailableError
   * Transaction `line_items` only returns the line items for a transaction response object. Use TransactionLineItem `find_all` to search all line items on a transaction, given a transaction_id.
-* Split development and deployments requirements files out
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
