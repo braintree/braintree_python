@@ -3,6 +3,8 @@
 * Add `Authentication Insight` to payment method nonce create
 * Add ThreeDSecure test payment method nonces
 * Add test `AuthenticationId`s
+* Add `three_d_secure_authentication_id` to `three_d_secure_info`
+* Add `three_d_secure_authentication_id` support for transaction sale
 * Breaking Changes
   * Require Python 3.5+
   * Remove deprecated Transparent Redirect
@@ -28,8 +30,6 @@
 * Fix error when running against Python 3.8 (thanks @felixonmars #114)
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
 * Add Graphql ID to `CreditCardVerification`, `Customer`, `Dispute`, and `Transaction`
-* Add `three_d_secure_authentication_id` to `three_d_secure_info`
-* Add `three_d_secure_authentication_id` support for transaction sale
 
 ## 3.57.1
 * Set correct version for PyPi
