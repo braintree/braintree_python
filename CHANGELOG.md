@@ -26,7 +26,6 @@
 ## 3.58.0
 * Add support for managing Apple Pay domains (thanks @ethier #117)
 * Fix error when running against Python 3.8 (thanks @felixonmars #114)
->>>>>>> master
 * Add `ProcessorDoesNotSupportMotoForCardType` to validation errors
 * Add Graphql ID to `CreditCardVerification`, `Customer`, `Dispute`, and `Transaction`
 * Add `three_d_secure_authentication_id` to `three_d_secure_info`
