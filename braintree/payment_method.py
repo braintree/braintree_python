@@ -65,7 +65,6 @@ class PaymentMethod(Resource):
             "number",
             "payment_method_nonce",
             "paypal_refresh_token",
-            "paypal_vault_without_upgrade",
             "token",
             {
                 "billing_address": Address.create_signature()

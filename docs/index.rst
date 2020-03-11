@@ -33,7 +33,6 @@ Utility Objects
    :maxdepth: 2
 
    resource_collection
-   transparent_redirect
    successful_result
 
 Errors

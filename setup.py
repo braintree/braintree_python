@@ -12,7 +12,7 @@ long_description = """
 
 setup(
     name="braintree",
-    version="3.57.1",
+    version="3.59.0",
     description="Braintree Python Library",
     long_description=long_description,
     author="Braintree",
@@ -25,10 +25,9 @@ setup(
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5"
+        "Programming Language :: Python :: 3.6"
+        "Programming Language :: Python :: 3.7"
+        "Programming Language :: Python :: 3.8"
     ]
 )

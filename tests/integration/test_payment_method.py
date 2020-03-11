@@ -118,25 +118,6 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(created_account.billing_agreement_id, found_account.billing_agreement_id)
         self.assertEqual(created_account.payer_id, found_account.payer_id)
 
-    def test_create_with_paypal_refresh_token_without_upgrade(self):
-        customer_id = Customer.create().customer.id
-        result = PaymentMethod.create({
-            "customer_id": customer_id,
-            "paypal_refresh_token": "PAYPAL_REFRESH_TOKEN",
-            "paypal_vault_without_upgrade": True,
-        })
-
-        self.assertTrue(result.is_success)
-        created_account = result.payment_method
-        self.assertEqual(PayPalAccount, created_account.__class__)
-        self.assertEqual(created_account.billing_agreement_id, None)
-
-        found_account = PaymentMethod.find(result.payment_method.token)
-        self.assertNotEqual(None, found_account)
-        self.assertEqual(created_account.token, found_account.token)
-        self.assertEqual(created_account.customer_id, found_account.customer_id)
-        self.assertEqual(created_account.billing_agreement_id, found_account.billing_agreement_id)
-
     def test_create_returns_validation_failures(self):
         http = ClientApiHttp.create()
         status_code, nonce = http.get_paypal_nonce({
@@ -1342,47 +1323,3 @@ class TestPaymentMethod(unittest.TestCase):
     def test_payment_method_revoke_raises_on_non_existent_tokens(self):
         granting_gateway, _ = TestHelper.create_payment_method_grant_fixtures()
         self.assertRaises(NotFoundError, granting_gateway.payment_method.revoke, "non-existant-token")
-
-class CreditCardForwardingTest(unittest.TestCase):
-    def setUp(self):
-        braintree.Configuration.configure(
-            braintree.Environment.Development,
-            "forward_payment_method_merchant_id",
-            "forward_payment_method_public_key",
-            "forward_payment_method_private_key"
-        )
-
-    def tearDown(self):
-        braintree.Configuration.configure(
-            braintree.Environment.Development,
-            "integration_merchant_id",
-            "integration_public_key",
-            "integration_private_key"
-        )
-
-    def test_forward_raises_exception(self):
-        customer = Customer.create().customer
-        credit_card_result = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_date": "05/2025"
-        })
-        self.assertTrue(credit_card_result.is_success)
-        source_merchant_card = credit_card_result.credit_card
-
-        self.assertRaises(NotFoundError, CreditCard.forward, source_merchant_card.token, "integration_merchant_id")
-
-    def test_forward_invalid_token_raises_exception(self):
-        self.assertRaises(NotFoundError, CreditCard.forward, "invalid", "integration_merchant_id")
-
-    def test_forward_invalid_receiving_merchant_raises_exception(self):
-        customer = Customer.create().customer
-        credit_card_result = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_date": "05/2025"
-        })
-        self.assertTrue(credit_card_result.is_success)
-        source_merchant_card = credit_card_result.credit_card
-
-        self.assertRaises(NotFoundError, CreditCard.forward, source_merchant_card.token, "invalid_merchant_id")

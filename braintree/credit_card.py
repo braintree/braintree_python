@@ -3,7 +3,6 @@ import warnings
 from braintree.resource import Resource
 from braintree.address import Address
 from braintree.configuration import Configuration
-from braintree.transparent_redirect import TransparentRedirect
 from braintree.credit_card_verification import CreditCardVerification
 
 class CreditCard(Resource):
@@ -111,18 +110,6 @@ class CreditCard(Resource):
             CountryOfIssuance = IssuingBank = Payroll = Prepaid = ProductId = CardTypeIndicator
 
     @staticmethod
-    def confirm_transparent_redirect(query_string):
-        """
-        Confirms a transparent redirect request. It expects the query string from the
-        redirect request. The query string should _not_ include the leading "?" character. ::
-
-            result = braintree.CreditCard.confirm_transparent_redirect_request("foo=bar&id=12345")
-        """
-
-        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        return Configuration.gateway().credit_card.confirm_transparent_redirect(query_string)
-
-    @staticmethod
     def create(params={}):
         """
         Create a CreditCard.
@@ -186,14 +173,6 @@ class CreditCard(Resource):
             credit_card = braintree.CreditCard.find("my_credit_card_token")
         """
         return Configuration.gateway().credit_card.find(credit_card_token)
-
-    @staticmethod
-    def forward(credit_card_token, receiving_merchant_id):
-        """
-        This method has been deprecated. Please consider the Grant API instead.
-        """
-
-        return Configuration.gateway().credit_card.forward(credit_card_token, receiving_merchant_id)
 
     @staticmethod
     def from_nonce(nonce):
@@ -280,38 +259,6 @@ class CreditCard(Resource):
             raise AttributeError
 
         return signature
-
-    @staticmethod
-    def transparent_redirect_create_url():
-        """
-        Returns the url to use for creating CreditCards through transparent redirect.
-        """
-        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.gateway().credit_card.transparent_redirect_create_url()
-
-    @staticmethod
-    def tr_data_for_create(tr_data, redirect_url):
-        """
-        Builds tr_data for CreditCard creation.
-        """
-
-        return Configuration.gateway().credit_card.tr_data_for_create(tr_data, redirect_url)
-
-    @staticmethod
-    def tr_data_for_update(tr_data, redirect_url):
-        """
-        Builds tr_data for CreditCard updating.
-        """
-
-        return Configuration.gateway().credit_card.tr_data_for_update(tr_data, redirect_url)
-
-    @staticmethod
-    def transparent_redirect_update_url():
-        """
-        Returns the url to be used for updating CreditCards through transparent redirect.
-        """
-        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.gateway().credit_card.transparent_redirect_update_url()
 
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)

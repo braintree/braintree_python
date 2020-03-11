@@ -2,7 +2,7 @@ import json
 
 from braintree.exceptions.authentication_error import AuthenticationError
 from braintree.exceptions.authorization_error import AuthorizationError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
+from braintree.exceptions.service_unavailable_error import ServiceUnavailableError
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.server_error import ServerError
 from braintree.exceptions.too_many_requests_error import TooManyRequestsError
@@ -35,7 +35,7 @@ class GraphQLClient(Http):
                 elif error_type == "INTERNAL":
                     raise ServerError
                 elif error_type == "SERVICE_AVAILABILITY":
-                    raise DownForMaintenanceError
+                    raise ServiceUnavailableError
                 else:
                     raise UnexpectedError("Unexpected Response: " + error["message"])
 

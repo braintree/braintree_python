@@ -4,7 +4,6 @@ from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.venmo_account import VenmoAccount
@@ -23,10 +22,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 
 import sys
-if sys.version_info[0] == 2:
-    from urllib import urlencode
-else:
-    from urllib.parse import urlencode
+from urllib.parse import urlencode
 
 class PaymentMethodGateway(object):
     def __init__(self, gateway):
@@ -118,9 +114,9 @@ class PaymentMethodGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-        elif result_key is "revoke" and response.get("success", False):
+        elif result_key == "revoke" and response.get("success", False):
             return SuccessfulResult()
-        elif result_key is "payment_method_nonce":
+        elif result_key == "payment_method_nonce":
             payment_method_nonce = self._parse_payment_method_nonce(response)
             return SuccessfulResult({result_key: payment_method_nonce})
         else:

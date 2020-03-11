@@ -3,8 +3,8 @@ import string
 import sys
 from braintree.attribute_getter import AttributeGetter
 
-text_type = unicode if sys.version_info[0] == 2 else str
-raw_type = str if sys.version_info[0] == 2 else bytes
+text_type = str
+raw_type = bytes
 
 class Resource(AttributeGetter):
     @staticmethod
