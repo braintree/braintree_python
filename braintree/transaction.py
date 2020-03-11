@@ -476,7 +476,7 @@ class Transaction(Resource):
             "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "discount_amount", "shipping_amount", "ships_from_postal_code",
-            "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "risk_data": [
                     "customer_browser", "customer_ip"
