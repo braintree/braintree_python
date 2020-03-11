@@ -13,7 +13,7 @@ class MerchantAccountGateway(object):
         self.config = gateway.config
 
     def create(self, params={}):
-        Resource.verify_keys(params, MerchantAccountGateway._detect_signature(params))
+        Resource.verify_keys(params, MerchantAccountGateway._create_signature())
         return self._post("/merchant_accounts/create_via_api", {"merchant_account": params})
 
     def update(self, merchant_account_id, params={}):
@@ -59,40 +59,6 @@ class MerchantAccountGateway(object):
             return SuccessfulResult({"merchant_account": MerchantAccount(self.gateway, response["merchant_account"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-
-    @staticmethod
-    def _detect_signature(attributes):
-        if 'applicant_details' in attributes:
-            # Warn deprecated
-            return MerchantAccountGateway._create_deprecated_signature()
-        else:
-            return MerchantAccountGateway._create_signature()
-
-    @staticmethod
-    def _create_deprecated_signature():
-        return [
-            {'applicant_details': [
-                'company_name',
-                'first_name',
-                'last_name',
-                'email',
-                'phone',
-                'date_of_birth',
-                'ssn',
-                'tax_id',
-                'routing_number',
-                'account_number',
-                {'address': [
-                    'street_address',
-                    'postal_code',
-                    'locality',
-                    'region']}
-                ]
-            },
-            'tos_accepted',
-            'master_merchant_account_id',
-            'id'
-        ]
 
     @staticmethod
     def _create_signature():

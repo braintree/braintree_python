@@ -14,20 +14,18 @@ class CreditCardVerification(AttributeGetter):
         * braintree.CreditCardVerification.Status.Failed
         * braintree.CreditCardVerification.Status.GatewayRejected
         * braintree.CreditCardVerification.Status.ProcessorDeclined
-        * braintree.CreditCardVerification.Status.Unrecognized
         * braintree.CreditCardVerification.Status.Verified
         """
 
         Failed                 = "failed"
         GatewayRejected        = "gateway_rejected"
         ProcessorDeclined      = "processor_declined"
-        Unrecognized           = "unrecognized"
         Verified               = "verified"
 
     def __init__(self, gateway, attributes):
         AttributeGetter.__init__(self, attributes)
 
-        if "amount" in attributes and self.amount:
+        if "amount" in attributes and getattr(self, "amount", None):
             self.amount = Decimal(self.amount)
         else:
             self.amount = None

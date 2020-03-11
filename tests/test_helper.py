@@ -8,14 +8,9 @@ import warnings
 import subprocess
 import time
 
-if sys.version_info[0] == 2:
-    from urllib import urlencode, quote_plus
-    from httplib import HTTPConnection
-    from base64 import encodestring as encodebytes
-else:
-    from urllib.parse import urlencode, quote_plus
-    from http.client import HTTPConnection
-    from base64 import encodebytes
+from urllib.parse import urlencode, quote_plus
+from http.client import HTTPConnection
+from base64 import encodebytes
 import requests
 
 from base64 import b64decode
@@ -126,8 +121,8 @@ class TestHelper(object):
     }
 
     valid_token_characters = list("bcdfghjkmnpqrstvwxyz23456789")
-    text_type = unicode if sys.version_info[0] == 2 else str
-    raw_type = str if sys.version_info[0] == 2 else bytes
+    text_type = str
+    raw_type = bytes
 
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
@@ -152,16 +147,6 @@ class TestHelper(object):
     @staticmethod
     def settlement_pending_transaction(transaction_id):
         return Configuration.gateway().testing.settlement_pending_transaction(transaction_id)
-
-    @staticmethod
-    def simulate_tr_form_post(post_params, url=TransparentRedirect.url()):
-        form_data = urlencode(post_params)
-        conn = HTTPConnection(Configuration.environment.server_and_port)
-        conn.request("POST", url, form_data, TestHelper.__headers())
-        response = conn.getresponse()
-        query_string = response.getheader("location").split("?", 1)[1]
-        conn.close()
-        return query_string
 
     @staticmethod
     def create_3ds_verification(merchant_account_id, params):
@@ -275,6 +260,7 @@ class TestHelper(object):
             "ach_mandate": {
                 "text": "cl mandate text"
             }
+
         }
         resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
         respJson = json.loads(resp.text)
@@ -315,33 +301,6 @@ class TestHelper(object):
             token += "_" + TestHelper.random_token_block('d')
         token += "_xxx"
         return token
-
-    @staticmethod
-    def generate_valid_ideal_payment_id(amount=TransactionAmounts.Authorize):
-        client_token = json.loads(TestHelper.generate_decoded_client_token({
-            "merchant_account_id": "ideal_merchant_account"
-        }))
-        client = ClientApiHttp(Configuration.instantiate(), {
-            "authorization_fingerprint": client_token["authorizationFingerprint"]
-        })
-        _, configuration = client.get_configuration()
-        route_id = json.loads(configuration)["ideal"]["routeId"]
-        headers = {
-            "Content-Type": "application/json",
-            "Braintree-Version": "2015-11-01",
-            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
-        }
-        payload = {
-            "issuer": "RABONL2U",
-            "order_id": "ABC123",
-            "amount": amount,
-            "currency": "EUR",
-            "route_id": route_id,
-            "redirect_url": "https://braintree-api.com",
-        }
-        resp = requests.post(client_token["braintree_api"]["url"] + "/ideal-payments", headers=headers, data=json.dumps(payload) )
-        respJson = json.loads(resp.text)
-        return respJson["data"]["id"]
 
     @staticmethod
     def generate_three_d_secure_nonce(gateway, params):
@@ -533,6 +492,6 @@ class ClientApiHttp(Http):
     def __headers(self):
         return {
             "Content-type": "application/json",
-            "User-Agent": "Braintree Python " + version.Version,
+            "User-Agent": "Braintree Python " + version.Version, #pylint: disable=E0602
             "X-ApiVersion": Configuration.api_version()
         }

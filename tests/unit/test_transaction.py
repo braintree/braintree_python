@@ -3,10 +3,7 @@ from braintree.test.credit_card_numbers import CreditCardNumbers
 from datetime import datetime
 from datetime import date
 from braintree.authorization_adjustment import AuthorizationAdjustment
-if sys.version_info[0] == 2:
-    from mock import MagicMock
-else:
-    from unittest.mock import MagicMock
+from unittest.mock import MagicMock
 
 class TestTransaction(unittest.TestCase):
     @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
@@ -20,10 +17,6 @@ class TestTransaction(unittest.TestCase):
     @raises_with_regexp(KeyError, "'Invalid keys: credit_card\[bad_key\]'")
     def test_sale_raises_exception_with_nested_bad_keys(self):
         Transaction.sale({"credit_card": {"bad_key": "value"}})
-
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
-    def test_tr_data_for_sale_raises_error_with_bad_keys(self):
-        Transaction.tr_data_for_sale({"bad_key": "value"}, "http://example.com")
 
     @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
@@ -159,26 +152,6 @@ class TestTransaction(unittest.TestCase):
         transaction_gateway._post = MagicMock(name='config.http.post')
         return transaction_gateway
 
-    def test_ideal_payment_details(self):
-        attributes = {
-            'amount': '27.00',
-            'tax_amount': '1.00',
-            'ideal_payment': {
-                'ideal_payment_id': 'idealpayment_abc_123',
-                'masked_iban': '12************7890',
-                'bic': 'RABONL2U',
-                'image_url': 'http://www.example.com/ideal.png',
-            },
-        }
-
-        transaction = Transaction(None, attributes)
-
-        self.assertEqual(transaction.ideal_payment_details.ideal_payment_id, 'idealpayment_abc_123')
-        self.assertEqual(transaction.ideal_payment_details.masked_iban, '12************7890')
-        self.assertEqual(transaction.ideal_payment_details.bic, 'RABONL2U')
-        self.assertEqual(transaction.ideal_payment_details.image_url, 'http://www.example.com/ideal.png')
-
-
     def test_constructor_doesnt_includes_auth_adjustments(self):
         attributes = {
             'amount': '27.00',
@@ -219,25 +192,16 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction_adjustment.processor_response_code, "1000")
         self.assertEqual(transaction_adjustment.processor_response_text, "Approved")
 
-    def test_constructor_includes_network_transaction_id(self):
+    def test_constructor_includes_network_transaction_id_and_response_code_and_response_text(self):
         attributes = {
             'amount': '27.00',
             'tax_amount': '1.00',
-            'network_transaction_id': '123456789012345'
-        }
-
-        transaction = Transaction(None, attributes)
-        self.assertEqual(transaction.network_transaction_id, "123456789012345")
-
-    def test_constructor_includes_network_transaction_id(self):
-        attributes = {
-            'amount': '27.00',
-            'tax_amount': '1.00',
+            'network_transaction_id': '123456789012345',
             'network_response_code': '00',
             'network_response_text': 'Successful approval/completion or V.I.P. PIN verification is successful'
         }
 
         transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.network_transaction_id, "123456789012345")
         self.assertEqual(transaction.network_response_code, "00")
         self.assertEqual(transaction.network_response_text, "Successful approval/completion or V.I.P. PIN verification is successful")
-

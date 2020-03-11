@@ -31,7 +31,6 @@ class TestSubscription(unittest.TestCase):
         subscription = result.subscription
         self.assertNotEqual(None, re.search(r"\A\w{6}\Z", subscription.id))
         self.assertEqual(Decimal("12.34"), subscription.price)
-        self.assertEqual(Decimal("12.34"), subscription.next_bill_amount)
         self.assertEqual(Decimal("12.34"), subscription.next_billing_period_amount)
         self.assertEqual(Subscription.Status.Active, subscription.status)
         self.assertEqual("integration_trialless_plan", subscription.plan_id)
@@ -1309,23 +1308,6 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(TestHelper.includes(collection, subscription_found))
         self.assertFalse(TestHelper.includes(collection, subscription_not_found))
 
-    def test_retryCharge_without_amount__deprecated(self):
-        subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"],
-        }).subscription
-        TestHelper.make_past_due(subscription)
-
-        result = Subscription.retryCharge(subscription.id)
-
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-
-        self.assertEqual(subscription.price, transaction.amount)
-        self.assertNotEqual(None, transaction.processor_authorization_code)
-        self.assertEqual(Transaction.Type.Sale, transaction.type)
-        self.assertEqual(Transaction.Status.Authorized, transaction.status)
-
     def test_retry_charge_without_amount(self):
         subscription = Subscription.create({
             "payment_method_token": self.credit_card.token,
@@ -1339,23 +1321,6 @@ class TestSubscription(unittest.TestCase):
         transaction = result.transaction
 
         self.assertEqual(subscription.price, transaction.amount)
-        self.assertNotEqual(None, transaction.processor_authorization_code)
-        self.assertEqual(Transaction.Type.Sale, transaction.type)
-        self.assertEqual(Transaction.Status.Authorized, transaction.status)
-
-    def test_retryCharge_with_amount__deprecated(self):
-        subscription = Subscription.create({
-            "payment_method_token": self.credit_card.token,
-            "plan_id": TestHelper.trialless_plan["id"],
-        }).subscription
-        TestHelper.make_past_due(subscription)
-
-        result = Subscription.retryCharge(subscription.id, Decimal(TransactionAmounts.Authorize))
-
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-
-        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
         self.assertNotEqual(None, transaction.processor_authorization_code)
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.Authorized, transaction.status)

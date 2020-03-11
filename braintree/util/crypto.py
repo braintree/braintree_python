@@ -2,10 +2,7 @@ import hashlib
 import hmac
 import sys
 
-if sys.version_info[0] == 2:
-    text_type = unicode
-else:
-    text_type = str
+text_type = str
 
 class Crypto:
     @staticmethod

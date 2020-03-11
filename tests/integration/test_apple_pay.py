@@ -1,6 +1,6 @@
 from tests.test_helper import *
 
-class ApplePayGateway(unittest.TestCase):
+class TestApplePay(unittest.TestCase):
     @staticmethod
     def get_gateway():
         config = Configuration("development", "integration_merchant_id",

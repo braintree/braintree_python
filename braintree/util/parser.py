@@ -4,10 +4,7 @@ from braintree.util.datetime_parser import parse_datetime
 import re
 import sys
 
-if sys.version_info[0] == 2:
-    binary_type = str
-else:
-    binary_type = bytes
+binary_type = bytes
 
 class Parser(object):
     def __init__(self, xml):

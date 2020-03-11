@@ -1,9 +1,6 @@
 import re
 import sys
-if sys.version_info[0] == 2:
-    from base64 import decodestring as decodebytes
-else:
-    from base64 import decodebytes
+from base64 import decodebytes
 import sys
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
 from braintree.exceptions.invalid_challenge_error import InvalidChallengeError
@@ -11,10 +8,7 @@ from braintree.util.crypto import Crypto
 from braintree.util.xml_util import XmlUtil
 from braintree.webhook_notification import WebhookNotification
 
-if sys.version_info[0] == 2:
-    text_type = unicode
-else:
-    text_type = str
+text_type = str
 
 class WebhookNotificationGateway(object):
     def __init__(self, gateway):
