@@ -70,7 +70,7 @@ class TestDocumentUpload(unittest.TestCase):
         finally:
             os.remove(file_path)
 
-    def test_create_returns_error_with_malformed_file(self):
+    def test_create_returns_error_with_too_long_file(self):
         file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/too_long.pdf")
         too_long_pdf = open(file_path, "rb")
 

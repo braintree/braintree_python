@@ -4,7 +4,6 @@ from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.venmo_account import VenmoAccount
@@ -27,8 +26,6 @@ def parse_payment_method(gateway, attributes):
         return AndroidPayCard(gateway, attributes["android_pay_card"])
     elif "amex_express_checkout_card" in attributes:
         return AmexExpressCheckoutCard(gateway, attributes["amex_express_checkout_card"])
-    elif "coinbase_account" in attributes:
-        return CoinbaseAccount(gateway, attributes["coinbase_account"])
     elif "venmo_account" in attributes:
         return VenmoAccount(gateway, attributes["venmo_account"])
     elif "us_bank_account" in attributes:

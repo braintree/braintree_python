@@ -34,7 +34,6 @@ from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.us_bank_account import UsBankAccount
-from braintree.ideal_payment import IdealPayment
 from braintree.merchant import Merchant
 from braintree.merchant_account import MerchantAccount
 from braintree.merchant_account_gateway import MerchantAccountGateway
@@ -68,8 +67,6 @@ from braintree.transaction_details import TransactionDetails
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.transaction_search import TransactionSearch
-from braintree.transparent_redirect import TransparentRedirect
-from braintree.transparent_redirect_gateway import TransparentRedirectGateway
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.validation_error_collection import ValidationErrorCollection
 from braintree.venmo_account import VenmoAccount

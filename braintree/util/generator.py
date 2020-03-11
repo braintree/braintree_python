@@ -2,14 +2,9 @@ import datetime
 import sys
 from decimal import Decimal
 
-if sys.version_info[0] == 2:
-    integer_types = int, long
-    text_type = unicode
-    binary_type = str
-else:
-    integer_types = int,
-    text_type = str
-    binary_type = bytes
+integer_types = int
+text_type = str
+binary_type = bytes
 
 class Generator(object):
     def __init__(self, dict):

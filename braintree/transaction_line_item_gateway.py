@@ -4,7 +4,7 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
+from braintree.exceptions.request_timeout_error import RequestTimeoutError
 
 class TransactionLineItemGateway(object):
     def __init__(self, gateway):
@@ -19,6 +19,6 @@ class TransactionLineItemGateway(object):
             if "line_items" in response:
                 return [TransactionLineItem(item) for item in ResourceCollection._extract_as_array(response, "line_items")]
             else:
-                raise DownForMaintenanceError()
+                raise RequestTimeoutError()
         except NotFoundError:
             raise NotFoundError("transaction line items with id " + repr(transaction_id) + " not found")

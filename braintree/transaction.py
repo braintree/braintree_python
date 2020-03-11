@@ -4,7 +4,6 @@ from decimal import Decimal
 from braintree.add_on import AddOn
 from braintree.apple_pay_card import ApplePayCard
 from braintree.authorization_adjustment import AuthorizationAdjustment
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.venmo_account import VenmoAccount
@@ -24,16 +23,12 @@ from braintree.paypal_here import PayPalHere
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.subscription_details import SubscriptionDetails
 from braintree.resource_collection import ResourceCollection
-from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.us_bank_account import UsBankAccount
-# NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
-# DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
-from braintree.ideal_payment import IdealPayment
 from braintree.local_payment import LocalPayment
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
@@ -163,7 +158,6 @@ class Transaction(Resource):
 
         FullInformation = "full_information"
         Token           = "token"
-        Unrecognized    = "unrecognized"
 
     class GatewayRejectionReason(object):
         """
@@ -184,13 +178,11 @@ class Transaction(Resource):
         Fraud                 = "fraud"
         ThreeDSecure          = "three_d_secure"
         TokenIssuance         = "token_issuance"
-        Unrecognized          = "unrecognized"
 
     class Source(object):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
-        Unrecognized = "unrecognized"
 
     class EscrowStatus(object):
         """
@@ -208,7 +200,6 @@ class Transaction(Resource):
         ReleasePending = "release_pending"
         Released       = "released"
         Refunded       = "refunded"
-        Unrecognized   = "unrecognized"
 
     class Status(object):
         """
@@ -242,8 +233,6 @@ class Transaction(Resource):
         Settling               = "settling"
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
-        # NEXT_MAJOR_VERSION this is never used and should be removed
-        Unrecognized           = "unrecognized"
 
     class Type(object):
         """
@@ -287,18 +276,6 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.cancel_release(transaction_id)
 
     @staticmethod
-    def confirm_transparent_redirect(query_string):
-        """
-        Confirms a transparent redirect request. It expects the query string from the
-        redirect request. The query string should _not_ include the leading "?" character. ::
-
-            result = braintree.Transaction.confirm_transparent_redirect_request("foo=bar&id=12345")
-        """
-
-        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        return Configuration.gateway().transaction.confirm_transparent_redirect(query_string)
-
-    @staticmethod
     def credit(params={}):
         """
         Creates a transaction of type Credit.
@@ -339,14 +316,6 @@ class Transaction(Resource):
             transaction = braintree.Transaction.find("my_transaction_id")
         """
         return Configuration.gateway().transaction.find(transaction_id)
-
-    @staticmethod
-    def line_items(transaction_id):
-        """
-        Find a transaction's line items, given a transaction_id. This does not return
-        a result object. This will raise a :class:`NotFoundError <braintree.exceptions.not_found_error.NotFoundError>` if the provided transaction_id is not found. ::
-        """
-        return Configuration.gateway().transaction_line_item.find_all(transaction_id)
 
     @staticmethod
     def hold_in_escrow(transaction_id):
@@ -454,29 +423,6 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.update_details(transaction_id, params)
 
     @staticmethod
-    def tr_data_for_credit(tr_data, redirect_url):
-        """
-        Builds tr_data for a Transaction of type Credit
-        """
-        return Configuration.gateway().transaction.tr_data_for_credit(tr_data, redirect_url)
-
-    @staticmethod
-    def tr_data_for_sale(tr_data, redirect_url):
-        """
-        Builds tr_data for a Transaction of type Sale
-        """
-        return Configuration.gateway().transaction.tr_data_for_sale(tr_data, redirect_url)
-
-    @staticmethod
-    def transparent_redirect_create_url():
-        """
-        Returns the url to be used for creating Transactions through transparent redirect.
-        """
-
-        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.gateway().transaction.transparent_redirect_create_url()
-
-    @staticmethod
     def void(transaction_id):
         """
         Voids an existing transaction.
@@ -530,7 +476,7 @@ class Transaction(Resource):
             "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "discount_amount", "shipping_amount", "ships_from_postal_code",
-            "tax_exempt", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "risk_data": [
                     "customer_browser", "customer_ip"
@@ -698,20 +644,14 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount, params)
 
     def __init__(self, gateway, attributes):
-        if "refund_id" in attributes:
-            self._refund_id = attributes["refund_id"]
-            del(attributes["refund_id"])
-        else:
-            self._refund_id = None
-
         Resource.__init__(self, gateway, attributes)
 
         self.amount = Decimal(self.amount)
-        if "tax_amount" in attributes and self.tax_amount:
+        if "tax_amount" in attributes and getattr(self, "tax_amount", None):
             self.tax_amount = Decimal(self.tax_amount)
-        if "discount_amount" in attributes and self.discount_amount:
+        if "discount_amount" in attributes and getattr(self, "discount_amount", None):
             self.discount_amount = Decimal(self.discount_amount)
-        if "shipping_amount" in attributes and self.shipping_amount:
+        if "shipping_amount" in attributes and getattr(self, "shipping_amount", None):
             self.shipping_amount = Decimal(self.shipping_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
@@ -727,14 +667,8 @@ class Transaction(Resource):
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "us_bank_account" in attributes:
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
-        # NEXT_MAJOR_VERSION Remove this class as legacy Ideal has been removed/disabled in the Braintree Gateway
-        # DEPRECATED If you're looking to accept iDEAL as a payment method contact accounts@braintreepayments.com for a solution.
-        if "ideal_payment" in attributes:
-            self.ideal_payment_details = IdealPayment(gateway, attributes.pop("ideal_payment"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
-        if "coinbase_account" in attributes:
-            self.coinbase_details = CoinbaseAccount(gateway, attributes.pop("coinbase_account"))
         if "android_pay_card" in attributes:
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         if "amex_express_checkout_card" in attributes:
@@ -784,11 +718,6 @@ class Transaction(Resource):
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
         if "network_transaction_id" in attributes:
             self.network_transaction_id = attributes["network_transaction_id"]
-
-    @property
-    def refund_id(self):
-        warnings.warn("Please use Transaction.refund_ids instead", DeprecationWarning)
-        return self._refund_id
 
     @property
     def vault_billing_address(self):
