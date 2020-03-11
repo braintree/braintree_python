@@ -3,7 +3,6 @@
 * Add `Authentication Insight` to payment method nonce create
 * Add ThreeDSecure test payment method nonces
 * Add test `AuthenticationId`s
-* Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
 * Breaking Changes
   * Require Python 3.5+
   * Remove deprecated Transparent Redirect
@@ -14,8 +13,9 @@
   * Remove Coinbase references
   * Add GatewayTimeoutError, RequestTimeoutError exceptions
   * Rename DownForMaintenanceError exception to ServiceUnavailableError
-  * Transaction `line_items` only returns the line items for a transaction response object. Use TransactionLineItem `find_all` to search all line items on a transaction, given a transaction_id.
+  * Transaction `line_items` only returns the line items for a transaction response object. Use TransactionLineItem `find_all` to search all line items on a transaction, given a transaction_id
   * Upgrade API version to retrieve declined refund transactions
+  * Remove all deprecated parameters, errors, and methods
 
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
