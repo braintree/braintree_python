@@ -1,10 +1,7 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
 import sys
-if sys.version_info[0] == 2:
-    import urlparse
-else:
-    import urllib.parse as urlparse
+import urllib.parse as urlparse
 
 class TestOAuthGateway(unittest.TestCase):
     def setUp(self):

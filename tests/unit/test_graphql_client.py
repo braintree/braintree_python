@@ -1,6 +1,20 @@
 from tests.test_helper import *
 
 class TestGraphQLClient(unittest.TestCase):
+    @raises(ServiceUnavailableError)
+    def test_raise_exception_from_status_service_unavailable(self):
+        response = {
+            "errors": [
+                {
+                    "message": "error message",
+                    "extensions": {
+                        "errorClass": "SERVICE_AVAILABILITY"
+                    }
+                }
+            ]
+        }
+        GraphQLClient.raise_exception_for_graphql_error(response)
+
     @raises(UpgradeRequiredError)
     def test_raise_exception_from_status_for_upgrade_required(self):
         response = {

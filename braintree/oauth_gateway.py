@@ -5,11 +5,8 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.oauth_credentials import OAuthCredentials
 
 import sys
-if sys.version_info[0] == 2:
-    from urllib import quote_plus
-else:
-    from urllib.parse import quote_plus
-    from functools import reduce
+from urllib.parse import quote_plus
+from functools import reduce
 
 class OAuthGateway(object):
     def __init__(self, gateway):

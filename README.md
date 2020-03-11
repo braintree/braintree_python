@@ -2,33 +2,25 @@
 
 The Braintree Python library provides integration access to the Braintree Gateway.
 
-## Please Note
-> **The Payment Card Industry (PCI) Council has [mandated](https://blog.pcisecuritystandards.org/migrating-from-ssl-and-early-tls) that early versions of TLS be retired from service.  All organizations that handle credit card information are required to comply with this standard. As part of this obligation, Braintree is updating its services to require TLS 1.2 for all HTTPS connections. Braintree will also require HTTP/1.1 for all connections. Please see our [technical documentation](https://github.com/paypal/tls-update) for more information.**
+## TLS 1.2 required
+> **The Payment Card Industry (PCI) Council has [mandated](https://blog.pcisecuritystandards.org/migrating-from-ssl-and-early-tls) that early versions of TLS be retired from service.  All organizations that handle credit card information are required to comply with this standard. As part of this obligation, Braintree has updated its services to require TLS 1.2 for all HTTPS connections. Braintrees require HTTP/1.1 for all connections. Please see our [technical documentation](https://github.com/paypal/tls-update) for more information.**
 
 ## Dependencies
 
 * [requests](http://docs.python-requests.org/en/latest/)
 
-The Braintree Python SDK is tested against Python versions 2.7.9, 3.3.5 and 3.8.0.
+The Braintree Python SDK is tested against Python versions 3.5.3 and 3.8.0.
 
-## Upgrading from 2.x.x to 3.x.x
+_The Python core development community has released [End-of-Life branches](https://devguide.python.org/devcycle/#end-of-life-branches) for Python versions 2.7 - 3.4, and are no longer receiving [security updates](https://devguide.python.org/#branchstatus). As a result, Braintree no longer supports these versions of Python._
 
-On Python 2.6 or 2.7 with default settings / requests:
+## Versions
 
-No changes are required to upgrade to version 3.
+Braintree employs a deprecation policy for our SDKs. For more information on the statuses of an SDK check our [developer docs](http://developers.braintreepayments.com/reference/general/server-sdk-deprecation-policy).
 
-On Python 2.6 or 2.7 with pycurl, httplib, or use_unsafe_ssl = True:
-
-Install requests and test that you are able to connect to the Sandbox
-environment with version 3 and without specifying an HTTP strategy.
-The use_unsafe_ssl parameter will be ignored.
-
-On Python 2.5:
-
-Python 2.5 isn't supported by version 3 of the library.
-Most code that runs on 2.5 will work unmodified on Python 2.6.
-After making sure your code works on Python 2.6, follow the
-instructions above for upgrading from pycurl / httplib to requests.
+| Major version number | Status | Released | Deprecated | Unsupported |
+| -------------------- | ------ | -------- | ---------- | ----------- |
+| 4.x.x | Active | March 2020 | TBA | TBA |
+| 3.x.x | Inactive | June 2014 | March 2022 | March 2023 |
 
 ## Documentation
 
@@ -86,7 +78,7 @@ else:
 3. Install dependencies:
 
    ```
-   pip install -r requirements.txt
+   pip3 install -r dev_requirements.txt
    ```
 
 ## Developing (Docker)

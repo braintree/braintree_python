@@ -6,8 +6,8 @@ from braintree.bin_data import BinData
 
 class PaymentMethodNonce(Resource):
     @staticmethod
-    def create(payment_method_token):
-        return Configuration.gateway().payment_method_nonce.create(payment_method_token)
+    def create(payment_method_token, params = {}):
+        return Configuration.gateway().payment_method_nonce.create(payment_method_token, params)
 
     @staticmethod
     def find(payment_method_nonce):
@@ -20,6 +20,11 @@ class PaymentMethodNonce(Resource):
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None
+
+        if "authentication_insight" in attributes and not attributes["authentication_insight"] is None:
+            self.authentication_insight = attributes["authentication_insight"]
+        else:
+            self.authentication_insight = None
 
         if "bin_data" in attributes and not attributes["bin_data"] is None:
             self.bin_data = BinData(attributes["bin_data"])

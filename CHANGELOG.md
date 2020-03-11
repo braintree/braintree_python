@@ -1,9 +1,29 @@
+## 4.0.0
+* Split development and deployments requirements files out
+* Add `Authentication Insight` to payment method nonce create
+* Add ThreeDSecure test payment method nonces
+* Add test `AuthenticationId`s
+* Add `three_d_secure_authentication_id` to `three_d_secure_info`
+* Add `three_d_secure_authentication_id` support for transaction sale
+* Breaking Changes
+  * Require Python 3.5+
+  * Remove deprecated Transparent Redirect
+  * Remove deprecated iDeal payment method
+  * Apple Pay register_domains returns an ApplePayOptions object
+  * Remove `unrecognized` status from Transaction, Subscription, and CreditCardVerification
+  * Remove `GrantedPaymentInstrumentUpdate` kind from Webhook
+  * Remove Coinbase references
+  * Add GatewayTimeoutError, RequestTimeoutError exceptions
+  * Rename DownForMaintenanceError exception to ServiceUnavailableError
+  * Transaction `line_items` only returns the line items for a transaction response object. Use TransactionLineItem `find_all` to search all line items on a transaction, given a transaction_id
+  * Upgrade API version to retrieve declined refund transactions
+  * Remove all deprecated parameters, errors, and methods
+
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
 * Fix issue where managing Apple Pay domains would fail in Python 3.8+
 * Add level 2 processing options `purchase_order_number`, `tax_amount`, and `tax_exempt` to `Transaction.submit_for_settlement`
 * Add level 3 processing options `discount_amount`, `shipping_amount`, `ships_from_postal_code`, `line_items` to `Transaction.submit_for_settlement`
-
 
 ## 3.58.0
 * Add support for managing Apple Pay domains (thanks @ethier #117)

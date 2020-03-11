@@ -1,9 +1,6 @@
 from tests.test_helper import *
 from braintree.apple_pay_gateway import ApplePayGateway
-if sys.version_info[0] == 2:
-    from mock import MagicMock
-else:
-    from unittest.mock import MagicMock
+from unittest.mock import MagicMock
 
 class TestApplePayGateway(unittest.TestCase):
     @staticmethod

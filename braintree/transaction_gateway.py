@@ -4,9 +4,8 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
-from braintree.transparent_redirect import TransparentRedirect
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.exceptions.down_for_maintenance_error import DownForMaintenanceError
+from braintree.exceptions.request_timeout_error import RequestTimeoutError
 
 class TransactionGateway(object):
     def __init__(self, gateway):
@@ -23,10 +22,6 @@ class TransactionGateway(object):
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-
-    def confirm_transparent_redirect(self, query_string):
-        id = self.gateway.transparent_redirect._parse_and_validate_query_string(query_string)["id"][0]
-        return self._post("/transactions/all/confirm_transparent_redirect_request", {"id": id})
 
     def create(self, params):
         Resource.verify_keys(params, Transaction.create_signature())
@@ -85,7 +80,7 @@ class TransactionGateway(object):
         if "search_results" in response:
             return ResourceCollection(query, response, self.__fetch)
         else:
-            raise DownForMaintenanceError("search timeout")
+            raise RequestTimeoutError("search timeout")
 
     def release_from_escrow(self, transaction_id):
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/release_from_escrow", {})
@@ -125,25 +120,6 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def tr_data_for_credit(self, tr_data, redirect_url):
-        if "transaction" not in tr_data:
-            tr_data["transaction"] = {}
-        tr_data["transaction"]["type"] = Transaction.Type.Credit
-        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
-        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
-
-    def tr_data_for_sale(self, tr_data, redirect_url):
-        if "transaction" not in tr_data:
-            tr_data["transaction"] = {}
-        tr_data["transaction"]["type"] = Transaction.Type.Sale
-        Resource.verify_keys(tr_data, [{"transaction": Transaction.create_signature()}])
-        tr_data["kind"] = TransparentRedirect.Kind.CreateTransaction
-        return self.gateway.transparent_redirect.tr_data(tr_data, redirect_url)
-
-    def transparent_redirect_create_url(self):
-        return self.config.base_url() + self.config.base_merchant_path() + "/transactions/all/create_via_transparent_redirect_request"
-
     def void(self, transaction_id):
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/void")
         if "transaction" in response:
@@ -158,7 +134,7 @@ class TransactionGateway(object):
         if "credit_card_transactions" in response:
             return [Transaction(self.gateway, item) for item in ResourceCollection._extract_as_array(response["credit_card_transactions"], "transaction")]
         else:
-            raise DownForMaintenanceError("search timeout")
+            raise RequestTimeoutError("search timeout")
 
     def __criteria(self, query):
         criteria = {}

@@ -1,9 +1,6 @@
 from tests.test_helper import *
 from braintree.payment_method_parser import parse_payment_method
-if sys.version_info[0] == 2:
-    from mock import MagicMock
-else:
-    from unittest.mock import MagicMock
+from unittest.mock import MagicMock
 
 class TestPaymentMethodParser(unittest.TestCase):
     def test_parse_response_returns_a_credit_card(self):
