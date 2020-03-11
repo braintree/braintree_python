@@ -1,5 +1,6 @@
 ## unreleased
 * Split development and deployments requirements files out
+* Add `Authentication Insight` to payment method nonce create
 * Add ThreeDSecure test payment method nonces
 * Add test `AuthenticationId`s
 * Breaking Changes
