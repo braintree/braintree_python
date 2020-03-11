@@ -1574,7 +1574,7 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(1, collection.maximum_size)
         self.assertEqual(transaction.id, collection.first.id)
 
-    @raises(DownForMaintenanceError)
+    @raises(RequestTimeoutError)
     def test_search_handles_a_search_timeout(self):
         Transaction.search([
             TransactionSearch.amount.between("-1100", "1600")

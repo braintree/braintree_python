@@ -65,8 +65,6 @@ class PaymentMethod(Resource):
             "number",
             "payment_method_nonce",
             "paypal_refresh_token",
-            # NEXT_MAJOR_VERSION remove this parameter as it's been ignored in the gateway
-            "paypal_vault_without_upgrade",
             "token",
             {
                 "billing_address": Address.create_signature()

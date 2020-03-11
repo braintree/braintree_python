@@ -3074,115 +3074,6 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("billing").on("country_name")[0].code
         )
 
-    def test_sale_from_transparent_redirect_with_successful_result(self):
-        tr_data = {
-            "transaction": {
-                "amount": TransactionAmounts.Authorize,
-            }
-        }
-        post_params = {
-            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
-            "transaction[credit_card][number]": "4111111111111111",
-            "transaction[credit_card][expiration_date]": "05/2010",
-        }
-
-        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
-        result = Transaction.confirm_transparent_redirect(query_string)
-        self.assertTrue(result.is_success)
-
-        transaction = result.transaction
-        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
-        self.assertEqual(Transaction.Type.Sale, transaction.type)
-        self.assertEqual("411111", transaction.credit_card_details.bin)
-        self.assertEqual("1111", transaction.credit_card_details.last_4)
-        self.assertEqual("05/2010", transaction.credit_card_details.expiration_date)
-
-    def test_sale_from_transparent_redirect_with_error_result(self):
-        tr_data = {
-            "transaction": {
-                "amount": TransactionAmounts.Authorize,
-            }
-        }
-        post_params = {
-            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
-            "transaction[credit_card][number]": "booya",
-            "transaction[credit_card][expiration_date]": "05/2010",
-        }
-
-        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
-        result = Transaction.confirm_transparent_redirect(query_string)
-        self.assertFalse(result.is_success)
-        self.assertTrue(len(result.errors.for_object("transaction").for_object("credit_card").on("number")) > 0)
-
-    def test_sale_from_transparent_redirect_with_403_and_message(self):
-        tr_data = {
-            "transaction": {
-                "amount": TransactionAmounts.Authorize
-            }
-        }
-        post_params = {
-            "tr_data": Transaction.tr_data_for_sale(tr_data, "http://example.com/path"),
-            "transaction[credit_card][number]": "booya",
-            "transaction[credit_card][expiration_date]": "05/2010",
-            "transaction[bad]": "value"
-        }
-
-        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
-        try:
-            Transaction.confirm_transparent_redirect(query_string)
-            self.fail()
-        except AuthorizationError as e:
-            self.assertEqual("Invalid params: transaction[bad]", str(e))
-
-    def test_credit_from_transparent_redirect_with_successful_result(self):
-        tr_data = {
-            "transaction": {
-                "amount": TransactionAmounts.Authorize,
-            }
-        }
-        post_params = {
-            "tr_data": Transaction.tr_data_for_credit(tr_data, "http://example.com/path"),
-            "transaction[credit_card][number]": "4111111111111111",
-            "transaction[credit_card][expiration_date]": "05/2010",
-            "transaction[billing][country_code_alpha2]": "US",
-            "transaction[billing][country_code_alpha3]": "USA",
-            "transaction[billing][country_code_numeric]": "840",
-            "transaction[billing][country_name]": "United States of America"
-        }
-
-        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
-        result = Transaction.confirm_transparent_redirect(query_string)
-        self.assertTrue(result.is_success)
-
-        transaction = result.transaction
-        self.assertEqual(Decimal(TransactionAmounts.Authorize), transaction.amount)
-        self.assertEqual(Transaction.Type.Credit, transaction.type)
-        self.assertEqual("411111", transaction.credit_card_details.bin)
-        self.assertEqual("1111", transaction.credit_card_details.last_4)
-        self.assertEqual("05/2010", transaction.credit_card_details.expiration_date)
-
-        self.assertEqual("US", transaction.billing_details.country_code_alpha2)
-        self.assertEqual("USA", transaction.billing_details.country_code_alpha3)
-        self.assertEqual("840", transaction.billing_details.country_code_numeric)
-        self.assertEqual("United States of America", transaction.billing_details.country_name)
-
-    def test_credit_from_transparent_redirect_with_error_result(self):
-        tr_data = {
-            "transaction": {
-                "amount": TransactionAmounts.Authorize,
-            }
-        }
-        post_params = {
-            "tr_data": Transaction.tr_data_for_credit(tr_data, "http://example.com/path"),
-            "transaction[credit_card][number]": "booya",
-            "transaction[credit_card][expiration_date]": "05/2010",
-        }
-
-        query_string = TestHelper.simulate_tr_form_post(post_params, Transaction.transparent_redirect_create_url())
-        result = Transaction.confirm_transparent_redirect(query_string)
-        self.assertFalse(result.is_success)
-        self.assertTrue(len(result.errors.for_object("transaction").for_object("credit_card").on("number")) > 0)
-
     def test_submit_for_settlement_without_amount(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -4251,6 +4142,172 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureTransactionDataDoesntMatchVerify,
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
+        )
+
+    def test_sale_with_three_d_secure_authentication_id_with_vaulted_token(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": "4111111111111111",
+            "expiration_date": "12/2020",
+        })
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
+        payment_method_token = credit_card_result.credit_card.token
+
+        three_d_secure_authentication_id = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "12",
+            "expiration_year": "2020",
+        })
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": payment_method_token,
+            "three_d_secure_authentication_id": three_d_secure_authentication_id
+        })
+
+        self.assertTrue(result.is_success)
+
+
+    def test_sale_with_three_d_secure_authentication_id_with_nonce(self):
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
+        credit_card = {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "12",
+                "expiration_year": "2020"
+            }
+        }
+        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+
+        found_nonce = PaymentMethodNonce.find(nonce)
+        three_d_secure_info = found_nonce.three_d_secure_info
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": nonce,
+            "three_d_secure_authentication_id": three_d_secure_info.three_d_secure_authentication_id
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_sale_returns_error_with_none_three_d_secure_authentication_id(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_authentication_id": None
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureAuthenticationIdIsInvalid,
+            result.errors.for_object("transaction").on("three_d_secure_authentication_id")[0].code
+        )
+
+    def test_sale_returns_error_with_mismatched_payment_data_with_three_d_secure_authentication_id(self):
+        three_d_secure_authentication_id = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+        })
+
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_authentication_id": three_d_secure_authentication_id
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureTransactionPaymentMethodDoesntMatchThreeDSecureAuthenticationPaymentMethod,
+            result.errors.for_object("transaction").on("three_d_secure_authentication_id")[0].code
+        )
+
+    def test_sale_returns_error_with_mismatched_3ds_data_with_three_d_secure_authentication_id(self):
+        three_d_secure_authentication_id = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "12",
+            "expiration_year": "2020",
+        })
+
+        config = Configuration(
+            environment=Environment.Development,
+            merchant_id="integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key"
+        )
+        gateway = BraintreeGateway(config)
+        credit_card = {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "12",
+                "expiration_year": "2020"
+            }
+        }
+        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2009"
+            },
+            "payment_method_nonce": nonce,
+            "three_d_secure_authentication_id": three_d_secure_authentication_id
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureAuthenticationIdDoesntMatchNonceThreeDSecureAuthentication,
+            result.errors.for_object("transaction").on("three_d_secure_authentication_id")[0].code
+        )
+
+    def test_transaction_with_both_three_d_secure_authentication_id_and_three_d_secure_pass_thru(self):
+        three_d_secure_authentication_id = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2009",
+        })
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "three_d_secure_authentication_id": three_d_secure_authentication_id,
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            }
+        })
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ThreeDSecureAuthenticationIdWithThreeDSecurePassThruIsInvalid,
+            result.errors.for_object("transaction").on("three_d_secure_authentication_id")[0].code
         )
 
     def test_transaction_with_three_d_secure_pass_thru(self):

@@ -187,7 +187,7 @@ class TestDispute(unittest.TestCase):
         Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "a" })
 
     @raises_with_regexp(ValueError, "sequence_number must be an integer")
-    def test_add_text_evidence_sequence_number_not_number_evidence_raises_value_exception(self):
+    def test_add_text_evidence_sequence_number_number_and_letter_evidence_raises_value_exception(self):
         Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "1abc" })
 
     @raises_with_regexp(ValueError, "category must be a string")

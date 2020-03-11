@@ -10,7 +10,6 @@ from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.us_bank_account import UsBankAccount
-from braintree.coinbase_account import CoinbaseAccount
 from braintree.venmo_account import VenmoAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
@@ -19,7 +18,6 @@ from braintree.configuration import Configuration
 from braintree.ids_search import IdsSearch
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
-from braintree.transparent_redirect import TransparentRedirect
 from braintree.samsung_pay_card import SamsungPayCard
 
 class Customer(Resource):
@@ -95,18 +93,6 @@ class Customer(Resource):
         return Configuration.gateway().customer.all()
 
     @staticmethod
-    def confirm_transparent_redirect(query_string):
-        """
-        Confirms a transparent redirect request.  It expects the query string from the
-        redirect request.  The query string should _not_ include the leading "?" character. ::
-
-            result = braintree.Customer.confirm_transparent_redirect_request("foo=bar&id=12345")
-        """
-
-        warnings.warn("Please use TransparentRedirect.confirm instead", DeprecationWarning)
-        return Configuration.gateway().customer.confirm_transparent_redirect(query_string)
-
-    @staticmethod
     def create(params={}):
         """
         Create a Customer
@@ -150,32 +136,6 @@ class Customer(Resource):
     @staticmethod
     def search(*query):
         return Configuration.gateway().customer.search(*query)
-
-    @staticmethod
-    def tr_data_for_create(tr_data, redirect_url):
-        """ Builds tr_data for creating a Customer. """
-
-        return Configuration.gateway().customer.tr_data_for_create(tr_data, redirect_url)
-
-    @staticmethod
-    def tr_data_for_update(tr_data, redirect_url):
-        """ Builds tr_data for updating a Customer. """
-
-        return Configuration.gateway().customer.tr_data_for_update(tr_data, redirect_url)
-
-    @staticmethod
-    def transparent_redirect_create_url():
-        """ Returns the url to use for creating Customers through transparent redirect. """
-
-        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.gateway().customer.transparent_redirect_create_url()
-
-    @staticmethod
-    def transparent_redirect_update_url():
-        """ Returns the url to use for updating Customers through transparent redirect. """
-
-        warnings.warn("Please use TransparentRedirect.url instead", DeprecationWarning)
-        return Configuration.gateway().customer.transparent_redirect_update_url()
 
     @staticmethod
     def update(customer_id, params={}):
@@ -254,10 +214,6 @@ class Customer(Resource):
         if "europe_bank_accounts" in attributes:
             self.europe_bank_accounts = [EuropeBankAccount(gateway, europe_bank_account) for europe_bank_account in self.europe_bank_accounts]
             self.payment_methods += self.europe_bank_accounts
-
-        if "coinbase_accounts" in attributes:
-            self.coinbase_accounts = [CoinbaseAccount(gateway, coinbase_account) for coinbase_account in self.coinbase_accounts]
-            self.payment_methods += self.coinbase_accounts
 
         if "venmo_accounts" in attributes:
             self.venmo_accounts = [VenmoAccount(gateway, venmo_account) for venmo_account in self.venmo_accounts]
