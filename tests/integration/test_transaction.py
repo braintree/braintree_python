@@ -3554,12 +3554,12 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
 
         result = Transaction.refund(transaction.id, Decimal("2046.00"))
+        refund = result.transaction
 
         self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.RefundAuthSoftDeclined,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
+        self.assertEqual(Transaction.Status.ProcessorDeclined, refund.status)
+        self.assertEqual(ProcessorResponseTypes.SoftDeclined, refund.processor_response_type)
+        self.assertEqual("2046 : Declined", refund.additional_processor_response)
 
     def test_refund_returns_an_error_if_hard_declined(self):
         transaction = Transaction.sale({
@@ -3575,12 +3575,12 @@ class TestTransaction(unittest.TestCase):
         TestHelper.settle_transaction(transaction.id)
 
         result = Transaction.refund(transaction.id, Decimal("2009.00"))
+        refund = result.transaction
 
         self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.RefundAuthHardDeclined,
-            result.errors.for_object("transaction").on("base")[0].code
-        )
+        self.assertEqual(Transaction.Status.ProcessorDeclined, refund.status)
+        self.assertEqual(ProcessorResponseTypes.HardDeclined, refund.processor_response_type)
+        self.assertEqual("2009 : No Such Issuer", refund.additional_processor_response)
 
     @staticmethod
     def __create_transaction_to_refund():
