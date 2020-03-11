@@ -1,5 +1,7 @@
 ## unreleased
 * Split development and deployments requirements files out
+* Add ThreeDSecure test payment method nonces
+* Add test `AuthenticationId`s
 * Breaking Changes
   * Require Python 3.5+
   * Remove deprecated Transparent Redirect
