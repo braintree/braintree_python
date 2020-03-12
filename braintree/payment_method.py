@@ -52,6 +52,14 @@ class PaymentMethod(Resource):
             },
         ]
 
+        three_d_secure_pass_thru = [
+            "cavv",
+            "ds_transaction_id",
+            "eci_flag",
+            "three_d_secure_version",
+            "xid"
+        ]
+
         signature = [
             "billing_address_id",
             "cardholder_name",
@@ -71,12 +79,24 @@ class PaymentMethod(Resource):
             },
             {
                 "options": options
+            },
+            {
+                "three_d_secure_pass_thru": three_d_secure_pass_thru
             }
+
         ]
         return signature
 
     @staticmethod
     def update_signature():
+        three_d_secure_pass_thru = [
+            "cavv",
+            "ds_transaction_id",
+            "eci_flag",
+            "three_d_secure_version",
+            "xid"
+        ]
+
         signature = [
             "billing_address_id",
             "cardholder_name",
@@ -110,6 +130,9 @@ class PaymentMethod(Resource):
             },
             {
                 "billing_address": Address.update_signature() + [{"options": ["update_existing"]}]
+            },
+            {
+                "three_d_secure_pass_thru": three_d_secure_pass_thru
             }
         ]
         return signature

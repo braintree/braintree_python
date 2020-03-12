@@ -242,6 +242,40 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("05", three_d_secure_info.eci_flag)
         self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
 
+    def test_create_with_three_d_secure_pass_thru(self):
+        result = Customer.create({
+            "payment_method_nonce": Nonces.ThreeDSecureVisaFullAuthentication,
+            "credit_card": {
+                "three_d_secure_pass_thru": {
+                    "eci_flag": "05",
+                    "cavv": "some-cavv",
+                    "xid": "some-xid"
+                    },
+                "options": {
+                    "verify_card": True,
+                    },
+            },
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_create_with_three_d_secure_pass_thru_without_eci_flag(self):
+        result = Customer.create({
+            "payment_method_nonce": Nonces.ThreeDSecureVisaFullAuthentication,
+            "credit_card": {
+                "three_d_secure_pass_thru": {
+                    "cavv": "some-cavv",
+                    "xid": "some-xid"
+                    },
+                "options": {
+                    "verify_card": True,
+                    },
+            },
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual("EciFlag is required.", result.message)
+
     def test_create_with_android_pay_proxy_card_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.AndroidPayCardDiscover})
         self.assertTrue(result.is_success)

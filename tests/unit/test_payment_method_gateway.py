@@ -64,7 +64,16 @@ class TestPaymentMethodGateway(unittest.TestCase):
                         ]
                     },
                 ]
-            }
+            },
+            {
+                "three_d_secure_pass_thru": [
+                    "cavv",
+                    "ds_transaction_id",
+                    "eci_flag",
+                    "three_d_secure_version",
+                    "xid"
+                    ]
+            },
         ]
 
         self.assertEqual(expected_signature, actual_signature)
@@ -105,7 +114,16 @@ class TestPaymentMethodGateway(unittest.TestCase):
             },
             {
                 "billing_address" : Address.update_signature() + [{"options": ["update_existing"]}]
-            }
+            },
+            {
+                "three_d_secure_pass_thru": [
+                    "cavv",
+                    "ds_transaction_id",
+                    "eci_flag",
+                    "three_d_secure_version",
+                    "xid"
+                    ]
+            },
         ]
 
         self.assertEqual(expected_signature, actual_signature)

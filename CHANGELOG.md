@@ -1,5 +1,7 @@
 ## unreleased
 * Add `DisputeAccepted`, `DisputeDisputed`, and `DisputeExpired` webhook constants
+* Add `three_d_secure_pass_thru` to `CreditCard.create`, `CreditCard.update`, `PaymentMethod.create`, `PaymentMethod.update`, `Customer.create`, and `Customer.update`. 
+* Add `Verification` validation errors for 3D Secure
 
 ## 4.0.0
 * Split development and deployments requirements files out

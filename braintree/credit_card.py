@@ -226,6 +226,14 @@ class CreditCard(Resource):
             }
         ]
 
+        three_d_secure_pass_thru = [
+            "cavv",
+            "ds_transaction_id",
+            "eci_flag",
+            "three_d_secure_version",
+            "xid"
+        ]
+
         signature = [
             "billing_address_id",
             "cardholder_name",
@@ -245,6 +253,9 @@ class CreditCard(Resource):
             },
             {
                 "options": options
+            },
+            {
+                "three_d_secure_pass_thru": three_d_secure_pass_thru
             }
         ]
 
@@ -286,4 +297,3 @@ class CreditCard(Resource):
         Returns the masked number of the CreditCard.
         """
         return self.bin + "******" + self.last_4
-

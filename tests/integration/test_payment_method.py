@@ -29,6 +29,39 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual("05", three_d_secure_info.eci_flag)
         self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
 
+    def test_create_with_three_d_secure_pass_thru(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.Transactable,
+            "three_d_secure_pass_thru": {
+                "eci_flag": "05",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            },
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_create_with_three_d_secure_pass_thru_without_eci_flag(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.Transactable,
+            "three_d_secure_pass_thru": {
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            },
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual("EciFlag is required.", result.message)
     def test_create_with_paypal_future_payments_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
