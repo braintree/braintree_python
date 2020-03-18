@@ -67,6 +67,12 @@ class WebhookTestingGateway(object):
             return self.__dispute_lost_sample_xml(id)
         elif kind == WebhookNotification.Kind.DisputeWon:
             return self.__dispute_won_sample_xml(id)
+        elif kind == WebhookNotification.Kind.DisputeAccepted:
+            return self.__dispute_accepted_sample_xml(id)
+        elif kind == WebhookNotification.Kind.DisputeDisputed:
+            return self.__dispute_disputed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.DisputeExpired:
+            return self.__dispute_expired_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
             return self.__subscription_charged_successfully_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedUnsuccessfully:
@@ -209,6 +215,24 @@ class WebhookTestingGateway(object):
         else:
             return self.__new_dispute_won_sample_xml(id)
 
+    def __dispute_accepted_sample_xml(self, id):
+        if id == "legacy_dispute_id":
+            return self.__old_dispute_accepted_sample_xml(id)
+        else:
+            return self.__new_dispute_accepted_sample_xml(id)
+
+    def __dispute_disputed_sample_xml(self, id):
+        if id == "legacy_dispute_id":
+            return self.__old_dispute_disputed_sample_xml(id)
+        else:
+            return self.__new_dispute_disputed_sample_xml(id)
+
+    def __dispute_expired_sample_xml(self, id):
+        if id == "legacy_dispute_id":
+            return self.__old_dispute_expired_sample_xml(id)
+        else:
+            return self.__new_dispute_expired_sample_xml(id)
+
     def __old_dispute_opened_sample_xml(self, id):
         return """
             <dispute>
@@ -264,6 +288,63 @@ class WebhookTestingGateway(object):
               </transaction>
               <date-opened type="date">2014-03-28</date-opened>
               <date-won type="date">2014-09-01</date-won>
+            </dispute>
+        """ % (id, id)
+
+    def __old_dispute_accepted_sample_xml(self, id):
+        return """
+            <dispute>
+              <amount>250.00</amount>
+              <currency-iso-code>USD</currency-iso-code>
+              <received-date type="date">2014-03-01</received-date>
+              <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
+              <status>accepted</status>
+              <reason>fraud</reason>
+              <id>%s</id>
+              <transaction>
+                <id>%s</id>
+                <amount>250.00</amount>
+              </transaction>
+              <date-opened type="date">2014-03-28</date-opened>
+            </dispute>
+        """ % (id, id)
+
+    def __old_dispute_disputed_sample_xml(self, id):
+        return """
+            <dispute>
+              <amount>250.00</amount>
+              <currency-iso-code>USD</currency-iso-code>
+              <received-date type="date">2014-03-01</received-date>
+              <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
+              <status>disputed</status>
+              <reason>fraud</reason>
+              <id>%s</id>
+              <transaction>
+                <id>%s</id>
+                <amount>250.00</amount>
+              </transaction>
+              <date-opened type="date">2014-03-28</date-opened>
+            </dispute>
+        """ % (id, id)
+
+    def __old_dispute_expired_sample_xml(self, id):
+        return """
+            <dispute>
+              <amount>250.00</amount>
+              <currency-iso-code>USD</currency-iso-code>
+              <received-date type="date">2014-03-01</received-date>
+              <reply-by-date type="date">2014-03-21</reply-by-date>
+              <kind>chargeback</kind>
+              <status>expired</status>
+              <reason>fraud</reason>
+              <id>%s</id>
+              <transaction>
+                <id>%s</id>
+                <amount>250.00</amount>
+              </transaction>
+              <date-opened type="date">2014-03-28</date-opened>
             </dispute>
         """ % (id, id)
 
@@ -426,6 +507,141 @@ class WebhookTestingGateway(object):
           </transaction>
           <date-opened type=\"date\">2014-03-28</date-opened>
           <date-won type=\"date\">2014-09-01</date-won>
+        </dispute>
+        """ % (id, id)
+
+    def __new_dispute_accepted_sample_xml(self, id):
+        return """
+        <dispute>
+          <id>%s</id>
+          <amount>100.00</amount>
+          <amount-disputed>100.00</amount-disputed>
+          <amount-won>95.00</amount-won>
+          <case-number>CASE-12345</case-number>
+          <created-at type="datetime">2017-06-16T20:44:41Z</created-at>
+          <currency-iso-code>USD</currency-iso-code>
+          <forwarded-comments nil="true"/>
+          <kind>chargeback</kind>
+          <merchant-account-id>ytnlulaloidoqwvzxjrdqputg</merchant-account-id>
+          <reason>fraud</reason>
+          <reason-code nil="true"/>
+          <reason-description nil="true"/>
+          <received-date type="date">2016-02-15</received-date>
+          <reference-number>REF-9876</reference-number>
+          <reply-by-date type="date">2016-02-22</reply-by-date>
+          <status>accepted</status>
+          <updated-at type="datetime">2017-06-16T20:44:41Z</updated-at>
+          <original-dispute-id>9qde5qgp</original-dispute-id>
+          <status-history type="array">
+            <status-history>
+              <status>open</status>
+              <timestamp type="datetime">2017-06-15T20:44:41Z</timestamp>
+            </status-history>
+            <status-history>
+              <status>accepted</status>
+              <timestamp type="datetime">2017-06-16T20:44:41Z</timestamp>
+            </status-history>
+          </status-history>
+          <evidence type="array"/>
+          <transaction>
+            <id>%s</id>
+            <amount>100.00</amount>
+            <created-at>2017-06-21T20:44:41Z</created-at>
+            <order-id nil="true"/>
+            <purchase-order-number nil="true"/>
+            <payment-instrument-subtype>Visa</payment-instrument-subtype>
+          </transaction>
+          <date-opened type=\"date\">2014-03-28</date-opened>
+        </dispute>
+        """ % (id, id)
+
+    def __new_dispute_disputed_sample_xml(self, id):
+        return """
+        <dispute>
+          <id>%s</id>
+          <amount>100.00</amount>
+          <amount-disputed>100.00</amount-disputed>
+          <amount-won>95.00</amount-won>
+          <case-number>CASE-12345</case-number>
+          <created-at type="datetime">2017-06-16T20:44:41Z</created-at>
+          <currency-iso-code>USD</currency-iso-code>
+          <forwarded-comments nil="true"/>
+          <kind>chargeback</kind>
+          <merchant-account-id>ytnlulaloidoqwvzxjrdqputg</merchant-account-id>
+          <reason>fraud</reason>
+          <reason-code nil="true"/>
+          <reason-description nil="true"/>
+          <received-date type="date">2016-02-15</received-date>
+          <reference-number>REF-9876</reference-number>
+          <reply-by-date type="date">2016-02-22</reply-by-date>
+          <status>disputed</status>
+          <updated-at type="datetime">2017-06-16T20:44:41Z</updated-at>
+          <original-dispute-id>9qde5qgp</original-dispute-id>
+          <status-history type="array">
+            <status-history>
+              <status>open</status>
+              <timestamp type="datetime">2017-06-15T20:44:41Z</timestamp>
+            </status-history>
+            <status-history>
+              <status>disputed</status>
+              <timestamp type="datetime">2017-06-16T20:44:41Z</timestamp>
+            </status-history>
+          </status-history>
+          <evidence type="array"/>
+          <transaction>
+            <id>%s</id>
+            <amount>100.00</amount>
+            <created-at>2017-06-21T20:44:41Z</created-at>
+            <order-id nil="true"/>
+            <purchase-order-number nil="true"/>
+            <payment-instrument-subtype>Visa</payment-instrument-subtype>
+          </transaction>
+          <date-opened type=\"date\">2014-03-28</date-opened>
+        </dispute>
+        """ % (id, id)
+
+    def __new_dispute_expired_sample_xml(self, id):
+        return """
+        <dispute>
+          <id>%s</id>
+          <amount>100.00</amount>
+          <amount-disputed>100.00</amount-disputed>
+          <amount-won>95.00</amount-won>
+          <case-number>CASE-12345</case-number>
+          <created-at type="datetime">2017-06-16T20:44:41Z</created-at>
+          <currency-iso-code>USD</currency-iso-code>
+          <forwarded-comments nil="true"/>
+          <kind>chargeback</kind>
+          <merchant-account-id>ytnlulaloidoqwvzxjrdqputg</merchant-account-id>
+          <reason>fraud</reason>
+          <reason-code nil="true"/>
+          <reason-description nil="true"/>
+          <received-date type="date">2016-02-15</received-date>
+          <reference-number>REF-9876</reference-number>
+          <reply-by-date type="date">2016-02-22</reply-by-date>
+          <status>expired</status>
+          <updated-at type="datetime">2017-06-16T20:44:41Z</updated-at>
+          <original-dispute-id>9qde5qgp</original-dispute-id>
+          <status-history type="array">
+            <status-history>
+              <status>open</status>
+              <timestamp type="datetime">2017-06-15T20:44:41Z</timestamp>
+            </status-history>
+            <status-history>
+              <status>expired</status>
+              <timestamp type="datetime">2017-06-25T20:44:41Z</timestamp>
+            </status-history>
+          </status-history>
+          <evidence type="array"/>
+          <transaction>
+            <id>%s</id>
+            <amount>100.00</amount>
+            <created-at>2017-06-21T20:44:41Z</created-at>
+            <order-id nil="true"/>
+            <purchase-order-number nil="true"/>
+            <payment-instrument-subtype>Visa</payment-instrument-subtype>
+          </transaction>
+          <date-opened type=\"date\">2014-03-28</date-opened>
         </dispute>
         """ % (id, id)
 

@@ -287,6 +287,45 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
         self.assertEqual(notification.dispute.date_won, date(2014, 9, 1))
 
+    def test_builds_notification_for_old_dispute_accepted(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeAccepted,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeAccepted, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Accepted, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
+    def test_builds_notification_for_old_dispute_disputed(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeDisputed,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeDisputed, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Disputed, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
+    def test_builds_notification_for_old_dispute_expired(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeExpired,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeExpired, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Expired, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
     def test_builds_notification_for_new_dispute_opened(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeOpened,
@@ -329,6 +368,45 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
         self.assertEqual(notification.dispute.date_opened, date(2014, 3, 28))
         self.assertEqual(notification.dispute.date_won, date(2014, 9, 1))
+
+    def test_builds_notification_for_new_dispute_accepted(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeAccepted,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeAccepted, notification.kind)
+        self.assertEqual("my_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Accepted, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
+    def test_builds_notification_for_new_dispute_disputed(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeDisputed,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeDisputed, notification.kind)
+        self.assertEqual("my_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Disputed, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
+    def test_builds_notification_for_new_dispute_expired(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeExpired,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeExpired, notification.kind)
+        self.assertEqual("my_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.Expired, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
 
     def test_builds_notification_for_partner_merchant_connected(self):
         sample_notification = WebhookTesting.sample_notification(
