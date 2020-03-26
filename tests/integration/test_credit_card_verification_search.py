@@ -29,6 +29,29 @@ class TestVerificationSearch(unittest.TestCase):
         self.assertEqual(1, found_verifications.maximum_size)
         self.assertEqual(verification_id, found_verifications.first.id)
 
+    def test_search_on_payment_method_token(self):
+        customer_id = "%s" % random.randint(1, 10000)
+        payment_method_token = customer_id + "token"
+
+        result = Customer.create({
+            "id": customer_id,
+            "credit_card": {
+                "token": payment_method_token,
+                "expiration_date": "10/2018",
+                "number": CreditCardNumbers.Visa,
+                "options": {
+                    "verify_card": True
+                }
+            }
+        })
+
+        found_verifications = CreditCardVerification.search(
+            CreditCardVerificationSearch.payment_method_token == payment_method_token
+        )
+
+        self.assertEqual(1, found_verifications.maximum_size)
+        self.assertEqual(payment_method_token, found_verifications.first.credit_card["token"])
+
     def test_all_text_fields(self):
         email = "mark.a@example.com"
         cardholder_name = "Tom %s" % random.randint(1, 10000)
