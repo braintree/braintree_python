@@ -70,6 +70,24 @@ class TestDocumentUpload(unittest.TestCase):
         finally:
             os.remove(file_path)
 
+    def test_create_returns_error_when_file_is_empty(self):
+        file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/empty_file.png")
+        try:
+            f = open(file_path, 'w+')
+            os.utime(f, None)
+            f.close()
+
+            empty_file = open(file_path, 'rb')
+
+            result = DocumentUpload.create({
+                "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+                "file": empty_file
+            })
+
+            self.assertEqual(result.errors.for_object("document_upload")[0].code, ErrorCodes.DocumentUpload.FileIsEmpty)
+        finally:
+            os.remove(file_path)
+
     def test_create_returns_error_with_too_long_file(self):
         file_path = os.path.join(os.path.dirname(__file__), "..", "fixtures/too_long.pdf")
         too_long_pdf = open(file_path, "rb")
