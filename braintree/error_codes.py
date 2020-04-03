@@ -204,7 +204,6 @@ class ErrorCodes(object):
         FileTypeIsInvalid = "84903"
         FileIsMalformedOrEncrypted = "84904"
         FileIsTooLong = "84905"
-        FileIsEmpty = "84906"
 
     class Merchant(object):
         CountryCannotBeBlank = "83603"
