@@ -35,6 +35,7 @@ class TestPaymentMethod(unittest.TestCase):
             "customer_id": customer_id,
             "payment_method_nonce": Nonces.Transactable,
             "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.0",
                 "eci_flag": "05",
                 "cavv": "some-cavv",
                 "xid": "some-xid"
@@ -52,6 +53,7 @@ class TestPaymentMethod(unittest.TestCase):
             "customer_id": customer_id,
             "payment_method_nonce": Nonces.Transactable,
             "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.0",
                 "cavv": "some-cavv",
                 "xid": "some-xid"
             },

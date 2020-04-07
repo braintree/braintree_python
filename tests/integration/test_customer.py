@@ -247,6 +247,7 @@ class TestCustomer(unittest.TestCase):
             "payment_method_nonce": Nonces.ThreeDSecureVisaFullAuthentication,
             "credit_card": {
                 "three_d_secure_pass_thru": {
+                    "three_d_secure_version": "1.1.1",
                     "eci_flag": "05",
                     "cavv": "some-cavv",
                     "xid": "some-xid"
@@ -264,6 +265,7 @@ class TestCustomer(unittest.TestCase):
             "payment_method_nonce": Nonces.ThreeDSecureVisaFullAuthentication,
             "credit_card": {
                 "three_d_secure_pass_thru": {
+                    "three_d_secure_version": "1.1.1",
                     "cavv": "some-cavv",
                     "xid": "some-xid"
                     },

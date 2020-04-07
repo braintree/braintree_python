@@ -63,8 +63,12 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("sca_required", auth_insight_result["sca_indicator"])
 
     def test_create_nonce_with_auth_insight_sca_indicator_sca_optional(self):
-        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token, self.amount_threshold_for_rbi)
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token, self.amount_threshold_for_rbi, False, None)
         self.assertEqual("sca_optional", auth_insight_result["sca_indicator"])
+
+    def test_create_nonce_with_auth_insight_sca_indicator_sca_required_with_recurring_customer_consent_and_max_amount(self):
+        auth_insight_result = self._request_authentication_insights(self.indian_merchant_token, self.indian_payment_token, self.amount_threshold_for_rbi, True, 1000)
+        self.assertEqual("sca_required", auth_insight_result["sca_indicator"])
 
     def test_create_raises_not_found_when_404(self):
         self.assertRaises(NotFoundError, PaymentMethodNonce.create, "not-a-token")
@@ -203,11 +207,15 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual(CreditCard.Prepaid.Unknown, bin_data.prepaid)
         self.assertEqual(CreditCard.ProductId.Unknown, bin_data.product_id)
 
-    def _request_authentication_insights(self, merchant_account_id, payment_method_token, amount = None):
+    def _request_authentication_insights(self, merchant_account_id, payment_method_token, amount = None, recurring_customer_consent = None, recurring_max_amount = None):
         nonce_request = {
             "merchant_account_id": merchant_account_id,
             "authentication_insight": True,
-            "amount": amount
+            "authentication_insight_options": {
+                "amount": amount,
+                "recurring_customer_consent": recurring_customer_consent,
+                "recurring_max_amount": recurring_max_amount,
+             }
         }
         result = PaymentMethodNonce.create(payment_method_token, {"payment_method_nonce": nonce_request})
         return result.payment_method_nonce.authentication_insight

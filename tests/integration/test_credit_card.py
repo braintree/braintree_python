@@ -36,6 +36,7 @@ class TestCreditCard(unittest.TestCase):
             "number": "4111111111111111",
             "expiration_date": "05/2009",
             "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.1",
                 "eci_flag": "05",
                 "cavv": "some-cavv",
                 "xid": "some-xid"
@@ -54,6 +55,7 @@ class TestCreditCard(unittest.TestCase):
             "number": "4111111111111111",
             "expiration_date": "05/2009",
             "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.1",
                 "cavv": "some-cavv",
                 "xid": "some-xid"
             },
