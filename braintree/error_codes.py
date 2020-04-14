@@ -349,6 +349,7 @@ class ErrorCodes(object):
             EciFlagIsRequired = "942113"
             EciFlagIsInvalid = "942114"
             CavvIsRequired = "942116"
+            ThreeDSecureVersionIsRequired = "942117"
             ThreeDSecureVersionIsInvalid = "942119"
             AuthenticationResponseIsInvalid = "942120"
             DirectoryResponseIsInvalid = "942121"
