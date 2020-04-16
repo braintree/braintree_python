@@ -64,6 +64,7 @@ class TestPaymentMethod(unittest.TestCase):
 
         self.assertFalse(result.is_success)
         self.assertEqual("EciFlag is required.", result.message)
+
     def test_create_with_paypal_future_payments_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
@@ -897,6 +898,60 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(updated_credit_card.bin == CreditCardNumbers.MasterCard[:6])
         self.assertTrue(updated_credit_card.last_4 == CreditCardNumbers.MasterCard[-4:])
         self.assertTrue(updated_credit_card.expiration_date == "06/2013")
+
+    def test_update_with_three_d_secure_pass_thru(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Original Holder",
+            "customer_id": customer_id,
+            "cvv": "123",
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "cardholder_name": "New Holder",
+            "cvv": "456",
+            "number": CreditCardNumbers.MasterCard,
+            "expiration_date": "06/2013",
+            "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.0",
+                "eci_flag": "05",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            },
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertTrue(update_result.is_success)
+
+    def test_create_with_three_d_secure_pass_thru_without_eci_flag(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "cardholder_name": "Original Holder",
+            "customer_id": customer_id,
+            "cvv": "123",
+            "number": CreditCardNumbers.Visa,
+            "expiration_date": "05/2012"
+        })
+        update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+            "cardholder_name": "New Holder",
+            "cvv": "456",
+            "number": CreditCardNumbers.MasterCard,
+            "expiration_date": "06/2013",
+            "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.0",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            },
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertFalse(update_result.is_success)
+        self.assertEqual("EciFlag is required.", update_result.message)
 
     def test_update_credit_cards_with_account_type_credit(self):
         customer = Customer.create().customer

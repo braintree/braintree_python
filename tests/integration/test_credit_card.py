@@ -569,6 +569,60 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual("06/2010", credit_card.expiration_date)
         self.assertEqual("Jane Jones", credit_card.cardholder_name)
 
+    def test_update_with_three_d_secure_pass_thru(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        result = CreditCard.update(credit_card.token, {
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "123",
+            "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.1",
+                "eci_flag": "05",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            },
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_update_with_three_d_secure_pass_thru_without_eci_flag(self):
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        result = CreditCard.update(credit_card.token, {
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "123",
+            "three_d_secure_pass_thru": {
+                "three_d_secure_version": "1.1.1",
+                "cavv": "some-cavv",
+                "xid": "some-xid"
+            },
+            "options": {
+                "verify_card": "true",
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual("EciFlag is required.", result.message)
+
     def test_update_billing_address_creates_new_by_default(self):
         customer = Customer.create().customer
         initial_credit_card = CreditCard.create({
