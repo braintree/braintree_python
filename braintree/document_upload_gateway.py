@@ -5,12 +5,15 @@ from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.successful_result import SuccessfulResult
 
+
 class DocumentUploadGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
         self.config = gateway.config
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, DocumentUpload.create_signature())
 
         if "file" in params and not hasattr(params["file"], "read"):

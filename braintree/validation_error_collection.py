@@ -1,5 +1,6 @@
 from braintree.validation_error import ValidationError
 
+
 class ValidationErrorCollection(object):
     """
     A class representing a collection of validation errors.
@@ -8,7 +9,9 @@ class ValidationErrorCollection(object):
 
     """
 
-    def __init__(self, data={"errors": []}):
+    def __init__(self, data=None):
+        if data is None:
+            data = {"errors": []}
         self.data = data
 
     @property
@@ -87,7 +90,7 @@ class ValidationErrorCollection(object):
     def __nested_errors(self):
         nested_errors = {}
         for key in self.data:
-            if key == "errors": continue
+            if key == "errors":
+                continue
             nested_errors[key] = ValidationErrorCollection(self.data[key])
         return nested_errors
-

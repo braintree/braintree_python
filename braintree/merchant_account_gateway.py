@@ -7,16 +7,21 @@ from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
 
+
 class MerchantAccountGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
         self.config = gateway.config
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, MerchantAccountGateway._create_signature())
         return self._post("/merchant_accounts/create_via_api", {"merchant_account": params})
 
-    def update(self, merchant_account_id, params={}):
+    def update(self, merchant_account_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, MerchantAccountGateway._update_signature())
         return self._put("/merchant_accounts/%s/update_via_api" % merchant_account_id, {"merchant_account": params})
 
@@ -29,7 +34,9 @@ class MerchantAccountGateway(object):
         except NotFoundError:
             raise NotFoundError("merchant account with id " + repr(merchant_account_id) + " not found")
 
-    def create_for_currency(self, params={}):
+    def create_for_currency(self, params=None):
+        if params is None:
+            params = {}
         return self._post("/merchant_accounts/create_for_currency", {"merchant_account": params})
 
     def all(self):
@@ -42,7 +49,9 @@ class MerchantAccountGateway(object):
         merchant_accounts = [MerchantAccount(self.gateway, merchant_account) for merchant_account in ResourceCollection._extract_as_array(body, "merchant_account")]
         return PaginatedResult(body["total_items"], body["page_size"], merchant_accounts)
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
 
         if "response" in response:
@@ -53,7 +62,9 @@ class MerchantAccountGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def _put(self, url, params={}):
+    def _put(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().put(self.config.base_merchant_path() + url, params)
         if "merchant_account" in response:
             return SuccessfulResult({"merchant_account": MerchantAccount(self.gateway, response["merchant_account"])})

@@ -7,6 +7,7 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 
+
 class CustomerGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
@@ -16,7 +17,9 @@ class CustomerGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search_ids")
         return ResourceCollection({}, response, self.__fetch)
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Customer.create_signature())
         return self._post("/customers", {"customer": params})
 
@@ -45,7 +48,9 @@ class CustomerGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search_ids", {"search": self.__criteria(query)})
         return ResourceCollection(query, response, self.__fetch)
 
-    def update(self, customer_id, params={}):
+    def update(self, customer_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Customer.update_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/customers/" + customer_id, {"customer": params})
         if "customer" in response:
@@ -68,7 +73,9 @@ class CustomerGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/customers/advanced_search", {"search": criteria})
         return [Customer(self.gateway, item) for item in ResourceCollection._extract_as_array(response["customers"], "customer")]
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})

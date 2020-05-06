@@ -7,6 +7,7 @@ from braintree.transaction import Transaction
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.request_timeout_error import RequestTimeoutError
 
+
 class TransactionGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
@@ -89,7 +90,9 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def submit_for_settlement(self, transaction_id, amount=None, params={}):
+    def submit_for_settlement(self, transaction_id, amount=None, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
         transaction_params = {"amount": amount}
         transaction_params.update(params)
@@ -100,7 +103,9 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def update_details(self, transaction_id, params={}):
+    def update_details(self, transaction_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Transaction.update_details_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/update_details",
                 {"transaction": params})
@@ -109,7 +114,9 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
-    def submit_for_partial_settlement(self, transaction_id, amount, params={}):
+    def submit_for_partial_settlement(self, transaction_id, amount, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
         transaction_params = {"amount": amount}
         transaction_params.update(params)
@@ -145,10 +152,11 @@ class TransactionGateway(object):
                 criteria[term.name] = term.to_param()
         return criteria
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-

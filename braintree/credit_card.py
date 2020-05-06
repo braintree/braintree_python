@@ -5,6 +5,7 @@ from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card_verification import CreditCardVerification
 
+
 class CreditCard(Resource):
     """
     A class representing Braintree CreditCard objects.
@@ -110,7 +111,7 @@ class CreditCard(Resource):
             CountryOfIssuance = IssuingBank = Payroll = Prepaid = ProductId = CardTypeIndicator
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create a CreditCard.
 
@@ -122,11 +123,12 @@ class CreditCard(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().credit_card.create(params)
 
     @staticmethod
-    def update(credit_card_token, params={}):
+    def update(credit_card_token, params=None):
         """
         Update an existing CreditCard
 
@@ -137,7 +139,8 @@ class CreditCard(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().credit_card.update(credit_card_token, params)
 
     @staticmethod

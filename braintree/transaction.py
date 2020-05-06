@@ -37,6 +37,7 @@ from braintree.facilitator_details import FacilitatorDetails
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.samsung_pay_card import SamsungPayCard
 
+
 class Transaction(Resource):
     """
     A class representing Braintree Transaction objects.
@@ -276,7 +277,7 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.cancel_release(transaction_id)
 
     @staticmethod
-    def credit(params={}):
+    def credit(params=None):
         """
         Creates a transaction of type Credit.
 
@@ -302,7 +303,8 @@ class Transaction(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         params["type"] = Transaction.Type.Credit
         return Transaction.create(params)
 
@@ -344,7 +346,7 @@ class Transaction(Resource):
 
 
     @staticmethod
-    def sale(params={}):
+    def sale(params=None):
         """
         Creates a transaction of type Sale. Amount is required. Also, a credit card,
         customer_id or payment_method_token is required. ::
@@ -367,7 +369,8 @@ class Transaction(Resource):
                 "customer_id": "my_customer_id"
             })
         """
-
+        if params is None:
+            params = {}
         params["type"] = Transaction.Type.Sale
         return Transaction.create(params)
 
@@ -389,7 +392,7 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.release_from_escrow(transaction_id)
 
     @staticmethod
-    def submit_for_settlement(transaction_id, amount=None, params={}):
+    def submit_for_settlement(transaction_id, amount=None, params=None):
         """
         Submits an authorized transaction for settlement.
 
@@ -398,11 +401,12 @@ class Transaction(Resource):
             result = braintree.Transaction.submit_for_settlement("my_transaction_id")
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().transaction.submit_for_settlement(transaction_id, amount, params)
 
     @staticmethod
-    def update_details(transaction_id, params={}):
+    def update_details(transaction_id, params=None):
         """
         Updates exisiting details for transaction submtted_for_settlement.
 
@@ -419,7 +423,8 @@ class Transaction(Resource):
             )
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().transaction.update_details(transaction_id, params)
 
     @staticmethod
@@ -631,7 +636,7 @@ class Transaction(Resource):
         return ["amount", "order_id"]
 
     @staticmethod
-    def submit_for_partial_settlement(transaction_id, amount, params={}):
+    def submit_for_partial_settlement(transaction_id, amount, params=None):
         """
         Creates a partial settlement transaction for an authorized transaction
 
@@ -640,7 +645,8 @@ class Transaction(Resource):
             result = braintree.Transaction.submit_for_partial_settlement("my_transaction_id", "20.00")
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().transaction.submit_for_partial_settlement(transaction_id, amount, params)
 
     def __init__(self, gateway, attributes):
@@ -747,7 +753,7 @@ class Transaction(Resource):
 
     @property
     def is_disbursed(self):
-       return self.disbursement_details.is_valid
+        return self.disbursement_details.is_valid
 
     @property
     def line_items(self):

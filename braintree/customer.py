@@ -20,6 +20,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
 from braintree.samsung_pay_card import SamsungPayCard
 
+
 class Customer(Resource):
     """
     A class representing a customer.
@@ -93,7 +94,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.all()
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create a Customer
 
@@ -105,7 +106,8 @@ class Customer(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().customer.create(params)
 
     @staticmethod
@@ -138,7 +140,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.search(*query)
 
     @staticmethod
-    def update(customer_id, params={}):
+    def update(customer_id, params=None):
         """
         Update an existing Customer
 
@@ -149,7 +151,8 @@ class Customer(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().customer.update(customer_id, params)
 
     @staticmethod

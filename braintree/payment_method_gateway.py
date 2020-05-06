@@ -24,12 +24,15 @@ from braintree.successful_result import SuccessfulResult
 import sys
 from urllib.parse import urlencode
 
+
 class PaymentMethodGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
         self.config = gateway.config
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, PaymentMethod.create_signature())
         return self._post("/payment_methods", {"payment_method": params})
 
@@ -56,7 +59,9 @@ class PaymentMethodGateway(object):
         except NotFoundError:
             raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
-    def delete(self, payment_method_token, options={}):
+    def delete(self, payment_method_token, options=None):
+        if options is None:
+            options = {}
         Resource.verify_keys(options, PaymentMethod.delete_signature())
         query_param = ""
         if options:
@@ -110,7 +115,9 @@ class PaymentMethodGateway(object):
         except NotFoundError:
             raise NotFoundError("payment method with payment_method_token " + repr(payment_method_token) + " not found")
 
-    def _post(self, url, params={}, result_key="payment_method"):
+    def _post(self, url, params=None, result_key="payment_method"):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
@@ -124,7 +131,9 @@ class PaymentMethodGateway(object):
             return SuccessfulResult({result_key: payment_method})
         return response
 
-    def _put(self, url, params={}):
+    def _put(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().put(self.config.base_merchant_path() + url, params)
         if "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])

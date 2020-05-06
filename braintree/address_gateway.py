@@ -11,11 +11,13 @@ class AddressGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Address.create_signature())
-        if not "customer_id" in params:
+        if "customer_id" not in params:
             raise KeyError("customer_id must be provided")
-        if not re.search("\A[0-9A-Za-z_-]+\Z", params["customer_id"]):
+        if not re.search(r"\A[0-9A-Za-z_-]+\Z", params["customer_id"]):
             raise KeyError("customer_id contains invalid characters")
 
         response = self.config.http().post(self.config.base_merchant_path() + "/customers/" + params.pop("customer_id") + "/addresses", {"address": params})
@@ -37,7 +39,9 @@ class AddressGateway(object):
         except NotFoundError:
             raise NotFoundError("address for customer " + repr(customer_id) + " with id " + repr(address_id) + " not found")
 
-    def update(self, customer_id, address_id, params={}):
+    def update(self, customer_id, address_id, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, Address.update_signature())
         response = self.config.http().put(
             self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id,

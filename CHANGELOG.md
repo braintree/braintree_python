@@ -5,6 +5,7 @@
 * Add `payment_method_token` to `CreditCardVerificationSearch`
 * Add `recurring_customer_consent` and `recurring_max_amount` to `authentication_insight_options` for `PaymentMethodNonce.create`
 * Add `FileIsEmpty` error code
+* Eliminates usage of mutable objects for function parameters. Resolves #113 Thank you @maneeshd! 
 
 ## 4.0.0
 * Split development and deployments requirements files out
