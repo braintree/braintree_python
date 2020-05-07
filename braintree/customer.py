@@ -20,6 +20,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
 from braintree.samsung_pay_card import SamsungPayCard
 
+
 class Customer(Resource):
     """
     A class representing a customer.
@@ -93,7 +94,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.all()
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create a Customer
 
@@ -105,7 +106,8 @@ class Customer(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().customer.create(params)
 
     @staticmethod
@@ -138,7 +140,7 @@ class Customer(Resource):
         return Configuration.gateway().customer.search(*query)
 
     @staticmethod
-    def update(customer_id, params={}):
+    def update(customer_id, params=None):
         """
         Update an existing Customer
 
@@ -149,7 +151,8 @@ class Customer(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().customer.update(customer_id, params)
 
     @staticmethod
@@ -159,6 +162,13 @@ class Customer(Resource):
             {"risk_data": ["customer_browser", "customer_ip"]},
             {"credit_card": CreditCard.create_signature()},
             {"custom_fields": ["__any_key__"]},
+            {"three_d_secure_pass_thru": [
+                "cavv",
+                "ds_transaction_id",
+                "eci_flag",
+                "three_d_secure_version",
+                "xid",
+                ]},
             {"options": [{"paypal": [
                 "payee_email",
                 "order_id",
@@ -174,6 +184,13 @@ class Customer(Resource):
         return [
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce", "default_payment_method_token",
             {"credit_card": CreditCard.signature("update_via_customer")},
+            {"three_d_secure_pass_thru": [
+                "cavv",
+                "ds_transaction_id",
+                "eci_flag",
+                "three_d_secure_version",
+                "xid",
+                ]},
             {"custom_fields": ["__any_key__"]},
             {"options": [{"paypal": [
                 "payee_email",

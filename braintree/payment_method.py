@@ -3,9 +3,12 @@ from braintree.address import Address
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 
+
 class PaymentMethod(Resource):
     @staticmethod
-    def create(params={}):
+    def create(params=None):
+        if params is None:
+            params = {}
         return Configuration.gateway().payment_method.create(params)
 
     @staticmethod
@@ -17,7 +20,9 @@ class PaymentMethod(Resource):
         return Configuration.gateway().payment_method.update(payment_method_token, params)
 
     @staticmethod
-    def delete(payment_method_token, options={}):
+    def delete(payment_method_token, options=None):
+        if options is None:
+            options = {}
         return Configuration.gateway().payment_method.delete(payment_method_token, options)
 
     @staticmethod
@@ -52,6 +57,14 @@ class PaymentMethod(Resource):
             },
         ]
 
+        three_d_secure_pass_thru = [
+            "cavv",
+            "ds_transaction_id",
+            "eci_flag",
+            "three_d_secure_version",
+            "xid"
+        ]
+
         signature = [
             "billing_address_id",
             "cardholder_name",
@@ -71,12 +84,24 @@ class PaymentMethod(Resource):
             },
             {
                 "options": options
+            },
+            {
+                "three_d_secure_pass_thru": three_d_secure_pass_thru
             }
+
         ]
         return signature
 
     @staticmethod
     def update_signature():
+        three_d_secure_pass_thru = [
+            "cavv",
+            "ds_transaction_id",
+            "eci_flag",
+            "three_d_secure_version",
+            "xid"
+        ]
+
         signature = [
             "billing_address_id",
             "cardholder_name",
@@ -110,6 +135,9 @@ class PaymentMethod(Resource):
             },
             {
                 "billing_address": Address.update_signature() + [{"options": ["update_existing"]}]
+            },
+            {
+                "three_d_secure_pass_thru": three_d_secure_pass_thru
             }
         ]
         return signature

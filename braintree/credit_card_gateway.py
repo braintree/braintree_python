@@ -7,12 +7,15 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 
+
 class CreditCardGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
         self.config = gateway.config
 
-    def create(self, params={}):
+    def create(self, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, CreditCard.create_signature())
         return self._post("/payment_methods", {"credit_card": params})
 
@@ -52,7 +55,9 @@ class CreditCardGateway(object):
         except NotFoundError:
             raise NotFoundError("payment method with nonce " + repr(nonce) + " locked, consumed or not found")
 
-    def update(self, credit_card_token, params={}):
+    def update(self, credit_card_token, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, CreditCard.update_signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/payment_methods/credit_card/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
@@ -72,7 +77,9 @@ class CreditCardGateway(object):
         response = self.config.http().post(self.config.base_merchant_path() + "/payment_methods/all/expiring?" + query, {"search": criteria})
         return [CreditCard(self.gateway, item) for item in ResourceCollection._extract_as_array(response["payment_methods"], "credit_card")]
 
-    def _post(self, url, params={}):
+    def _post(self, url, params=None):
+        if params is None:
+            params = {}
         response = self.config.http().post(self.config.base_merchant_path() + url, params)
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})

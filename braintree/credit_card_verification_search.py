@@ -15,3 +15,4 @@ class CreditCardVerificationSearch:
     billing_postal_code          = Search.TextNodeBuilder("billing_address_details_postal_code")
     customer_email               = Search.TextNodeBuilder("customer_email")
     customer_id                  = Search.TextNodeBuilder("customer_id")
+    payment_method_token         = Search.TextNodeBuilder("payment_method_token")

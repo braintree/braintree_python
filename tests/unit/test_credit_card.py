@@ -22,6 +22,11 @@ class TestCreditCard(unittest.TestCase):
             },
             {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "verification_account_type", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
             ]},
+            {
+                "three_d_secure_pass_thru": [
+                    "cavv", "ds_transaction_id", "eci_flag", "three_d_secure_version", "xid"
+                ]
+            },
             "customer_id"
         ]
         self.assertEqual(expected, CreditCard.create_signature())
@@ -38,7 +43,12 @@ class TestCreditCard(unittest.TestCase):
                 ]
             },
             {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "verification_account_type", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
-            ]}
+            ]},
+            {
+                "three_d_secure_pass_thru": [
+                    "cavv", "ds_transaction_id", "eci_flag", "three_d_secure_version", "xid"
+                ]
+            },
         ]
         self.assertEqual(expected, CreditCard.update_signature())
 

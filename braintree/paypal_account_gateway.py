@@ -5,6 +5,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource import Resource
 from braintree.successful_result import SuccessfulResult
 
+
 class PayPalAccountGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
@@ -25,7 +26,9 @@ class PayPalAccountGateway(object):
         self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/paypal_account/" + paypal_account_token)
         return SuccessfulResult()
 
-    def update(self, paypal_account_token, params={}):
+    def update(self, paypal_account_token, params=None):
+        if params is None:
+            params = {}
         Resource.verify_keys(params, PayPalAccount.signature())
         response = self.config.http().put(self.config.base_merchant_path() + "/payment_methods/paypal_account/" + paypal_account_token, {"paypal_account": params})
         if "paypal_account" in response:

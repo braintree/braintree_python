@@ -2,6 +2,7 @@ import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 
+
 class PayPalAccount(Resource):
     @staticmethod
     def find(paypal_account_token):
@@ -12,7 +13,9 @@ class PayPalAccount(Resource):
         return Configuration.gateway().paypal_account.delete(paypal_account_token)
 
     @staticmethod
-    def update(paypal_account_token, params={}):
+    def update(paypal_account_token, params=None):
+        if params is None:
+            params = {}
         return Configuration.gateway().paypal_account.update(paypal_account_token, params)
 
     @staticmethod

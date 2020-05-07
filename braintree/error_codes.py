@@ -204,6 +204,7 @@ class ErrorCodes(object):
         FileTypeIsInvalid = "84903"
         FileIsMalformedOrEncrypted = "84904"
         FileIsTooLong = "84905"
+        FileIsEmpty = "84906"
 
     class Merchant(object):
         CountryCannotBeBlank = "83603"
@@ -335,6 +336,27 @@ class ErrorCodes(object):
         UnsupportedGrantType = "93805"
 
     class Verification(object):
+        ThreeDSecureAuthenticationIdIsInvalid = "942196"
+        ThreeDSecureAuthenticationIdDoesntMatchNonceThreeDSecureAuthentication = "942198"
+        ThreeDSecureTransactionPaymentMethodDoesntMatchThreeDSecureAuthenticationPaymentMethod = "942197"
+        ThreeDSecureAuthenticationIdWithThreeDSecurePassThruIsInvalid = "942199"
+        ThreeDSecureAuthenticationFailed = "94271"
+        ThreeDSecureTokenIsInvalid = "94268"
+        ThreeDSecureVerificationDataDoesntMatchVerify = "94270"
+        MerchantAccountDoesNotSupport3DSecure = "942169"
+        MerchantAcountDoesNotMatch3DSecureMerchantAccount = "94284"
+        AmountDoesNotMatch3DSecureAmount = "94285"
+        class ThreeDSecurePassThru(object):
+            EciFlagIsRequired = "942113"
+            EciFlagIsInvalid = "942114"
+            CavvIsRequired = "942116"
+            ThreeDSecureVersionIsRequired = "942117"
+            ThreeDSecureVersionIsInvalid = "942119"
+            AuthenticationResponseIsInvalid = "942120"
+            DirectoryResponseIsInvalid = "942121"
+            CavvAlgorithmIsInvalid = "942122"
+
+
         class Options(object):
             AmountCannotBeNegative = "94201"
             AmountFormatIsInvalid = "94202"

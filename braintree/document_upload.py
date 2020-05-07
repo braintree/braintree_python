@@ -3,6 +3,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 
+
 class DocumentUpload(Resource):
     """
     A class representing a DocumentUpload.
@@ -24,7 +25,7 @@ class DocumentUpload(Resource):
         EvidenceDocument = "evidence_document"
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create a DocumentUpload
 
@@ -38,6 +39,8 @@ class DocumentUpload(Resource):
             )
 
         """
+        if params is None:
+            params = {}
         return Configuration.gateway().document_upload.create(params)
 
     @staticmethod

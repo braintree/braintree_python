@@ -2,6 +2,7 @@ from braintree.configuration import Configuration
 from braintree.resource import Resource
 from braintree.merchant_account import BusinessDetails, FundingDetails, IndividualDetails
 
+
 class MerchantAccount(Resource):
     class Status(object):
         Active = "active"
@@ -37,7 +38,9 @@ class MerchantAccount(Resource):
         return super(MerchantAccount, self).__repr__(detail_list)
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
+        if params is None:
+            params = {}
         return Configuration.gateway().merchant_account.create(params)
 
     @staticmethod

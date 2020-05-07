@@ -14,7 +14,7 @@ class PaymentMethodNonceGateway(object):
 
     def create(self, payment_method_token, params = {"payment_method_nonce": {}}):
         try:
-            schema = [{"payment_method_nonce": ["merchant_account_id", "authentication_insight", "amount"]}]
+            schema = [{"payment_method_nonce": ["merchant_account_id", "authentication_insight", {"authentication_insight_options": ["amount", "recurring_customer_consent", "recurring_max_amount"]}]}]
             Resource.verify_keys(params, schema)
             response = self.config.http().post(self.config.base_merchant_path() + "/payment_methods/" + payment_method_token + "/nonces", params)
             if "api_error_response" in response:

@@ -14,6 +14,7 @@ from braintree.transaction import Transaction
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 
+
 class Subscription(Resource):
     """
     A class representing a Subscription.
@@ -69,7 +70,7 @@ class Subscription(Resource):
         Pending = "Pending"
 
     @staticmethod
-    def create(params={}):
+    def create(params=None):
         """
         Create a Subscription
 
@@ -81,7 +82,8 @@ class Subscription(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().subscription.create(params)
 
     @staticmethod
@@ -101,14 +103,14 @@ class Subscription(Resource):
             "trial_duration_unit",
             "trial_period",
             {
-                "descriptor": [ "name", "phone", "url" ]
+                "descriptor": ["name", "phone", "url"]
             },
             {
                 "options": [
                     "do_not_inherit_add_ons_or_discounts",
                     "start_immediately",
-                    { 
-                        "paypal": [ "description" ] 
+                    {
+                        "paypal": ["description"]
                     }
                 ]
             }
@@ -131,7 +133,7 @@ class Subscription(Resource):
         return Configuration.gateway().subscription.retry_charge(subscription_id, amount, submit_for_settlement)
 
     @staticmethod
-    def update(subscription_id, params={}):
+    def update(subscription_id, params=None):
         """
         Update an existing subscription
 
@@ -143,7 +145,8 @@ class Subscription(Resource):
             })
 
         """
-
+        if params is None:
+            params = {}
         return Configuration.gateway().subscription.update(subscription_id, params)
 
     @staticmethod
@@ -197,9 +200,9 @@ class Subscription(Resource):
                 "descriptor": [ "name", "phone", "url" ]
             },
             {
-                "options": [ 
-                    "prorate_charges", 
-                    "replace_all_add_ons_and_discounts", 
+                "options": [
+                    "prorate_charges",
+                    "replace_all_add_ons_and_discounts",
                     "revert_subscription_on_proration_failure",
                     {
                         "paypal": [ "description" ]
@@ -238,7 +241,7 @@ class Subscription(Resource):
         if "descriptor" in attributes:
             self.descriptor = Descriptor(gateway, attributes.pop("descriptor"))
         if "description" in attributes:
-            self.description = attributes["description"] 
+            self.description = attributes["description"]
         if "discounts" in attributes:
             self.discounts = [Discount(gateway, discount) for discount in self.discounts]
         if "status_history" in attributes:
