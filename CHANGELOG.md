@@ -1,3 +1,7 @@
+## unreleased
+
+* Add `retrieval_reference_number` to `Transaction`
+
 ## 4.1.0
 * Add `DisputeAccepted`, `DisputeDisputed`, and `DisputeExpired` webhook constants
 * Add `three_d_secure_pass_thru` to `CreditCard.create`, `CreditCard.update`, `PaymentMethod.create`, `PaymentMethod.update`, `Customer.create`, and `Customer.update`. 

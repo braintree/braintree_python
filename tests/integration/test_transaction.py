@@ -5678,3 +5678,15 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
         self.assertEqual("XX", transaction.network_response_code)
         self.assertEqual("sample network response text", transaction.network_response_text)
+
+    def test_retrieval_reference_number(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        transaction = result.transaction
+        self.assertIsNotNone(transaction.retrieval_reference_number)
