@@ -964,17 +964,18 @@ class TestTransaction(unittest.TestCase):
             Configuration.private_key = old_private_key
 
     def test_sale_with_gateway_rejected_with_fraud(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4000111111111511",
-                "expiration_date": "05/2017",
-                "cvv": "333"
-            }
-        })
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4000111111111511",
+                    "expiration_date": "05/2017",
+                    "cvv": "333"
+                }
+            })
 
-        self.assertFalse(result.is_success)
-        self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_gateway_rejected_token_issuance(self):
         result = Transaction.sale({
