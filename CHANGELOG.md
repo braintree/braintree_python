@@ -1,6 +1,7 @@
 ## unreleased
 
 * Add `retrieval_reference_number` to `Transaction`
+* Add `network_transaction_id` to `CreditCardVerification`
 
 ## 4.1.0
 * Add `DisputeAccepted`, `DisputeDisputed`, and `DisputeExpired` webhook constants
