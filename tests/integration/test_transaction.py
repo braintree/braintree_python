@@ -314,6 +314,7 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.sale({
             "amount": "100.00",
             "order_id": "123",
+            "product_sku": "productsku01",
             "channel": "MyShoppingCartProvider",
             "credit_card": {
                 "cardholder_name": "The Cardholder",
@@ -338,6 +339,7 @@ class TestTransaction(unittest.TestCase):
                 "extended_address": "Suite 403",
                 "locality": "Chicago",
                 "region": "IL",
+                "phone_number": "122-555-1237",
                 "postal_code": "60622",
                 "country_name": "United States of America",
                 "country_code_alpha2": "US",
@@ -352,11 +354,13 @@ class TestTransaction(unittest.TestCase):
                 "extended_address": "Apt 2F",
                 "locality": "Bartlett",
                 "region": "IL",
+                "phone_number": "122-555-1236",
                 "postal_code": "60103",
                 "country_name": "Mexico",
                 "country_code_alpha2": "MX",
                 "country_code_alpha3": "MEX",
-                "country_code_numeric": "484"
+                "country_code_numeric": "484",
+                "shipping_method": Address.ShippingMethod.Electronic
             }
         })
 
@@ -412,6 +416,42 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("MEX", transaction.shipping_details.country_code_alpha3)
         self.assertEqual("484", transaction.shipping_details.country_code_numeric)
         self.assertEqual(None, transaction.additional_processor_response)
+
+    def test_sale_with_invalid_address(self):
+        customer = Customer.create({
+            "first_name": "Pingu",
+            "last_name": "Penguin",
+        }).customer
+
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "customer_id": customer.id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "billing": {
+                "phone_number": "123-234-3456=098765"
+            },
+            "shipping": {
+                "phone_number": "123-234-3456=098765",
+                "shipping_method": "urgent"
+            },
+        })
+
+        self.assertFalse(result.is_success)
+
+        billing_phone_number_errors = result.errors.for_object("transaction").for_object("billing").on("phone_number")
+        self.assertEqual(1, len(billing_phone_number_errors))
+        self.assertEqual(ErrorCodes.Address.BillingPhoneNumberIsInvalid, billing_phone_number_errors[0].code)
+
+        shipping_phone_number_errors = result.errors.for_object("transaction").for_object("shipping").on("phone_number")
+        self.assertEqual(1, len(shipping_phone_number_errors))
+        self.assertEqual(ErrorCodes.Address.ShippingPhoneNumberIsInvalid, shipping_phone_number_errors[0].code)
+
+        shipping_method_errors = result.errors.for_object("transaction").for_object("shipping").on("shipping_method")
+        self.assertEqual(1, len(shipping_method_errors))
+        self.assertEqual(ErrorCodes.Address.ShippingMethodIsInvalid, shipping_method_errors[0].code)
 
     def test_sale_with_vault_customer_and_credit_card_data(self):
         customer = Customer.create({
@@ -560,11 +600,36 @@ class TestTransaction(unittest.TestCase):
             },
             "risk_data": {
                 "customer_browser": "IE7",
-                "customer_ip": "192.168.0.1"
+                "customer_device_id": "customer_device_id_012",
+                "customer_ip": "192.168.0.1",
+                "customer_location_zip": "91244",
+                "customer_tenure": 20
             }
         })
 
         self.assertTrue(result.is_success)
+
+    def test_sale_with_invalid_risk_data_security_parameters(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "risk_data": {
+                "customer_browser": "IE7",
+                "customer_device_id": "customer_device_id_012",
+                "customer_ip": "192.168.0.1",
+                "customer_location_zip": "912$4",
+                "customer_tenure": "20"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+
+        customer_location_zip_errors = result.errors.for_object("transaction").for_object("risk_data").on("customer_location_zip")
+        self.assertEqual(1, len(customer_location_zip_errors))
+        self.assertEqual(ErrorCodes.RiskData.CustomerLocationZipInvalidCharacters, customer_location_zip_errors[0].code)
 
     def test_sale_with_billing_address_id(self):
         result = Customer.create({
@@ -5691,3 +5756,21 @@ class TestTransaction(unittest.TestCase):
 
         transaction = result.transaction
         self.assertIsNotNone(transaction.retrieval_reference_number)
+
+    def test_sale_returns_risk_data(self):
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "device_session_id": "abc123",
+            })
+
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertIsInstance(transaction.risk_data, RiskData)
+            self.assertNotEqual(transaction.risk_data.id, None)
+            self.assertEqual(transaction.risk_data.decision, "Approve")
+            self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))

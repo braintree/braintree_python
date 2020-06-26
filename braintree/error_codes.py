@@ -28,6 +28,8 @@ class ErrorCodes(object):
         LastNameIsTooLong = "81806"
         LocalityIsInvalid = "91824"
         LocalityIsTooLong = "81807"
+        ShippingPhoneNumberIsInvalid = "915204"
+        BillingPhoneNumberIsInvalid = "915206"
         PostalCodeInvalidCharacters = "81813"
         PostalCodeIsInvalid = "91826"
         PostalCodeIsRequired = "81808"
@@ -35,6 +37,7 @@ class ErrorCodes(object):
         PostalCodeIsTooLong = "81809"
         RegionIsInvalid = "91825"
         RegionIsTooLong = "81810"
+        ShippingMethodIsInvalid = "915203"
         StateIsInvalidForSellerProtection = "81827"
         StreetAddressIsInvalid = "91822"
         StreetAddressIsRequired = "81811"
@@ -752,3 +755,11 @@ class ErrorCodes(object):
         TooManyConfirmationAttempts = "96104"
         UnableToConfirmDepositAmounts = "96105"
         InvalidDepositAmounts = "96106"
+
+    class RiskData(object):
+        CustomerBrowserIsTooLong = "94701"
+        CustomerDeviceIdIsTooLong = "94702"
+        CustomerLocationZipInvalidCharacters = "94703"
+        CustomerLocationZipIsInvalid = "94704"
+        CustomerLocationZipIsTooLong = "94705"
+        CustomerTenureIsTooLong = "94706"
