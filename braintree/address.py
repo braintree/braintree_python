@@ -127,8 +127,7 @@ class Address(Resource):
     def create_signature():
         return ["company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric",
                 "country_name", "customer_id", "extended_address", "first_name",
-                "last_name", "locality", "phone_number", "postal_code", "region", "street_address",
-                "shipping_method"]
+                "last_name", "locality", "phone_number", "postal_code", "region", "street_address"]
 
     @staticmethod
     def update_signature():

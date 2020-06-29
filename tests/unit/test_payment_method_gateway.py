@@ -60,7 +60,6 @@ class TestPaymentMethodGateway(unittest.TestCase):
                                     "postal_code",
                                     "region",
                                     "street_address",
-                                    "shipping_method"
                                 ]
                             },
                         ]
