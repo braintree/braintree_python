@@ -1,5 +1,4 @@
-## unreleased
-
+## 4.2.0
 * Add `retrieval_reference_number` to `Transaction`
 * Add `network_transaction_id` to `CreditCardVerification`
 * Add `product_sku` to `Transaction`
