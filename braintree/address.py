@@ -42,9 +42,27 @@ class Address(Resource):
             "postal_code",
             "region",
             "street_address",
+            "shipping_method",
         ]
         return super(Address, self).__repr__(detail_list)
 
+    class ShippingMethod(object):
+        """
+        Constants representing shipping methods for shipping addresses. Available types are:
+
+        * braintree.Address.ShippingMethod.SameDay
+        * braintree.Address.ShippingMethod.NextDay
+        * braintree.Address.ShippingMethod.Priority
+        * braintree.Address.ShippingMethod.Ground
+        * braintree.Address.ShippingMethod.Electronic
+        * braintree.Address.ShippingMethod.ShipToStore
+        """
+        SameDay     = "same_day"
+        NextDay     = "next_day"
+        Priority    = "priority"
+        Ground      = "ground"
+        Electronic  = "electronic"
+        ShipToStore = "ship_to_store"
 
     @staticmethod
     def create(params=None):
@@ -109,7 +127,7 @@ class Address(Resource):
     def create_signature():
         return ["company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric",
                 "country_name", "customer_id", "extended_address", "first_name",
-                "last_name", "locality", "postal_code", "region", "street_address"]
+                "last_name", "locality", "phone_number", "postal_code", "region", "street_address"]
 
     @staticmethod
     def update_signature():

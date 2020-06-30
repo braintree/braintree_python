@@ -132,6 +132,7 @@ class Transaction(Resource):
         "recurring",
         "refund_id",
         "refunded_transaction_id",
+        "retrieval_reference_number",
         "service_fee_amount",
         "settlement_batch_id",
         "shipping_amount",
@@ -478,13 +479,13 @@ class Transaction(Resource):
         return [
             "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "transaction_source", "shipping_address_id",
-            "device_data", "billing_address_id", "payment_method_nonce", "tax_amount",
+            "device_data", "billing_address_id", "payment_method_nonce", "product_sku", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "discount_amount", "shipping_amount", "ships_from_postal_code",
             "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
             {
                 "risk_data": [
-                    "customer_browser", "customer_ip"
+                    "customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"
                 ]
             },
             {
@@ -501,14 +502,14 @@ class Transaction(Resource):
                 "billing": [
                     "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
                     "country_code_numeric", "country_name", "extended_address", "locality",
-                    "postal_code", "region", "street_address"
+                    "phone_number", "postal_code", "region", "street_address"
                 ]
             },
             {
                 "shipping": [
                     "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
                     "country_code_numeric", "country_name", "extended_address", "locality",
-                    "postal_code", "region", "street_address"
+                    "phone_number", "postal_code", "region", "shipping_method", "street_address"
                 ]
             },
             {

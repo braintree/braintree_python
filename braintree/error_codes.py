@@ -497,6 +497,7 @@ class ErrorCodes(object):
         AmountMustBeGreaterThanZero = "81531"
         AmountNotSupportedByProcessor = "815193"
         BillingAddressConflict = "91530"
+        BillingPhoneNumberIsInvalid = "915206"
         CannotBeVoided = "91504"
         CannotCancelRelease = "91562"
         CannotCloneCredit = "91543"
@@ -536,6 +537,8 @@ class ErrorCodes(object):
         ShippingAmountFormatIsInvalid = "915162"
         ShippingAmountCannotBeNegative = "915163"
         ShippingAmountIsTooLarge = "915164"
+        ShippingPhoneNumberIsInvalid = "915204"
+        ShippingMethodIsInvalid = "915203"
         ShipsFromPostalCodeIsTooLong = "915165"
         ShipsFromPostalCodeIsInvalid = "915166"
         ShipsFromPostalCodeInvalidCharacters = "915167"
@@ -752,3 +755,11 @@ class ErrorCodes(object):
         TooManyConfirmationAttempts = "96104"
         UnableToConfirmDepositAmounts = "96105"
         InvalidDepositAmounts = "96106"
+
+    class RiskData(object):
+        CustomerBrowserIsTooLong = "94701"
+        CustomerDeviceIdIsTooLong = "94702"
+        CustomerLocationZipInvalidCharacters = "94703"
+        CustomerLocationZipIsInvalid = "94704"
+        CustomerLocationZipIsTooLong = "94705"
+        CustomerTenureIsTooLong = "94706"

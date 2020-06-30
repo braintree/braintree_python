@@ -1,3 +1,20 @@
+## 4.2.0
+* Add `retrieval_reference_number` to `Transaction`
+* Add `network_transaction_id` to `CreditCardVerification`
+* Add `product_sku` to `Transaction`
+* Add `customer_device_id`, `customer_location_zip`, and `customer_tenure` to `RiskData`
+* Add `phone_number` and `shipping_method` to `Address`
+* Add validation error codes:
+  * `Transaction.ShippingMethodIsInvalid`
+  * `Transaction.ShippingPhoneNumberIsInvalid`
+  * `Transaction.BillingPhoneNumberIsInvalid`
+  * `RiskData.CustomerBrowserIsTooLong`
+  * `RiskData.CustomerDeviceIdIsTooLong`
+  * `RiskData.CustomerLocationZipInvalidCharacters`
+  * `RiskData.CustomerLocationZipIsInvalid`
+  * `RiskData.CustomerLocationZipIsTooLong`
+  * `RiskData.CustomerTenureIsTooLong`
+
 ## 4.1.0
 * Add `DisputeAccepted`, `DisputeDisputed`, and `DisputeExpired` webhook constants
 * Add `three_d_secure_pass_thru` to `CreditCard.create`, `CreditCard.update`, `PaymentMethod.create`, `PaymentMethod.update`, `Customer.create`, and `Customer.update`. 
