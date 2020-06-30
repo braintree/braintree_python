@@ -443,15 +443,15 @@ class TestTransaction(unittest.TestCase):
 
         billing_phone_number_errors = result.errors.for_object("transaction").for_object("billing").on("phone_number")
         self.assertEqual(1, len(billing_phone_number_errors))
-        self.assertEqual(ErrorCodes.Address.BillingPhoneNumberIsInvalid, billing_phone_number_errors[0].code)
+        self.assertEqual(ErrorCodes.Transaction.BillingPhoneNumberIsInvalid, billing_phone_number_errors[0].code)
 
         shipping_phone_number_errors = result.errors.for_object("transaction").for_object("shipping").on("phone_number")
         self.assertEqual(1, len(shipping_phone_number_errors))
-        self.assertEqual(ErrorCodes.Address.ShippingPhoneNumberIsInvalid, shipping_phone_number_errors[0].code)
+        self.assertEqual(ErrorCodes.Transaction.ShippingPhoneNumberIsInvalid, shipping_phone_number_errors[0].code)
 
         shipping_method_errors = result.errors.for_object("transaction").for_object("shipping").on("shipping_method")
         self.assertEqual(1, len(shipping_method_errors))
-        self.assertEqual(ErrorCodes.Address.ShippingMethodIsInvalid, shipping_method_errors[0].code)
+        self.assertEqual(ErrorCodes.Transaction.ShippingMethodIsInvalid, shipping_method_errors[0].code)
 
     def test_sale_with_vault_customer_and_credit_card_data(self):
         customer = Customer.create({
