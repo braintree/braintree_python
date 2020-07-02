@@ -5,6 +5,7 @@
 * Add `customer_device_id`, `customer_location_zip`, and `customer_tenure` to `RiskData`
 * Add `phone_number` and `shipping_method` to `Address`
 * Add validation error codes:
+  * `Transaction.ProductSkuIsInvalid`
   * `Transaction.ShippingMethodIsInvalid`
   * `Transaction.ShippingPhoneNumberIsInvalid`
   * `Transaction.BillingPhoneNumberIsInvalid`

@@ -578,6 +578,7 @@ class ErrorCodes(object):
         ProcessorDoesNotSupportVoiceAuthorizations = "91545"
         PurchaseOrderNumberIsInvalid = "91548"
         PurchaseOrderNumberIsTooLong = "91537"
+        ProductSkuIsInvalid = "915202"
         RefundAmountIsTooLarge = "91521"
         RefundAuthHardDeclined = "915200"
         RefundAuthSoftDeclined = "915201"

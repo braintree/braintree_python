@@ -417,6 +417,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("484", transaction.shipping_details.country_code_numeric)
         self.assertEqual(None, transaction.additional_processor_response)
 
+    def test_sale_with_invalid_product_sku(self):
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "product_sku": "product$ku!",
+        })
+
+        self.assertFalse(result.is_success)
+
+        product_sku_errors = result.errors.for_object("transaction").on("product_sku")
+        self.assertEqual(1, len(product_sku_errors))
+        self.assertEqual(ErrorCodes.Transaction.ProductSkuIsInvalid, product_sku_errors[0].code)
+
     def test_sale_with_invalid_address(self):
         customer = Customer.create({
             "first_name": "Pingu",
