@@ -1,3 +1,6 @@
+## Unreleased
+* Add validation error code `Transaction.ProductSkuIsInvalid`
+
 ## 4.2.0
 * Add `retrieval_reference_number` to `Transaction`
 * Add `network_transaction_id` to `CreditCardVerification`
@@ -5,7 +8,6 @@
 * Add `customer_device_id`, `customer_location_zip`, and `customer_tenure` to `RiskData`
 * Add `phone_number` and `shipping_method` to `Address`
 * Add validation error codes:
-  * `Transaction.ProductSkuIsInvalid`
   * `Transaction.ShippingMethodIsInvalid`
   * `Transaction.ShippingPhoneNumberIsInvalid`
   * `Transaction.BillingPhoneNumberIsInvalid`
