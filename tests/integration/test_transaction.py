@@ -1058,6 +1058,30 @@ class TestTransaction(unittest.TestCase):
             self.assertFalse(result.is_success)
             self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
+    def test_sale_with_gateway_rejected_with_risk_threshold(self):
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111130000000003",
+                    "expiration_date": "05/2017",
+                    "cvv": "333"
+                }
+            })
+
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.RiskThreshold, result.transaction.gateway_rejection_reason)
+
+    def test_sale_with_gateway_rejected_with_risk_threshold_nonce(self):
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "payment_method_nonce": Nonces.GatewayRejectedRiskThreshold
+            })
+
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.RiskThreshold, result.transaction.gateway_rejection_reason)
+
     def test_sale_with_gateway_rejected_token_issuance(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

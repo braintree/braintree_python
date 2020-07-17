@@ -1,5 +1,6 @@
 ## Unreleased
 * Add validation error code `Transaction.ProductSkuIsInvalid`
+* Add 'RiskThreshold' gateway rejection reason
 
 ## 4.2.0
 * Add `retrieval_reference_number` to `Transaction`
