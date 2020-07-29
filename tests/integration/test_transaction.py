@@ -5814,3 +5814,30 @@ class TestTransaction(unittest.TestCase):
             self.assertNotEqual(transaction.risk_data.id, None)
             self.assertEqual(transaction.risk_data.decision, "Approve")
             self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
+
+    def test_network_tokenized_credit_card_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": "network_tokenized_credit_card",
+            })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual(True, transaction.processed_with_network_token)
+
+    def test_non_network_tokenized_credit_card_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual(False, transaction.processed_with_network_token)

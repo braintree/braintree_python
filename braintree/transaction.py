@@ -123,6 +123,7 @@ class Transaction(Resource):
         "payment_instrument_type",
         "payment_method_token",
         "plan_id",
+        "processed_with_network_token",
         "processor_authorization_code",
         "processor_response_code",
         "processor_response_text",
