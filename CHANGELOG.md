@@ -1,4 +1,4 @@
-## Unreleased
+## 4.3.0
 * Add validation error code `Transaction.ProductSkuIsInvalid`
 * Add 'RiskThreshold' gateway rejection reason
 * Add `processed_with_network_token` to `Transaction`
