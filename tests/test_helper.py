@@ -237,62 +237,84 @@ class TestHelper(object):
 
     @staticmethod
     def generate_valid_us_bank_account_nonce(routing_number="021000021", account_number="567891234"):
-        client_token = json.loads(TestHelper.generate_decoded_client_token())
-        headers = {
-            "Content-Type": "application/json",
-            "Braintree-Version": "2016-10-07",
-            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
-        }
-        payload = {
-            "type": "us_bank_account",
-            "billing_address": {
-                "street_address": "123 Ave",
-                "region": "CA",
-                "locality": "San Francisco",
-                "postal_code": "94112"
-            },
-            "account_type": "checking",
-            "ownership_type": "personal",
-            "routing_number": routing_number,
-            "account_number": account_number,
-            "first_name": "Dan",
-            "last_name": "Schulman",
-            "ach_mandate": {
-                "text": "cl mandate text"
+        query = '''
+          mutation TokenizeUsBankAccount($input: TokenizeUsBankAccountInput!) {
+            tokenizeUsBankAccount(input: $input) {
+              paymentMethod {
+                id
+              }
             }
+          }
+        '''
 
+        variables = {
+            "input": {
+                "usBankAccount": {
+                    "accountNumber": account_number,
+                    "routingNumber": routing_number,
+                    "accountType": "CHECKING",
+                    "individualOwner": {
+                        "firstName": "Dan",
+                        "lastName": "Schulman"
+                     },
+                    "achMandate": "cl mandate text",
+                    "billingAddress": {
+                        "streetAddress": "123 Ave",
+                        "state": "CA",
+                        "city": "San Francisco",
+                        "zipCode": "94112"
+                     }
+                }
+            }
         }
-        resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
-        respJson = json.loads(resp.text)
-        return respJson["data"]["id"]
+
+        graphql_request = {
+            "query": query,
+            "variables": variables
+        }
+
+        response = TestHelper.__send_graphql_request(graphql_request)
+        return response["data"]["tokenizeUsBankAccount"]["paymentMethod"]["id"]
 
     @staticmethod
     def generate_plaid_us_bank_account_nonce():
-        client_token = json.loads(TestHelper.generate_decoded_client_token())
-        headers = {
-            "Content-Type": "application/json",
-            "Braintree-Version": "2016-10-07",
-            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
-        }
-        payload = {
-            "type": "plaid_public_token",
-            "public_token": "good",
-            "account_id": "plaid_account_id",
-            "ownership_type": "business",
-            "business_name": "PayPal, Inc.",
-            "billing_address": {
-                "street_address": "123 Ave",
-                "region": "CA",
-                "locality": "San Francisco",
-                "postal_code": "94112"
-            },
-            "ach_mandate": {
-                "text": "cl mandate text"
+        query = '''
+          mutation TokenizeUsBankLogin($input: TokenizeUsBankLoginInput!) {
+            tokenizeUsBankLogin(input: $input) {
+              paymentMethod {
+                id
+              }
+            }
+          }
+        '''
+
+        variables = {
+            "input": {
+                "usBankLogin": {
+                    "publicToken": "good",
+                    "accountId": "plaid_account_id",
+                    "accountType": "CHECKING",
+                    "businessOwner": {
+                        "businessName": "PayPal, Inc."
+                     },
+                    "achMandate": "cl mandate text",
+                    "billingAddress": {
+                        "streetAddress": "123 Ave",
+                        "state": "CA",
+                        "city": "San Francisco",
+                        "zipCode": "94112"
+                     }
+                }
             }
         }
-        resp = requests.post(client_token["braintree_api"]["url"] + "/tokens", headers=headers, data=json.dumps(payload) )
-        respJson = json.loads(resp.text)
-        return respJson["data"]["id"]
+
+        graphql_request = {
+            "query": query,
+            "variables": variables
+        }
+
+        response = TestHelper.__send_graphql_request(graphql_request)
+        return response["data"]["tokenizeUsBankLogin"]["paymentMethod"]["id"]
 
     @staticmethod
     def generate_invalid_us_bank_account_nonce():
@@ -394,6 +416,17 @@ class TestHelper(object):
         hmac_payload = Crypto.sha1_hmac_hash(gateway.config.private_key, payload)
         signature = "%s|%s" % (gateway.config.public_key, hmac_payload)
         return {'bt_signature': signature, 'bt_payload': payload}
+
+    @staticmethod
+    def __send_graphql_request(graphql_request):
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        headers = {
+            "Content-Type": "application/json",
+            "Braintree-Version": "2016-10-07",
+            "Authorization": "Bearer " + client_token["braintree_api"]["access_token"]
+        }
+        resp = requests.post(client_token["braintree_api"]["url"] + "/graphql", headers=headers, data=json.dumps(graphql_request))
+        return json.loads(resp.text)
 
 class ClientApiHttp(Http):
     def __init__(self, config, options):

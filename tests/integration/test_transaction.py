@@ -417,6 +417,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("484", transaction.shipping_details.country_code_numeric)
         self.assertEqual(None, transaction.additional_processor_response)
 
+    def test_sale_with_invalid_product_sku(self):
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "product_sku": "product$ku!",
+        })
+
+        self.assertFalse(result.is_success)
+
+        product_sku_errors = result.errors.for_object("transaction").on("product_sku")
+        self.assertEqual(1, len(product_sku_errors))
+        self.assertEqual(ErrorCodes.Transaction.ProductSkuIsInvalid, product_sku_errors[0].code)
+
     def test_sale_with_invalid_address(self):
         customer = Customer.create({
             "first_name": "Pingu",
@@ -1041,6 +1057,30 @@ class TestTransaction(unittest.TestCase):
 
             self.assertFalse(result.is_success)
             self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
+
+    def test_sale_with_gateway_rejected_with_risk_threshold(self):
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111130000000003",
+                    "expiration_date": "05/2017",
+                    "cvv": "333"
+                }
+            })
+
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.RiskThreshold, result.transaction.gateway_rejection_reason)
+
+    def test_sale_with_gateway_rejected_with_risk_threshold_nonce(self):
+        with AdvancedFraudIntegrationMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "payment_method_nonce": Nonces.GatewayRejectedRiskThreshold
+            })
+
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.RiskThreshold, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_gateway_rejected_token_issuance(self):
         result = Transaction.sale({
@@ -5774,3 +5814,30 @@ class TestTransaction(unittest.TestCase):
             self.assertNotEqual(transaction.risk_data.id, None)
             self.assertEqual(transaction.risk_data.decision, "Approve")
             self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
+
+    def test_network_tokenized_credit_card_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": "network_tokenized_credit_card",
+            })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual(True, transaction.processed_with_network_token)
+
+    def test_non_network_tokenized_credit_card_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual(False, transaction.processed_with_network_token)

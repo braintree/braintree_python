@@ -1,22 +1,40 @@
 task :default => :test
 
-task :test => ["test:unit", "test:integration"]
+task :test => ["test:all"]
 
 namespace :test do
+
+  # Usage:
+  #   rake test:unit
+  #   rake test:unit[test_configuration]
+  #   rake test:unit[test_configuration,test_base_merchant_path_for_development]
   desc "run unit tests"
-  task :unit do
-    sh "nosetests tests/unit"
+  task :unit, [:file_name, :test_name] do |task, args|
+    if args.file_name.nil?
+      sh "nosetests tests/unit"
+    elsif args.test_name.nil?
+      sh "nosetests tests/unit/#{args.file_name}.py"
+    else
+      sh "nosetests tests/unit/#{args.file_name}.py -m #{args.test_name}"
+    end
   end
 
+  # Usage:
+  #   rake test:integration
+  #   rake test:integration[test_plan]
+  #   rake test:integration[test_plan,test_all_returns_all_the_plans]
   desc "run integration tests"
-  task :integration do
-    sh "env nosetests tests/integration"
+  task :integration, [:file_name, :test_name] do |task, args|
+    if args.file_name.nil?
+      sh "nosetests tests/integration"
+    elsif args.test_name.nil?
+      sh "nosetests tests/integration/#{args.file_name}.py"
+    else
+      sh "nosetests tests/integration/#{args.file_name}.py -m #{args.test_name}"
+    end
   end
 
-  desc "run single test (example: rake test:single[tests/integration/test_paypal_account.py:TestPayPalAccount.test_find_returns_paypal_account])"
-  task :single, [:test_name] do |t, args|
-      sh "nosetests #{args[:test_name]}"
-  end
+  task :all => [:unit, :integration]
 end
 
 task :clean do

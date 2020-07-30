@@ -123,6 +123,7 @@ class Transaction(Resource):
         "payment_instrument_type",
         "payment_method_token",
         "plan_id",
+        "processed_with_network_token",
         "processor_authorization_code",
         "processor_response_code",
         "processor_response_text",
@@ -170,7 +171,9 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
         * braintree.Transaction.GatewayRejectionReason.Fraud
+        * braintree.Transaction.GatewayRejectionReason.RiskThreshold
         * braintree.Transaction.GatewayRejectionReason.ThreeDSecure
+        * braintree.Transaction.GatewayRejectionReason.TokenIssuance
         """
         ApplicationIncomplete = "application_incomplete"
         Avs                   = "avs"
@@ -178,6 +181,7 @@ class Transaction(Resource):
         Cvv                   = "cvv"
         Duplicate             = "duplicate"
         Fraud                 = "fraud"
+        RiskThreshold         = "risk_threshold"
         ThreeDSecure          = "three_d_secure"
         TokenIssuance         = "token_issuance"
 

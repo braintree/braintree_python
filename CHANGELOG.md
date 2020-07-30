@@ -1,3 +1,9 @@
+## 4.3.0
+* Add validation error code `Transaction.ProductSkuIsInvalid`
+* Add 'RiskThreshold' gateway rejection reason
+* Add `processed_with_network_token` to `Transaction`
+* Add `is_network_tokenized` to `CreditCard`
+
 ## 4.2.0
 * Add `retrieval_reference_number` to `Transaction`
 * Add `network_transaction_id` to `CreditCardVerification`

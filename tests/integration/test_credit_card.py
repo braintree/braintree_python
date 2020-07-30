@@ -1241,3 +1241,22 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(updated_result.is_success, True)
         self.assertEqual("debit", updated_result.credit_card.verifications[0]["credit_card"]["account_type"])
         self.assertEqual("credit", updated_result.credit_card.verifications[1]["credit_card"]["account_type"])
+
+    def test_network_tokenized_credit_card(self):
+        credit_card = CreditCard.find("network_tokenized_credit_card")
+
+        self.assertEqual(credit_card.is_network_tokenized, True)
+
+    def test_non_network_tokenized_credit_card(self):
+        customer = Customer.create().customer
+        card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        credit_card = CreditCard.find(card.token)
+
+        self.assertEqual(credit_card.is_network_tokenized, False)
