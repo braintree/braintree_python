@@ -682,12 +682,14 @@ class Transaction(Resource):
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
         if "android_pay_card" in attributes:
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
+        # NEXT_MAJOR_VERSION remove amex express checkout
         if "amex_express_checkout_card" in attributes:
             self.amex_express_checkout_card_details = AmexExpressCheckoutCard(gateway, attributes.pop("amex_express_checkout_card"))
         if "venmo_account" in attributes:
             self.venmo_account_details = VenmoAccount(gateway, attributes.pop("venmo_account"))
         if "visa_checkout_card" in attributes:
             self.visa_checkout_card_details = VisaCheckoutCard(gateway, attributes.pop("visa_checkout_card"))
+        # NEXt_MAJOR_VERSION remove masterpass
         if "masterpass_card" in attributes:
             self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
         if "samsung_pay_card" in attributes:

@@ -5,10 +5,12 @@ from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.android_pay_card import AndroidPayCard
+# NEXT_MAJOR_VERSION remove amex express checkout
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.venmo_account import VenmoAccount
 from braintree.us_bank_account import UsBankAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
+# NEXT_MAJOR_VERSION remove masterpass
 from braintree.masterpass_card import MasterpassCard
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.unknown_payment_method import UnknownPaymentMethod

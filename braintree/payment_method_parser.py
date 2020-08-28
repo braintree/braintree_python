@@ -24,6 +24,7 @@ def parse_payment_method(gateway, attributes):
         return ApplePayCard(gateway, attributes["apple_pay_card"])
     elif "android_pay_card" in attributes:
         return AndroidPayCard(gateway, attributes["android_pay_card"])
+    # NEXT_MAJOR_VERSION remove amex express checkout
     elif "amex_express_checkout_card" in attributes:
         return AmexExpressCheckoutCard(gateway, attributes["amex_express_checkout_card"])
     elif "venmo_account" in attributes:
@@ -32,6 +33,7 @@ def parse_payment_method(gateway, attributes):
         return UsBankAccount(gateway, attributes["us_bank_account"])
     elif "visa_checkout_card" in attributes:
         return VisaCheckoutCard(gateway, attributes["visa_checkout_card"])
+    # NEXT_MAJOR_VERSION remove masterpass
     elif "masterpass_card" in attributes:
         return MasterpassCard(gateway, attributes["masterpass_card"])
     elif "samsung_pay_card" in attributes:
