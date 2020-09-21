@@ -171,3 +171,19 @@ class TestTransactionGateway(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertEqual(Transaction.GatewayRejectionReason.ApplicationIncomplete, transaction.gateway_rejection_reason)
+
+    def test_sale_with_apple_pay_params(self):
+        result = self.gateway.transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "apple_pay_card": {
+                "cardholder_name": "Evelyn Boyd Granville",
+                "cryptogram": "AAAAAAAA/COBt84dnIEcwAA3gAAGhgEDoLABAAhAgAABAAAALnNCLw==",
+                "eci_indicator": "07",
+                "expiration_month": "10",
+                "expiration_year": "14",
+                "number": "370295001292109"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
