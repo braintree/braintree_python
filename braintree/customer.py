@@ -224,6 +224,7 @@ class Customer(Resource):
             self.android_pay_cards  = [AndroidPayCard(gateway, android_pay_card) for android_pay_card in self.android_pay_cards]
             self.payment_methods += self.android_pay_cards
 
+        # NEXT_MAJOR_VERSION remove deprecated amex express checkout
         if "amex_express_checkout_cards" in attributes:
             self.amex_express_checkout_cards  = [AmexExpressCheckoutCard(gateway, amex_express_checkout_card) for amex_express_checkout_card in self.amex_express_checkout_cards]
             self.payment_methods += self.amex_express_checkout_cards
@@ -244,6 +245,7 @@ class Customer(Resource):
             self.visa_checkout_cards = [VisaCheckoutCard(gateway, visa_checkout_card) for visa_checkout_card in self.visa_checkout_cards]
             self.payment_methods += self.visa_checkout_cards
 
+        # NEXT_MAJOR_VERSION remove deprecated masterpass
         if "masterpass_cards" in attributes:
             self.masterpass_cards = [MasterpassCard(gateway, masterpass_card) for masterpass_card in self.masterpass_cards]
             self.payment_methods += self.masterpass_cards

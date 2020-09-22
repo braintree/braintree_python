@@ -28,6 +28,12 @@ class TransactionGateway(object):
         Resource.verify_keys(params, Transaction.create_signature())
         return self._post("/transactions", {"transaction": params})
 
+    def credit(self, params):
+        if params is None:
+            params = {}
+        params["type"] = Transaction.Type.Credit
+        return self.create(params)
+
     def find(self, transaction_id):
         try:
             if transaction_id is None or transaction_id.strip() == "":

@@ -14,6 +14,7 @@ class Nonces(object):
     AndroidPayCardVisa = "fake-android-pay-visa-nonce"
     AndroidPayCardMasterCard = "fake-android-pay-mastercard-nonce"
     AndroidPayCardAmEx = "fake-android-pay-amex-nonce"
+    # NEXT_MAJOR_VERSION remove amex express checkout
     AmexExpressCheckoutCard = "fake-amex-express-checkout-nonce"
     VenmoAccount = "fake-venmo-account-nonce"
     VenmoAccountTokenIssuanceError = "fake-token-issuance-error-venmo-account-nonce"
@@ -61,6 +62,7 @@ class Nonces(object):
     SEPA = "fake-sepa-bank-account-nonce"
     GatewayRejectedFraud = "fake-gateway-rejected-fraud-nonce"
     GatewayRejectedRiskThreshold = "fake-gateway-rejected-risk-thresholds-nonce"
+    # NEXT_MAJOR_VERSION remove masterpass
     MasterpassAmEx = "fake-masterpass-amex-nonce"
     MasterpassDiscover = "fake-masterpass-discover-nonce"
     MasterpassMasterCard = "fake-masterpass-mastercard-nonce"

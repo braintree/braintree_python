@@ -1,3 +1,7 @@
+## 4.4.0
+* Deprecate `masterpass_card` and `amex_checkout_card` payment methods
+* Fix issue where `transaction.credit` could not be called using a gateway object
+
 ## 4.3.0
 * Add validation error code `Transaction.ProductSkuIsInvalid`
 * Add 'RiskThreshold' gateway rejection reason
