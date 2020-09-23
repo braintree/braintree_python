@@ -187,3 +187,27 @@ class TestTransactionGateway(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
+
+    def test_sale_with_google_pay_params(self):
+        result = self.gateway.transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "android_pay_card": {
+                "cryptogram": "AAAAAAAA/COBt84dnIEcwAA3gAAGhgEDoLABAAhAgAABAAAALnNCLw==",
+                "eci_indicator": "07",
+                "expiration_month": "10",
+                "expiration_year": "14",
+                "google_transaction_id": "12345",
+                "number": "4012888888881881",
+                "source_card_last_four": "1881",
+                "source_card_type": "Visa"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
+        self.assertEqual("android_pay_card", result.transaction.payment_instrument_type)
+        self.assertEqual("10", result.transaction.android_pay_card_details.expiration_month)
+        self.assertEqual("14", result.transaction.android_pay_card_details.expiration_year)
+        self.assertEqual("12345", result.transaction.android_pay_card_details.google_transaction_id)
+        self.assertEqual("1881", result.transaction.android_pay_card_details.source_card_last_4)
+        self.assertEqual("Visa", result.transaction.android_pay_card_details.source_card_type)

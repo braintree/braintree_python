@@ -613,6 +613,7 @@ class Transaction(Resource):
                 ]
             },
             {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
+            {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
         ]
 
     @staticmethod
