@@ -613,6 +613,7 @@ class Transaction(Resource):
                 ]
             },
             {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
+            # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
             {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
         ]
 
@@ -682,6 +683,7 @@ class Transaction(Resource):
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
+        # NEXT_MAJOR_VERSION rename to google_pay_card_details
         if "android_pay_card" in attributes:
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         # NEXT_MAJOR_VERSION remove amex express checkout

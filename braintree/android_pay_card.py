@@ -1,6 +1,7 @@
 import braintree
 from braintree.resource import Resource
 
+# NEXT_MAJOR_VERSION - rename to GooglePayCard
 class AndroidPayCard(Resource):
     """
     A class representing Braintree Android Pay card objects.
