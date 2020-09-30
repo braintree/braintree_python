@@ -1,4 +1,4 @@
-# Braintree Python library
+# Braintree Python library -an imagine library
 
 The Braintree Python library provides integration access to the Braintree Gateway.
 
