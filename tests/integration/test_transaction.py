@@ -5086,6 +5086,21 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
 
+    def test_creating_paypal_transaction_with_billing_agreement_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertNotEqual(None, transaction.paypal_details.billing_agreement_id)
+
     def test_validation_failure_on_invalid_paypal_nonce(self):
         http = ClientApiHttp.create()
 
