@@ -99,6 +99,7 @@ class Transaction(Resource):
         "graphql_id",
         "additional_processor_response",
         "amount",
+        "acquirer_reference_number",
         "authorization_adjustments",
         "authorization_expires_at",
         "avs_error_response_code",

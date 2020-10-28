@@ -275,6 +275,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("1111", transaction.credit_card_details.last_4)
         self.assertEqual("05/2009", transaction.credit_card_details.expiration_date)
         self.assertEqual(None, transaction.voice_referral_number)
+        self.assertEqual(None, transaction.acquirer_reference_number)
 
     def test_sale_allows_amount_as_a_decimal(self):
         result = Transaction.sale({
@@ -4740,6 +4741,10 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
+    def test_find_exposes_acquirer_reference_numbers(self):
+        transaction = Transaction.find("transactionwithacquirerreferencenumber")
+        self.assertEqual("123456789 091019", transaction.acquirer_reference_number)
 
     def test_find_exposes_authorization_adjustments(self):
         transaction = Transaction.find("authadjustmenttransaction")
