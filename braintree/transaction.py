@@ -377,6 +377,8 @@ class Transaction(Resource):
         """
         if params is None:
             params = {}
+        if "recurring" in params.keys():
+            warnings.warn("Use transaction_source parameter instead", DeprecationWarning)
         params["type"] = Transaction.Type.Sale
         return Transaction.create(params)
 

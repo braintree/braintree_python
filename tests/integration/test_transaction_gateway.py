@@ -211,3 +211,36 @@ class TestTransactionGateway(unittest.TestCase):
         self.assertEqual("12345", result.transaction.android_pay_card_details.google_transaction_id)
         self.assertEqual("1881", result.transaction.android_pay_card_details.source_card_last_4)
         self.assertEqual("Visa", result.transaction.android_pay_card_details.source_card_type)
+
+    def test_create_can_set_recurring_flag(self):
+        result = self.gateway.transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+                },
+            "recurring": True
+            })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(True, transaction.recurring)
+
+    def test_create_recurring_flag_sends_deprecation_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = self.gateway.transaction.sale({
+                "amount": "100",
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "recurring": True
+            })
+
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertEqual(True, transaction.recurring)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Use transaction_source parameter instead" in str(w[-1].message)

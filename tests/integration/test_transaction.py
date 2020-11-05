@@ -2565,6 +2565,25 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
 
+    def test_create_recurring_flag_sends_deprecation_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = Transaction.sale({
+                "amount": "100",
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "recurring": True
+            })
+
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertEqual(True, transaction.recurring)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Use transaction_source parameter instead" in str(w[-1].message)
+
     def test_create_can_set_transaction_source_flag_recurring_first(self):
         result = Transaction.sale({
             "amount": "100",

@@ -1,4 +1,5 @@
 import braintree
+import warnings
 from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
@@ -76,6 +77,8 @@ class TransactionGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def sale(self, params):
+        if "recurring" in params.keys():
+            warnings.warn("Use transaction_source parameter instead", DeprecationWarning)
         params.update({"type": "sale"})
         return self.create(params)
 

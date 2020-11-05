@@ -4,6 +4,7 @@ task :test => ["test:all"]
 
 namespace :test do
 
+  print_stdout = "--nocapture"
   # Usage:
   #   rake test:unit
   #   rake test:unit[test_configuration]
@@ -11,11 +12,11 @@ namespace :test do
   desc "run unit tests"
   task :unit, [:file_name, :test_name] do |task, args|
     if args.file_name.nil?
-      sh "nosetests tests/unit"
+      sh "nosetests #{print_stdout} tests/unit"
     elsif args.test_name.nil?
-      sh "nosetests tests/unit/#{args.file_name}.py"
+      sh "nosetests #{print_stdout} tests/unit/#{args.file_name}.py"
     else
-      sh "nosetests tests/unit/#{args.file_name}.py -m #{args.test_name}"
+      sh "nosetests #{print_stdout} tests/unit/#{args.file_name}.py -m #{args.test_name}"
     end
   end
 
@@ -26,11 +27,11 @@ namespace :test do
   desc "run integration tests"
   task :integration, [:file_name, :test_name] do |task, args|
     if args.file_name.nil?
-      sh "nosetests tests/integration"
+      sh "nosetests #{print_stdout} tests/integration"
     elsif args.test_name.nil?
-      sh "nosetests tests/integration/#{args.file_name}.py"
+      sh "nosetests #{print_stdout} tests/integration/#{args.file_name}.py"
     else
-      sh "nosetests tests/integration/#{args.file_name}.py -m #{args.test_name}"
+      sh "nosetests #{print_stdout} tests/integration/#{args.file_name}.py -m #{args.test_name}"
     end
   end
 
