@@ -2,6 +2,7 @@ import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 
+#NEXT_MAJOR_VERSION this was specific to iDEAL integrations and can be removed
 class EuropeBankAccount(Resource):
     class MandateType(object):
         """

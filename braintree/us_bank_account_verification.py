@@ -4,6 +4,7 @@ import braintree.us_bank_account
 
 class UsBankAccountVerification(AttributeGetter):
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
         Constants representing transaction statuses. Available statuses are:
@@ -23,6 +24,7 @@ class UsBankAccountVerification(AttributeGetter):
         Verified               = "verified"
         Pending                = "pending"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class VerificationMethod(object):
         """
         Constants representing transaction statuses. Available statuses are:

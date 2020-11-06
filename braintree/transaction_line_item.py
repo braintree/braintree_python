@@ -8,6 +8,7 @@ from braintree.configuration import Configuration
 class TransactionLineItem(AttributeGetter):
     pass
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Kind(object):
         """
         Constants representing transaction line item kinds. Available kinds are:

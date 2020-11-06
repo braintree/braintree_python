@@ -152,6 +152,7 @@ class Transaction(Resource):
 
       return super(Transaction, self).__repr__(detail_list)
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class CreatedUsing(object):
         """
         Constants representing how the transaction was created.  Available types are:
@@ -163,6 +164,7 @@ class Transaction(Resource):
         FullInformation = "full_information"
         Token           = "token"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class GatewayRejectionReason(object):
         """
         Constants representing gateway rejection reasons. Available types are:
@@ -186,11 +188,13 @@ class Transaction(Resource):
         ThreeDSecure          = "three_d_secure"
         TokenIssuance         = "token_issuance"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Source(object):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class EscrowStatus(object):
         """
         Constants representing transaction escrow statuses. Available statuses are:
@@ -208,6 +212,7 @@ class Transaction(Resource):
         Released       = "released"
         Refunded       = "refunded"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
         Constants representing transaction statuses. Available statuses are:
@@ -241,6 +246,7 @@ class Transaction(Resource):
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Type(object):
         """
         Constants representing transaction types. Available types are:
@@ -252,11 +258,13 @@ class Transaction(Resource):
         Credit = "credit"
         Sale = "sale"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class IndustryType(object):
         Lodging = "lodging"
         TravelAndCruise = "travel_cruise"
         TravelAndFlight = "travel_flight"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class AdditionalCharge(object):
         Restaurant = "restaurant"
         GiftShop = "gift_shop"
