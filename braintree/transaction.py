@@ -99,6 +99,7 @@ class Transaction(Resource):
         "graphql_id",
         "additional_processor_response",
         "amount",
+        "acquirer_reference_number",
         "authorization_adjustments",
         "authorization_expires_at",
         "avs_error_response_code",
@@ -151,6 +152,7 @@ class Transaction(Resource):
 
       return super(Transaction, self).__repr__(detail_list)
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class CreatedUsing(object):
         """
         Constants representing how the transaction was created.  Available types are:
@@ -162,6 +164,7 @@ class Transaction(Resource):
         FullInformation = "full_information"
         Token           = "token"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class GatewayRejectionReason(object):
         """
         Constants representing gateway rejection reasons. Available types are:
@@ -185,11 +188,13 @@ class Transaction(Resource):
         ThreeDSecure          = "three_d_secure"
         TokenIssuance         = "token_issuance"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Source(object):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class EscrowStatus(object):
         """
         Constants representing transaction escrow statuses. Available statuses are:
@@ -207,6 +212,7 @@ class Transaction(Resource):
         Released       = "released"
         Refunded       = "refunded"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
         Constants representing transaction statuses. Available statuses are:
@@ -240,6 +246,7 @@ class Transaction(Resource):
         SubmittedForSettlement = "submitted_for_settlement"
         Voided                 = "voided"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Type(object):
         """
         Constants representing transaction types. Available types are:
@@ -251,11 +258,13 @@ class Transaction(Resource):
         Credit = "credit"
         Sale = "sale"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class IndustryType(object):
         Lodging = "lodging"
         TravelAndCruise = "travel_cruise"
         TravelAndFlight = "travel_flight"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class AdditionalCharge(object):
         Restaurant = "restaurant"
         GiftShop = "gift_shop"
@@ -376,6 +385,8 @@ class Transaction(Resource):
         """
         if params is None:
             params = {}
+        if "recurring" in params.keys():
+            warnings.warn("Use transaction_source parameter instead", DeprecationWarning)
         params["type"] = Transaction.Type.Sale
         return Transaction.create(params)
 
@@ -613,6 +624,8 @@ class Transaction(Resource):
                 ]
             },
             {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
+            # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
+            {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
         ]
 
     @staticmethod
@@ -681,6 +694,7 @@ class Transaction(Resource):
             self.us_bank_account = UsBankAccount(gateway, attributes.pop("us_bank_account"))
         if "apple_pay" in attributes:
             self.apple_pay_details = ApplePayCard(gateway, attributes.pop("apple_pay"))
+        # NEXT_MAJOR_VERSION rename to google_pay_card_details
         if "android_pay_card" in attributes:
             self.android_pay_card_details = AndroidPayCard(gateway, attributes.pop("android_pay_card"))
         # NEXT_MAJOR_VERSION remove amex express checkout

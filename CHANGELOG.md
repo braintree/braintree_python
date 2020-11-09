@@ -1,3 +1,7 @@
+## 4.5.0
+* Add `acquirer_reference_number` to `Transaction`
+* Deprecate `recurring` in Transaction sale requests
+
 ## 4.4.0
 * Deprecate `masterpass_card` and `amex_checkout_card` payment methods
 * Fix issue where `transaction.credit` could not be called using a gateway object

@@ -66,6 +66,7 @@ class TestDispute(unittest.TestCase):
             "id": "transaction_id",
             "amount": "100.00",
             "created_at": datetime(2013, 3, 19, 10, 50, 39),
+            "installment_count": None,
             "order_id": None,
             "purchase_order_number": "po",
             "payment_instrument_subtype": "Visa",
@@ -158,6 +159,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.transaction.id, "transaction_id")
         self.assertEqual(dispute.transaction.amount, Decimal("100.00"))
         self.assertEqual(dispute.transaction.created_at, datetime(2013, 3, 19, 10, 50, 39))
+        self.assertIsNone(dispute.transaction.installment_count)
         self.assertIsNone(dispute.transaction.order_id)
         self.assertEqual(dispute.transaction.purchase_order_number, "po")
         self.assertEqual(dispute.transaction.payment_instrument_subtype, "Visa")

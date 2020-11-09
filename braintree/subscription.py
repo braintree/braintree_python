@@ -36,6 +36,7 @@ class Subscription(Resource):
 
     """
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class TrialDurationUnit(object):
         """
         Constants representing trial duration units.  Available types are:
@@ -47,11 +48,13 @@ class Subscription(Resource):
         Day = "day"
         Month = "month"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Source(object):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
         Constants representing subscription statusues.  Available statuses are:

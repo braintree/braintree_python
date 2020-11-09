@@ -26,6 +26,8 @@ Braintree employs a deprecation policy for our SDKs. For more information on the
 
  * [Official documentation](https://developers.braintreepayments.com/ios+python/start/hello-server)
 
+Updating from an Inactive, Deprecated, or Unsupported version of this SDK? Check our [Migration Guide](https://developers.braintreepayments.com/reference/general/server-sdk-migration-guide/python) for tips.
+
 ## Quick Start Example
 
 ```python

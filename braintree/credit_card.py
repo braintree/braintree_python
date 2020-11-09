@@ -95,6 +95,7 @@ class CreditCard(Resource):
         International = "international"
         US = "us"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class CardTypeIndicator(object):
         """
         Constants representing the three states for the card type indicator attributes

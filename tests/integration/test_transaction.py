@@ -275,6 +275,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("1111", transaction.credit_card_details.last_4)
         self.assertEqual("05/2009", transaction.credit_card_details.expiration_date)
         self.assertEqual(None, transaction.voice_referral_number)
+        self.assertEqual(None, transaction.acquirer_reference_number)
 
     def test_sale_allows_amount_as_a_decimal(self):
         result = Transaction.sale({
@@ -2564,6 +2565,25 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
 
+    def test_create_recurring_flag_sends_deprecation_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = Transaction.sale({
+                "amount": "100",
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "recurring": True
+            })
+
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            self.assertEqual(True, transaction.recurring)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Use transaction_source parameter instead" in str(w[-1].message)
+
     def test_create_can_set_transaction_source_flag_recurring_first(self):
         result = Transaction.sale({
             "amount": "100",
@@ -4741,6 +4761,10 @@ class TestTransaction(unittest.TestCase):
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
+    def test_find_exposes_acquirer_reference_numbers(self):
+        transaction = Transaction.find("transactionwithacquirerreferencenumber")
+        self.assertEqual("123456789 091019", transaction.acquirer_reference_number)
+
     def test_find_exposes_authorization_adjustments(self):
         transaction = Transaction.find("authadjustmenttransaction")
         authorization_adjustment = transaction.authorization_adjustments[0]
@@ -5085,6 +5109,21 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
         self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
         self.assertNotEqual(None, transaction.paypal_details.debug_id)
+
+    def test_creating_paypal_transaction_with_billing_agreement_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertNotEqual(None, transaction.paypal_details.billing_agreement_id)
 
     def test_validation_failure_on_invalid_paypal_nonce(self):
         http = ClientApiHttp.create()

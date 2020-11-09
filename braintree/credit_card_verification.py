@@ -7,6 +7,7 @@ from braintree.resource import Resource
 
 class CreditCardVerification(AttributeGetter):
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
         Constants representing transaction statuses. Available statuses are:

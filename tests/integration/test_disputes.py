@@ -242,6 +242,7 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(dispute.id, "open_dispute")
         self.assertEqual(dispute.status, Dispute.Status.Open)
         self.assertEqual(dispute.transaction.id, "open_disputed_transaction")
+        self.assertEqual(None, dispute.transaction.installment_count)
         self.assertNotEqual(None, dispute.graphql_id)
 
     @raises_with_regexp(NotFoundError, "dispute with id 'invalid-id' not found")

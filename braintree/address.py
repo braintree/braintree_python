@@ -46,6 +46,7 @@ class Address(Resource):
         ]
         return super(Address, self).__repr__(detail_list)
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class ShippingMethod(object):
         """
         Constants representing shipping methods for shipping addresses. Available types are:

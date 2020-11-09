@@ -79,7 +79,7 @@ class TestDisputeSearch(unittest.TestCase):
         ])
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(1, len(disputes))
+        self.assertGreaterEqual(len(disputes), 1)
 
         self.assertEquals(disputes[0].received_date, date(2014, 3, 4))
 

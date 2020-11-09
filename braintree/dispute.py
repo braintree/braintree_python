@@ -5,6 +5,7 @@ from braintree.dispute_details import DisputeEvidence, DisputeStatusHistory
 from braintree.configuration import Configuration
 
 class Dispute(AttributeGetter):
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
         Constants representing dispute statuses. Available types are:
@@ -22,6 +23,7 @@ class Dispute(AttributeGetter):
         Won  = "won"
         Lost = "lost"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Reason(object):
         """
         Constants representing dispute reasons. Available types are:
@@ -50,6 +52,7 @@ class Dispute(AttributeGetter):
         Retrieval                     = "retrieval"
         TransactionAmountDiffers      = "transaction_amount_differs"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Kind(object):
         """
         Constants representing dispute kinds. Available types are:
