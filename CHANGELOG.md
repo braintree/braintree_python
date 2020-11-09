@@ -1,6 +1,6 @@
 ### unreleased
-
 * Add `acquirer_reference_number` to `Transaction`
+* Deprecate `recurring` in Transaction sale requests
 
 ## 4.4.0
 * Deprecate `masterpass_card` and `amex_checkout_card` payment methods
