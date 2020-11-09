@@ -1,4 +1,4 @@
-### unreleased
+### 4.5.0
 * Add `acquirer_reference_number` to `Transaction`
 * Deprecate `recurring` in Transaction sale requests
 
