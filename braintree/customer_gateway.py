@@ -1,4 +1,5 @@
 import braintree
+import warnings
 from braintree.customer import Customer
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
@@ -21,6 +22,7 @@ class CustomerGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, Customer.create_signature())
+        self.__check_for_deprecated_attributes(params)
         return self._post("/customers", {"customer": params})
 
     def delete(self, customer_id):
@@ -52,6 +54,7 @@ class CustomerGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, Customer.update_signature())
+        self.__check_for_deprecated_attributes(params)
         response = self.config.http().put(self.config.base_merchant_path() + "/customers/" + customer_id, {"customer": params})
         if "customer" in response:
             return SuccessfulResult({"customer": Customer(self.gateway, response["customer"])})
@@ -84,3 +87,8 @@ class CustomerGateway(object):
         else:
             pass
 
+    def __check_for_deprecated_attributes(self, params):
+        if "device_session_id" in params.keys():
+            warnings.warn("Use device_data parameter instead", DeprecationWarning)
+        if "fraud_merchant_id" in params.keys():
+            warnings.warn("Use device_data parameter instead", DeprecationWarning)

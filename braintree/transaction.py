@@ -492,12 +492,13 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "device_session_id", "fraud_merchant_id", "merchant_account_id", "order_id", "channel",
+            "amount", "customer_id", "merchant_account_id", "order_id", "channel",
             "payment_method_token", "purchase_order_number", "recurring", "transaction_source", "shipping_address_id",
             "device_data", "billing_address_id", "payment_method_nonce", "product_sku", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "discount_amount", "shipping_amount", "ships_from_postal_code",
             "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "risk_data": [
                     "customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"

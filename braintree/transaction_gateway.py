@@ -27,6 +27,7 @@ class TransactionGateway(object):
 
     def create(self, params):
         Resource.verify_keys(params, Transaction.create_signature())
+        self.__check_for_deprecated_attributes(params)
         return self._post("/transactions", {"transaction": params})
 
     def credit(self, params):
@@ -169,3 +170,9 @@ class TransactionGateway(object):
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
+
+    def __check_for_deprecated_attributes(self, params):
+        if "device_session_id" in params.keys():
+            warnings.warn("Use device_data parameter instead", DeprecationWarning)
+        if "fraud_merchant_id" in params.keys():
+            warnings.warn("Use device_data parameter instead", DeprecationWarning)

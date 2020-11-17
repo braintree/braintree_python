@@ -58,7 +58,7 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
 
-    def test_create_with_device_session_id_and_fraud_merchant_id(self):
+    def test_create_with_device_data(self):
         result = Customer.create({
             "first_name": "Joe",
             "last_name": "Brown",
@@ -67,16 +67,39 @@ class TestCustomer(unittest.TestCase):
             "phone": "312.555.1234",
             "fax": "614.555.5678",
             "website": "www.email.com",
+            "device_data": "abc123",
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2010",
-                "cvv": "100",
-                "device_session_id": "abc123",
-                "fraud_merchant_id": "456"
-            }
-        })
+                "cvv": "100"
+                }
+            })
 
         self.assertTrue(result.is_success)
+
+    def test_create_with_device_session_id_and_fraud_merchant_id_sends_deprecation_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = Customer.create({
+                "first_name": "Joe",
+                "last_name": "Brown",
+                "company": "Fake Company",
+                "email": "joe@email.com",
+                "phone": "312.555.1234",
+                "fax": "614.555.5678",
+                "website": "www.email.com",
+                "device_session_id": "abc123",
+                "fraud_merchant_id": "456",
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2010",
+                    "cvv": "100"
+                    }
+                })
+
+            self.assertTrue(result.is_success)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
 
     def test_create_with_risk_data_security_parameters(self):
         result = Customer.create({

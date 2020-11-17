@@ -158,7 +158,8 @@ class Customer(Resource):
     @staticmethod
     def create_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce",
+            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "payment_method_nonce",
+            "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {"risk_data": ["customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"]},
             {"credit_card": CreditCard.create_signature()},
             {"custom_fields": ["__any_key__"]},
