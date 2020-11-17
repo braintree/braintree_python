@@ -758,6 +758,7 @@ class ErrorCodes(object):
         InvalidDepositAmounts = "96106"
 
     class RiskData(object):
+        # NEXT_MAJOR_VERSION Remove CustomerBrowserIsTooLong code as it is no longer used
         CustomerBrowserIsTooLong = "94701"
         CustomerDeviceIdIsTooLong = "94702"
         CustomerLocationZipInvalidCharacters = "94703"
