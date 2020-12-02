@@ -12,7 +12,6 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "customer_id",
             "cvv",
             "device_data",
-            "device_session_id",
             "expiration_date",
             "expiration_month",
             "expiration_year",
@@ -20,6 +19,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "payment_method_nonce",
             "paypal_refresh_token",
             "token",
+            "device_session_id",
             {
                 "billing_address": Address.create_signature()},
             {
@@ -86,7 +86,6 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "billing_address_id",
             "cardholder_name",
             "cvv",
-            "device_session_id",
             "expiration_date",
             "expiration_month",
             "expiration_year",
@@ -94,8 +93,9 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "token",
             "venmo_sdk_payment_method_code",
             "device_data",
-            "fraud_merchant_id",
             "payment_method_nonce",
+            "device_session_id",
+            "fraud_merchant_id",
             {
                 "options": [
                     "make_default",

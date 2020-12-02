@@ -71,7 +71,6 @@ class PaymentMethod(Resource):
             "customer_id",
             "cvv",
             "device_data",
-            "device_session_id",
             "expiration_date",
             "expiration_month",
             "expiration_year",
@@ -79,6 +78,7 @@ class PaymentMethod(Resource):
             "payment_method_nonce",
             "paypal_refresh_token",
             "token",
+            "device_session_id", # NEXT_MAJOR_VERSION remove device_session_id
             {
                 "billing_address": Address.create_signature()
             },
@@ -106,7 +106,6 @@ class PaymentMethod(Resource):
             "billing_address_id",
             "cardholder_name",
             "cvv",
-            "device_session_id",
             "expiration_date",
             "expiration_month",
             "expiration_year",
@@ -114,8 +113,8 @@ class PaymentMethod(Resource):
             "token",
             "venmo_sdk_payment_method_code",
             "device_data",
-            "fraud_merchant_id",
             "payment_method_nonce",
+            "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "options": [
                     "make_default",

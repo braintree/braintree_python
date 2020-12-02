@@ -31,7 +31,7 @@ class TestTransaction(unittest.TestCase):
                     "number": "4111111111111111",
                     "expiration_date": "05/2009"
                 },
-                "device_session_id": "abc123",
+                "device_data": "abc123",
             })
 
             self.assertTrue(result.is_success)
@@ -680,19 +680,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("123 Fake St.", transaction.billing_details.street_address)
         self.assertEqual(address.id, transaction.billing_details.id)
 
-    def test_sale_with_device_session_id_and_fraud_merchant_id(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2010"
-            },
-            "device_session_id": "abc123",
-            "fraud_merchant_id": "456"
-        })
+    def test_sale_with_device_session_id_and_fraud_merchant_id_sends_deprecation_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2010"
+                    },
+                "device_session_id": "abc123",
+                "fraud_merchant_id": "456"
+                })
 
-        self.assertTrue(result.is_success)
-
+            self.assertTrue(result.is_success)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
 
     def test_sale_with_level_2(self):
         result = Transaction.sale({
@@ -5703,7 +5706,7 @@ class TestTransaction(unittest.TestCase):
                     "number": "4111111111111111",
                     "expiration_date": "05/2009"
                 },
-                "device_session_id": "abc123",
+                "device_data": "abc123",
             })
 
             self.assertTrue(result.is_success)

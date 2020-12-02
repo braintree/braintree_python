@@ -132,19 +132,37 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual("05/2014", credit_card.expiration_date)
 
     def test_create_with_security_params(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_month": "05",
-            "expiration_year": "2014",
-            "cvv": "100",
-            "cardholder_name": "John Doe",
-            "device_session_id": "abc123",
-            "fraud_merchant_id": "456"
-        })
+            customer = Customer.create().customer
+            result = CreditCard.create({
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2014",
+                "cvv": "100",
+                "cardholder_name": "John Doe",
+                "device_data": "abc123"
+                })
 
-        self.assertTrue(result.is_success)
+            self.assertTrue(result.is_success)
+
+    def test_create_with_deprecated_security_params_sends_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            customer = Customer.create().customer
+            result = CreditCard.create({
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2014",
+                "cvv": "100",
+                "cardholder_name": "John Doe",
+                "device_session_id": "abc123",
+                "fraud_merchant_id": "456"
+                })
+
+            self.assertTrue(result.is_success)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
 
     def test_create_can_specify_the_desired_token(self):
         token = str(random.randint(1, 1000000))
@@ -227,7 +245,7 @@ class TestCreditCard(unittest.TestCase):
                 "number": "4000111111111115",
                 "expiration_date": "05/2014",
                 "options": {"verify_card": True},
-                "device_session_id": "abc123"
+                "device_data": "abc123"
             })
 
             self.assertFalse(result.is_success)
@@ -246,7 +264,7 @@ class TestCreditCard(unittest.TestCase):
                 "number": "4111111111111111",
                 "expiration_date": "05/2014",
                 "options": {"verify_card": True},
-                "device_session_id": "abc123"
+                "device_data": "abc123"
             })
 
             self.assertTrue(result.is_success)

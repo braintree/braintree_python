@@ -1,3 +1,6 @@
+## unreleased
+* Deprecate `device_session_id` and `fraud_merchant_id` in `CreditCardGateway`, `CustomerGateway`, `PaymentMethodGateway`, and `TransactionGateway` classes
+
 ## 4.5.0
 * Add `acquirer_reference_number` to `Transaction`
 * Deprecate `recurring` in Transaction sale requests
