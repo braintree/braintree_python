@@ -152,6 +152,6 @@ class PaymentMethodGateway(object):
 
     def __check_for_deprecated_attributes(self, params):
         if "device_session_id" in params.keys():
-            warnings.warn("Use device_data parameter instead", DeprecationWarning)
+            warnings.warn("device_session_id is deprecated, use device_data parameter instead", DeprecationWarning)
         if "fraud_merchant_id" in params.keys():
-            warnings.warn("Use device_data parameter instead", DeprecationWarning)
+            warnings.warn("fraud_merchant_id is deprecated, use device_data parameter instead", DeprecationWarning)
