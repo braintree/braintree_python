@@ -87,6 +87,7 @@ class TestHelper(object):
     another_us_bank_merchant_account_id = "another_us_bank_merchant_account"
     adyen_merchant_account_id = "adyen_ma"
     hiper_brl_merchant_account_id = "hiper_brl"
+    card_processor_brl_merchant_account_id = "card_processor_brl"
 
     add_on_discount_plan = {
          "description": "Plan for integration tests -- with add-ons and discounts",

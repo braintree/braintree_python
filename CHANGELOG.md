@@ -1,5 +1,8 @@
-## unreleased
+##Unreleased
+* Add `installments` to `Transaction` requests
+* Add `count` to `installments`
 * Deprecate `device_session_id` and `fraud_merchant_id` in `CreditCardGateway`, `CustomerGateway`, `PaymentMethodGateway`, and `TransactionGateway` classes
+
 
 ## 4.5.0
 * Add `acquirer_reference_number` to `Transaction`

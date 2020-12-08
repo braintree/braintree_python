@@ -115,6 +115,7 @@ class Transaction(Resource):
         "disputes",
         "escrow_status",
         "gateway_rejection_reason",
+        "installments",
         "master_merchant_account_id",
         "merchant_account_id",
         "network_response_code",
@@ -627,6 +628,7 @@ class Transaction(Resource):
             {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
             # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
             {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
+            {"installments": {"count"}},
         ]
 
     @staticmethod

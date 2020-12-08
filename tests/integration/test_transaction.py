@@ -5742,3 +5742,58 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("1000", transaction.processor_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
         self.assertEqual(False, transaction.processed_with_network_token)
+
+    def test_installment_count_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "installments": {
+                "count": 4,
+            },
+        })
+
+        transaction = result.transaction
+        self.assertTrue(result.is_success)
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual(4, transaction.installment_count)
+
+
+    def test_installment_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "installments": {
+                "count": 4,
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        })
+
+        transaction = result.transaction
+        self.assertTrue(result.is_success)
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEquals(4, transaction.installment_count)
+        self.assertEquals(4, len(transaction.installments))
+        for i, t in enumerate(transaction.installments) :
+            self.assertEquals('250.00', t['amount'])
+            self.assertEquals('% s_INST_% s'%(transaction.id,i+1), t['id'])
+
+        result = Transaction.refund(transaction.id,"20.00")
+        self.assertTrue(result.is_success)
+
+        refund = result.transaction
+
+        for t in refund.refunded_installments :
+            self.assertEquals('-5.00', t['adjustments'][0]['amount'])
+            self.assertEquals("REFUND",t['adjustments'][0]['kind'])
