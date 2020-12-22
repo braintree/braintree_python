@@ -2,6 +2,7 @@
 * Add `installments` to `Transaction` requests
 * Add `count` to `installments`
 * Deprecate `device_session_id` and `fraud_merchant_id` in `CreditCardGateway`, `CustomerGateway`, `PaymentMethodGateway`, and `TransactionGateway` classes
+* Add `sca_exemption` to Transaction.sale request
 
 
 ## 4.5.0

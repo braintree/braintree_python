@@ -779,6 +779,34 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Decimal("2.00"), transaction.shipping_amount)
         self.assertEqual("12345", transaction.ships_from_postal_code)
 
+    def test_sca_exemption_successful_result(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4023490000000008",
+                "expiration_date": "05/2009"
+            },
+            "sca_exemption": "low_value"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.sca_exemption_requested, "low_value")
+
+    def test_invalid_sca_exemption_failure_result(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4023490000000008",
+                "expiration_date": "05/2009"
+            },
+            "sca_exemption": "invalid"
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("transaction").on("sca_exemption")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ScaExemptionInvalid, errors[0].code)
+
     def test_create_with_discount_amount_invalid(self):
         result = Transaction.sale({
             "amount": Decimal("100"),

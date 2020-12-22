@@ -499,6 +499,7 @@ class Transaction(Resource):
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "discount_amount", "shipping_amount", "ships_from_postal_code",
             "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
+            "sca_exemption",
             "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "risk_data": [
@@ -712,6 +713,10 @@ class Transaction(Resource):
             self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
         if "samsung_pay_card" in attributes:
             self.samsung_pay_card_details = SamsungPayCard(gateway, attributes.pop("samsung_pay_card"))
+        if "sca_exemption_requested" in attributes:
+            self.sca_exemption_requested = attributes.pop("sca_exemption_requested")
+        else:
+            self.sca_exemption_requested = None
         if "customer" in attributes:
             self.customer_details = Customer(gateway, attributes.pop("customer"))
         if "shipping" in attributes:
