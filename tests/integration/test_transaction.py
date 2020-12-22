@@ -238,25 +238,6 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-    def test_sale_with_external_vault_validation_error_invalid_card_type(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.Elo,
-                "expiration_date": "05/2009"
-            },
-            "external_vault": {
-                "status": "vaulted",
-                "previous_network_transaction_id": "123456789012345"
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ExternalVault.CardTypeIsInvalid,
-            result.errors.for_object("transaction").for_object("external_vault").on("previous_network_transaction_id")[0].code
-        )
-
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
