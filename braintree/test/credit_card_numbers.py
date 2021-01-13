@@ -25,6 +25,7 @@ class CreditCardNumbers(object):
 
     Hiper = "6370950000000005"
     Hipercard = "6062820524845321"
+    Amex = "378734493671000"
 
     class FailsSandboxVerification(object):
         AmEx       = "378734493671000"

@@ -122,6 +122,20 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual(result.transaction, None)
 
+    def test_sale_accepts_external_vault_status_amex(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Amex,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.transaction.network_transaction_id, "")
 
     def test_sale_accepts_blank_external_vault_previous_network_transaction_id_non_visa(self):
         result = Transaction.sale({
