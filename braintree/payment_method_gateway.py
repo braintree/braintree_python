@@ -36,6 +36,7 @@ class PaymentMethodGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, PaymentMethod.create_signature())
+        self.__check_for_deprecated_attributes(params);
         return self._post("/payment_methods", {"payment_method": params})
 
     def find(self, payment_method_token):
@@ -50,6 +51,7 @@ class PaymentMethodGateway(object):
 
     def update(self, payment_method_token, params):
         Resource.verify_keys(params, PaymentMethod.update_signature())
+        self.__check_for_deprecated_attributes(params);
         try:
             if payment_method_token is None or payment_method_token.strip() == "":
                 raise NotFoundError()
@@ -147,3 +149,9 @@ class PaymentMethodGateway(object):
         if "payment_method_nonce" in response:
             return PaymentMethodNonce(self.gateway, response["payment_method_nonce"])
         raise ValueError("payment_method_nonce not present in response")
+
+    def __check_for_deprecated_attributes(self, params):
+        if "device_session_id" in params.keys():
+            warnings.warn("device_session_id is deprecated, use device_data parameter instead", DeprecationWarning)
+        if "fraud_merchant_id" in params.keys():
+            warnings.warn("fraud_merchant_id is deprecated, use device_data parameter instead", DeprecationWarning)

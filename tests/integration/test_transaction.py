@@ -31,7 +31,7 @@ class TestTransaction(unittest.TestCase):
                     "number": "4111111111111111",
                     "expiration_date": "05/2009"
                 },
-                "device_session_id": "abc123",
+                "device_data": "abc123",
             })
 
             self.assertTrue(result.is_success)
@@ -122,6 +122,20 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual(result.transaction, None)
 
+    def test_sale_accepts_external_vault_status_amex(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Amex,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.transaction.network_transaction_id, "")
 
     def test_sale_accepts_blank_external_vault_previous_network_transaction_id_non_visa(self):
         result = Transaction.sale({
@@ -237,25 +251,6 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
-
-    def test_sale_with_external_vault_validation_error_invalid_card_type(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": CreditCardNumbers.Elo,
-                "expiration_date": "05/2009"
-            },
-            "external_vault": {
-                "status": "vaulted",
-                "previous_network_transaction_id": "123456789012345"
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ExternalVault.CardTypeIsInvalid,
-            result.errors.for_object("transaction").for_object("external_vault").on("previous_network_transaction_id")[0].code
-        )
 
     def test_sale_returns_a_successful_result_with_type_of_sale(self):
         result = Transaction.sale({
@@ -680,19 +675,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("123 Fake St.", transaction.billing_details.street_address)
         self.assertEqual(address.id, transaction.billing_details.id)
 
-    def test_sale_with_device_session_id_and_fraud_merchant_id(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2010"
-            },
-            "device_session_id": "abc123",
-            "fraud_merchant_id": "456"
-        })
+    def test_sale_with_device_session_id_and_fraud_merchant_id_sends_deprecation_warning(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2010"
+                    },
+                "device_session_id": "abc123",
+                "fraud_merchant_id": "456"
+                })
 
-        self.assertTrue(result.is_success)
-
+            self.assertTrue(result.is_success)
+            assert len(w) > 0
+            assert issubclass(w[-1].category, DeprecationWarning)
 
     def test_sale_with_level_2(self):
         result = Transaction.sale({
@@ -775,6 +773,34 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Decimal("1.00"), transaction.discount_amount)
         self.assertEqual(Decimal("2.00"), transaction.shipping_amount)
         self.assertEqual("12345", transaction.ships_from_postal_code)
+
+    def test_sca_exemption_successful_result(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4023490000000008",
+                "expiration_date": "05/2009"
+            },
+            "sca_exemption": "low_value"
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.sca_exemption_requested, "low_value")
+
+    def test_invalid_sca_exemption_failure_result(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4023490000000008",
+                "expiration_date": "05/2009"
+            },
+            "sca_exemption": "invalid"
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("transaction").on("sca_exemption")
+        self.assertEqual(1, len(errors))
+        self.assertEqual(ErrorCodes.Transaction.ScaExemptionInvalid, errors[0].code)
 
     def test_create_with_discount_amount_invalid(self):
         result = Transaction.sale({
@@ -5703,7 +5729,7 @@ class TestTransaction(unittest.TestCase):
                     "number": "4111111111111111",
                     "expiration_date": "05/2009"
                 },
-                "device_session_id": "abc123",
+                "device_data": "abc123",
             })
 
             self.assertTrue(result.is_success)
@@ -5739,3 +5765,58 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("1000", transaction.processor_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
         self.assertEqual(False, transaction.processed_with_network_token)
+
+    def test_installment_count_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "installments": {
+                "count": 4,
+            },
+        })
+
+        transaction = result.transaction
+        self.assertTrue(result.is_success)
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEqual(4, transaction.installment_count)
+
+
+    def test_installment_transaction(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "installments": {
+                "count": 4,
+            },
+            "options": {
+                "submit_for_settlement": True
+            },
+        })
+
+        transaction = result.transaction
+        self.assertTrue(result.is_success)
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+        self.assertEquals(4, transaction.installment_count)
+        self.assertEquals(4, len(transaction.installments))
+        for i, t in enumerate(transaction.installments) :
+            self.assertEquals('250.00', t['amount'])
+            self.assertEquals('% s_INST_% s'%(transaction.id,i+1), t['id'])
+
+        result = Transaction.refund(transaction.id,"20.00")
+        self.assertTrue(result.is_success)
+
+        refund = result.transaction
+
+        for t in refund.refunded_installments :
+            self.assertEquals('-5.00', t['adjustments'][0]['amount'])
+            self.assertEquals("REFUND",t['adjustments'][0]['kind'])

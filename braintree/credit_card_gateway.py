@@ -1,4 +1,5 @@
 import braintree
+import warnings
 from braintree.credit_card import CreditCard
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
@@ -17,6 +18,7 @@ class CreditCardGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, CreditCard.create_signature())
+        self.__check_for_deprecated_attributes(params)
         return self._post("/payment_methods", {"credit_card": params})
 
     def delete(self, credit_card_token):
@@ -59,6 +61,7 @@ class CreditCardGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, CreditCard.update_signature())
+        self.__check_for_deprecated_attributes(params)
         response = self.config.http().put(self.config.base_merchant_path() + "/payment_methods/credit_card/" + credit_card_token, {"credit_card": params})
         if "credit_card" in response:
             return SuccessfulResult({"credit_card": CreditCard(self.gateway, response["credit_card"])})
@@ -86,3 +89,8 @@ class CreditCardGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    def __check_for_deprecated_attributes(self, params):
+        if "device_session_id" in params.keys():
+            warnings.warn("device_session_id is deprecated, use device_data parameter instead", DeprecationWarning)
+        if "fraud_merchant_id" in params.keys():
+            warnings.warn("fraud_merchant_id is deprecated, use device_data parameter instead", DeprecationWarning)

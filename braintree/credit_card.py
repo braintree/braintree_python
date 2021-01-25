@@ -245,13 +245,12 @@ class CreditCard(Resource):
             "expiration_date",
             "expiration_month",
             "expiration_year",
-            "device_session_id",
-            "fraud_merchant_id",
             "number",
             "token",
             "venmo_sdk_payment_method_code",
             "device_data",
             "payment_method_nonce",
+            "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "billing_address": billing_address_params
             },
