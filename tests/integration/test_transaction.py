@@ -4537,7 +4537,7 @@ class TestTransaction(unittest.TestCase):
             "merchant_account_id": TestHelper.adyen_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "4111111111111111",
+                "number": "5555555555554444",
                 "expiration_date": "10/2020",
                 "cvv": "737"
             },
