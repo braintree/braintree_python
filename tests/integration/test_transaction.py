@@ -24,7 +24,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
 
     def test_sale_returns_risk_data(self):
-        with AdvancedFraudIntegrationMerchant():
+        with FraudProtectionEnterpriseIntegrationMerchant():
             result = Transaction.sale({
                 "amount": TransactionAmounts.Authorize,
                 "credit_card": {
@@ -40,6 +40,8 @@ class TestTransaction(unittest.TestCase):
             self.assertNotEqual(transaction.risk_data.id, None)
             self.assertEqual(transaction.risk_data.decision, "Approve")
             self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
+            self.assertTrue(hasattr(transaction.risk_data, 'decision_reasons'))
+            self.assertTrue(hasattr(transaction.risk_data, 'transaction_risk_score'))
 
     def test_sale_receives_network_transaction_id_visa(self):
         result = Transaction.sale({
@@ -1039,7 +1041,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.private_key = old_private_key
 
     def test_sale_with_gateway_rejected_with_fraud(self):
-        with AdvancedFraudIntegrationMerchant():
+        with AdvancedFraudKountIntegrationMerchant():
             result = Transaction.sale({
                 "amount": TransactionAmounts.Authorize,
                 "credit_card": {
@@ -1053,7 +1055,7 @@ class TestTransaction(unittest.TestCase):
             self.assertEqual(Transaction.GatewayRejectionReason.Fraud, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_gateway_rejected_with_risk_threshold(self):
-        with AdvancedFraudIntegrationMerchant():
+        with AdvancedFraudKountIntegrationMerchant():
             result = Transaction.sale({
                 "amount": TransactionAmounts.Authorize,
                 "credit_card": {
@@ -1067,7 +1069,7 @@ class TestTransaction(unittest.TestCase):
             self.assertEqual(Transaction.GatewayRejectionReason.RiskThreshold, result.transaction.gateway_rejection_reason)
 
     def test_sale_with_gateway_rejected_with_risk_threshold_nonce(self):
-        with AdvancedFraudIntegrationMerchant():
+        with AdvancedFraudKountIntegrationMerchant():
             result = Transaction.sale({
                 "amount": TransactionAmounts.Authorize,
                 "payment_method_nonce": Nonces.GatewayRejectedRiskThreshold
@@ -1400,7 +1402,7 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
 
     def test_sale_with_advanced_fraud_checking_skipped(self):
-        with AdvancedFraudIntegrationMerchant():
+        with AdvancedFraudKountIntegrationMerchant():
             result = Transaction.sale({
                 "amount": TransactionAmounts.Authorize,
                 "credit_card": {
@@ -5720,24 +5722,6 @@ class TestTransaction(unittest.TestCase):
 
         transaction = result.transaction
         self.assertIsNotNone(transaction.retrieval_reference_number)
-
-    def test_sale_returns_risk_data(self):
-        with AdvancedFraudIntegrationMerchant():
-            result = Transaction.sale({
-                "amount": TransactionAmounts.Authorize,
-                "credit_card": {
-                    "number": "4111111111111111",
-                    "expiration_date": "05/2009"
-                },
-                "device_data": "abc123",
-            })
-
-            self.assertTrue(result.is_success)
-            transaction = result.transaction
-            self.assertIsInstance(transaction.risk_data, RiskData)
-            self.assertNotEqual(transaction.risk_data.id, None)
-            self.assertEqual(transaction.risk_data.decision, "Approve")
-            self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
 
     def test_network_tokenized_credit_card_transaction(self):
         result = Transaction.sale({

@@ -56,13 +56,25 @@ def reset_braintree_configuration():
     )
 reset_braintree_configuration()
 
-class AdvancedFraudIntegrationMerchant:
+class AdvancedFraudKountIntegrationMerchant:
     def __enter__(self):
         Configuration.configure(
             Environment.Development,
             "advanced_fraud_integration_merchant_id",
             "advanced_fraud_integration_public_key",
             "advanced_fraud_integration_private_key"
+        )
+
+    def __exit__(self, type, value, trace):
+        reset_braintree_configuration()
+
+class FraudProtectionEnterpriseIntegrationMerchant:
+    def __enter__(self):
+        Configuration.configure(
+            Environment.Development,
+            "fraud_protection_enterprise_integration_merchant_id",
+            "fraud_protection_enterprise_integration_public_key",
+            "fraud_protection_enterprise_integration_private_key"
         )
 
     def __exit__(self, type, value, trace):
