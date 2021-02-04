@@ -1,26 +1,22 @@
-import json
-import os
-import re
-import random
-import sys
-import unittest
-import warnings
-import subprocess
-import time
-
-from urllib.parse import urlencode, quote_plus
-from http.client import HTTPConnection
-from base64 import encodebytes
-import requests
-
-from base64 import b64decode
+from base64 import b64decode, encodebytes
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from enum import Enum
+from http.client import HTTPConnection
+from nose.tools import make_decorator, raises
 from subprocess import Popen, PIPE
-
-from nose.tools import make_decorator
-from nose.tools import raises
+from urllib.parse import urlencode, quote_plus
+import json
+import os
+import random
+import re
+import requests
+import subprocess
+import sys
+import time
+import unittest
+import warnings
 
 from braintree import *
 from braintree.exceptions import *
@@ -529,3 +525,6 @@ class ClientApiHttp(Http):
             "User-Agent": "Braintree Python " + version.Version, #pylint: disable=E0602
             "X-ApiVersion": Configuration.api_version()
         }
+
+class ExpirationHelper(Enum):
+    ADYEN = "03/2030"

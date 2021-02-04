@@ -4537,8 +4537,8 @@ class TestTransaction(unittest.TestCase):
             "merchant_account_id": TestHelper.adyen_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
-                "number": "5555555555554444",
-                "expiration_date": "10/2020",
+                "number": "4111111111111111",
+                "expiration_date": ExpirationHelper.ADYEN.value,
                 "cvv": "737"
             },
             "three_d_secure_pass_thru": {
@@ -4562,9 +4562,9 @@ class TestTransaction(unittest.TestCase):
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
-                "expiration_date": "10/2020",
+                "expiration_date": ExpirationHelper.ADYEN.value,
                 "cvv": "737"
-            },
+                },
             "three_d_secure_pass_thru": {
                 "eci_flag": "02",
                 "cavv": "some-cavv",
@@ -4589,7 +4589,7 @@ class TestTransaction(unittest.TestCase):
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
-                "expiration_date": "10/2020",
+                "expiration_date": ExpirationHelper.ADYEN.value,
                 "cvv": "737"
             },
             "three_d_secure_pass_thru": {
@@ -4616,7 +4616,7 @@ class TestTransaction(unittest.TestCase):
             "amount": TransactionAmounts.Authorize,
             "credit_card": {
                 "number": "4111111111111111",
-                "expiration_date": "10/2020",
+                "expiration_date": ExpirationHelper.ADYEN.value,
                 "cvv": "737"
             },
             "three_d_secure_pass_thru": {
@@ -5521,7 +5521,7 @@ class TestTransaction(unittest.TestCase):
             "merchant_account_id": TestHelper.adyen_merchant_account_id,
             "credit_card": {
                 "number": CreditCardNumbers.Elo,
-                "expiration_date": "10/2020",
+                "expiration_date": ExpirationHelper.ADYEN.value,
                 "cvv": "737",
             }
         })
