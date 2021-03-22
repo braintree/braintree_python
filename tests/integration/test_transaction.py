@@ -3627,7 +3627,8 @@ class TestTransaction(unittest.TestCase):
         transaction = self.__create_transaction_to_refund()
         options = {
             "amount": Decimal("1.00"),
-            "order_id": "abcd"
+            "order_id": "abcd",
+            "merchant_account_id": TestHelper.non_default_merchant_account_id
         }
         result = Transaction.refund(transaction.id, options)
 
@@ -3639,6 +3640,10 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             Decimal("1.00"),
             result.transaction.amount
+        )
+        self.assertEqual(
+            TestHelper.non_default_merchant_account_id,
+            result.transaction.merchant_account_id
         )
 
     def test_refund_returns_an_error_if_unsettled(self):

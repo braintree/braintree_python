@@ -656,7 +656,7 @@ class Transaction(Resource):
 
     @staticmethod
     def refund_signature():
-        return ["amount", "order_id"]
+        return ["amount", "order_id", "merchant_account_id"]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount, params=None):

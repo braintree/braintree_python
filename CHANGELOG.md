@@ -1,3 +1,6 @@
+## Unreleased
+* Add `merchant_account_id` to `Transaction.refund`
+
 ## 4.6.0
 * Add `installments` to `Transaction` requests
 * Add `count` to `installments`
