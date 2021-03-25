@@ -14,6 +14,14 @@ class TransactionGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
+    def adjust_authorization(self, transaction_id, amount):
+        transaction_params = {"amount": amount}
+        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/adjust_authorization", {"transaction": transaction_params})
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+
     def clone_transaction(self, transaction_id, params):
         Resource.verify_keys(params, Transaction.clone_signature())
         return self._post("/transactions/" + transaction_id + "/clone", {"transaction-clone": params})

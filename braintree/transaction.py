@@ -275,6 +275,18 @@ class Transaction(Resource):
         Other = "other"
 
     @staticmethod
+    def adjust_authorization(transaction_id, amount):
+        """
+        adjust authorization for an existing transaction.
+
+        It expects a `transaction_id` and `amount`, which is the new total authorization amount
+
+        result = braintree.Transaction.adjust_authorization("my_transaction_id", "amount")
+
+        """
+        return Configuration.gateway().transaction.adjust_authorization(transaction_id, amount)
+
+    @staticmethod
     def clone_transaction(transaction_id, params):
         return Configuration.gateway().transaction.clone_transaction(transaction_id, params)
 

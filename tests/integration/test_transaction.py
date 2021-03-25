@@ -3754,6 +3754,30 @@ class TestTransaction(unittest.TestCase):
         TestHelper.escrow_transaction(transaction.id)
         return transaction
 
+    @staticmethod
+    def __first_data_transaction_params():
+        merchant_dict = {
+                "merchant_account_id": TestHelper.fake_first_data_merchant_account_id,
+                "amount": "75.50",
+                "credit_card": {
+                    "number": "5105105105105100",
+                    "expiration_date": "05/2012"
+                    },
+                }
+        return merchant_dict
+
+    @staticmethod
+    def __first_data_visa_transaction_params():
+        merchant_dict = {
+                "merchant_account_id": TestHelper.fake_first_data_merchant_account_id,
+                 "amount": "75.50",
+                  "credit_card": {
+                       "number": CreditCardNumbers.Visa,
+                       "expiration_date": "05/2012"
+                       }
+                  }
+        return merchant_dict
+
     def test_snapshot_plan_id_add_ons_and_discounts_from_subscription(self):
         credit_card = Customer.create({
             "first_name": "Mike",
@@ -5809,3 +5833,99 @@ class TestTransaction(unittest.TestCase):
         for t in refund.refunded_installments :
             self.assertEquals('-5.00', t['adjustments'][0]['amount'])
             self.assertEquals("REFUND",t['adjustments'][0]['kind'])
+
+    def test_adjust_authorization_for_successful_adjustment(self):
+        initial_transaction_sale = Transaction.sale(self.__first_data_transaction_params())
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, Decimal("85.50"))
+
+        self.assertTrue(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("85.50"))
+
+    def test_adjust_authorization_processor_not_supports_multi_auth_adjustment(self):
+        initial_transaction_sale =  Transaction.sale({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "amount": "75.50",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009"
+                },
+            })
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result= Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "85.50")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportAuthAdjustment, error_code)
+
+    def test_adjust_authorization_amount_submitted_is_zero(self):
+        initial_transaction_sale =  Transaction.sale(self.__first_data_transaction_params())
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "0.0")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("authorization_adjustment").on("amount")[0].code
+        self.assertEqual(ErrorCodes.Transaction.AdjustmentAmountMustBeGreaterThanZero, error_code)
+
+    def test_adjust_authorization_when_amount_submitted_same_as_authorized(self):
+        initial_transaction_sale =  Transaction.sale(self.__first_data_transaction_params())
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "75.50")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("authorization_adjustment").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.NoNetAmountToPerformAuthAdjustment, error_code)
+
+    def test_adjust_authorization_when_transaction_status_is_not_authorized(self):
+        additional_params = { "options": { "submit_for_settlement": True } }
+        merchant_params = { **self.__first_data_transaction_params(), **additional_params }
+        initial_transaction_sale =  Transaction.sale(merchant_params)
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "85.50")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.TransactionMustBeInStateAuthorized, error_code)
+
+    def test_adjust_authorization_when_transaction_authorization_type_is_undfined_or_final(self):
+        additional_params = { "transaction_source": "recurring_first" }
+        merchant_params = { **self.__first_data_transaction_params(), **additional_params }
+        initial_transaction_sale =  Transaction.sale(merchant_params)
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "85.50")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.TransactionIsNotEligibleForAdjustment, error_code)
+
+    def test_adjust_authorization_when_processor_does_not_support_incremental_auth(self):
+        initial_transaction_sale =  Transaction.sale(self.__first_data_visa_transaction_params())
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "85.50")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportIncrementalAuth, error_code)
+
+    def test_adjust_authorization_when_processor_does_not_support_reversal(self):
+        initial_transaction_sale =  Transaction.sale(self.__first_data_visa_transaction_params())
+        self.assertTrue(initial_transaction_sale.is_success)
+        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "65.50")
+
+        self.assertFalse(adjusted_authorization_result.is_success)
+        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
+
+        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
+        self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportPartialAuthReversal, error_code)

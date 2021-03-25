@@ -91,6 +91,7 @@ class TestHelper(object):
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     fake_amex_direct_merchant_account_id = "fake_amex_direct_usd"
     fake_venmo_account_merchant_account_id = "fake_first_data_venmo_account"
+    fake_first_data_merchant_account_id = "fake_first_data_merchant_account"
     us_bank_merchant_account_id = "us_bank_merchant_account"
     another_us_bank_merchant_account_id = "another_us_bank_merchant_account"
     adyen_merchant_account_id = "adyen_ma"
