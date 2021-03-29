@@ -1,4 +1,4 @@
-## Unreleased
+## 4.7.0
 * Add `merchant_account_id` to `Transaction.refund`
 * Add `Transaction.adjust_authorization` method to support for multiple authorizations for a single transaction
 
