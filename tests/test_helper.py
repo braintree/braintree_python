@@ -1,26 +1,22 @@
-import json
-import os
-import re
-import random
-import sys
-import unittest
-import warnings
-import subprocess
-import time
-
-from urllib.parse import urlencode, quote_plus
-from http.client import HTTPConnection
-from base64 import encodebytes
-import requests
-
-from base64 import b64decode
+from base64 import b64decode, encodebytes
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from enum import Enum
+from http.client import HTTPConnection
+from nose.tools import make_decorator, raises
 from subprocess import Popen, PIPE
-
-from nose.tools import make_decorator
-from nose.tools import raises
+from urllib.parse import urlencode, quote_plus
+import json
+import os
+import random
+import re
+import requests
+import subprocess
+import sys
+import time
+import unittest
+import warnings
 
 from braintree import *
 from braintree.exceptions import *
@@ -60,13 +56,25 @@ def reset_braintree_configuration():
     )
 reset_braintree_configuration()
 
-class AdvancedFraudIntegrationMerchant:
+class AdvancedFraudKountIntegrationMerchant:
     def __enter__(self):
         Configuration.configure(
             Environment.Development,
             "advanced_fraud_integration_merchant_id",
             "advanced_fraud_integration_public_key",
             "advanced_fraud_integration_private_key"
+        )
+
+    def __exit__(self, type, value, trace):
+        reset_braintree_configuration()
+
+class FraudProtectionEnterpriseIntegrationMerchant:
+    def __enter__(self):
+        Configuration.configure(
+            Environment.Development,
+            "fraud_protection_enterprise_integration_merchant_id",
+            "fraud_protection_enterprise_integration_public_key",
+            "fraud_protection_enterprise_integration_private_key"
         )
 
     def __exit__(self, type, value, trace):
@@ -83,6 +91,7 @@ class TestHelper(object):
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     fake_amex_direct_merchant_account_id = "fake_amex_direct_usd"
     fake_venmo_account_merchant_account_id = "fake_first_data_venmo_account"
+    fake_first_data_merchant_account_id = "fake_first_data_merchant_account"
     us_bank_merchant_account_id = "us_bank_merchant_account"
     another_us_bank_merchant_account_id = "another_us_bank_merchant_account"
     adyen_merchant_account_id = "adyen_ma"
@@ -529,3 +538,6 @@ class ClientApiHttp(Http):
             "User-Agent": "Braintree Python " + version.Version, #pylint: disable=E0602
             "X-ApiVersion": Configuration.api_version()
         }
+
+class ExpirationHelper(Enum):
+    ADYEN = "03/2030"

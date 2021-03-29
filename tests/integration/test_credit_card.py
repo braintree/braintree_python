@@ -238,7 +238,7 @@ class TestCreditCard(unittest.TestCase):
 
 
     def test_unsuccessful_create_with_card_verification_returns_risk_data(self):
-        with AdvancedFraudIntegrationMerchant():
+        with FraudProtectionEnterpriseIntegrationMerchant():
             customer = Customer.create().customer
             result = CreditCard.create({
                 "customer_id": customer.id,
@@ -253,11 +253,13 @@ class TestCreditCard(unittest.TestCase):
             self.assertIsInstance(verification.risk_data, RiskData)
             self.assertTrue(hasattr(verification.risk_data, 'id'))
             self.assertEqual("Approve", verification.risk_data.decision)
+            self.assertTrue(hasattr(verification.risk_data, 'decision_reasons'))
             self.assertTrue(hasattr(verification.risk_data, 'device_data_captured'))
             self.assertTrue(hasattr(verification.risk_data, 'fraud_service_provider'))
+            self.assertTrue(hasattr(verification.risk_data, 'transaction_risk_score'))
 
     def test_successful_create_with_card_verification_returns_risk_data(self):
-        with AdvancedFraudIntegrationMerchant():
+        with FraudProtectionEnterpriseIntegrationMerchant():
             customer = Customer.create().customer
             result = CreditCard.create({
                 "customer_id": customer.id,
@@ -272,8 +274,10 @@ class TestCreditCard(unittest.TestCase):
             self.assertIsInstance(verification.risk_data, RiskData)
             self.assertTrue(hasattr(verification.risk_data, 'id'))
             self.assertEqual("Approve", verification.risk_data.decision)
+            self.assertTrue(hasattr(verification.risk_data, 'decision_reasons'))
             self.assertTrue(hasattr(verification.risk_data, 'device_data_captured'))
             self.assertTrue(hasattr(verification.risk_data, 'fraud_service_provider'))
+            self.assertTrue(hasattr(verification.risk_data, 'transaction_risk_score'))
 
     def test_create_with_card_verification(self):
         customer = Customer.create().customer
