@@ -43,6 +43,7 @@ class TransactionSearch:
     paypal_payment_id            = Search.TextNodeBuilder("paypal_payment_id")
     paypal_authorization_id      = Search.TextNodeBuilder("paypal_authorization_id")
     credit_card_unique_identifier = Search.TextNodeBuilder("credit_card_unique_identifier")
+    store_id                     = Search.TextNodeBuilder("store_id")
 
     credit_card_expiration_date  = Search.EqualityNodeBuilder("credit_card_expiration_date")
     credit_card_number           = Search.PartialMatchNodeBuilder("credit_card_number")
@@ -51,6 +52,7 @@ class TransactionSearch:
     ids                          = Search.MultipleValueNodeBuilder("ids")
     merchant_account_id          = Search.MultipleValueNodeBuilder("merchant_account_id")
     payment_instrument_type      = Search.MultipleValueNodeBuilder("payment_instrument_type")
+    store_ids                    = Search.MultipleValueNodeBuilder("store_ids")
 
     created_using = Search.MultipleValueNodeBuilder(
         "created_using",
