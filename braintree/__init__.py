@@ -75,3 +75,5 @@ from braintree.webhook_notification import WebhookNotification
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
 from braintree.webhook_testing import WebhookTesting
 from braintree.webhook_testing_gateway import WebhookTestingGateway
+from braintree.local_payment_completed import LocalPaymentCompleted
+from braintree.local_payment_reversed import LocalPaymentReversed

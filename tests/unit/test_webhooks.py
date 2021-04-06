@@ -721,3 +721,14 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("ee257d98-de40-47e8-96b3-a6954ea7a9a4", local_payment_completed.payment_method_nonce)
         self.assertTrue(isinstance(local_payment_completed.transaction, Transaction))
 
+    def test_local_payment_reversed_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.LocalPaymentReversed,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        local_payment_reversed = notification.local_payment_reversed
+
+        self.assertEqual(WebhookNotification.Kind.LocalPaymentReversed, notification.kind)
+        self.assertEqual("a-payment-id", local_payment_reversed.payment_id)
