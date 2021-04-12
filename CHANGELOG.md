@@ -1,4 +1,4 @@
-## Unreleased
+## 4.8.0
 * Add `LocalPaymentReversed` webhook
 * Add `store_id` and `store_ids` to `Transaction.search`
 
