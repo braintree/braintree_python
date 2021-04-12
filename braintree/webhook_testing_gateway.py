@@ -87,6 +87,8 @@ class WebhookTestingGateway(object):
             return self.__payment_method_revoked_by_customer(id)
         elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
             return self.__local_payment_completed()
+        elif kind == WebhookNotification.Kind.LocalPaymentReversed:
+            return self.__local_payment_reversed()
         else:
             return self.__subscription_sample_xml(id)
 
@@ -839,4 +841,11 @@ class WebhookTestingGateway(object):
                     <order-id>order1234</order-id>
                 </transaction>
             </local-payment>
+            """
+
+    def __local_payment_reversed(self):
+        return """
+            <local-payment-reversed>
+                <payment-id>a-payment-id</payment-id>
+            </local-payment-reversed>
             """

@@ -1,31 +1,48 @@
-from braintree.resource import Resource
-from braintree.configuration import Configuration
-from braintree.subscription import Subscription
-from braintree.merchant_account import MerchantAccount
-from braintree.transaction import Transaction
-from braintree.partner_merchant import PartnerMerchant
-from braintree.oauth_access_revocation import OAuthAccessRevocation
-from braintree.disbursement import Disbursement
-from braintree.dispute import Dispute
 from braintree.account_updater_daily_report import AccountUpdaterDailyReport
-from braintree.error_result import ErrorResult
-from braintree.validation_error_collection import ValidationErrorCollection
+from braintree.configuration import Configuration
 from braintree.connected_merchant_paypal_status_changed import ConnectedMerchantPayPalStatusChanged
 from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
+from braintree.disbursement import Disbursement
+from braintree.dispute import Dispute
+from braintree.error_result import ErrorResult
 from braintree.granted_payment_instrument_update import GrantedPaymentInstrumentUpdate
-from braintree.revoked_payment_method_metadata import RevokedPaymentMethodMetadata
 from braintree.local_payment_completed import LocalPaymentCompleted
+from braintree.local_payment_reversed import LocalPaymentReversed
+from braintree.merchant_account import MerchantAccount
+from braintree.oauth_access_revocation import OAuthAccessRevocation
+from braintree.partner_merchant import PartnerMerchant
+from braintree.resource import Resource
+from braintree.revoked_payment_method_metadata import RevokedPaymentMethodMetadata
+from braintree.subscription import Subscription
+from braintree.transaction import Transaction
+from braintree.validation_error_collection import ValidationErrorCollection
 
 class WebhookNotification(Resource):
     class Kind(object):
         AccountUpdaterDailyReport = "account_updater_daily_report"
         Check = "check"
-        ConnectedMerchantStatusTransitioned = "connected_merchant_status_transitioned"
         ConnectedMerchantPayPalStatusChanged = "connected_merchant_paypal_status_changed"
-        PartnerMerchantConnected = "partner_merchant_connected"
-        PartnerMerchantDisconnected = "partner_merchant_disconnected"
-        PartnerMerchantDeclined = "partner_merchant_declined"
+        ConnectedMerchantStatusTransitioned = "connected_merchant_status_transitioned"
+        Disbursement = "disbursement"
+        DisbursementException = "disbursement_exception"
+        DisputeAccepted = "dispute_accepted"
+        DisputeDisputed = "dispute_disputed"
+        DisputeExpired = "dispute_expired"
+        DisputeLost = "dispute_lost"
+        DisputeOpened = "dispute_opened"
+        DisputeWon = "dispute_won"
+        GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
+        GrantorUpdatedGrantedPaymentMethod = "grantor_updated_granted_payment_method"
+        LocalPaymentCompleted = "local_payment_completed"
+        LocalPaymentReversed = "local_payment_reversed"
         OAuthAccessRevoked = "oauth_access_revoked"
+        PartnerMerchantConnected = "partner_merchant_connected"
+        PartnerMerchantDeclined = "partner_merchant_declined"
+        PartnerMerchantDisconnected = "partner_merchant_disconnected"
+        PaymentMethodRevokedByCustomer = "payment_method_revoked_by_customer"
+        RecipientUpdatedGrantedPaymentMethod = "recipient_updated_granted_payment_method"
+        SubMerchantAccountApproved = "sub_merchant_account_approved"
+        SubMerchantAccountDeclined = "sub_merchant_account_declined"
         SubscriptionCanceled = "subscription_canceled"
         SubscriptionChargedSuccessfully = "subscription_charged_successfully"
         SubscriptionChargedUnsuccessfully = "subscription_charged_unsuccessfully"
@@ -33,24 +50,9 @@ class WebhookNotification(Resource):
         SubscriptionTrialEnded = "subscription_trial_ended"
         SubscriptionWentActive = "subscription_went_active"
         SubscriptionWentPastDue = "subscription_went_past_due"
-        SubMerchantAccountApproved = "sub_merchant_account_approved"
-        SubMerchantAccountDeclined = "sub_merchant_account_declined"
         TransactionDisbursed = "transaction_disbursed"
         TransactionSettled = "transaction_settled"
         TransactionSettlementDeclined = "transaction_settlement_declined"
-        DisbursementException = "disbursement_exception"
-        Disbursement = "disbursement"
-        DisputeOpened = "dispute_opened"
-        DisputeLost = "dispute_lost"
-        DisputeWon = "dispute_won"
-        DisputeAccepted = "dispute_accepted"
-        DisputeDisputed = "dispute_disputed"
-        DisputeExpired = "dispute_expired"
-        GrantorUpdatedGrantedPaymentMethod = "grantor_updated_granted_payment_method"
-        RecipientUpdatedGrantedPaymentMethod = "recipient_updated_granted_payment_method"
-        GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
-        PaymentMethodRevokedByCustomer = "payment_method_revoked_by_customer"
-        LocalPaymentCompleted = "local_payment_completed"
 
     @staticmethod
     def parse(signature, payload):
@@ -95,8 +97,10 @@ class WebhookNotification(Resource):
             self.granted_payment_instrument_update = GrantedPaymentInstrumentUpdate(gateway, node_wrapper["granted_payment_instrument_update"])
         elif attributes["kind"] in [WebhookNotification.Kind.GrantedPaymentMethodRevoked, WebhookNotification.Kind.PaymentMethodRevokedByCustomer]:
             self.revoked_payment_method_metadata = RevokedPaymentMethodMetadata(gateway, node_wrapper)
-        elif "local_payment" in node_wrapper:
+        elif "local_payment" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentCompleted:
             self.local_payment_completed = LocalPaymentCompleted(gateway, node_wrapper["local_payment"])
+        elif "local_payment_reversed" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentReversed:
+            self.local_payment_reversed = LocalPaymentReversed(gateway, node_wrapper["local_payment_reversed"])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

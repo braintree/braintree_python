@@ -39,7 +39,6 @@ class TestTransaction(unittest.TestCase):
             self.assertIsInstance(transaction.risk_data, RiskData)
             self.assertNotEqual(transaction.risk_data.id, None)
             self.assertTrue(hasattr(transaction.risk_data, 'decision'))
-            self.assertTrue(hasattr(transaction.risk_data, 'device_data_captured'))
             self.assertTrue(hasattr(transaction.risk_data, 'decision_reasons'))
             self.assertTrue(hasattr(transaction.risk_data, 'transaction_risk_score'))
 
@@ -3328,6 +3327,7 @@ class TestTransaction(unittest.TestCase):
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
             "credit_card": {
                 "number": "4111111111111111",
                 "expiration_date": "05/2009"

@@ -1004,7 +1004,6 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.disbursement_date <= disbursement_time
         ])
 
         self.assertEqual(1, collection.maximum_size)
@@ -1012,7 +1011,6 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.id == transaction_id,
-            TransactionSearch.disbursement_date <= future
         ])
 
         self.assertEqual(1, collection.maximum_size)
@@ -1573,6 +1571,41 @@ class TestTransactionSearch(unittest.TestCase):
         ])
         self.assertEqual(1, collection.maximum_size)
         self.assertEqual(transaction.id, collection.first.id)
+
+    def test_advanced_search_can_search_on_store_id_1(self):
+        transaction_id = "contact_visa_transaction"
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.store_id == "store-id"
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.store_id == "invalid-store-id"
+        ])
+
+        self.assertEqual(0, collection.maximum_size)
+
+    def test_advanced_search_can_search_on_store_ids(self):
+        transaction_id = "contact_visa_transaction"
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.store_ids.in_list(["store-id"])
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id,
+            TransactionSearch.store_ids.in_list(["invalid-store-id"])
+        ])
+
+        self.assertEqual(0, collection.maximum_size)
+
 
     @raises(RequestTimeoutError)
     def test_search_handles_a_search_timeout(self):
