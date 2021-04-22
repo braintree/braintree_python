@@ -58,6 +58,15 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
 
+    def test_create_with_tax_identifiers(self):
+        result = Customer.create({
+            "tax_identifiers": [
+                {"countryCode": "US", "identifier": "123456789"},
+                {"countryCode": "GB", "identifier": "987654321"}]
+            })
+
+        self.assertTrue(result.is_success)
+
     def test_create_with_device_data(self):
         result = Customer.create({
             "first_name": "Joe",
@@ -1096,6 +1105,22 @@ class TestCustomer(unittest.TestCase):
                 },
             }
         })
+
+        self.assertTrue(result.is_success)
+
+    def test_update_with_tax_identifiers(self):
+        customer = Customer.create({
+            "tax_identifiers": [
+                {"countryCode": "US", "identifier": "123456789"},
+                {"countryCode": "GB", "identifier": "987654321"}]
+            }).customer
+
+        result = Customer.update(customer.id, {
+            "tax_identifiers": [{
+                "countryCode": "GB",
+                "identifier": "567891234"
+                }]
+            })
 
         self.assertTrue(result.is_success)
 
