@@ -61,8 +61,8 @@ class TestCustomer(unittest.TestCase):
     def test_create_with_tax_identifiers(self):
         result = Customer.create({
             "tax_identifiers": [
-                {"countryCode": "US", "identifier": "123456789"},
-                {"countryCode": "GB", "identifier": "987654321"}]
+                {"country_code": "US", "identifier": "123456789"},
+                {"country_code": "GB", "identifier": "987654321"}]
             })
 
         self.assertTrue(result.is_success)
@@ -1111,13 +1111,13 @@ class TestCustomer(unittest.TestCase):
     def test_update_with_tax_identifiers(self):
         customer = Customer.create({
             "tax_identifiers": [
-                {"countryCode": "US", "identifier": "123456789"},
-                {"countryCode": "GB", "identifier": "987654321"}]
+                {"country_code": "US", "identifier": "123456789"},
+                {"country_code": "GB", "identifier": "987654321"}]
             }).customer
 
         result = Customer.update(customer.id, {
             "tax_identifiers": [{
-                "countryCode": "GB",
+                "country_code": "GB",
                 "identifier": "567891234"
                 }]
             })
