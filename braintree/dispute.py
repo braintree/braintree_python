@@ -74,9 +74,9 @@ class Dispute(AttributeGetter):
         * braintree.Dispute.ChargebackProtectionLevel.STANDARD
         * braintree.Dispute.ChargebackProtectionLevel.NOT_PROTECTED
         """
-        EFFORTLESS     = "effortless"
-        STANDARD       = "standard"
-        NOT_PROTECTED  = "not_protected"
+        Effortless     = "effortless"
+        Standard       = "standard"
+        NotProtected  = "not_protected"
 
     @staticmethod
     def accept(id):

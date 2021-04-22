@@ -26,6 +26,7 @@ class TestDispute(unittest.TestCase):
         "amount_disputed": "100.00",
         "amount_won": "0.00",
         "case_number": "CB123456",
+        "chargebackProtectionLevel": "effortless",
         "created_at": datetime(2013, 4, 10, 10, 50, 39),
         "currency_iso_code": "USD",
         "date_opened": date(2013, 4, 1),
