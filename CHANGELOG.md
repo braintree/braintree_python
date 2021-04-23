@@ -1,4 +1,5 @@
 ## Unreleased
+* Add `chargeback_protection_level` into dispute search
 * Add `LocalPaymentReversed` webhook
 * Add `store_id` and `store_ids` to `Transaction.search`
 
