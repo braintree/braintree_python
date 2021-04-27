@@ -1,3 +1,6 @@
+## unreleased
+* Add `tax_identifiers` parameter to `Customer.create` and `Customer.update`
+
 ## 4.8.0
 * Add `LocalPaymentReversed` webhook
 * Add `store_id` and `store_ids` to `Transaction.search`

@@ -170,6 +170,7 @@ class Customer(Resource):
                 "three_d_secure_version",
                 "xid",
                 ]},
+            {"tax_identifiers": ["country_code", "identifier"]},
             {"options": [{"paypal": [
                 "payee_email",
                 "order_id",
@@ -193,6 +194,7 @@ class Customer(Resource):
                 "xid",
                 ]},
             {"custom_fields": ["__any_key__"]},
+            {"tax_identifiers": ["country_code", "identifier"]},
             {"options": [{"paypal": [
                 "payee_email",
                 "order_id",
