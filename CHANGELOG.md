@@ -1,5 +1,4 @@
 ## unreleased
-* Add `payment_reader_card_details` parameter to `Transaction.sale`
 * Add `tax_identifiers` parameter to `Customer.create` and `Customer.update`
 
 ## 4.8.0

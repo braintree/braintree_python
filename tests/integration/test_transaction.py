@@ -5834,34 +5834,6 @@ class TestTransaction(unittest.TestCase):
             self.assertEquals('-5.00', t['adjustments'][0]['amount'])
             self.assertEquals("REFUND",t['adjustments'][0]['kind'])
 
-    def test_manual_key_entry_transactions_with_valid_card_details(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "credit_card": {
-                "payment_reader_card_details": {
-                    "encrypted_card_data": "8F34DFB312DC79C24FD5320622F3E11682D79E6B0C0FD881",
-                    "key_serial_number": "FFFFFF02000572A00005",
-                    }
-                },
-            })
-
-        self.assertTrue(result.is_success)
-
-    def test_manual_key_entry_transactions_with_invalid_card_details(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "credit_card": {
-                "payment_reader_card_details": {
-                    "encrypted_card_data": "invalid",
-                    "key_serial_number": "invalid",
-                    }
-                },
-            })
-
-        self.assertFalse(result.is_success)
-        error_code = result.errors.for_object("transaction")[0].code
-        self.assertEqual(ErrorCodes.Transaction.PaymentInstrumentNotSupportedByMerchantAccount, error_code)
-
     def test_adjust_authorization_for_successful_adjustment(self):
         initial_transaction_sale = Transaction.sale(self.__first_data_transaction_params())
         self.assertTrue(initial_transaction_sale.is_success)
