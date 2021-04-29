@@ -520,7 +520,7 @@ class Transaction(Resource):
             },
             {
                 "credit_card": [
-                    "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number"
+                    "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number", {"payment_reader_card_details": ["encrypted_card_data", "key_serial_number"]}
                 ]
             },
             {
