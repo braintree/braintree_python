@@ -1,4 +1,5 @@
 ## unreleased
+* Add `paypal_messages` to `Dispute`
 * Add `tax_identifiers` parameter to `Customer.create` and `Customer.update`
 
 ## 4.8.0

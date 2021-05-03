@@ -71,6 +71,11 @@ class TestDispute(unittest.TestCase):
             "purchase_order_number": "po",
             "payment_instrument_subtype": "Visa",
         },
+        "paypal_messages": [{
+            "message": "message",
+            "sender": "seller",
+            "sent_at": datetime(2013, 4, 10, 10, 50, 39),
+        }],
     }
 
     def test_legacy_constructor(self):
@@ -129,6 +134,9 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.evidence[1].id, "evidence2")
         self.assertEqual(dispute.evidence[1].sent_to_processor_at, "2009-04-11")
         self.assertIsNone(dispute.evidence[1].url)
+        self.assertEqual(dispute.paypal_messages[0].message, "message")
+        self.assertEqual(dispute.paypal_messages[0].sender, "seller")
+        self.assertEqual(dispute.paypal_messages[0].sent_at, datetime(2013, 4, 10, 10, 50, 39))
         self.assertEqual(dispute.status_history[0].disbursement_date, "2013-04-11")
         self.assertEqual(dispute.status_history[0].effective_date, "2013-04-10")
         self.assertEqual(dispute.status_history[0].status, "open")
@@ -141,16 +149,19 @@ class TestDispute(unittest.TestCase):
             "date_opened": None,
             "date_won": None,
             "evidence": None,
+            "paypal_messages": None,
             "reply_by_date": None,
             "status_history": None
         })
 
         dispute = Dispute(attributes)
 
-        self.assertIsNone(dispute.reply_by_date)
         self.assertIsNone(dispute.amount)
         self.assertIsNone(dispute.date_opened)
         self.assertIsNone(dispute.date_won)
+        self.assertIsNone(dispute.evidence)
+        self.assertIsNone(dispute.paypal_messages)
+        self.assertIsNone(dispute.reply_by_date)
         self.assertIsNone(dispute.status_history)
 
     def test_constructor_populates_transaction(self):
