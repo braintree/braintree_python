@@ -4,8 +4,23 @@ from braintree.dispute import Dispute
 from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
 from braintree.venmo_account import VenmoAccount
+import base64
+import xml.etree.ElementTree as ET
 
 class TestWebhooks(unittest.TestCase):
+    def test_granted_payment_method_revoked(self):
+        webhook_testing_gateway = WebhookTestingGateway(BraintreeGateway(Configuration.instantiate()))
+
+        sample_notification = webhook_testing_gateway.sample_notification(WebhookNotification.Kind.GrantedPaymentMethodRevoked, '1234')
+
+        payload = base64.b64decode(sample_notification['bt_payload']).decode('UTF-8')
+        tree = ET.fromstring(payload)
+
+        subject = tree.find('subject')
+
+        self.assertEqual('venmo-account', subject.find('venmo-account').tag)
+        self.assertEqual('1234', subject.find('venmo-account').find('token').text)
+
     def test_sample_notification_builds_a_parsable_notification(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
