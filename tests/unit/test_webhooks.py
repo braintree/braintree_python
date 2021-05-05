@@ -4,8 +4,6 @@ from braintree.dispute import Dispute
 from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
 from braintree.venmo_account import VenmoAccount
-import base64
-import xml.etree.ElementTree as ET
 
 class TestWebhooks(unittest.TestCase):
     def test_granted_payment_method_revoked(self):
