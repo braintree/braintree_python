@@ -1,7 +1,7 @@
 from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
 from braintree.transaction_details import TransactionDetails
-from braintree.dispute_details import DisputeEvidence, DisputeStatusHistory
+from braintree.dispute_details import DisputeEvidence, DisputeStatusHistory, DisputePayPalMessage
 from braintree.configuration import Configuration
 
 class Dispute(AttributeGetter):
@@ -176,6 +176,8 @@ class Dispute(AttributeGetter):
             self.transaction = self.transaction_details
         if "evidence" in attributes and getattr(self, "evidence", None) is not None:
             self.evidence = [DisputeEvidence(evidence) for evidence in self.evidence]
+        if "paypal_messages" in attributes and getattr(self, "paypal_messages", None) is not None:
+            self.paypal_messages = [DisputePayPalMessage(paypal_message) for paypal_message in self.paypal_messages]
         if "status_history" in attributes and getattr(self, "status_history", None) is not None:
             self.status_history = [DisputeStatusHistory(status_history) for status_history in self.status_history]
         if "processor_comments" in attributes and self.processor_comments is not None:

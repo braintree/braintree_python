@@ -1,2 +1,3 @@
 from braintree.dispute_details.evidence import DisputeEvidence
+from braintree.dispute_details.paypal_message import DisputePayPalMessage
 from braintree.dispute_details.status_history import DisputeStatusHistory
