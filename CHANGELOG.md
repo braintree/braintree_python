@@ -1,5 +1,11 @@
 ## Unreleased
 * Add `chargeback_protection_level` into dispute search
+
+## 4.9.0
+* Add `paypal_messages` to `Dispute`
+* Add `tax_identifiers` parameter to `Customer.create` and `Customer.update`
+
+## 4.8.0
 * Add `LocalPaymentReversed` webhook
 * Add `store_id` and `store_ids` to `Transaction.search`
 
