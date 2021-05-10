@@ -76,7 +76,7 @@ class Dispute(AttributeGetter):
         """
         Effortless     = "effortless"
         Standard       = "standard"
-        NotProtected  = "not_protected"
+        NotProtected   = "not_protected"
 
     @staticmethod
     def accept(id):

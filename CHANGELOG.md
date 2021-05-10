@@ -1,5 +1,5 @@
 ## Unreleased
-* Add `chargeback_protection_level` into dispute search
+* Add `chargeback_protection_level` to `DisputeSearch`
 
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`
