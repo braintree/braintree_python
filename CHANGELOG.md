@@ -1,3 +1,6 @@
+## unreleased
+* Add webhook sample for `GrantedPaymentMethodRevoked`
+
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`
 * Add `tax_identifiers` parameter to `Customer.create` and `Customer.update`
