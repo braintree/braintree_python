@@ -1,5 +1,6 @@
-## Unreleased
+## unreleased
 * Add `chargeback_protection_level` to `DisputeSearch`
+* Add webhook sample for `GrantedPaymentMethodRevoked`
 
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`
