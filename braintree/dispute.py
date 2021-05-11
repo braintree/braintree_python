@@ -65,6 +65,19 @@ class Dispute(AttributeGetter):
         PreArbitration = "pre_arbitration"
         Retrieval      = "retrieval"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class ChargebackProtectionLevel(object):
+        """
+        Constants representing dispute chargebackProtectionLevel. Available types are:
+
+        * braintree.Dispute.ChargebackProtectionLevel.EFFORTLESS
+        * braintree.Dispute.ChargebackProtectionLevel.STANDARD
+        * braintree.Dispute.ChargebackProtectionLevel.NOT_PROTECTED
+        """
+        Effortless     = "effortless"
+        Standard       = "standard"
+        NotProtected   = "not_protected"
+
     @staticmethod
     def accept(id):
         """

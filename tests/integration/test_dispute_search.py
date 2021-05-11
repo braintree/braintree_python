@@ -73,6 +73,20 @@ class TestDisputeSearch(unittest.TestCase):
         disputes = [dispute for dispute in collection.disputes.items]
         self.assertGreaterEqual(len(disputes), 2)
 
+    def test_advanced_search_returns_disputes_by_chargeback_protection_level(self):
+            collection = Dispute.search([
+                DisputeSearch.chargeback_protection_level.in_list([
+                    braintree.Dispute.ChargebackProtectionLevel.Effortless,
+                ])
+            ])
+
+            disputes = [dispute for dispute in collection.disputes.items]
+            self.assertEqual(len(disputes), 1)
+            self.assertEqual(disputes[0].case_number, "CASE-CHARGEBACK-PROTECTED")
+            self.assertEqual(disputes[0].reason, braintree.Dispute.Reason.Fraud)
+            self.assertEqual(disputes[0].chargeback_protection_level, braintree.Dispute.ChargebackProtectionLevel.Effortless)
+
+
     def test_advanced_search_returns_disputes_by_date_range(self):
         collection = Dispute.search([
             DisputeSearch.received_date.between("03/03/2014", "03/05/2014")

@@ -26,6 +26,7 @@ class TestDispute(unittest.TestCase):
         "amount_disputed": "100.00",
         "amount_won": "0.00",
         "case_number": "CB123456",
+        "chargeback_protection_level": "effortless",
         "created_at": datetime(2013, 4, 10, 10, 50, 39),
         "currency_iso_code": "USD",
         "date_opened": date(2013, 4, 1),
@@ -115,6 +116,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.amount_disputed, 100.0)
         self.assertEqual(dispute.amount_won, 0.00)
         self.assertEqual(dispute.case_number, "CB123456")
+        self.assertEqual(dispute.chargeback_protection_level, "effortless")
         self.assertEqual(dispute.created_at, datetime(2013, 4, 10, 10, 50, 39))
         self.assertEqual(dispute.forwarded_comments, "Forwarded comments")
         self.assertEqual(dispute.processor_comments, "Forwarded comments")
