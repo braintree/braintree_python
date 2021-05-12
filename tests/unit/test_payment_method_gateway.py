@@ -26,11 +26,12 @@ class TestPaymentMethodGateway(unittest.TestCase):
                 "options": [
                     "fail_on_duplicate_payment_method",
                     "make_default",
+                    "skip_advanced_fraud_checking",
                     "us_bank_account_verification_method",
+                    "verification_account_type",
+                    "verification_amount",
                     "verification_merchant_account_id",
                     "verify_card",
-                    "verification_amount",
-                    "verification_account_type",
                     {
                         "adyen":[
                             "overwrite_brand",
@@ -86,25 +87,26 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "billing_address_id",
             "cardholder_name",
             "cvv",
+            "device_data",
             "expiration_date",
             "expiration_month",
             "expiration_year",
             "number",
+            "payment_method_nonce",
             "token",
             "venmo_sdk_payment_method_code",
-            "device_data",
-            "payment_method_nonce",
             "device_session_id",
             "fraud_merchant_id",
             {
                 "options": [
                     "make_default",
+                    "skip_advanced_fraud_checking",
                     "us_bank_account_verification_method",
-                    "verify_card",
+                    "venmo_sdk_session",
+                    "verification_account_type",
                     "verification_amount",
                     "verification_merchant_account_id",
-                    "verification_account_type",
-                    "venmo_sdk_session",
+                    "verify_card",
                     {
                         "adyen":[
                             "overwrite_brand",

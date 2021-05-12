@@ -21,7 +21,16 @@ class TestCreditCard(unittest.TestCase):
                     "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "verification_account_type", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
+            {"options": [
+                "fail_on_duplicate_payment_method",
+                "make_default",
+                "skip_advanced_fraud_checking",
+                "venmo_sdk_session",
+                "verification_account_type",
+                "verification_amount",
+                "verification_merchant_account_id",
+                "verify_card",
+                {"adyen":["overwrite_brand", "selected_brand"]}
             ]},
             {
                 "three_d_secure_pass_thru": [
@@ -44,7 +53,16 @@ class TestCreditCard(unittest.TestCase):
                     {"options": ["update_existing"]}
                 ]
             },
-            {"options": ["make_default", "verification_merchant_account_id", "verify_card", "verification_amount", "verification_account_type", "venmo_sdk_session", "fail_on_duplicate_payment_method", {"adyen":["overwrite_brand", "selected_brand"]}
+            {"options": [
+                "fail_on_duplicate_payment_method",
+                "make_default",
+                "skip_advanced_fraud_checking",
+                "venmo_sdk_session",
+                "verification_account_type",
+                "verification_amount",
+                "verification_merchant_account_id",
+                "verify_card",
+                {"adyen":["overwrite_brand", "selected_brand"]}
             ]},
             {
                 "three_d_secure_pass_thru": [

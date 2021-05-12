@@ -1,6 +1,9 @@
-## unreleased
-* Add `chargeback_protection_level` to `DisputeSearch`
+## Unreleased
 * Add webhook sample for `GrantedPaymentMethodRevoked`
+* Add `chargeback_protection_level` to `DisputeSearch`
+* Add `skip_advanced_fraud_checking` to:
+  * `PaymentMethod.create` and `PaymentMethod.update`
+  * `CreditCard.create` and `CreditCard.update`
 
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`

@@ -439,6 +439,68 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(result.credit_card_verification.processor_response_text == "Do Not Honor")
         self.assertTrue(result.credit_card_verification.merchant_account_id == TestHelper.non_default_merchant_account_id)
 
+    def test_create_includes_risk_data_when_skip_advanced_fraud_checking_is_false(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            config = Configuration.instantiate()
+            customer_id = Customer.create().customer.id
+            client_token = json.loads(TestHelper.generate_decoded_client_token())
+            authorization_fingerprint = client_token["authorizationFingerprint"]
+            http = ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing",
+                })
+            status_code, nonce = http.get_credit_card_nonce({
+                "number": "4111111111111111",
+                "expirationMonth": "11",
+                "expirationYear": "2099",
+                })
+            self.assertTrue(status_code == 201)
+
+            result = PaymentMethod.create({
+                "customer_id": customer_id,
+                "payment_method_nonce": nonce,
+                "options": {
+                    "verify_card": True,
+                    "skip_advanced_fraud_checking": False
+                    },
+                })
+
+            self.assertTrue(result.is_success)
+            verification = result.payment_method.verification
+            self.assertIsInstance(verification.risk_data, RiskData)
+
+    def test_create_does_not_include_risk_data_when_skip_advanced_fraud_checking_is_true(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            config = Configuration.instantiate()
+            customer_id = Customer.create().customer.id
+            client_token = json.loads(TestHelper.generate_decoded_client_token())
+            authorization_fingerprint = client_token["authorizationFingerprint"]
+            http = ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing",
+                })
+            status_code, nonce = http.get_credit_card_nonce({
+                "number": "4111111111111111",
+                "expirationMonth": "11",
+                "expirationYear": "2099",
+                })
+            self.assertTrue(status_code == 201)
+
+            result = PaymentMethod.create({
+                "customer_id": customer_id,
+                "payment_method_nonce": nonce,
+                "options": {
+                    "verify_card": True,
+                    "skip_advanced_fraud_checking": True
+                    },
+                })
+
+            self.assertTrue(result.is_success)
+            verification = result.payment_method.verification
+            self.assertIsNone(verification.risk_data)
+
     def test_create_respects_fail_one_duplicate_payment_method_when_included_outside_of_the_nonce(self):
         customer_id = Customer.create().customer.id
         credit_card_result = CreditCard.create({
@@ -1181,6 +1243,52 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(update_result.is_success)
         self.assertTrue(update_result.credit_card_verification.status == CreditCardVerification.Status.ProcessorDeclined)
         self.assertTrue(update_result.credit_card_verification.gateway_rejection_reason is None)
+
+    def test_update_includes_risk_data_when_skip_advanced_fraud_checking_is_false(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer_id = Customer.create().customer.id
+            credit_card_result = CreditCard.create({
+                "cardholder_name": "Card Holder",
+                "customer_id": customer_id,
+                "cvv": "123",
+                "number": "4111111111111111",
+                "expiration_date": "05/2020"
+            })
+
+            update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+                "expiration_date": "10/2020",
+                "options": {
+                    "verify_card": True,
+                    "skip_advanced_fraud_checking": False
+                    },
+                })
+
+            self.assertTrue(update_result.is_success)
+            verification = update_result.payment_method.verification
+            self.assertIsInstance(verification.risk_data, RiskData)
+
+    def test_update_does_not_include_risk_data_when_skip_advanced_fraud_checking_is_true(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer_id = Customer.create().customer.id
+            credit_card_result = CreditCard.create({
+                "cardholder_name": "Card Holder",
+                "customer_id": customer_id,
+                "cvv": "123",
+                "number": "4111111111111111",
+                "expiration_date": "05/2020"
+            })
+
+            update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
+                "expiration_date": "10/2020",
+                "options": {
+                    "verify_card": True,
+                    "skip_advanced_fraud_checking": True
+                    },
+                })
+
+            self.assertTrue(update_result.is_success)
+            verification = update_result.payment_method.verification
+            self.assertIsNone(verification.risk_data)
 
     def test_update_can_update_the_billing_address(self):
         customer_id = Customer.create().customer.id
