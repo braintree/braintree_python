@@ -1,4 +1,4 @@
-## Unreleased
+## 4.10.0
 * Add `payment_reader_card_details` parameter to `Transaction.sale`
 * Add webhook sample for `GrantedPaymentMethodRevoked`
 * Add `chargeback_protection_level` to `DisputeSearch`
