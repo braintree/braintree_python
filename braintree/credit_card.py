@@ -215,13 +215,14 @@ class CreditCard(Resource):
         ]
 
         options = [
+            "fail_on_duplicate_payment_method",
             "make_default",
+            "skip_advanced_fraud_checking",
+            "venmo_sdk_session",
+            "verification_account_type",
+            "verification_amount",
             "verification_merchant_account_id",
             "verify_card",
-            "verification_amount",
-            "verification_account_type",
-            "venmo_sdk_session",
-            "fail_on_duplicate_payment_method",
             {
                 "adyen":[
                     "overwrite_brand",

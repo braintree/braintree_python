@@ -85,6 +85,8 @@ class WebhookTestingGateway(object):
             return self.__granted_payment_instrument_update()
         elif kind == WebhookNotification.Kind.PaymentMethodRevokedByCustomer:
             return self.__payment_method_revoked_by_customer(id)
+        elif kind == WebhookNotification.Kind.GrantedPaymentMethodRevoked:
+            return self.__granted_payment_method_revoked(id)
         elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
             return self.__local_payment_completed()
         elif kind == WebhookNotification.Kind.LocalPaymentReversed:
@@ -806,6 +808,23 @@ class WebhookTestingGateway(object):
                 </updated-fields>
             </granted-payment-instrument-update>
             """
+
+    def __granted_payment_method_revoked(self, id):
+        return """
+            <venmo-account>
+                <created-at type="datetime">2018-10-11T21:28:37Z</created-at>
+                <updated-at type="datetime">2018-10-11T21:28:37Z</updated-at>
+                <default type="boolean">true</default>
+                <image-url>https://assets.braintreegateway.com/payment_method_logo/venmo.png?environment=test</image-url>
+                <token>%s</token>
+                <source-description>Venmo Account: venmojoe</source-description>
+                <username>venmojoe</username>
+                <venmo-user-id>456</venmo-user-id>
+                <subscriptions type="array"/>
+                <customer-id>venmo_customer_id</customer-id>
+                <global-id>cGF5bWVudG1ldGhvZF92ZW5tb2FjY291bnQ</global-id>
+            </venmo-account>
+            """ % id
 
     def __payment_method_revoked_by_customer(self, id):
         return """

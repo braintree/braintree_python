@@ -6,6 +6,20 @@ from braintree.paypal_account import PayPalAccount
 from braintree.venmo_account import VenmoAccount
 
 class TestWebhooks(unittest.TestCase):
+    def test_granted_payment_method_revoked(self):
+        webhook_testing_gateway = WebhookTestingGateway(BraintreeGateway(Configuration.instantiate()))
+
+        sample_notification = webhook_testing_gateway.sample_notification(WebhookNotification.Kind.GrantedPaymentMethodRevoked, 'granted_payment_method_revoked_id')
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        metadata = notification.revoked_payment_method_metadata
+
+        self.assertEqual(WebhookNotification.Kind.GrantedPaymentMethodRevoked, notification.kind)
+        self.assertEqual("venmo_customer_id", metadata.customer_id)
+        self.assertEqual("granted_payment_method_revoked_id", metadata.token)
+        self.assertEqual(type(metadata.revoked_payment_method), VenmoAccount)
+
     def test_sample_notification_builds_a_parsable_notification(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,

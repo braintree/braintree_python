@@ -1,3 +1,11 @@
+## 4.10.0
+* Add `payment_reader_card_details` parameter to `Transaction.sale`
+* Add webhook sample for `GrantedPaymentMethodRevoked`
+* Add `chargeback_protection_level` to `DisputeSearch`
+* Add `skip_advanced_fraud_checking` to:
+  * `PaymentMethod.create` and `PaymentMethod.update`
+  * `CreditCard.create` and `CreditCard.update`
+
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`
 * Add `tax_identifiers` parameter to `Customer.create` and `Customer.update`

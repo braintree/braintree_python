@@ -129,6 +129,39 @@ class TestCustomer(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    def test_create_includes_risk_data_when_skip_advanced_fraud_checking_is_false(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            result = Customer.create({
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2014",
+                    "options": {
+                        "verify_card": True,
+                        "skip_advanced_fraud_checking": False
+                        },
+                    },
+                })
+
+            self.assertTrue(result.is_success)
+            verification = result.customer.credit_cards[0].verification
+            self.assertIsInstance(verification.risk_data, RiskData)
+
+    def test_create_does_not_include_risk_data_when_skip_advanced_fraud_checking_is_true(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            result = Customer.create({
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2014",
+                    "options": {
+                        "verify_card": True,
+                        "skip_advanced_fraud_checking": True
+                        },
+                    },
+                })
+
+            self.assertTrue(result.is_success)
+            verification = result.customer.credit_cards[0].verification
+            self.assertIsNone(verification.risk_data)
 
     def test_create_and_update_with_verification_account_type(self):
         result_with_account_type_credit = Customer.create({
@@ -1107,6 +1140,48 @@ class TestCustomer(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
+
+    def test_update_includes_risk_data_when_skip_advanced_fraud_checking_is_false(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer = Customer.create().customer
+
+            result = Customer.update(customer.id, {
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2014",
+                    "cvv": "100",
+                    "cardholder_name": "John Doe",
+                    "options": {
+                        "verify_card": True,
+                        "skip_advanced_fraud_checking": False
+                        }
+                    }
+                })
+
+            self.assertTrue(result.is_success)
+            verification = result.customer.credit_cards[0].verification
+            self.assertIsInstance(verification.risk_data, RiskData)
+
+    def test_update_does_not_include_risk_data_when_skip_advanced_fraud_checking_is_true(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer = Customer.create().customer
+
+            result = Customer.update(customer.id, {
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2014",
+                    "cvv": "100",
+                    "cardholder_name": "John Doe",
+                    "options": {
+                        "verify_card": True,
+                        "skip_advanced_fraud_checking": True
+                        }
+                    }
+                })
+
+            self.assertTrue(result.is_success)
+            verification = result.customer.credit_cards[0].verification
+            self.assertIsNone(verification.risk_data)
 
     def test_update_with_tax_identifiers(self):
         customer = Customer.create({
