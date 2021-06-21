@@ -5,6 +5,7 @@
 * Add `skip_advanced_fraud_checking` to:
   * `PaymentMethod.create` and `PaymentMethod.update`
   * `CreditCard.create` and `CreditCard.update`
+* Add error code `Transaction.TaxAmountIsRequiredForAibSwedish` for attribute `tax_amount` to handle validation for AIB:Domestic Transactions in Sweden
 
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`

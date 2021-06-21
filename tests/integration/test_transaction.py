@@ -430,6 +430,22 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(1, len(product_sku_errors))
         self.assertEqual(ErrorCodes.Transaction.ProductSkuIsInvalid, product_sku_errors[0].code)
 
+    def test_sale_to_create_error_tax_amount_is_required_for_aib_swedish(self):
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "merchant_account_id": TestHelper.aib_swe_ma_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2030"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+
+        tax_amount_errors = result.errors.for_object("transaction").on("tax_amount")
+        self.assertEqual(1, len(tax_amount_errors))
+        self.assertEqual(ErrorCodes.Transaction.TaxAmountIsRequiredForAibSwedish, tax_amount_errors[0].code)
+
     def test_sale_with_invalid_address(self):
         customer = Customer.create({
             "first_name": "Pingu",

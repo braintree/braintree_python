@@ -603,6 +603,7 @@ class ErrorCodes(object):
         SubscriptionStatusMustBePastDue = "91531"
         TaxAmountCannotBeNegative = "81534"
         TaxAmountFormatIsInvalid = "81535"
+        TaxAmountIsRequiredForAibSwedish = "815224"
         TaxAmountIsTooLarge = "81536"
         ThreeDSecureAuthenticationFailed = "81571"
         ThreeDSecureAuthenticationIdDoesntMatchNonceThreeDSecureAuthentication = "915198"
