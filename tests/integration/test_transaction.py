@@ -313,6 +313,7 @@ class TestTransaction(unittest.TestCase):
             "order_id": "123",
             "product_sku": "productsku01",
             "channel": "MyShoppingCartProvider",
+            "exchange_rate_quote_id": "dummyExchangeRateQuoteId-Brainree-Python",
             "credit_card": {
                 "cardholder_name": "The Cardholder",
                 "number": "5105105105105100",
@@ -413,6 +414,36 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("MEX", transaction.shipping_details.country_code_alpha3)
         self.assertEqual("484", transaction.shipping_details.country_code_numeric)
         self.assertEqual(None, transaction.additional_processor_response)
+
+    def test_sale_with_exchange_rate_quote_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "exchange_rate_quote_id": "dummyExchangeRateQuoteId-Brainree-Python",
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+
+    def test_sale_with_invalid_exchange_rate_quote_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "exchange_rate_quote_id": "a" * 4010,
+        })
+
+        self.assertFalse(result.is_success)
+
+        exchange_rate_quote_id_errors = result.errors.for_object("transaction").on("exchange_rate_quote_id")
+        self.assertEqual(ErrorCodes.Transaction.ExchangeRateQuoteIdIsTooLong, exchange_rate_quote_id_errors[0].code)
 
     def test_sale_with_invalid_product_sku(self):
         result = Transaction.sale({

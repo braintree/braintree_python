@@ -1,3 +1,7 @@
+## Unreleased
+* Add `exchange_rate_quote_id` to `Transaction.sale`
+* Add validation error code `ExchangeRateQuoteIdIsTooLong` to `Transaction`
+
 ## 4.10.0
 * Add `payment_reader_card_details` parameter to `Transaction.sale`
 * Add webhook sample for `GrantedPaymentMethodRevoked`

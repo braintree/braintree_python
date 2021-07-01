@@ -530,6 +530,7 @@ class ErrorCodes(object):
         DiscountAmountCannotBeNegative = "915160"
         DiscountAmountFormatIsInvalid = "915159"
         DiscountAmountIsTooLarge = "915161"
+        ExchangeRateQuoteIdIsTooLong = "915229"
         FailedAuthAdjustmentAllowRetry = "95603"
         FailedAuthAdjustmentHardDecline = "95602"
         FinalAuthSubmitForSettlementForDifferentAmount = "95601"
