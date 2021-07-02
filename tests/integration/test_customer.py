@@ -282,6 +282,17 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertEqual(1, len(customer.apple_pay_cards))
         self.assertIsInstance(customer.apple_pay_cards[0], ApplePayCard)
+        self.assertNotEqual(customer.apple_pay_cards[0].bin, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].token, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].prepaid, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].healthcare, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].debit, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].durbin_regulated, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].commercial, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].payroll, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].issuing_bank, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].country_of_issuance, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].product_id, None)
 
     def test_create_with_three_d_secure_nonce(self):
         result = Customer.create({
