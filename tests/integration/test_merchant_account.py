@@ -6,7 +6,7 @@ class TestMerchantAccount(unittest.TestCase):
             "first_name": "Joe",
             "last_name": "Bloggs",
             "email": "joe@bloggs.com",
-            "phone": "555-555-5555",
+            "phone": "555-123-1234",
             "address": {
                 "street_address": "123 Credibility St.",
                 "postal_code": "60606",
@@ -19,7 +19,7 @@ class TestMerchantAccount(unittest.TestCase):
         "business": {
             "dba_name": "Garbage Garage",
             "legal_name": "Junk Jymnasium",
-            "tax_id": "123456789",
+            "tax_id": "423456789",
             "address": {
                 "street_address": "123 Reputation St.",
                 "postal_code": "40222",
@@ -114,7 +114,7 @@ class TestMerchantAccount(unittest.TestCase):
             "business": {
                 "dba_name": "James's Bloggs",
                 "legal_name": "James's Junkyard",
-                "tax_id": "987654321",
+                "tax_id": "987651324",
                 "address": {
                     "street_address": "456 Fake St",
                     "postal_code": "48104",
@@ -148,7 +148,7 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual(result.merchant_account.individual_details.address_details.postal_code, "60622")
         self.assertEqual(result.merchant_account.business_details.dba_name, "James's Bloggs")
         self.assertEqual(result.merchant_account.business_details.legal_name, "James's Junkyard")
-        self.assertEqual(result.merchant_account.business_details.tax_id, "987654321")
+        self.assertEqual(result.merchant_account.business_details.tax_id, "987651324")
         self.assertEqual(result.merchant_account.business_details.address_details.street_address, "456 Fake St")
         self.assertEqual(result.merchant_account.business_details.address_details.postal_code, "48104")
         self.assertEqual(result.merchant_account.business_details.address_details.locality, "Ann Arbor")
