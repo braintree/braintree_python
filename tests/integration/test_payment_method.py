@@ -265,6 +265,8 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(apple_pay_card.issuing_bank, None)
         self.assertNotEqual(apple_pay_card.country_of_issuance, None)
         self.assertNotEqual(apple_pay_card.product_id, None)
+        self.assertNotEqual(apple_pay_card.last_4, None)
+        self.assertNotEqual(apple_pay_card.card_type, None)
 
         self.assertEqual(apple_pay_card.customer_id, customer_id)
         self.assertEqual(ApplePayCard.CardType.MasterCard, apple_pay_card.card_type)
@@ -332,6 +334,19 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual("555555", android_pay_card.bin)
         self.assertEqual("google_transaction_id", android_pay_card.google_transaction_id)
         self.assertTrue(android_pay_card.is_network_tokenized)
+        self.assertNotEqual(android_pay_card.bin, None)
+        self.assertNotEqual(android_pay_card.token, None)
+        self.assertNotEqual(android_pay_card.prepaid, None)
+        self.assertNotEqual(android_pay_card.healthcare, None)
+        self.assertNotEqual(android_pay_card.debit, None)
+        self.assertNotEqual(android_pay_card.durbin_regulated, None)
+        self.assertNotEqual(android_pay_card.commercial, None)
+        self.assertNotEqual(android_pay_card.payroll, None)
+        self.assertNotEqual(android_pay_card.issuing_bank, None)
+        self.assertNotEqual(android_pay_card.country_of_issuance, None)
+        self.assertNotEqual(android_pay_card.product_id, None)
+        self.assertNotEqual(android_pay_card.last_4, None)
+        self.assertNotEqual(android_pay_card.card_type, None)
 
     def test_create_with_fake_amex_express_checkout_card_nonce(self):
         customer_id = Customer.create().customer.id

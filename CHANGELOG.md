@@ -11,8 +11,10 @@
   * `product_id`
   * `country_of_issuance`
   * `issuing_bank`
-  * `bin`
+  * `bin` 
   * `token`
+  * `last_4` (ApplePayCard only)
+  * `card_type` (ApplePayCard only)
 
 ## 4.10.0
 * Add `payment_reader_card_details` parameter to `Transaction.sale`
