@@ -1,7 +1,7 @@
 ## Unreleased
 * Add `exchange_rate_quote_id` to `Transaction.sale`
 * Add validation error code `ExchangeRateQuoteIdIsTooLong` to `Transaction`
-* Add the following fields to ApplePayCard and GooglePayCard:
+* Add the following fields to `ApplePayCard` and `AndroidPayCard`:
   * `commercial`
   * `debit`
   * `durbin_regulated`
