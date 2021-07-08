@@ -43,6 +43,10 @@ class ApplePayCard(Resource):
         return self.bin
 
     @property
+    def token(self):
+        return self.token
+
+    @property
     def commercial(self):
         return self.commercial
 

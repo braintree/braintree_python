@@ -11,6 +11,8 @@
   * `product_id`
   * `country_of_issuance`
   * `issuing_bank`
+  * `bin`
+  * `token`
 
 ## 4.10.0
 * Add `payment_reader_card_details` parameter to `Transaction.sale`
