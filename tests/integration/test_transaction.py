@@ -5382,8 +5382,6 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(None, transaction.paypal_details.seller_protection_status)
         self.assertNotEqual(None, transaction.paypal_details.capture_id)
         #self.assertNotEqual(None, transaction.paypal_details.refund_id)
-        self.assertNotEqual(None, transaction.paypal_details.tax_id)
-        self.assertNotEqual(None, transaction.paypal_details.tax_id_type)
         self.assertNotEqual(None, transaction.paypal_details.transaction_fee_amount)
         self.assertNotEqual(None, transaction.paypal_details.transaction_fee_currency_iso_code)
 
