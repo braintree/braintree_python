@@ -40,44 +40,44 @@ class ApplePayCard(Resource):
 
     @property
     def bin(self):
-        return self.virtual_bin
+        return self.bin
 
     @property
     def token(self):
-        return self.virtual_token
+        return self.token
 
     @property
     def commercial(self):
-        return self.virtual_commercial
+        return self.commercial
 
     @property
     def country_of_issuance(self):
-        return self.virtual_country_of_issuance
+        return self.country_of_issuance
 
     @property
     def debit(self):
-        return self.virtual_debit
+        return self.debit
 
     @property
     def durbin_regulated(self):
-        return self.virtual_durbin_regulated
+        return self.durbin_regulated
 
     @property
     def healthcare(self):
-        return self.virtual_healthcare
+        return self.healthcare
 
     @property
     def issuing_bank(self):
-        return self.virtual_issuing_bank
+        return self.issuing_bank
 
     @property
     def payroll(self):
-        return self.virtual_payroll
+        return self.payroll
 
     @property
     def prepaid(self):
-        return self.virtual_prepaid
+        return self.prepaid
 
     @property
     def product_id(self):
-        return self.virtual_product_id
+        return self.product_id
