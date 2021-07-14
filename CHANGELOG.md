@@ -1,6 +1,16 @@
 ## Unreleased
 * Add `exchange_rate_quote_id` to `Transaction.sale`
 * Add validation error code `ExchangeRateQuoteIdIsTooLong` to `Transaction`
+* Add the following fields to `ApplePayCard` and `AndroidPayCard`:
+  * `commercial`
+  * `debit`
+  * `durbin_regulated`
+  * `healthcare`
+  * `payroll`
+  * `prepaid`
+  * `product_id`
+  * `country_of_issuance`
+  * `issuing_bank`
 
 ## 4.10.0
 * Add `payment_reader_card_details` parameter to `Transaction.sale`
