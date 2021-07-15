@@ -313,6 +313,7 @@ class TestTransaction(unittest.TestCase):
             "order_id": "123",
             "product_sku": "productsku01",
             "channel": "MyShoppingCartProvider",
+            "exchange_rate_quote_id": "dummyExchangeRateQuoteId-Brainree-Python",
             "credit_card": {
                 "cardholder_name": "The Cardholder",
                 "number": "5105105105105100",
@@ -414,6 +415,36 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("484", transaction.shipping_details.country_code_numeric)
         self.assertEqual(None, transaction.additional_processor_response)
 
+    def test_sale_with_exchange_rate_quote_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "exchange_rate_quote_id": "dummyExchangeRateQuoteId-Brainree-Python",
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1000", transaction.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
+
+    def test_sale_with_invalid_exchange_rate_quote_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "exchange_rate_quote_id": "a" * 4010,
+        })
+
+        self.assertFalse(result.is_success)
+
+        exchange_rate_quote_id_errors = result.errors.for_object("transaction").on("exchange_rate_quote_id")
+        self.assertEqual(ErrorCodes.Transaction.ExchangeRateQuoteIdIsTooLong, exchange_rate_quote_id_errors[0].code)
+
     def test_sale_with_invalid_product_sku(self):
         result = Transaction.sale({
             "amount": Decimal(TransactionAmounts.Authorize),
@@ -429,6 +460,22 @@ class TestTransaction(unittest.TestCase):
         product_sku_errors = result.errors.for_object("transaction").on("product_sku")
         self.assertEqual(1, len(product_sku_errors))
         self.assertEqual(ErrorCodes.Transaction.ProductSkuIsInvalid, product_sku_errors[0].code)
+
+    def test_sale_to_create_error_tax_amount_is_required_for_aib_swedish(self):
+        result = Transaction.sale({
+            "amount": Decimal(TransactionAmounts.Authorize),
+            "merchant_account_id": TestHelper.aib_swe_ma_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2030"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+
+        tax_amount_errors = result.errors.for_object("transaction").on("tax_amount")
+        self.assertEqual(1, len(tax_amount_errors))
+        self.assertEqual(ErrorCodes.Transaction.TaxAmountIsRequiredForAibSwedish, tax_amount_errors[0].code)
 
     def test_sale_with_invalid_address(self):
         customer = Customer.create({

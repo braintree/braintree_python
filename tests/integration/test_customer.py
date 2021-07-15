@@ -282,6 +282,19 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertEqual(1, len(customer.apple_pay_cards))
         self.assertIsInstance(customer.apple_pay_cards[0], ApplePayCard)
+        self.assertNotEqual(customer.apple_pay_cards[0].bin, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].token, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].prepaid, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].healthcare, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].debit, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].durbin_regulated, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].commercial, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].payroll, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].issuing_bank, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].country_of_issuance, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].product_id, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].last_4, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].card_type, None)
 
     def test_create_with_three_d_secure_nonce(self):
         result = Customer.create({
@@ -358,6 +371,19 @@ class TestCustomer(unittest.TestCase):
         customer = result.customer
         self.assertEqual(1, len(customer.android_pay_cards))
         self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
+        self.assertNotEqual(customer.android_pay_cards[0].bin, None)
+        self.assertNotEqual(customer.android_pay_cards[0].token, None)
+        self.assertNotEqual(customer.android_pay_cards[0].prepaid, None)
+        self.assertNotEqual(customer.android_pay_cards[0].healthcare, None)
+        self.assertNotEqual(customer.android_pay_cards[0].debit, None)
+        self.assertNotEqual(customer.android_pay_cards[0].durbin_regulated, None)
+        self.assertNotEqual(customer.android_pay_cards[0].commercial, None)
+        self.assertNotEqual(customer.android_pay_cards[0].payroll, None)
+        self.assertNotEqual(customer.android_pay_cards[0].issuing_bank, None)
+        self.assertNotEqual(customer.android_pay_cards[0].country_of_issuance, None)
+        self.assertNotEqual(customer.android_pay_cards[0].product_id, None)
+        self.assertNotEqual(customer.android_pay_cards[0].last_4, None)
+        self.assertNotEqual(customer.android_pay_cards[0].card_type, None)
 
     def test_create_with_amex_express_checkout_card_nonce(self):
         result = Customer.create({"payment_method_nonce": Nonces.AmexExpressCheckoutCard})
