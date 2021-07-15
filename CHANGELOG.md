@@ -1,4 +1,4 @@
-## Unreleased
+## 4.11.0
 * Add `exchange_rate_quote_id` to `Transaction.sale`
 * Add validation error code `ExchangeRateQuoteIdIsTooLong` to `Transaction`
 * Add the following fields to `ApplePayCard` and `AndroidPayCard`:
