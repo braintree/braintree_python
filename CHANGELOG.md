@@ -11,6 +11,7 @@
   * `product_id`
   * `country_of_issuance`
   * `issuing_bank`
+* Add error code `Transaction.TaxAmountIsRequiredForAibSwedish` for attribute `tax_amount` to handle validation for AIB:Domestic Transactions in Sweden
 
 ## 4.10.0
 * Add `payment_reader_card_details` parameter to `Transaction.sale`
@@ -19,7 +20,6 @@
 * Add `skip_advanced_fraud_checking` to:
   * `PaymentMethod.create` and `PaymentMethod.update`
   * `CreditCard.create` and `CreditCard.update`
-* Add error code `Transaction.TaxAmountIsRequiredForAibSwedish` for attribute `tax_amount` to handle validation for AIB:Domestic Transactions in Sweden
 
 ## 4.9.0
 * Add `paypal_messages` to `Dispute`
