@@ -735,6 +735,36 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("ee257d98-de40-47e8-96b3-a6954ea7a9a4", local_payment_completed.payment_method_nonce)
         self.assertTrue(isinstance(local_payment_completed.transaction, Transaction))
 
+    def test_local_payment_expired_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.LocalPaymentExpired,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        local_payment_expired = notification.local_payment_expired
+
+        self.assertEqual(WebhookNotification.Kind.LocalPaymentExpired, notification.kind)
+        self.assertEqual("a-payment-id", local_payment_expired.payment_id)
+        self.assertEqual("a-context-payment-id", local_payment_expired.payment_context_id)
+
+    def test_local_payment_funded_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.LocalPaymentFunded,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        local_payment_funded = notification.local_payment_funded
+
+        self.assertEqual(WebhookNotification.Kind.LocalPaymentFunded, notification.kind)
+        self.assertEqual("a-payment-id", local_payment_funded.payment_id)
+        self.assertEqual("a-context-payment-id", local_payment_funded.payment_context_id)
+        self.assertTrue(isinstance(local_payment_funded.transaction, Transaction))
+        self.assertEqual("1", local_payment_funded.transaction.id)
+        self.assertEqual("settled", local_payment_funded.transaction.status)
+        self.assertEqual("order1234", local_payment_funded.transaction.order_id)
+
     def test_local_payment_reversed_webhook(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.LocalPaymentReversed,
