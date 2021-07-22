@@ -1,1 +1,2 @@
 include braintree/ssl/*
+recursive-include tests
