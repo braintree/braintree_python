@@ -97,9 +97,9 @@ class TestPaymentMethodNonce(unittest.TestCase):
 
         credit_card = {
             "credit_card": {
-                "number": "4000000000000002",
-                "expiration_month": "12",
-                "expiration_year": "2020"
+                "number": "4111111111111111",
+                "expiration_month": "01",
+                "expiration_year": "2024"
             }
         }
 
