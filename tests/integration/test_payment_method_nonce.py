@@ -95,15 +95,7 @@ class TestPaymentMethodNonce(unittest.TestCase):
         )
         gateway = BraintreeGateway(config)
 
-        credit_card = {
-            "credit_card": {
-                "number": "4000000000000002",
-                "expiration_month": "01",
-                "expiration_year": "2024"
-            }
-        }
-
-        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+        nonce = "fake-three-d-secure-visa-full-authentication-nonce"
         found_nonce = PaymentMethodNonce.find(nonce)
         three_d_secure_info = found_nonce.three_d_secure_info
 
