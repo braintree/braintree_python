@@ -106,8 +106,8 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
         self.assertEqual("cavv_value", three_d_secure_info.cavv)
-        self.assertEqual("test_xid", three_d_secure_info.xid)
-        self.assertEqual("test_eci", three_d_secure_info.eci_flag)
+        self.assertEqual("xid_value", three_d_secure_info.xid)
+        self.assertEqual("eci_value", three_d_secure_info.eci_flag)
         self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
         self.assertIsNotNone(three_d_secure_info.three_d_secure_authentication_id)
 
