@@ -95,15 +95,7 @@ class TestPaymentMethodNonce(unittest.TestCase):
         )
         gateway = BraintreeGateway(config)
 
-        credit_card = {
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_month": "12",
-                "expiration_year": "2020"
-            }
-        }
-
-        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+        nonce = "fake-three-d-secure-visa-full-authentication-nonce"
         found_nonce = PaymentMethodNonce.find(nonce)
         three_d_secure_info = found_nonce.three_d_secure_info
 
@@ -113,9 +105,9 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
-        self.assertEqual("test_cavv", three_d_secure_info.cavv)
-        self.assertEqual("test_xid", three_d_secure_info.xid)
-        self.assertEqual("test_eci", three_d_secure_info.eci_flag)
+        self.assertEqual("cavv_value", three_d_secure_info.cavv)
+        self.assertEqual("xid_value", three_d_secure_info.xid)
+        self.assertEqual("05", three_d_secure_info.eci_flag)
         self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
         self.assertIsNotNone(three_d_secure_info.three_d_secure_authentication_id)
 

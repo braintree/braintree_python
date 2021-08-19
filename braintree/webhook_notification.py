@@ -7,6 +7,8 @@ from braintree.dispute import Dispute
 from braintree.error_result import ErrorResult
 from braintree.granted_payment_instrument_update import GrantedPaymentInstrumentUpdate
 from braintree.local_payment_completed import LocalPaymentCompleted
+from braintree.local_payment_expired import LocalPaymentExpired
+from braintree.local_payment_funded import LocalPaymentFunded
 from braintree.local_payment_reversed import LocalPaymentReversed
 from braintree.merchant_account import MerchantAccount
 from braintree.oauth_access_revocation import OAuthAccessRevocation
@@ -34,6 +36,8 @@ class WebhookNotification(Resource):
         GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
         GrantorUpdatedGrantedPaymentMethod = "grantor_updated_granted_payment_method"
         LocalPaymentCompleted = "local_payment_completed"
+        LocalPaymentExpired = "local_payment_expired"
+        LocalPaymentFunded = "local_payment_funded"
         LocalPaymentReversed = "local_payment_reversed"
         OAuthAccessRevoked = "oauth_access_revoked"
         PartnerMerchantConnected = "partner_merchant_connected"
@@ -99,6 +103,10 @@ class WebhookNotification(Resource):
             self.revoked_payment_method_metadata = RevokedPaymentMethodMetadata(gateway, node_wrapper)
         elif "local_payment" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentCompleted:
             self.local_payment_completed = LocalPaymentCompleted(gateway, node_wrapper["local_payment"])
+        elif "local_payment_expired" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentExpired:
+            self.local_payment_expired = LocalPaymentExpired(gateway, node_wrapper["local_payment_expired"])
+        elif "local_payment_funded" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentFunded:
+            self.local_payment_funded = LocalPaymentFunded(gateway, node_wrapper["local_payment_funded"])
         elif "local_payment_reversed" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentReversed:
             self.local_payment_reversed = LocalPaymentReversed(gateway, node_wrapper["local_payment_reversed"])
 

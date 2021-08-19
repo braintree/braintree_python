@@ -89,6 +89,10 @@ class WebhookTestingGateway(object):
             return self.__granted_payment_method_revoked(id)
         elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
             return self.__local_payment_completed()
+        elif kind == WebhookNotification.Kind.LocalPaymentExpired:
+            return self.__local_payment_expired()
+        elif kind == WebhookNotification.Kind.LocalPaymentFunded:
+            return self.__local_payment_funded()
         elif kind == WebhookNotification.Kind.LocalPaymentReversed:
             return self.__local_payment_reversed()
         else:
@@ -860,6 +864,28 @@ class WebhookTestingGateway(object):
                     <order-id>order1234</order-id>
                 </transaction>
             </local-payment>
+            """
+
+    def __local_payment_expired(self):
+        return """
+            <local-payment-expired>
+                <payment-id>a-payment-id</payment-id>
+                <payment-context-id>a-context-payment-id</payment-context-id>
+            </local-payment-expired>
+            """
+
+    def __local_payment_funded(self):
+        return """
+            <local-payment-funded>
+                <payment-id>a-payment-id</payment-id>
+                <payment-context-id>a-context-payment-id</payment-context-id>
+                <transaction>
+                    <id>1</id>
+                    <status>settled</status>
+                    <amount>10.00</amount>
+                    <order-id>order1234</order-id>
+                </transaction>
+            </local-payment-funded>
             """
 
     def __local_payment_reversed(self):
