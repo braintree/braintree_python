@@ -1,4 +1,4 @@
-## Unreleased
+## 4.12.0
 * Add `localPaymentFunded` and `localPaymentExpired` webhooks
 
 ## 4.11.0
