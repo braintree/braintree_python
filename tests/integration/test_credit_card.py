@@ -270,12 +270,6 @@ class TestCreditCard(unittest.TestCase):
             self.assertTrue(result.is_success)
             verification = result.credit_card.verification
             self.assertIsInstance(verification.risk_data, RiskData)
-            self.assertTrue(hasattr(verification.risk_data, 'id'))
-            self.assertEqual("Approve", verification.risk_data.decision)
-            self.assertTrue(hasattr(verification.risk_data, 'decision_reasons'))
-            self.assertTrue(hasattr(verification.risk_data, 'device_data_captured'))
-            self.assertTrue(hasattr(verification.risk_data, 'fraud_service_provider'))
-            self.assertTrue(hasattr(verification.risk_data, 'transaction_risk_score'))
 
     def test_create_includes_risk_data_when_skip_advanced_fraud_checking_is_false(self):
         with FraudProtectionEnterpriseIntegrationMerchant():
