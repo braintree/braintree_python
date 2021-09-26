@@ -57,7 +57,7 @@ class Subscription(Resource):
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
-        Constants representing subscription statusues.  Available statuses are:
+        Constants representing subscription statuses.  Available statuses are:
 
         * braintree.Subscription.Status.Active
         * braintree.Subscription.Status.Canceled
@@ -177,7 +177,7 @@ class Subscription(Resource):
         - status
 
         For text fields, you can search using the following operators: ==, !=, starts_with, ends_with
-        and contains. For mutiple value fields, you can search using the in_list operator. An example::
+        and contains. For multiple value fields, you can search using the in_list operator. An example::
 
             braintree.Subscription.search([
                 braintree.SubscriptionSearch.plan_id.starts_with("abc"),

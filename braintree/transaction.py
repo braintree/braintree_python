@@ -437,7 +437,7 @@ class Transaction(Resource):
     @staticmethod
     def update_details(transaction_id, params=None):
         """
-        Updates exisiting details for transaction submtted_for_settlement.
+        Updates existing details for transaction submitted_for_settlement.
 
         Requires the transaction id::
 
