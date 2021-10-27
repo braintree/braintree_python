@@ -40,6 +40,11 @@ class ErrorResult(object):
         else:
             self.subscription = None
 
+        if "plan" in attributes:
+            self.plan = braintree.plan.Plan(gateway, attributes["plan"])
+        else:
+            self.plan = None
+
         if "merchant_account" in attributes:
             self.merchant_account = braintree.merchant_account.MerchantAccount(gateway, attributes["merchant_account"])
         else:
