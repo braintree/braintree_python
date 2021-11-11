@@ -17,6 +17,7 @@ from braintree.resource import Resource
 from braintree.revoked_payment_method_metadata import RevokedPaymentMethodMetadata
 from braintree.subscription import Subscription
 from braintree.transaction import Transaction
+from braintree.transaction_review import TransactionReview
 from braintree.validation_error_collection import ValidationErrorCollection
 
 class WebhookNotification(Resource):
@@ -55,6 +56,7 @@ class WebhookNotification(Resource):
         SubscriptionWentActive = "subscription_went_active"
         SubscriptionWentPastDue = "subscription_went_past_due"
         TransactionDisbursed = "transaction_disbursed"
+        TransactionReviewed = "transaction_reviewed"
         TransactionSettled = "transaction_settled"
         TransactionSettlementDeclined = "transaction_settlement_declined"
 
@@ -83,6 +85,8 @@ class WebhookNotification(Resource):
             self.merchant_account = MerchantAccount(gateway, node_wrapper['merchant_account'])
         elif "transaction" in node_wrapper:
             self.transaction = Transaction(gateway, node_wrapper['transaction'])
+        elif "transaction_review" in node_wrapper:
+            self.transaction_review = TransactionReview(node_wrapper['transaction_review'])
         elif "connected_merchant_status_transitioned" in node_wrapper:
             self.connected_merchant_status_transitioned = ConnectedMerchantStatusTransitioned(gateway, node_wrapper['connected_merchant_status_transitioned'])
         elif "connected_merchant_paypal_status_changed" in node_wrapper:

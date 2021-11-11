@@ -45,6 +45,8 @@ class WebhookTestingGateway(object):
             return self.__merchant_account_declined_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionDisbursed:
             return self.__transaction_disbursed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.TransactionReviewed:
+            return self.__transaction_reviewed_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionSettled:
             return self.__transaction_settled_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionSettlementDeclined:
@@ -117,6 +119,17 @@ class WebhookTestingGateway(object):
                 <disbursement-date type="datetime">2013-07-09T18:23:29Z</disbursement-date>
               </disbursement-details>
             </transaction>
+        """ % id
+
+    def __transaction_reviewed_sample_xml(self, id):
+        return """
+            <transaction-review>
+              <transaction-id>%s</transaction-id>
+              <decision>a smart decision</decision>
+              <reviewer-email>hey@girl.com</reviewer-email>
+              <reviewer-note>I reviewed this</reviewer-note>
+              <reviewer-time type="datetime">2021-04-20T06:09:00Z</reviewer-time>
+            </transaction-review>
         """ % id
 
     def __transaction_settled_sample_xml(self, id):
