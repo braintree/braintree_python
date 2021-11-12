@@ -128,7 +128,7 @@ class WebhookTestingGateway(object):
               <decision>a smart decision</decision>
               <reviewer-email>hey@girl.com</reviewer-email>
               <reviewer-note>I reviewed this</reviewer-note>
-              <reviewer-time type="datetime">2021-04-20T06:09:00Z</reviewer-time>
+              <reviewed-time type="datetime">2021-04-20T06:09:00Z</reviewed-time>
             </transaction-review>
         """ % id
 

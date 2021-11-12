@@ -207,7 +207,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("a smart decision", notification.transaction_review.decision)
         self.assertEqual("hey@girl.com", notification.transaction_review.reviewer_email)
         self.assertEqual("I reviewed this", notification.transaction_review.reviewer_note)
-        self.assertEqual(datetime(2021, 4, 20, 6, 9, 0), notification.transaction_review.reviewer_time)
+        self.assertEqual(datetime(2021, 4, 20, 6, 9, 0), notification.transaction_review.reviewed_time)
 
     def test_builds_notification_for_settled_transactions(self):
         sample_notification = WebhookTesting.sample_notification(
