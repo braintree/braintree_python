@@ -29,5 +29,5 @@ class UsBankAccountVerificationSearch:
     # Equality fields
     account_type = Search.EqualityNodeBuilder("account_type")
 
-    # Ends-with fieds
+    # Ends-with fields
     account_number = Search.EndsWithNodeBuilder("account_number")
