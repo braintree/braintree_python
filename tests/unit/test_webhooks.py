@@ -194,6 +194,21 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(100, notification.transaction.amount)
         self.assertEqual(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
 
+    def test_builds_notification_for_reviewed_transactions(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.TransactionReviewed,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.TransactionReviewed, notification.kind)
+        self.assertEqual("my_id", notification.transaction_review.transaction_id)
+        self.assertEqual("a smart decision", notification.transaction_review.decision)
+        self.assertEqual("hey@girl.com", notification.transaction_review.reviewer_email)
+        self.assertEqual("I reviewed this", notification.transaction_review.reviewer_note)
+        self.assertEqual(datetime(2021, 4, 20, 6, 9, 0), notification.transaction_review.reviewed_time)
+
     def test_builds_notification_for_settled_transactions(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.TransactionSettled,

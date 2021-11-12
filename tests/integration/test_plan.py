@@ -1,5 +1,5 @@
-from tests.test_helper import *
 
+from tests.test_helper import *
 class TestPlan(unittest.TestCase):
 
     def test_all_returns_empty_list(self):
@@ -77,3 +77,72 @@ class TestPlan(unittest.TestCase):
 
         self.assertEqual(1, len(actual_plan.discounts))
         self.assertEqual(discount_attributes["name"], actual_plan.discounts[0].name)
+
+    def test_create_returns_successful_result_if_valid(self):
+        attributes = {
+            "billing_day_of_month": 12,
+            "billing_frequency": 1,
+            "currency_iso_code": "USD",
+            "description": "description on create",
+            "name": "my new plan name",
+            "number_of_billing_cycles": 1,
+            "price": "9.99",
+            "trial_period": False
+        }
+
+        result = Plan.create(attributes)
+        self.assertTrue(result.is_success)
+        plan = result.plan
+        self.assertEqual(12, attributes["billing_day_of_month"])
+        self.assertEqual(1, attributes["billing_frequency"])
+        self.assertEqual("USD", attributes["currency_iso_code"])
+        self.assertEqual("description on create", attributes["description"])
+        self.assertEqual("my new plan name", attributes["name"])
+        self.assertEqual(1, attributes["number_of_billing_cycles"])
+        self.assertEqual("9.99", attributes["price"])
+
+    def test_find_with_valid_id(self):
+        plan_attributes = {
+            "billing_day_of_month": 12,
+            "billing_frequency": 1,
+            "currency_iso_code": "USD",
+            "description": "description on create",
+            "name": "my new plan name",
+            "number_of_billing_cycles": 1,
+            "price": "9.99",
+            "trial_period": False
+        }
+
+        created_plan = Plan.create(plan_attributes).plan
+        found_plan = Plan.find(created_plan.id)
+        self.assertEqual(created_plan.name, found_plan.name)
+        self.assertEqual(created_plan.id, found_plan.id)
+        self.assertEqual(created_plan.price, found_plan.price)
+        self.assertEqual(created_plan.billing_day_of_month, found_plan.billing_day_of_month)
+
+    @raises_with_regexp(NotFoundError, "Plan with id 'bad_token' not found")
+    def test_find_with_invalid_token(self):
+        Plan.find("bad_token")
+
+    def test_update_returns_successful_result_if_valid(self):
+        plan_attributes = {
+            "billing_day_of_month": 12,
+            "billing_frequency": 1,
+            "currency_iso_code": "USD",
+            "description": "description on create",
+            "name": "my new plan name",
+            "number_of_billing_cycles": 1,
+            "price": "9.99",
+            "trial_period": False
+        }
+
+        created_plan = Plan.create(plan_attributes).plan
+        result = Plan.update(created_plan.id, {
+            "name": "updated name",
+            "price": Decimal("99.88")
+        })
+        self.assertTrue(result.is_success)
+        updated_plan = result.plan
+        self.assertEqual("updated name", updated_plan.name)
+        self.assertEqual("99.88", updated_plan.price)
+
