@@ -903,7 +903,9 @@ class WebhookTestingGateway(object):
                 <payment-method>%s</payment-method>
                 <datetime-updated type='dateTime'>2022-01-01T21:28:37Z</datetime-updated>
                 <enriched-customer-data>
-                    <fields-updated type='array'/>
+                    <fields-updated type='array'>
+                        <item>username</item>
+                    </fields-updated>
                     <profile-data>
                         <username>venmo_username</username>
                         <first-name>John</first-name>

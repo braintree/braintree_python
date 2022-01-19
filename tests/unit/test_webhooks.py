@@ -807,7 +807,7 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(payment_method_customer_data_updated.datetime_updated, "2022-01-01T21:28:37Z")
 
         enriched_customer_data = payment_method_customer_data_updated.enriched_customer_data
-        self.assertEqual(enriched_customer_data.fields_updated, [])
+        self.assertEqual(enriched_customer_data.fields_updated, ["username"])
 
         profile_data = enriched_customer_data.profile_data
         self.assertEqual(profile_data.first_name, "John")
