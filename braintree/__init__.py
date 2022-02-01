@@ -28,6 +28,7 @@ from braintree.discount import Discount
 from braintree.discount_gateway import DiscountGateway
 from braintree.dispute import Dispute
 from braintree.dispute_search import DisputeSearch
+from braintree.enriched_customer_data import EnrichedCustomerData
 from braintree.environment import Environment
 from braintree.error_codes import ErrorCodes
 from braintree.error_result import ErrorResult
@@ -41,6 +42,7 @@ from braintree.oauth_access_revocation import OAuthAccessRevocation
 from braintree.partner_merchant import PartnerMerchant
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.payment_method import PaymentMethod
+from braintree.payment_method_customer_data_updated_metadata import PaymentMethodCustomerDataUpdatedMetadata
 from braintree.payment_method_nonce import PaymentMethodNonce
 from braintree.payment_method_parser import parse_payment_method
 from braintree.paypal_account import PayPalAccount
@@ -70,6 +72,7 @@ from braintree.transaction_search import TransactionSearch
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.validation_error_collection import ValidationErrorCollection
 from braintree.venmo_account import VenmoAccount
+from braintree.venmo_profile_data import VenmoProfileData
 from braintree.version import Version
 from braintree.webhook_notification import WebhookNotification
 from braintree.webhook_notification_gateway import WebhookNotificationGateway
