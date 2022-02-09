@@ -4,6 +4,6 @@ class AuthorizationError(BraintreeError):
     """
     Raised when the user does not have permission to complete the requested operation.
 
-    See https://developers.braintreepayments.com/reference/general/exceptions/python#authorization-error
+    See https://developer.paypal.com/braintree/docs/reference/general/exceptions/python#authorization-error
     """
     pass

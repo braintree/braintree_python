@@ -4,6 +4,6 @@ class AuthenticationError(BraintreeError):
     """
     Raised when the client library cannot authenticate with the gateway.  This generally means the public_key/private key are incorrect, or the user is not active.
 
-    See https://developers.braintreepayments.com/reference/general/exceptions/python#authentication-error
+    See https://developer.paypal.com/braintree/docs/reference/general/exceptions/python#authentication-error
     """
     pass

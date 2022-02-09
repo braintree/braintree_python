@@ -17,7 +17,7 @@ class DocumentUpload(Resource):
             }
         )
 
-    For more information on DocumentUploads, see https://developers.braintreepayments.com/reference/request/document_upload/create
+    For more information on DocumentUploads, see https://developer.paypal.com/braintree/docs/reference/request/document-upload/create
 
     """
 

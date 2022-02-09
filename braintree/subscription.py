@@ -32,7 +32,7 @@ class Subscription(Resource):
             "trial_period": True
         })
 
-    For more information on Subscriptions, see https://developers.braintreepayments.com/reference/request/subscription/create/python
+    For more information on Subscriptions, see https://developer.paypal.com/braintree/docs/reference/request/subscription/create/python
 
     """
 
