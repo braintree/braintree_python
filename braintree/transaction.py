@@ -89,7 +89,7 @@ class Transaction(Resource):
         print(result.transaction.amount)
         print(result.transaction.order_id)
 
-    For more information on Transactions, see https://developers.braintreepayments.com/reference/request/transaction/sale/python
+    For more information on Transactions, see https://developer.paypal.com/braintree/docs/reference/request/transaction/sale/python
 
     """
 

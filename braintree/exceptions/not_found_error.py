@@ -4,6 +4,6 @@ class NotFoundError(BraintreeError):
     """
     Raised when an object is not found in the gateway, such as a Transaction.find("bad_id").
 
-    See https://developers.braintreepayments.com/reference/general/exceptions/python#not-found-error
+    See https://developer.paypal.com/braintree/docs/reference/general/exceptions/python#not-found-error
     """
     pass
