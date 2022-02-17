@@ -66,7 +66,7 @@ class Customer(Resource):
         print(result.customer.id)
         print(result.customer.first_name)
 
-    For more information on Customers, see https://developers.braintreepayments.com/reference/request/customer/create/python
+    For more information on Customers, see https://developer.paypal.com/braintree/docs/reference/request/customer/create/python
 
     """
 

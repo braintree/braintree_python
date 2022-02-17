@@ -791,3 +791,27 @@ class TestWebhooks(unittest.TestCase):
 
         self.assertEqual(WebhookNotification.Kind.LocalPaymentReversed, notification.kind)
         self.assertEqual("a-payment-id", local_payment_reversed.payment_id)
+
+    def test_payment_method_customer_data_updated_webhook(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.PaymentMethodCustomerDataUpdated,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification["bt_signature"], sample_notification["bt_payload"])
+        payment_method_customer_data_updated = notification.payment_method_customer_data_updated_metadata
+
+        self.assertEqual(WebhookNotification.Kind.PaymentMethodCustomerDataUpdated, notification.kind)
+
+        self.assertEqual(payment_method_customer_data_updated.token, "TOKEN-12345")
+        self.assertEqual(payment_method_customer_data_updated.datetime_updated, "2022-01-01T21:28:37Z")
+
+        enriched_customer_data = payment_method_customer_data_updated.enriched_customer_data
+        self.assertEqual(enriched_customer_data.fields_updated, ["username"])
+
+        profile_data = enriched_customer_data.profile_data
+        self.assertEqual(profile_data.first_name, "John")
+        self.assertEqual(profile_data.last_name, "Doe")
+        self.assertEqual(profile_data.username, "venmo_username")
+        self.assertEqual(profile_data.phone_number, "1231231234")
+        self.assertEqual(profile_data.email, "john.doe@paypal.com")

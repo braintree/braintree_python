@@ -13,6 +13,7 @@ from braintree.local_payment_reversed import LocalPaymentReversed
 from braintree.merchant_account import MerchantAccount
 from braintree.oauth_access_revocation import OAuthAccessRevocation
 from braintree.partner_merchant import PartnerMerchant
+from braintree.payment_method_customer_data_updated_metadata import PaymentMethodCustomerDataUpdatedMetadata
 from braintree.resource import Resource
 from braintree.revoked_payment_method_metadata import RevokedPaymentMethodMetadata
 from braintree.subscription import Subscription
@@ -44,6 +45,7 @@ class WebhookNotification(Resource):
         PartnerMerchantConnected = "partner_merchant_connected"
         PartnerMerchantDeclined = "partner_merchant_declined"
         PartnerMerchantDisconnected = "partner_merchant_disconnected"
+        PaymentMethodCustomerDataUpdated = "payment_method_customer_data_updated"
         PaymentMethodRevokedByCustomer = "payment_method_revoked_by_customer"
         RecipientUpdatedGrantedPaymentMethod = "recipient_updated_granted_payment_method"
         SubMerchantAccountApproved = "sub_merchant_account_approved"
@@ -113,6 +115,8 @@ class WebhookNotification(Resource):
             self.local_payment_funded = LocalPaymentFunded(gateway, node_wrapper["local_payment_funded"])
         elif "local_payment_reversed" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.LocalPaymentReversed:
             self.local_payment_reversed = LocalPaymentReversed(gateway, node_wrapper["local_payment_reversed"])
+        elif "payment_method_customer_data_updated_metadata" in node_wrapper and attributes["kind"] == WebhookNotification.Kind.PaymentMethodCustomerDataUpdated:
+            self.payment_method_customer_data_updated_metadata = PaymentMethodCustomerDataUpdatedMetadata(gateway, node_wrapper["payment_method_customer_data_updated_metadata"])
 
         if "errors" in node_wrapper:
             self.errors = ValidationErrorCollection(node_wrapper['errors'])

@@ -97,6 +97,8 @@ class WebhookTestingGateway(object):
             return self.__local_payment_funded()
         elif kind == WebhookNotification.Kind.LocalPaymentReversed:
             return self.__local_payment_reversed()
+        elif kind == WebhookNotification.Kind.PaymentMethodCustomerDataUpdated:
+            return self.__payment_method_customer_data_updated_sample_xml(id)
         else:
             return self.__subscription_sample_xml(id)
 
@@ -827,21 +829,7 @@ class WebhookTestingGateway(object):
             """
 
     def __granted_payment_method_revoked(self, id):
-        return """
-            <venmo-account>
-                <created-at type="datetime">2018-10-11T21:28:37Z</created-at>
-                <updated-at type="datetime">2018-10-11T21:28:37Z</updated-at>
-                <default type="boolean">true</default>
-                <image-url>https://assets.braintreegateway.com/payment_method_logo/venmo.png?environment=test</image-url>
-                <token>%s</token>
-                <source-description>Venmo Account: venmojoe</source-description>
-                <username>venmojoe</username>
-                <venmo-user-id>456</venmo-user-id>
-                <subscriptions type="array"/>
-                <customer-id>venmo_customer_id</customer-id>
-                <global-id>cGF5bWVudG1ldGhvZF92ZW5tb2FjY291bnQ</global-id>
-            </venmo-account>
-            """ % id
+        return self.__venmo_account_xml(id)
 
     def __payment_method_revoked_by_customer(self, id):
         return """
@@ -907,3 +895,41 @@ class WebhookTestingGateway(object):
                 <payment-id>a-payment-id</payment-id>
             </local-payment-reversed>
             """
+
+    def __payment_method_customer_data_updated_sample_xml(self, id):
+        return """
+            <payment-method-customer-data-updated-metadata>
+                <token>TOKEN-12345</token>
+                <payment-method>%s</payment-method>
+                <datetime-updated type='dateTime'>2022-01-01T21:28:37Z</datetime-updated>
+                <enriched-customer-data>
+                    <fields-updated type='array'>
+                        <item>username</item>
+                    </fields-updated>
+                    <profile-data>
+                        <username>venmo_username</username>
+                        <first-name>John</first-name>
+                        <last-name>Doe</last-name>
+                        <phone-number>1231231234</phone-number>
+                        <email>john.doe@paypal.com</email>
+                    </profile-data>
+                </enriched-customer-data>
+            </payment-method-customer-data-updated-metadata>
+            """ % self.__venmo_account_xml(id)
+
+    def __venmo_account_xml(self, id):
+        return """
+            <venmo-account>
+                <created-at type="datetime">2018-10-11T21:28:37Z</created-at>
+                <updated-at type="datetime">2018-10-11T21:28:37Z</updated-at>
+                <default type="boolean">true</default>
+                <image-url>https://assets.braintreegateway.com/payment_method_logo/venmo.png?environment=test</image-url>
+                <token>%s</token>
+                <source-description>Venmo Account: venmojoe</source-description>
+                <username>venmojoe</username>
+                <venmo-user-id>456</venmo-user-id>
+                <subscriptions type="array"/>
+                <customer-id>venmo_customer_id</customer-id>
+                <global-id>cGF5bWVudG1ldGhvZF92ZW5tb2FjY291bnQ</global-id>
+            </venmo-account>
+            """ % id

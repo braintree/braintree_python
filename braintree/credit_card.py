@@ -38,7 +38,7 @@ class CreditCard(Resource):
         print(result.credit_card.token)
         print(result.credit_card.masked_number)
 
-    For more information on CreditCards, see https://developers.braintreepayments.com/reference/request/credit-card/create/python
+    For more information on CreditCards, see https://developer.paypal.com/braintree/docs/reference/request/credit-card/create/python
 
     """
     class CardType(object):
