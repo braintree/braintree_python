@@ -13,6 +13,7 @@ class TestAddress(unittest.TestCase):
             "locality": "Chicago",
             "region": "Illinois",
             "postal_code": "60622",
+            "phone_number": "8675309",
             "country_name": "United States of America",
             "country_code_alpha2": "US",
             "country_code_alpha3": "USA",
@@ -30,6 +31,7 @@ class TestAddress(unittest.TestCase):
         self.assertEqual("Chicago", address.locality)
         self.assertEqual("Illinois", address.region)
         self.assertEqual("60622", address.postal_code)
+        self.assertEqual("8675309", address.phone_number)
         self.assertEqual("US", address.country_code_alpha2)
         self.assertEqual("USA", address.country_code_alpha3)
         self.assertEqual("840", address.country_code_numeric)
