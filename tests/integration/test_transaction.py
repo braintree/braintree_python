@@ -6004,3 +6004,39 @@ class TestTransaction(unittest.TestCase):
 
         error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
         self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportPartialAuthReversal, error_code)
+
+    def test_retried_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "amount": TransactionAmounts.Decline,
+            "payment_method_token": "network_tokenized_credit_card",
+            })
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertTrue(transaction.retried)
+
+    def test_non_retried_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009"
+                },
+            })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertFalse(hasattr(transaction, 'retried'))
+
+    def test_ineligible_retry_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009"
+                },
+            })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertFalse(hasattr(transaction, 'retried'))
