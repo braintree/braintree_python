@@ -1431,7 +1431,7 @@ class TestTransaction(unittest.TestCase):
         venmo_account_details = result.transaction.venmo_account_details
         self.assertIsNotNone(venmo_account_details)
         self.assertEqual(venmo_account_details.username, "venmojoe")
-        self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
+        self.assertEqual(venmo_account_details.venmo_user_id, "1234567891234567891")
 
     def test_sale_with_fake_venmo_account_nonce_and_profile_id(self):
         result = Transaction.sale({

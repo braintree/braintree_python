@@ -384,7 +384,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(venmo_account.default)
         self.assertIsNotNone(venmo_account.token)
         self.assertEqual("venmojoe", venmo_account.username)
-        self.assertEqual("Venmo-Joe-1", venmo_account.venmo_user_id)
+        self.assertEqual("1234567891234567891", venmo_account.venmo_user_id)
         self.assertEqual("Venmo Account: venmojoe", venmo_account.source_description)
         self.assertRegexpMatches(venmo_account.image_url, r"\.png")
         self.assertEqual(customer_id, venmo_account.customer_id)
