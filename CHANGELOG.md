@@ -1,4 +1,5 @@
-## Unreleased
+# Changelog
+## 4.15.0
 * Add `retried` to `Transaction`
 
 ## 4.14.0
