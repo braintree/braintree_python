@@ -1431,7 +1431,7 @@ class TestTransaction(unittest.TestCase):
         venmo_account_details = result.transaction.venmo_account_details
         self.assertIsNotNone(venmo_account_details)
         self.assertEqual(venmo_account_details.username, "venmojoe")
-        self.assertEqual(venmo_account_details.venmo_user_id, "Venmo-Joe-1")
+        self.assertEqual(venmo_account_details.venmo_user_id, "1234567891234567891")
 
     def test_sale_with_fake_venmo_account_nonce_and_profile_id(self):
         result = Transaction.sale({
@@ -6004,3 +6004,39 @@ class TestTransaction(unittest.TestCase):
 
         error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
         self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportPartialAuthReversal, error_code)
+
+    def test_retried_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "amount": TransactionAmounts.Decline,
+            "payment_method_token": "network_tokenized_credit_card",
+            })
+        self.assertFalse(result.is_success)
+        transaction = result.transaction
+        self.assertTrue(transaction.retried)
+
+    def test_non_retried_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009"
+                },
+            })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertFalse(hasattr(transaction, 'retried'))
+
+    def test_ineligible_retry_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.non_default_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009"
+                },
+            })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertFalse(hasattr(transaction, 'retried'))

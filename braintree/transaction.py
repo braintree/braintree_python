@@ -135,6 +135,7 @@ class Transaction(Resource):
         "recurring",
         "refund_id",
         "refunded_transaction_id",
+        "retried",
         "retrieval_reference_number",
         "service_fee_amount",
         "settlement_batch_id",

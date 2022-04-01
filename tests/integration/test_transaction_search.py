@@ -639,6 +639,15 @@ class TestTransactionSearch(unittest.TestCase):
         ])
         print(collection)
 
+    def test_advanced_search_settlement_confirmed_transaction(self):
+        transaction_id = "settlement_confirmed_txn"
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction_id
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+
     @raises_with_regexp(AttributeError, "Invalid argument\(s\) for status: noSuchStatus")
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
         Transaction.search([TransactionSearch.status == "noSuchStatus"])
