@@ -1,5 +1,5 @@
 # Changelog
-## 4.15.0
+## 4.15.2
 * Add `retried` to `Transaction`
 
 ## 4.14.0
