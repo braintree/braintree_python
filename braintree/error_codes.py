@@ -64,6 +64,8 @@ class ErrorCodes(object):
         InvalidToken = "83520"
         PrivateKeyMismatch = "93521"
         KeyMismatchStoringCertificate = "93522"
+        CustomerIdIsInvalid = "93528"
+        BillingAddressFormatIsInvalid = "93529"
 
     class AuthorizationFingerprint(object):
         MissingFingerprint = "93201"

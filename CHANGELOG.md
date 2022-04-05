@@ -1,4 +1,8 @@
 # Changelog
+
+## Unreleased
+* Allow vaulting of raw ApplePayCards with billing address via Customer.create/update
+
 ## 4.15.2
 * Add `retried` to `Transaction`
 

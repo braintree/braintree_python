@@ -542,6 +542,64 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("1111", credit_card.last_4)
         self.assertEqual("05/2010", credit_card.expiration_date)
 
+    def test_create_for_raw_apple_pay(self):
+        result = Customer.create({
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "apple_pay_card": {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2014",
+                "eci_indicator": "5",
+                "cryptogram": "01010101010101010101",
+                "cardholder_name": "John Doe",
+                "billing_address": {
+                    "postal_code": 83704
+                }
+            }
+        })
+
+        customer = result.customer
+        self.assertEqual("Rickey", customer.first_name)
+        self.assertEqual("Crabapple", customer.last_name)
+
+        self.assertTrue(result.is_success)
+        apple_pay_card = result.customer.apple_pay_cards[0]
+        self.assertEqual("411111", apple_pay_card.bin)
+        self.assertEqual("1111", apple_pay_card.last_4)
+        self.assertEqual("2014", apple_pay_card.expiration_year)
+        self.assertEqual("05", apple_pay_card.expiration_month)
+        self.assertEqual(apple_pay_card.billing_address["postal_code"], "83704")
+
+    def test_create_for_raw_apple_pay_with_invalid_params(self):
+        result = Customer.create({
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "apple_pay_card": {
+                "number": "4111111111111111",
+                "expiration_year": "2014",
+                "expiration_month": "01",
+                "eci_indicator": "5",
+                "cryptogram": "01010101010101010101",
+                "cardholder_name": "John Doe",
+                "billing_address": {
+                    "street_address": "head 100 yds south once you hear the beehive",
+                    "postal_code": '$$$$',
+                    "country_code_alpha2": "UX",
+                }
+            }
+        })
+#
+        errors = result.errors.for_object("apple_pay").on("billing_address")
+        self.assertFalse(result.is_success)
+
+        postal_errors = result.errors.for_object("apple_pay").for_object("billing_address").on("postal_code")
+        country_errors = result.errors.for_object("apple_pay").for_object("billing_address").on("country_code_alpha2")
+        self.assertEqual(1, len(postal_errors))
+        self.assertEqual(1, len(country_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_errors[0].code)
+        self.assertEqual(ErrorCodes.Address.PostalCodeInvalidCharacters, postal_errors[0].code)
+
     def test_create_customer_and_verify_payment_method(self):
         result = Customer.create({
             "first_name": "Mike",
@@ -1208,6 +1266,58 @@ class TestCustomer(unittest.TestCase):
             self.assertTrue(result.is_success)
             verification = result.customer.credit_cards[0].verification
             self.assertIsNone(verification.risk_data)
+
+    def test_update_works_for_raw_apple_pay(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer = Customer.create().customer
+            secure_token = TestHelper.random_token_block(None)
+
+            result = Customer.update(customer.id, {
+                "apple_pay_card": {
+                    "number": "4111111111111111",
+                    "expiration_month": "05",
+                    "expiration_year": "2014",
+                    "eci_indicator": "0",
+                    "cryptogram": "01010101010101010101",
+                    "cardholder_name": "John Doe",
+                    "token": secure_token,
+                    "options": {
+                        "make_default": True
+                    },
+                    "billing_address": {
+                        "street_address": "123 Abc Way",
+                        "locality": "Chicago",
+                        "region": "Illinois",
+                        "postal_code": "60622",
+                        "phone_number": "312.555.1234",
+                        "country_code_alpha2": "US",
+                        "country_code_alpha3": "USA",
+                        "country_code_numeric": "840",
+                        "country_name": "United States of America"
+                    }
+                },
+            })
+
+            self.assertTrue(result.is_success)
+            self.assertEqual(secure_token, result.customer.payment_methods[0].token)
+
+            self.assertNotEqual(0, len(result.customer.apple_pay_cards))
+            apple_pay_card = result.customer.apple_pay_cards[0]
+            self.assertTrue(apple_pay_card.default)
+            self.assertEqual(apple_pay_card.expiration_month, "05")
+            self.assertEqual(apple_pay_card.expiration_year, "2014")
+            self.assertEqual(apple_pay_card.cardholder_name, "John Doe")
+            self.assertEqual(apple_pay_card.bin, "411111")
+
+            self.assertEqual(apple_pay_card.billing_address["street_address"], "123 Abc Way")
+            self.assertEqual(apple_pay_card.billing_address["locality"], "Chicago")
+            self.assertEqual(apple_pay_card.billing_address["region"], "Illinois")
+            self.assertEqual(apple_pay_card.billing_address["postal_code"], "60622")
+            self.assertEqual(apple_pay_card.billing_address["phone_number"], "312.555.1234")
+            self.assertEqual(apple_pay_card.billing_address["country_code_alpha2"], "US")
+            self.assertEqual(apple_pay_card.billing_address["country_code_alpha3"], "USA")
+            self.assertEqual(apple_pay_card.billing_address["country_code_numeric"], "840")
+            self.assertEqual(apple_pay_card.billing_address["country_name"], "United States of America")
 
     def test_update_with_tax_identifiers(self):
         customer = Customer.create({
