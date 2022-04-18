@@ -12,6 +12,10 @@ class TestRiskData(unittest.TestCase):
                     "some_fraud_provider",
                     "transaction_risk_score": "42",
                     "decision_reasons": ["reason"],
+                    "liability_shift": {
+                          "responsible_party": "paypal",
+                          "conditions": ["unauthorized"],
+                        }
                     }
                 )
         self.assertEqual("123", risk_data.id)
@@ -20,3 +24,5 @@ class TestRiskData(unittest.TestCase):
         self.assertEqual("some_fraud_provider", risk_data.fraud_service_provider)
         self.assertEqual("42", risk_data.transaction_risk_score)
         self.assertEqual(["reason"], risk_data.decision_reasons)
+        self.assertEqual("paypal", risk_data.liability_shift.responsible_party)
+        self.assertEqual(["unauthorized"], risk_data.liability_shift.conditions)

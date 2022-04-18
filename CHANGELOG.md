@@ -1,4 +1,7 @@
 # Changelog
+## Unreleased
+* Add `LiabilityShift` class and `liability_shift` to RiskData
+
 ## 4.15.2
 * Add `retried` to `Transaction`
 
