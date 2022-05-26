@@ -29,7 +29,6 @@ class TestGraphQLClient(TestCase):
         definition = '''
           mutation CreateClientToken($input: CreateClientTokenInput!) {
             createClientToken(input: $input) {
-            clientMutationId
             clientToken
             }
           }
@@ -37,7 +36,6 @@ class TestGraphQLClient(TestCase):
 
         variables = {
             "input": {
-                "clientMutationId": "abc123",
                 "clientToken": {
                     "merchantAccountId": "ABC123"
                 }

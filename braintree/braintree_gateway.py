@@ -9,6 +9,7 @@ from braintree.customer_gateway import CustomerGateway
 from braintree.discount_gateway import DiscountGateway
 from braintree.dispute_gateway import DisputeGateway
 from braintree.document_upload_gateway import DocumentUploadGateway
+from braintree.exchange_rate_quote_gateway import ExchangeRateQuoteGateway
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.merchant_gateway import MerchantGateway
 from braintree.oauth_gateway import OAuthGateway
@@ -47,6 +48,7 @@ class BraintreeGateway(object):
         self.discount = DiscountGateway(self)
         self.dispute = DisputeGateway(self)
         self.document_upload = DocumentUploadGateway(self)
+        self.exchange_rate_quote = ExchangeRateQuoteGateway(self)
         self.graphql_client = self.config.graphql_client()
         self.merchant = MerchantGateway(self)
         self.merchant_account = MerchantAccountGateway(self)

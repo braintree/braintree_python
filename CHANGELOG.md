@@ -1,6 +1,8 @@
 # Changelog
+
 ## Unreleased
 * Add `LiabilityShift` class and `liability_shift` to RiskData
+* Add ExchangeRateQuote API
 
 ## 4.15.2
 * Add `retried` to `Transaction`
