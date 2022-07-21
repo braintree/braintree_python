@@ -193,6 +193,10 @@ class Transaction(Resource):
         TokenIssuance         = "token_issuance"
 
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class ReasonCode(object):
+        ANY_REASON_CODE = 'any_reason_code'
+
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Source(object):
         Api          = "api"
         ControlPanel = "control_panel"
