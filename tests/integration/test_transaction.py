@@ -42,6 +42,24 @@ class TestTransaction(unittest.TestCase):
             self.assertTrue(hasattr(transaction.risk_data, 'decision_reasons'))
             self.assertTrue(hasattr(transaction.risk_data, 'transaction_risk_score'))
 
+    def test_sale_returns_chargeback_protection_risk_data(self):
+        with EffortlessChargebackProtectionMerchant():
+            result = Transaction.sale({
+                "amount": TransactionAmounts.Authorize,
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_date": "05/2009"
+                },
+                "device_data": "abc123",
+            })
+
+            self.assertTrue(result.is_success)
+            transaction = result.transaction
+            risk_data = result.transaction.risk_data
+            self.assertIsInstance(risk_data, RiskData)
+            self.assertNotEqual(risk_data.id, None)
+            self.assertTrue(hasattr(risk_data, 'liability_shift'))
+
     def test_sale_receives_network_transaction_id_visa(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

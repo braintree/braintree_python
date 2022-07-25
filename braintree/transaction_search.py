@@ -95,3 +95,5 @@ class TransactionSearch:
     settled_at = Search.RangeNodeBuilder("settled_at")
     submitted_for_settlement_at = Search.RangeNodeBuilder("submitted_for_settlement_at")
     voided_at = Search.RangeNodeBuilder("voided_at")
+    ach_return_responses_created_at = Search.RangeNodeBuilder("ach_return_responses_created_at")
+    reason_code = Search.MultipleValueNodeBuilder('reason_code')

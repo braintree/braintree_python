@@ -30,3 +30,40 @@ class ApplePayCard(Resource):
     def expiration_date(self):
         return self.expiration_month + "/" + self.expiration_year
 
+    @staticmethod
+    def signature():
+        options = ["make_default"]
+
+        signature = [
+            "customer_id",
+            "cardholder_name",
+            "expiration_month",
+            "expiration_year",
+            "number",
+            "cryptogram",
+            "eci_indicator",
+            "token",
+            {
+                "options": options
+            },
+            {
+                "billing_address": [
+                    "company",
+                    "country_code_alpha2",
+                    "country_code_alpha3",
+                    "country_code_numeric",
+                    "country_name",
+                    "extended_address",
+                    "first_name",
+                    "last_name",
+                    "locality",
+                    "postal_code",
+                    "phone_number",
+                    "region",
+                    "street_address"
+                ]
+            }
+        ]
+
+        return signature
+

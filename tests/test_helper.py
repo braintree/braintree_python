@@ -80,6 +80,18 @@ class FraudProtectionEnterpriseIntegrationMerchant:
     def __exit__(self, type, value, trace):
         reset_braintree_configuration()
 
+class EffortlessChargebackProtectionMerchant:
+    def __enter__(self):
+        Configuration.configure(
+            Environment.Development,
+            "fraud_protection_effortless_chargeback_protection_merchant_id",
+            "effortless_chargeback_protection_public_key",
+            "effortless_chargeback_protection_private_key"
+        )
+
+    def __exit__(self, type, value, trace):
+        reset_braintree_configuration()
+
 def showwarning(*_):
     pass
 warnings.showwarning = showwarning

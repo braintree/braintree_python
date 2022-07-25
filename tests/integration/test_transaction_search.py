@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from tests.test_helper import *
 
 class TestTransactionSearch(unittest.TestCase):
@@ -1621,3 +1622,41 @@ class TestTransactionSearch(unittest.TestCase):
         Transaction.search([
             TransactionSearch.amount.between("-1100", "1600")
         ])
+
+    def test_search_returns_records_from_valid_daterange(self):
+        yesterday = datetime.now() - timedelta(days=1)
+        tomorrow = datetime.now() + timedelta(days=1)
+
+        collection = Transaction.search([
+            TransactionSearch.ach_return_responses_created_at.between(yesterday, tomorrow)
+        ]) 
+        self.assertEqual(2, collection.maximum_size) 
+
+    def test_search_returns_records_from_invalid_daterange(self):
+        day_after_tomorrow = datetime.now() + timedelta(days=1)
+        tomorrow = datetime.now() + timedelta(days=2)
+
+        collection = Transaction.search([
+            TransactionSearch.ach_return_responses_created_at.between(tomorrow, day_after_tomorrow)
+        ]) 
+        self.assertEqual(0, collection.maximum_size)
+
+    def test_search_returns_records_for_one_reasoncode(self):
+        collection = Transaction.search([
+            TransactionSearch.reason_code.in_list(['R01'])
+        ])
+        self.assertEqual(1, collection.maximum_size)
+
+    def test_search_returns_records_for_multiple_reasoncode(self):
+        collection = Transaction.search([
+            TransactionSearch.reason_code.in_list(['R01', 'R02'])
+        ])
+        self.assertEqual(2, collection.maximum_size)
+
+    def test_search_returns_multiple_records_for_any_reason_code(self):
+        collection = Transaction.search([
+            TransactionSearch.reason_code == Transaction.ReasonCode.ANY_REASON_CODE
+        ])
+        self.assertEqual(2, collection.maximum_size)
+
+

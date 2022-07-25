@@ -2,40 +2,41 @@ import braintree
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
+from braintree.address import Address
+from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
+from braintree.android_pay_card import AndroidPayCard
 from braintree.apple_pay_card import ApplePayCard
 from braintree.authorization_adjustment import AuthorizationAdjustment
-from braintree.android_pay_card import AndroidPayCard
-from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
-from braintree.venmo_account import VenmoAccount
-from braintree.disbursement_detail import DisbursementDetail
-from braintree.dispute import Dispute
-from braintree.discount import Discount
-from braintree.successful_result import SuccessfulResult
-from braintree.status_event import StatusEvent
-from braintree.error_result import ErrorResult
-from braintree.resource import Resource
-from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card import CreditCard
 from braintree.customer import Customer
+from braintree.descriptor import Descriptor
+from braintree.disbursement_detail import DisbursementDetail
+from braintree.discount import Discount
+from braintree.dispute import Dispute
+from braintree.error_result import ErrorResult
+from braintree.europe_bank_account import EuropeBankAccount
+from braintree.exceptions.not_found_error import NotFoundError
+from braintree.facilitated_details import FacilitatedDetails
+from braintree.facilitator_details import FacilitatorDetails
+from braintree.liability_shift import LiabilityShift
+from braintree.local_payment import LocalPayment
+from braintree.masterpass_card import MasterpassCard
+from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.paypal_account import PayPalAccount
 from braintree.paypal_here import PayPalHere
-from braintree.europe_bank_account import EuropeBankAccount
-from braintree.subscription_details import SubscriptionDetails
+from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
-from braintree.exceptions.not_found_error import NotFoundError
-from braintree.descriptor import Descriptor
 from braintree.risk_data import RiskData
+from braintree.samsung_pay_card import SamsungPayCard
+from braintree.status_event import StatusEvent
+from braintree.subscription_details import SubscriptionDetails
+from braintree.successful_result import SuccessfulResult
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.us_bank_account import UsBankAccount
-from braintree.local_payment import LocalPayment
+from braintree.venmo_account import VenmoAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
-from braintree.masterpass_card import MasterpassCard
-from braintree.facilitated_details import FacilitatedDetails
-from braintree.facilitator_details import FacilitatorDetails
-from braintree.payment_instrument_type import PaymentInstrumentType
-from braintree.samsung_pay_card import SamsungPayCard
 
 
 class Transaction(Resource):
@@ -116,6 +117,7 @@ class Transaction(Resource):
         "escrow_status",
         "gateway_rejection_reason",
         "installments",
+        "liability_shift",
         "master_merchant_account_id",
         "merchant_account_id",
         "network_response_code",
@@ -189,6 +191,10 @@ class Transaction(Resource):
         RiskThreshold         = "risk_threshold"
         ThreeDSecure          = "three_d_secure"
         TokenIssuance         = "token_issuance"
+
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class ReasonCode(object):
+        ANY_REASON_CODE = 'any_reason_code'
 
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Source(object):
@@ -753,7 +759,6 @@ class Transaction(Resource):
             self.authorization_adjustments = [AuthorizationAdjustment(authorization_adjustment) for authorization_adjustment in self.authorization_adjustments]
         if "payment_instrument_type" in attributes:
             self.payment_instrument_type = attributes["payment_instrument_type"]
-
         if "risk_data" in attributes:
             self.risk_data = RiskData(attributes["risk_data"])
         else:

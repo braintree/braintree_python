@@ -1,4 +1,11 @@
 # Changelog
+
+## 4.16.0
+* Add `LiabilityShift` class and `liability_shift` to RiskData
+* Add ExchangeRateQuote API
+* Add `ach_return_responses_created_at` and `reason_code` fields in TransactionSearch
+* Allow vaulting of raw ApplePayCards with billing address via Customer.create/update
+
 ## 4.15.2
 * Add `retried` to `Transaction`
 
