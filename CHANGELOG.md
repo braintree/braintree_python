@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.16.1
+* Fix `DeprecationWarning` on invalid escape sequences
+
 ## 4.16.0
 * Add `LiabilityShift` class and `liability_shift` to RiskData
 * Add ExchangeRateQuote API
