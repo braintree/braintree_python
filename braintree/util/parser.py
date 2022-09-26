@@ -10,7 +10,7 @@ class Parser(object):
     def __init__(self, xml):
         if isinstance(xml, binary_type):
             xml = xml.decode('utf-8')
-        self.doc = minidom.parseString("><".join(re.split(">\s+<", xml)).strip())
+        self.doc = minidom.parseString("><".join(re.split(r">\s+<", xml)).strip())
 
     def parse(self):
         return {self.__underscored(self.doc.documentElement.tagName): self.__parse_node(self.doc.documentElement)}
