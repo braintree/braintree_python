@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.16.1
+## unreleased
 * Fix `DeprecationWarning` on invalid escape sequences
 
 ## 4.16.0
