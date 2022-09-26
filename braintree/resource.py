@@ -51,10 +51,14 @@ class Resource(AttributeGetter):
 
     @staticmethod
     def __remove_wildcard_keys(allowed_keys, invalid_keys):
-        wildcard_keys = [re.sub("(?<=[^\\\\])_", "\\_", re.escape(key)).replace("\\[\\_\\_any\\_key\\_\\_\\]", "\\[[\w-]+\\]") for key in allowed_keys if re.search("\\[__any_key__\\]", key)]
+        wildcard_keys = [
+            re.sub(r"(?<=[^\\])_", "\\_", re.escape(key)).replace(r"\[\_\_any\_key\_\_\]", r"\[[\w-]+\]")
+            for key in allowed_keys
+            if re.search(r"\[__any_key__\]", key)
+        ]
         new_keys = []
         for key in invalid_keys:
-            if len([match for match in wildcard_keys if re.match("\A" + match + "\Z", key)]) == 0:
+            if len([match for match in wildcard_keys if re.match(r"\A" + match + r"\Z", key)]) == 0:
                 new_keys.append(key)
         return new_keys
 
