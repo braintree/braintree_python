@@ -1,7 +1,7 @@
 # Changelog
 
 ## unreleased
-* Fix `DeprecationWarning` on invalid escape sequences
+* Fix `DeprecationWarning` on invalid escape sequences (thanks @DavidCain)
 
 ## 4.16.0
 * Add `LiabilityShift` class and `liability_shift` to RiskData
