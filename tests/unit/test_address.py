@@ -17,6 +17,22 @@ class TestAddress(unittest.TestCase):
     def test_update_raise_exception_with_bad_keys(self):
         Address.update("customer_id", "address_id", {"bad_key": "value"})
 
+    @raises_with_regexp(KeyError, "'customer_id contains invalid characters'")
+    def test_update_raises_key_error_if_given_invalid_customer_id(self):
+        Address.update("!@#$%", "foo")
+
+    @raises_with_regexp(KeyError, "'address_id contains invalid characters'")
+    def test_update_raises_key_error_if_given_invalid_address_id(self):
+        Address.update("foo", "!@#$%")
+
+    @raises_with_regexp(KeyError, "'customer_id contains invalid characters'")
+    def test_delete_raises_key_error_if_given_invalid_customer_id(self):
+        Address.delete("!@#$%", "foo")
+
+    @raises_with_regexp(KeyError, "'address_id contains invalid characters'")
+    def test_delete_raises_key_error_if_given_invalid_address_id(self):
+        Address.delete("foo", "!@#$%")
+
     @raises(NotFoundError)
     def test_finding_address_with_empty_customer_id_raises_not_found_exception(self):
         Address.find(" ", "address_id")
@@ -28,3 +44,15 @@ class TestAddress(unittest.TestCase):
     @raises(NotFoundError)
     def test_finding_address_with_empty_address_id_raises_not_found_exception(self):
         Address.find("customer_id", " ")
+
+    @raises(NotFoundError)
+    def test_finding_address_with_none_address_id_raises_not_found_exception(self):
+        Address.find("customer_id", None)
+
+    @raises_with_regexp(KeyError, "'customer_id contains invalid characters'")
+    def test_find_raises_key_error_if_given_invalid_customer_id(self):
+        Address.find("!@#$%", "foo")
+
+    @raises_with_regexp(KeyError, "'address_id contains invalid characters'")
+    def test_find_raises_key_error_if_given_invalid_address_id(self):
+        Address.find("foo", "!@#$%")

@@ -11,6 +11,12 @@ class AddressGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
+    def __validate_chars_in_args(self, customer_id, address_id):
+        if not re.search(r"\A[0-9A-Za-z_-]+\Z", customer_id):
+            raise KeyError("customer_id contains invalid characters")
+        if not re.search(r"\A[0-9A-Za-z]+\Z", address_id):
+            raise KeyError("address_id contains invalid characters")
+
     def create(self, params=None):
         if params is None:
             params = {}
@@ -27,6 +33,7 @@ class AddressGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def delete(self, customer_id, address_id):
+        self.__validate_chars_in_args(customer_id, address_id)
         self.config.http().delete(self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id)
         return SuccessfulResult()
 
@@ -34,6 +41,7 @@ class AddressGateway(object):
         try:
             if customer_id is None or customer_id.strip() == "" or address_id is None or address_id.strip() == "":
                 raise NotFoundError()
+            self.__validate_chars_in_args(customer_id, address_id)
             response = self.config.http().get(self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id)
             return Address(self.gateway, response["address"])
         except NotFoundError:
@@ -43,6 +51,7 @@ class AddressGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, Address.update_signature())
+        self.__validate_chars_in_args(customer_id, address_id)
         response = self.config.http().put(
             self.config.base_merchant_path() + "/customers/" + customer_id + "/addresses/" + address_id,
             {"address": params}
