@@ -39,6 +39,7 @@ class AddressGateway(object):
 
     def find(self, customer_id, address_id):
         try:
+            # NEXT_MAJOR_VERSION return KeyError instead of NotFoundError, it's a more helpful error message to the developer that way
             if customer_id is None or customer_id.strip() == "" or address_id is None or address_id.strip() == "":
                 raise NotFoundError()
             self.__validate_chars_in_args(customer_id, address_id)
