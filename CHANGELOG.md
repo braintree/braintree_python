@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased
+## 4.17.0
 * Fix `DeprecationWarning` on invalid escape sequences (thanks @DavidCain)
 * Add validation for arguments in Address.delete, Address.find, and Address.update
 
