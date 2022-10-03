@@ -1,7 +1,8 @@
 # Changelog
 
-## unreleased
-* Fix `DeprecationWarning` on invalid escape sequences
+## 4.17.0
+* Fix `DeprecationWarning` on invalid escape sequences (thanks @DavidCain)
+* Add validation for arguments in Address.delete, Address.find, and Address.update
 
 ## 4.16.0
 * Add `LiabilityShift` class and `liability_shift` to RiskData
