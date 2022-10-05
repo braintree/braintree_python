@@ -4,7 +4,6 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from http.client import HTTPConnection
-from nose.tools import make_decorator, raises
 from subprocess import Popen, PIPE
 from urllib.parse import urlencode, quote_plus
 import json
@@ -24,28 +23,6 @@ from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 from braintree.testing_gateway import *
 from braintree.util import *
-
-def raises_with_regexp(expected_exception_class, regexp_to_match):
-    def decorate(func):
-        name = func.__name__
-        def generated_function(*args, **kwargs):
-            exception_string = None
-            try:
-                func(*args, **kwargs)
-            except expected_exception_class as e:
-                exception_string = str(e)
-            except:
-                raise
-
-            if exception_string is None:
-                message = "%s() did not raise %s" % (name, expected_exception_class.__name__)
-                raise AssertionError(message)
-            elif re.match(regexp_to_match, exception_string) is None:
-                message = "%s() exception message (%s) did not match (%s)" % \
-                    (name, exception_string, regexp_to_match)
-                raise AssertionError(message)
-        return make_decorator(func)(generated_function)
-    return decorate
 
 def reset_braintree_configuration():
     Configuration.configure(

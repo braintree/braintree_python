@@ -36,14 +36,14 @@ class TestSubscriptionSearch(unittest.TestCase):
             Subscription.Status.PastDue
         )
 
-    @raises(AttributeError)
     def test_status_not_in_whitelist(self):
-        SubscriptionSearch.status.in_list(
-            Subscription.Status.Active,
-            Subscription.Status.Canceled,
-            Subscription.Status.Expired,
-            "not a status"
-        )
+        with self.assertRaises(AttributeError):
+            SubscriptionSearch.status.in_list(
+                Subscription.Status.Active,
+                Subscription.Status.Canceled,
+                Subscription.Status.Expired,
+                "not a status"
+            )
 
     def test_ids_is_a_multiple_value_node(self):
         self.assertEqual(Search.MultipleValueNodeBuilder, type(SubscriptionSearch.ids))

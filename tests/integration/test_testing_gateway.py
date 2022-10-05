@@ -8,30 +8,30 @@ class TestTestingGateway(unittest.TestCase):
         braintree_gateway = BraintreeGateway(config)
         self.gateway = TestingGateway(braintree_gateway)
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production_for_settle_transaction(self):
-        self.gateway.settle_transaction("")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.settle_transaction("")
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production_for_make_past_due(self):
-        self.gateway.make_past_due("")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.make_past_due("")
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production_for_escrow_transaction(self):
-        self.gateway.escrow_transaction("")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.escrow_transaction("")
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production_for_settlement_confirm_transaction(self):
-        self.gateway.settlement_confirm_transaction("")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.settlement_confirm_transaction("")
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production_for_settlement_decline_transaction(self):
-        self.gateway.settlement_decline_transaction("")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.settlement_decline_transaction("")
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production_for_create_3ds_verification(self):
-        self.gateway.create_3ds_verification("", "")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.create_3ds_verification("", "")
 
-    @raises(TestOperationPerformedInProductionError)
     def test_error_is_raised_in_production(self):
-        self.gateway.settle_transaction("")
+        with self.assertRaises(TestOperationPerformedInProductionError):
+            self.gateway.settle_transaction("")

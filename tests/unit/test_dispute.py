@@ -177,90 +177,90 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.transaction.purchase_order_number, "po")
         self.assertEqual(dispute.transaction.payment_instrument_subtype, "Visa")
 
-    @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_accept_none_raises_not_found_exception(self):
-        Dispute.accept(None)
+        with self.assertRaisesRegex(NotFoundError, "dispute with id None not found"):
+            Dispute.accept(None)
 
-    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_accept_empty_id_raises_not_found_exception(self):
-        Dispute.accept(" ")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id ' ' not found"):
+            Dispute.accept(" ")
 
-    @raises_with_regexp(NotFoundError, "dispute_id cannot be blank")
     def test_add_text_evidence_empty_id_raises_not_found_exception(self):
-        Dispute.add_text_evidence(" ", "evidence")
+        with self.assertRaisesRegex(NotFoundError, "dispute_id cannot be blank"):
+            Dispute.add_text_evidence(" ", "evidence")
 
-    @raises_with_regexp(NotFoundError, "dispute_id cannot be blank")
     def test_add_text_evidence_none_id_raises_not_found_exception(self):
-        Dispute.add_text_evidence(None, "evidence")
+        with self.assertRaisesRegex(NotFoundError, "dispute_id cannot be blank"):
+            Dispute.add_text_evidence(None, "evidence")
 
-    @raises_with_regexp(ValueError, "content cannot be blank")
     def test_add_text_evidence_empty_evidence_raises_value_exception(self):
-        Dispute.add_text_evidence("dispute_id", " ")
+        with self.assertRaisesRegex(ValueError, "content cannot be blank"):
+            Dispute.add_text_evidence("dispute_id", " ")
 
-    @raises_with_regexp(ValueError, "sequence_number must be an integer")
     def test_add_text_evidence_sequence_number_not_number_evidence_raises_value_exception(self):
-        Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "a" })
+        with self.assertRaisesRegex(ValueError, "sequence_number must be an integer"):
+            Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "a" })
 
-    @raises_with_regexp(ValueError, "sequence_number must be an integer")
     def test_add_text_evidence_sequence_number_number_and_letter_evidence_raises_value_exception(self):
-        Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "1abc" })
+        with self.assertRaisesRegex(ValueError, "sequence_number must be an integer"):
+            Dispute.add_text_evidence("dispute_id", { "content": "content", "sequence_number": "1abc" })
 
-    @raises_with_regexp(ValueError, "category must be a string")
     def test_add_text_evidence_category_is_number_evidence_raises_value_exception(self):
-        Dispute.add_text_evidence("dispute_id", { "content": "content", "category": 5 })
+        with self.assertRaisesRegex(ValueError, "category must be a string"):
+            Dispute.add_text_evidence("dispute_id", { "content": "content", "category": 5 })
 
-    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_add_file_evidence_empty_id_raises_not_found_exception(self):
-        Dispute.add_file_evidence(" ", 1)
+        with self.assertRaisesRegex(NotFoundError, "dispute with id ' ' not found"):
+            Dispute.add_file_evidence(" ", 1)
 
-    @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_add_file_evidence_none_id_raises_not_found_exception(self):
-        Dispute.add_file_evidence(None, 1)
+        with self.assertRaisesRegex(NotFoundError, "dispute with id None not found"):
+            Dispute.add_file_evidence(None, 1)
 
-    @raises_with_regexp(ValueError, "document_id cannot be blank")
     def test_add_file_evidence_empty_evidence_raises_value_exception(self):
-        Dispute.add_file_evidence("dispute_id", " ")
+        with self.assertRaisesRegex(ValueError, "document_id cannot be blank"):
+            Dispute.add_file_evidence("dispute_id", " ")
 
-    @raises_with_regexp(ValueError, "document_id cannot be blank")
     def test_add_file_evidence_none_evidence_raises_value_exception(self):
-        Dispute.add_file_evidence("dispute_id", None)
+        with self.assertRaisesRegex(ValueError, "document_id cannot be blank"):
+            Dispute.add_file_evidence("dispute_id", None)
 
-    @raises_with_regexp(ValueError, "category must be a string")
     def test_add_file_evidence_categorized_document_id_must_be_a_string(self):
-        Dispute.add_file_evidence("dispute_id", { "document_id": "213", "category": 5 })
+        with self.assertRaisesRegex(ValueError, "category must be a string"):
+            Dispute.add_file_evidence("dispute_id", { "document_id": "213", "category": 5 })
 
-    @raises_with_regexp(ValueError, "document_id cannot be blank")
     def test_add_file_evidence_empty_categorized_evidence_raises_value_exception(self):
-        Dispute.add_file_evidence("dispute_id", { "category": "DEVICE_ID" })
+        with self.assertRaisesRegex(ValueError, "document_id cannot be blank"):
+            Dispute.add_file_evidence("dispute_id", { "category": "DEVICE_ID" })
 
-    @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_finalize_none_raises_not_found_exception(self):
-        Dispute.finalize(None)
+        with self.assertRaisesRegex(NotFoundError, "dispute with id None not found"):
+            Dispute.finalize(None)
 
-    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_finalize_empty_id_raises_not_found_exception(self):
-        Dispute.finalize(" ")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id ' ' not found"):
+            Dispute.finalize(" ")
 
-    @raises_with_regexp(NotFoundError, "dispute with id None not found")
     def test_finding_none_raises_not_found_exception(self):
-        Dispute.find(None)
+        with self.assertRaisesRegex(NotFoundError, "dispute with id None not found"):
+            Dispute.find(None)
 
-    @raises_with_regexp(NotFoundError, "dispute with id ' ' not found")
     def test_finding_empty_id_raises_not_found_exception(self):
-        Dispute.find(" ")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id ' ' not found"):
+            Dispute.find(" ")
 
-    @raises_with_regexp(NotFoundError, "evidence with id 'evidence' for dispute with id ' ' not found")
     def test_remove_evidence_empty_dispute_id_raises_not_found_exception(self):
-        Dispute.remove_evidence(" ", "evidence")
+        with self.assertRaisesRegex(NotFoundError, "evidence with id 'evidence' for dispute with id ' ' not found"):
+            Dispute.remove_evidence(" ", "evidence")
 
-    @raises_with_regexp(NotFoundError, "evidence with id 'evidence' for dispute with id None not found")
     def test_remove_evidence_none_dispute_id_raises_not_found_exception(self):
-        Dispute.remove_evidence(None, "evidence")
+        with self.assertRaisesRegex(NotFoundError, "evidence with id 'evidence' for dispute with id None not found"):
+            Dispute.remove_evidence(None, "evidence")
 
-    @raises_with_regexp(NotFoundError, "evidence with id None for dispute with id 'dispute_id' not found")
     def test_remove_evidence_evidence_none_id_raises_not_found_exception(self):
-        Dispute.remove_evidence("dispute_id", None)
+        with self.assertRaisesRegex(NotFoundError, "evidence with id None for dispute with id 'dispute_id' not found"):
+            Dispute.remove_evidence("dispute_id", None)
 
-    @raises_with_regexp(NotFoundError, "evidence with id ' ' for dispute with id 'dispute_id' not found")
     def test_remove_evidence_empty_evidence_id_raises_value_exception(self):
-        Dispute.remove_evidence("dispute_id", " ")
+        with self.assertRaisesRegex(NotFoundError, "evidence with id ' ' for dispute with id 'dispute_id' not found"):
+            Dispute.remove_evidence("dispute_id", " ")

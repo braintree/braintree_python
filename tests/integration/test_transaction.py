@@ -3177,9 +3177,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.id, found_transaction.id)
         self.assertNotEqual(None, transaction.graphql_id)
 
-    @raises_with_regexp(NotFoundError, "transaction with id 'notreal' not found")
     def test_find_for_bad_transaction_raises_not_found_error(self):
-        Transaction.find("notreal")
+        with self.assertRaisesRegex(NotFoundError, "transaction with id 'notreal' not found"):
+            Transaction.find("notreal")
 
     def test_void_with_successful_result(self):
         transaction = Transaction.sale({
@@ -3368,7 +3368,6 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
-    @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -3387,7 +3386,8 @@ class TestTransaction(unittest.TestCase):
             "invalid_param": "foo",
         }
 
-        Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: invalid_param'"):
+            Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
 
     def test_submit_for_settlement_with_validation_error(self):
         transaction = Transaction.sale({
@@ -3457,7 +3457,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("3334445555", result.transaction.descriptor.phone)
         self.assertEqual("ebay.com", result.transaction.descriptor.url)
 
-    @raises_with_regexp(KeyError, "'Invalid keys: invalid_key'")
     def test_update_details_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": "10.00",
@@ -3481,7 +3480,8 @@ class TestTransaction(unittest.TestCase):
             }
         }
 
-        Transaction.update_details(transaction.id, params)
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: invalid_key'"):
+            Transaction.update_details(transaction.id, params)
 
     def test_update_details_with_invalid_order_id(self):
         transaction = Transaction.sale({
@@ -5561,7 +5561,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("3334445555", submitted_transaction.descriptor.phone)
         self.assertEqual("ebay.com", submitted_transaction.descriptor.url)
 
-    @raises_with_regexp(KeyError, "'Invalid keys: invalid_param'")
     def test_submit_for_partial_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -5580,7 +5579,8 @@ class TestTransaction(unittest.TestCase):
             "invalid_param": "foo",
         }
 
-        Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params)
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: invalid_param'"):
+            Transaction.submit_for_partial_settlement(transaction.id, Decimal("900"), params)
 
     def test_facilitated_transaction(self):
         granting_gateway, credit_card = TestHelper.create_payment_method_grant_fixtures()

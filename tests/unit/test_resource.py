@@ -16,7 +16,6 @@ class TestResource(unittest.TestCase):
         }
         Resource.verify_keys(params, signature)
 
-    @raises(KeyError)
     def test_verify_keys_escapes_brackets_in_signature(self):
         signature = [
             {"customer": [{"custom_fields": ["__any_key__"]}]}
@@ -24,7 +23,8 @@ class TestResource(unittest.TestCase):
         params = {
             "customer_id": "value",
         }
-        Resource.verify_keys(params, signature)
+        with self.assertRaises(KeyError):
+            Resource.verify_keys(params, signature)
 
     def test_verify_keys_works_with_array_param(self):
         signature = [
@@ -37,7 +37,6 @@ class TestResource(unittest.TestCase):
         }
         Resource.verify_keys(params, signature)
 
-    @raises(KeyError)
     def test_verify_keys_raises_on_bad_array_param(self):
         signature = [
             {"customer": ["one", "two"]}
@@ -47,7 +46,8 @@ class TestResource(unittest.TestCase):
                 "invalid": "foo"
             }
         }
-        Resource.verify_keys(params, signature)
+        with self.assertRaises(KeyError):
+            Resource.verify_keys(params, signature)
 
     def test_verify_keys_works_with_arrays(self):
         signature = [
@@ -65,7 +65,6 @@ class TestResource(unittest.TestCase):
         }
         Resource.verify_keys(params, signature)
 
-    @raises(KeyError)
     def test_verify_keys_raises_with_invalid_param_in_arrays(self):
         signature = [
             {"add_ons": [{"update": ["existing_id", "quantity"]}]}
@@ -80,7 +79,8 @@ class TestResource(unittest.TestCase):
                 ]
             }
         }
-        Resource.verify_keys(params, signature)
+        with self.assertRaises(KeyError):
+            Resource.verify_keys(params, signature)
 
     def test_verify_keys_allows_text(self):
         text_string = u"text_string"

@@ -120,9 +120,9 @@ class TestPlan(unittest.TestCase):
         self.assertEqual(created_plan.price, found_plan.price)
         self.assertEqual(created_plan.billing_day_of_month, found_plan.billing_day_of_month)
 
-    @raises_with_regexp(NotFoundError, "Plan with id 'bad_token' not found")
     def test_find_with_invalid_token(self):
-        Plan.find("bad_token")
+        with self.assertRaisesRegex(NotFoundError, "Plan with id 'bad_token' not found"):
+            Plan.find("bad_token")
 
     def test_update_returns_successful_result_if_valid(self):
         plan_attributes = {

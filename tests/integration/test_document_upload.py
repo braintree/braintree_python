@@ -1,5 +1,4 @@
 import os
-from nose.exc import SkipTest
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
 
@@ -98,23 +97,23 @@ class TestDocumentUpload(unittest.TestCase):
 
         self.assertEqual(result.errors.for_object("document_upload")[0].code, ErrorCodes.DocumentUpload.FileIsTooLong)
 
-    @raises_with_regexp(KeyError, "'Invalid keys: invalid_key'")
     def test_create_returns_invalid_keys_errors_with_invalid_signature(self):
-        result = DocumentUpload.create({
-            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
-            "invalid_key": "do not add"
-        })
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: invalid_key'"):
+            result = DocumentUpload.create({
+                "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+                "invalid_key": "do not add"
+            })
 
-    @raises_with_regexp(ValueError, "file must be a file handle")
     def test_create_throws_error_when_not_valid_file(self):
-        result = DocumentUpload.create({
-            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
-            "file": "not_a_file"
-        })
+        with self.assertRaisesRegex(ValueError, "file must be a file handle"):
+            result = DocumentUpload.create({
+                "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+                "file": "not_a_file"
+            })
 
-    @raises_with_regexp(ValueError, "file must be a file handle")
     def test_create_throws_error_when_none_file(self):
-        result = DocumentUpload.create({
-            "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
-            "file": None
-        })
+        with self.assertRaisesRegex(ValueError, "file must be a file handle"):
+            result = DocumentUpload.create({
+                "kind": braintree.DocumentUpload.Kind.EvidenceDocument,
+                "file": None
+            })

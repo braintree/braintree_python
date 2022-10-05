@@ -6,25 +6,25 @@ from braintree.authorization_adjustment import AuthorizationAdjustment
 from unittest.mock import MagicMock
 
 class TestTransaction(unittest.TestCase):
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_clone_transaction_raises_exception_with_bad_keys(self):
-        Transaction.clone_transaction("an id", {"bad_key": "value"})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            Transaction.clone_transaction("an id", {"bad_key": "value"})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_sale_raises_exception_with_bad_keys(self):
-        Transaction.sale({"bad_key": "value"})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            Transaction.sale({"bad_key": "value"})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: credit_card\[bad_key\]'")
     def test_sale_raises_exception_with_nested_bad_keys(self):
-        Transaction.sale({"credit_card": {"bad_key": "value"}})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: credit_card\[bad_key\]'"):
+            Transaction.sale({"credit_card": {"bad_key": "value"}})
 
-    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        Transaction.find(" ")
+        with self.assertRaises(NotFoundError):
+            Transaction.find(" ")
 
-    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        Transaction.find(None)
+        with self.assertRaises(NotFoundError):
+            Transaction.find(None)
 
     def test_constructor_includes_disbursement_information(self):
         attributes = {

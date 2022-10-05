@@ -86,10 +86,10 @@ class TestAddress(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-    @raises(NotFoundError)
     def test_delete_with_valid_customer_id_and_non_existing_address(self):
-        customer = Customer.create().customer
-        Address.delete(customer.id, "notreal")
+        with self.assertRaises(NotFoundError):
+            customer = Customer.create().customer
+            Address.delete(customer.id, "notreal")
 
     def test_find_with_valid_customer_id_and_address_id(self):
         customer = Customer.create().customer
@@ -98,10 +98,9 @@ class TestAddress(unittest.TestCase):
 
         self.assertEqual(address.street_address, found_address.street_address)
 
-    @raises_with_regexp(NotFoundError,
-        "address for customer 'notreal' with id 'badaddress' not found")
     def test_find_with_invalid_customer_id_and_address_id(self):
-        Address.find("notreal", "badaddress")
+        with self.assertRaisesRegex(NotFoundError, "address for customer 'notreal' with id 'badaddress' not found"):
+            Address.find("notreal", "badaddress")
 
     def test_update_with_valid_values(self):
         customer = Customer.create().customer
@@ -163,7 +162,7 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(1, len(country_name_errors))
         self.assertEqual(ErrorCodes.Address.CountryNameIsNotAccepted, country_name_errors[0].code)
 
-    @raises(NotFoundError)
     def test_update_raises_not_found_error_if_given_bad_address(self):
-        customer = Customer.create().customer
-        Address.update(customer.id, "notfound", {"street_address": "123 Main St."})
+        with self.assertRaises(NotFoundError):
+            customer = Customer.create().customer
+            Address.update(customer.id, "notfound", {"street_address": "123 Main St."})

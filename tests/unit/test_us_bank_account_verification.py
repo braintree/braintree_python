@@ -4,13 +4,13 @@ from tests.test_helper import *
 from braintree.us_bank_account_verification import UsBankAccountVerification
 
 class TestUsBankAccountVerification(unittest.TestCase):
-    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        UsBankAccountVerification.find(" ")
+        with self.assertRaises(NotFoundError):
+            UsBankAccountVerification.find(" ")
 
-    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        UsBankAccountVerification.find(None)
+        with self.assertRaises(NotFoundError):
+            UsBankAccountVerification.find(None)
 
     def test_attributes(self):
         attributes = {

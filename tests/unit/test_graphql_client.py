@@ -1,7 +1,6 @@
 from tests.test_helper import *
 
 class TestGraphQLClient(unittest.TestCase):
-    @raises(ServiceUnavailableError)
     def test_raise_exception_from_status_service_unavailable(self):
         response = {
             "errors": [
@@ -13,9 +12,9 @@ class TestGraphQLClient(unittest.TestCase):
                 }
             ]
         }
-        GraphQLClient.raise_exception_for_graphql_error(response)
+        with self.assertRaises(ServiceUnavailableError):
+            GraphQLClient.raise_exception_for_graphql_error(response)
 
-    @raises(UpgradeRequiredError)
     def test_raise_exception_from_status_for_upgrade_required(self):
         response = {
             "errors": [
@@ -27,9 +26,9 @@ class TestGraphQLClient(unittest.TestCase):
                 }
             ]
         }
-        GraphQLClient.raise_exception_for_graphql_error(response)
+        with self.assertRaises(UpgradeRequiredError):
+            GraphQLClient.raise_exception_for_graphql_error(response)
 
-    @raises(TooManyRequestsError)
     def test_raise_exception_from_too_many_requests(self):
         response = {
             "errors": [
@@ -41,7 +40,8 @@ class TestGraphQLClient(unittest.TestCase):
                 }
             ]
         }
-        GraphQLClient.raise_exception_for_graphql_error(response)
+        with self.assertRaises(TooManyRequestsError):
+            GraphQLClient.raise_exception_for_graphql_error(response)
 
     def test_does_not_raise_exception_from_validation_error(self):
         response = {
@@ -56,7 +56,6 @@ class TestGraphQLClient(unittest.TestCase):
         }
         GraphQLClient.raise_exception_for_graphql_error(response)
 
-    @raises(ServerError)
     def test_raise_exception_from_validation_error_and_legitimate_error(self):
         response = {
             "errors": [
@@ -74,4 +73,5 @@ class TestGraphQLClient(unittest.TestCase):
                 }
             ]
         }
-        GraphQLClient.raise_exception_for_graphql_error(response)
+        with self.assertRaises(ServerError):
+            GraphQLClient.raise_exception_for_graphql_error(response)

@@ -15,15 +15,15 @@ class TestHttp(unittest.TestCase):
         config = Configuration(environment, "merchant_id", public_key="public_key", private_key="private_key")
         return config.http()
 
-    @raises(AuthenticationError)
     def test_successful_connection_sandbox(self):
-        http = self.get_http(Environment.Sandbox)
-        http.get("/")
+        with self.assertRaises(AuthenticationError):
+            http = self.get_http(Environment.Sandbox)
+            http.get("/")
 
-    @raises(AuthenticationError)
     def test_successful_connection_production(self):
-        http = self.get_http(Environment.Production)
-        http.get("/")
+        with self.assertRaises(AuthenticationError):
+            http = self.get_http(Environment.Production)
+            http.get("/")
 
     def test_wrapping_http_exceptions(self):
         config = Configuration(
