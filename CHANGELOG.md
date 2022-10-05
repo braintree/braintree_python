@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.18.0
+* Replace nose usage for tests with unittest
+* Remove mock dev dependency
+
 ## 4.17.0
 * Fix `DeprecationWarning` on invalid escape sequences (thanks @DavidCain)
 * Add validation for arguments in Address.delete, Address.find, and Address.update
@@ -99,12 +103,12 @@
 
 ## 4.1.0
 * Add `DisputeAccepted`, `DisputeDisputed`, and `DisputeExpired` webhook constants
-* Add `three_d_secure_pass_thru` to `CreditCard.create`, `CreditCard.update`, `PaymentMethod.create`, `PaymentMethod.update`, `Customer.create`, and `Customer.update`. 
+* Add `three_d_secure_pass_thru` to `CreditCard.create`, `CreditCard.update`, `PaymentMethod.create`, `PaymentMethod.update`, `Customer.create`, and `Customer.update`.
 * Add `Verification` validation errors for 3D Secure
 * Add `payment_method_token` to `CreditCardVerificationSearch`
 * Add `recurring_customer_consent` and `recurring_max_amount` to `authentication_insight_options` for `PaymentMethodNonce.create`
 * Add `FileIsEmpty` error code
-* Eliminates usage of mutable objects for function parameters. Resolves #113 Thank you @maneeshd! 
+* Eliminates usage of mutable objects for function parameters. Resolves #113 Thank you @maneeshd!
 
 ## 4.0.0
 * Split development and deployments requirements files out
