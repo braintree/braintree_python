@@ -74,6 +74,18 @@ class TestPayPalAccount(unittest.TestCase):
         paypal_account = PayPalAccount.find(result.payment_method.token)
         self.assertNotEqual(None, paypal_account.billing_agreement_id)
 
+    def test_delete_customer_with_path_traversal(self):
+        try:
+            customer = Customer.create({"first_name":"Waldo"}).customer
+            PayPalAccount.delete("../../{}".format(customer.id))
+        except NotFoundError:
+            pass
+
+        found_customer = Customer.find(customer.id)
+        self.assertNotEqual(None, found_customer)
+        self.assertEqual("Waldo", found_customer.first_name)
+
+
     def test_delete_deletes_paypal_account(self):
         result = PaymentMethod.create({
             "customer_id": Customer.create().customer.id,

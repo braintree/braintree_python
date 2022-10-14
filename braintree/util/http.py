@@ -78,8 +78,7 @@ class Http(object):
         http_strategy = self.config.http_strategy()
         headers = self.__headers(content_type, header_overrides)
         request_body = self.__request_body(content_type, params, files)
-
-        full_path = path if path.startswith(self.config.base_url()) or path.startswith(self.config.graphql_base_url()) else (self.config.base_url() + path)
+        full_path = self.__full_path(path)
 
         try:
             status, response_body = http_strategy.http_do(http_verb, full_path, headers, request_body)
@@ -103,6 +102,7 @@ class Http(object):
     def http_do(self, http_verb, path, headers, request_body):
         data = request_body
         files = None
+        full_path = self.__full_path(path)
 
         if type(request_body) is tuple:
             data = request_body[0]
@@ -113,14 +113,19 @@ class Http(object):
         else:
           verify = self.environment.ssl_certificate
 
-        response = self.__request_function(http_verb)(
-            path if path.startswith(self.config.base_url()) or path.startswith(self.config.graphql_base_url()) else (self.config.base_url() + path),
-            headers=headers,
-            data=data,
-            files=files,
-            verify=verify,
-            timeout=self.config.timeout
-        )
+        with requests.Session() as session:
+            request = requests.Request(
+                method=http_verb,
+                url=full_path,
+                headers=headers,
+                data=data,
+                files=files)
+            prepared_request = request.prepare()
+            prepared_request.url = full_path
+
+            response = session.send(prepared_request,
+                verify=verify,
+                timeout=self.config.timeout)
 
         return [response.status_code, response.text]
 
@@ -137,16 +142,6 @@ class Http(object):
             raise TimeoutError(exception)
         else:
             raise UnexpectedError(exception)
-
-    def __request_function(self, method):
-        if method == "GET":
-            return requests.get
-        elif method == "POST":
-            return requests.post
-        elif method == "PUT":
-            return requests.put
-        elif method == "DELETE":
-            return requests.delete
 
     def __authorization_header(self):
         if self.config.has_client_credentials():
@@ -188,3 +183,7 @@ class Http(object):
             return params
         else:
             return (params, files)
+
+    def __full_path(self, path):
+        return path if path.startswith(self.config.base_url()) or path.startswith(self.config.graphql_base_url()) else (self.config.base_url() + path)
+

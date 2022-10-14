@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.17.1
+* Prepare http request before setting url to resolve issue where dot segments get normalized
+
 ## 4.17.0
 * Fix `DeprecationWarning` on invalid escape sequences (thanks @DavidCain)
 * Add validation for arguments in Address.delete, Address.find, and Address.update
