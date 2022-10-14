@@ -937,6 +937,17 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual(AndroidPayCard, found_android_pay_card.__class__)
         self.assertEqual(found_android_pay_card.token, android_pay_card.token)
 
+    def test_delete_customer_with_path_traversal(self):
+        try:
+            customer = Customer.create({"first_name":"Waldo"}).customer
+            PaymentMethod.delete("../../customers/{}".format(customer.id))
+        except NotFoundError:
+            pass
+
+        found_customer = Customer.find(customer.id)
+        self.assertNotEqual(None, found_customer)
+        self.assertEqual("Waldo", found_customer.first_name)
+
     def test_delete_deletes_a_credit_card(self):
         customer = Customer.create().customer
         result = CreditCard.create({
