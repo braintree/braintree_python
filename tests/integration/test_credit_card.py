@@ -504,6 +504,17 @@ class TestCreditCard(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertFalse(result.credit_card.venmo_sdk)
 
+    def test_delete_customer_with_path_traversal(self):
+        try:
+            customer = Customer.create({"first_name":"Waldo"}).customer
+            CreditCard.delete("../../customers/{}".format(customer.id))
+        except NotFoundError:
+            pass
+
+        found_customer = Customer.find(customer.id)
+        self.assertNotEqual(None, found_customer)
+        self.assertEqual("Waldo", found_customer.first_name)
+
     def test_update_with_valid_options(self):
         customer = Customer.create().customer
         credit_card = CreditCard.create({

@@ -3,6 +3,7 @@ import traceback
 from tests.test_helper import *
 from braintree.exceptions.http.timeout_error import *
 from braintree.attribute_getter import AttributeGetter
+from unittest.mock import patch
 
 class TestHttp(unittest.TestCase):
     @raises(UpgradeRequiredError)
@@ -125,3 +126,35 @@ class TestHttp(unittest.TestCase):
 
         http = self.setup_http_strategy(test_http_do_strategy)
         http.handle_exception(requests.exceptions.ConnectTimeout())
+
+    def test_request_urls_retain_dots(self):
+        with patch('requests.Session.send') as send:
+            send.return_value.status_code = 200
+            config = Configuration(
+                Environment.Development,
+                "integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key",
+                wrap_http_exceptions=True
+            )
+            http = config.http()
+            http.get("/../../customers/")
+
+            prepared_request = send.call_args[0][0]
+            request_url = prepared_request.url
+            self.assertTrue(request_url.endswith("/../../customers/"))
+
+    def test_sessions_close_after_request(self):
+        with patch('requests.Session.send') as send, patch('requests.Session.close') as close:
+            send.return_value.status_code = 200
+            config = Configuration(
+                Environment.Development,
+                "integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key",
+                wrap_http_exceptions=True
+            )
+            http = config.http()
+            http.get("/../../customers/")
+
+            self.assertTrue(close.called)

@@ -1,3 +1,8 @@
+# Changelog
+
+## 3.59.1
+* Prepare http request before setting url to resolve issue where dot segments get normalized
+
 ## 3.59.0
 * Add `RefundAuthHardDeclined` and `RefundAuthSoftDeclined` to validation errors
 * Fix issue where managing Apple Pay domains would fail in Python 3.8+

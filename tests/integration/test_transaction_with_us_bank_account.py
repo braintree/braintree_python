@@ -77,27 +77,6 @@ class TestTransactionWithUsBankAccount(unittest.TestCase):
         error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
         self.assertEqual(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
-    def test_verification_create_with_plaid_nonce(self):
-        result = Transaction.sale({
-            "amount": TransactionAmounts.Authorize,
-            "merchant_account_id": TestHelper.us_bank_merchant_account_id,
-            "payment_method_nonce": TestHelper.generate_plaid_us_bank_account_nonce(),
-            "options": {
-                "submit_for_settlement": True,
-                "store_in_vault": True
-            }
-        })
-
-        self.assertTrue(result.is_success)
-
-        token = result.transaction.us_bank_account.token
-        us_bank_account = PaymentMethod.find(token)
-
-        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.UsBankAccount)
-        self.assertEqual(len(us_bank_account.verifications), 1)
-        self.assertEqual(us_bank_account.verifications[0].verification_method, UsBankAccountVerification.VerificationMethod.TokenizedCheck)
-        self.assertEqual(us_bank_account.verifications[0].status, UsBankAccountVerification.Status.Verified)
-
 class TestTransactionWithUsBankAccountCompliantMerchant(unittest.TestCase):
     def setUp(self):
         braintree.Configuration.configure(

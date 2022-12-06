@@ -272,6 +272,19 @@ class TestDisputes(unittest.TestCase):
     def test_find_raises_error_when_dispute_not_found(self):
         dispute = Dispute.find("invalid-id")
 
+    def test_delete_customer_with_path_traversal(self):
+        try:
+            customer = Customer.create({"first_name":"Waldo"}).customer
+            dispute = self.create_sample_dispute()
+            Dispute.remove_evidence(dispute.id, "../../../customers/{}".format(customer.id))
+        except NotFoundError:
+            pass
+
+        found_customer = Customer.find(customer.id)
+        self.assertNotEqual(None, found_customer)
+        self.assertEqual("Waldo", found_customer.first_name)
+
+
     def test_remove_evidence_removes_evidence_from_the_dispute(self):
         dispute = self.create_sample_dispute()
         evidence = Dispute.add_text_evidence(dispute.id, "text evidence").evidence

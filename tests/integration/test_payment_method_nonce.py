@@ -76,7 +76,7 @@ class TestPaymentMethodNonce(unittest.TestCase):
 
         self.assertEquals("99", found_nonce.details["last_two"])
         self.assertEquals("venmojoe", found_nonce.details["username"])
-        self.assertEquals("Venmo-Joe-1", found_nonce.details["venmo_user_id"])
+        self.assertEquals("1234567891234567891", found_nonce.details["venmo_user_id"])
 
     def test_exposes_null_3ds_info_if_none_exists(self):
         http = ClientApiHttp.create()
