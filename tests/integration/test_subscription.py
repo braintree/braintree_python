@@ -563,9 +563,9 @@ class TestSubscription(unittest.TestCase):
         found_subscription = Subscription.find(subscription.id)
         self.assertEqual(subscription.id, found_subscription.id)
 
-    @raises_with_regexp(NotFoundError, "subscription with id 'bad_token' not found")
     def test_find_with_invalid_token(self):
-        Subscription.find("bad_token")
+        with self.assertRaisesRegex(NotFoundError, "subscription with id 'bad_token' not found"):
+            Subscription.find("bad_token")
 
     def test_update_creates_a_prorated_transaction_when_merchant_is_set_to_prorate(self):
         result = Subscription.update(self.updateable_subscription.id, {
@@ -743,11 +743,11 @@ class TestSubscription(unittest.TestCase):
         self.assertEqual(1, len(id_errors))
         self.assertEqual("81906", id_errors[0].code)
 
-    @raises(NotFoundError)
     def test_update_raises_error_when_subscription_not_found(self):
-        Subscription.update("notfound", {
-            "id": "newid",
-        })
+        with self.assertRaises(NotFoundError):
+            Subscription.update("notfound", {
+                "id": "newid",
+            })
 
     def test_update_allows_overriding_of_inherited_add_ons_and_discounts(self):
         subscription = Subscription.create({
@@ -1034,9 +1034,9 @@ class TestSubscription(unittest.TestCase):
         self.assertTrue(len(status_errors), 1)
         self.assertEqual("81905", status_errors[0].code)
 
-    @raises(NotFoundError)
     def test_cancel_raises_not_found_error_with_bad_subscription(self):
-        Subscription.cancel("notreal")
+        with self.assertRaises(NotFoundError):
+            Subscription.cancel("notreal")
 
     def test_search_with_argument_list_rather_than_literal_list(self):
         trial_subscription = Subscription.create({

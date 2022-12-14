@@ -44,14 +44,13 @@ class TestWebhooks(unittest.TestCase):
 
         self.assertEqual('my_source_merchant_id', notification.source_merchant_id)
 
-    @raises(InvalidSignatureError)
     def test_completely_invalid_signature(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionWentPastDue,
             "my_id"
         )
-
-        WebhookNotification.parse("bad_stuff", sample_notification['bt_payload'])
+        with self.assertRaises(InvalidSignatureError):
+            WebhookNotification.parse("bad_stuff", sample_notification['bt_payload'])
 
     def test_parse_raises_when_public_key_is_wrong(self):
         sample_notification = WebhookTesting.sample_notification(

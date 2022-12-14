@@ -801,11 +801,11 @@ class TestCustomer(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-    @raises(NotFoundError)
     def test_delete_with_invalid_customer(self):
-        customer = Customer.create().customer
-        Customer.delete(customer.id)
-        Customer.delete(customer.id)
+        with self.assertRaises(NotFoundError):
+            customer = Customer.create().customer
+            Customer.delete(customer.id)
+            Customer.delete(customer.id)
 
     def test_delete_payment_method_with_path_traversal(self):
         try:
@@ -856,9 +856,9 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(found_customer.us_bank_accounts))
         self.assertIsInstance(found_customer.us_bank_accounts[0], UsBankAccount)
 
-    @raises_with_regexp(NotFoundError, "customer with id 'badid' not found")
     def test_find_with_invalid_customer(self):
-        Customer.find("badid")
+        with self.assertRaisesRegex(NotFoundError, "customer with id 'badid' not found"):
+            Customer.find("badid")
 
     def test_find_customer_with_all_filterable_associations_filtered_out(self):
         customer = Customer.create({

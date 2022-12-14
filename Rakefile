@@ -12,11 +12,11 @@ namespace :test do
   desc "run unit tests"
   task :unit, [:file_name, :test_name] do |task, args|
     if args.file_name.nil?
-      sh "nosetests #{print_stdout} tests/unit"
+      sh "python3 -m unittest discover #{print_stdout} tests/unit"
     elsif args.test_name.nil?
-      sh "nosetests #{print_stdout} tests/unit/#{args.file_name}.py"
+      sh "python3 -m unittest discover #{print_stdout} tests/unit/#{args.file_name}.py"
     else
-      sh "nosetests #{print_stdout} tests/unit/#{args.file_name}.py -m #{args.test_name}"
+      sh "python3 -m unittest discover #{print_stdout} tests/unit/#{args.file_name}.py -m #{args.test_name}"
     end
   end
 
@@ -27,11 +27,11 @@ namespace :test do
   desc "run integration tests"
   task :integration, [:file_name, :test_name] do |task, args|
     if args.file_name.nil?
-      sh "nosetests #{print_stdout} tests/integration"
+      sh "python3 -m unittest discover #{print_stdout} tests/integration"
     elsif args.test_name.nil?
-      sh "nosetests #{print_stdout} tests/integration/#{args.file_name}.py"
+      sh "python3 -m unittest discover #{print_stdout} tests/integration/#{args.file_name}.py"
     else
-      sh "nosetests #{print_stdout} tests/integration/#{args.file_name}.py -m #{args.test_name}"
+      sh "python3 -m unittest discover #{print_stdout} tests/integration/#{args.file_name}.py -m #{args.test_name}"
     end
   end
 
