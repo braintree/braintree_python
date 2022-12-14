@@ -3,7 +3,7 @@
 # Checklist
 
 - [ ] Added changelog entry
-- [ ] Ran unit tests (`nosetests tests/unit`)
+- [ ] Ran unit tests (`python3 -m unittest discover tests/unit`)
 - [ ] I understand that unless this is a Draft PR or has a DO NOT MERGE label, this PR is considered to be in a deploy ready state and can be deployed if merged to main
 
 <!-- **For Braintree Developers only, don't forget:**

@@ -2,13 +2,13 @@ from tests.test_helper import *
 import datetime
 
 class TestCreditCard(unittest.TestCase):
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_create_raises_exception_with_bad_keys(self):
-        CreditCard.create({"bad_key": "value"})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            CreditCard.create({"bad_key": "value"})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_update_raises_exception_with_bad_keys(self):
-        CreditCard.update("token", {"bad_key": "value"})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            CreditCard.update("token", {"bad_key": "value"})
 
     def test_create_signature(self):
         expected = ["billing_address_id", "cardholder_name", "cvv", "expiration_date", "expiration_month",
@@ -72,21 +72,21 @@ class TestCreditCard(unittest.TestCase):
         ]
         self.assertEqual(expected, CreditCard.update_signature())
 
-    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        CreditCard.find(" ")
+        with self.assertRaises(NotFoundError):
+            CreditCard.find(" ")
 
-    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        CreditCard.find(None)
+        with self.assertRaises(NotFoundError):
+            CreditCard.find(None)
 
-    @raises(NotFoundError)
     def test_from_nonce_empty_id_raises_not_found_exception(self):
-        CreditCard.from_nonce(" ")
+        with self.assertRaises(NotFoundError):
+            CreditCard.from_nonce(" ")
 
-    @raises(NotFoundError)
     def test_from_nonce_none_raises_not_found_exception(self):
-        CreditCard.from_nonce(None)
+        with self.assertRaises(NotFoundError):
+            CreditCard.from_nonce(None)
 
     def test_multiple_verifications_sort(self):
         verification1 = {"created_at": datetime.datetime(2014, 11, 18, 23, 20, 20), "id": 123, "amount": "0.00"}

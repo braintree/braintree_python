@@ -420,9 +420,9 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEqual(0, collection.maximum_size)
 
-    @raises_with_regexp(AttributeError, "Invalid argument\(s\) for created_using: noSuchCreatedUsing")
     def test_advanced_search_multiple_value_node_allowed_values_created_using(self):
-        Transaction.search([TransactionSearch.created_using == "noSuchCreatedUsing"])
+        with self.assertRaisesRegex(AttributeError, "Invalid argument\(s\) for created_using: noSuchCreatedUsing"):
+            Transaction.search([TransactionSearch.created_using == "noSuchCreatedUsing"])
 
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
         transaction = Transaction.sale({
@@ -456,12 +456,12 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEqual(0, collection.maximum_size)
 
-    @raises_with_regexp(AttributeError,
-            "Invalid argument\(s\) for credit_card_customer_location: noSuchCreditCardCustomerLocation")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_customer_location(self):
-        Transaction.search([
-            TransactionSearch.credit_card_customer_location == "noSuchCreditCardCustomerLocation"
-        ])
+        with self.assertRaisesRegex(AttributeError,
+            "Invalid argument\(s\) for credit_card_customer_location: noSuchCreditCardCustomerLocation"):
+            Transaction.search([
+                TransactionSearch.credit_card_customer_location == "noSuchCreditCardCustomerLocation"
+            ])
 
     def test_advanced_search_multiple_value_node_merchant_account_id(self):
         transaction = Transaction.sale({
@@ -587,12 +587,12 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.id, collection.first.id)
         self.assertEqual(transaction.credit_card_details.card_type, collection.first.credit_card_details.card_type)
 
-    @raises_with_regexp(AttributeError,
-            "Invalid argument\(s\) for credit_card_card_type: noSuchCreditCardCardType")
     def test_advanced_search_multiple_value_node_allowed_values_credit_card_card_type(self):
-        Transaction.search([
-            TransactionSearch.credit_card_card_type == "noSuchCreditCardCardType"
-        ])
+        with self.assertRaisesRegex(AttributeError,
+                "Invalid argument\(s\) for credit_card_card_type: noSuchCreditCardCardType"):
+            Transaction.search([
+                TransactionSearch.credit_card_card_type == "noSuchCreditCardCardType"
+            ])
 
     def test_advanced_search_multiple_value_node_status(self):
         transaction = Transaction.sale({
@@ -649,9 +649,9 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEqual(1, collection.maximum_size)
 
-    @raises_with_regexp(AttributeError, "Invalid argument\(s\) for status: noSuchStatus")
     def test_advanced_search_multiple_value_node_allowed_values_status(self):
-        Transaction.search([TransactionSearch.status == "noSuchStatus"])
+        with self.assertRaisesRegex(AttributeError, "Invalid argument\(s\) for status: noSuchStatus"):
+            Transaction.search([TransactionSearch.status == "noSuchStatus"])
 
     def test_advanced_search_multiple_value_node_source(self):
         transaction = Transaction.sale({
@@ -717,11 +717,11 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEqual(0, collection.maximum_size)
 
-    @raises_with_regexp(AttributeError, "Invalid argument\(s\) for type: noSuchType")
     def test_advanced_search_multiple_value_node_allowed_values_type(self):
-        Transaction.search([
-            TransactionSearch.type == "noSuchType"
-        ])
+        with self.assertRaisesRegex(AttributeError, "Invalid argument\(s\) for type: noSuchType"):
+            Transaction.search([
+                TransactionSearch.type == "noSuchType"
+            ])
 
     def test_advanced_search_multiple_value_node_type_with_refund(self):
         name = "Anabel Atkins%s" % random.randint(1, 100000)
@@ -1616,12 +1616,11 @@ class TestTransactionSearch(unittest.TestCase):
 
         self.assertEqual(0, collection.maximum_size)
 
-
-    @raises(RequestTimeoutError)
     def test_search_handles_a_search_timeout(self):
-        Transaction.search([
-            TransactionSearch.amount.between("-1100", "1600")
-        ])
+        with self.assertRaises(RequestTimeoutError):
+            Transaction.search([
+                TransactionSearch.amount.between("-1100", "1600")
+            ])
 
     def test_search_returns_records_from_valid_daterange(self):
         yesterday = datetime.now() - timedelta(days=1)
@@ -1629,8 +1628,8 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.ach_return_responses_created_at.between(yesterday, tomorrow)
-        ]) 
-        self.assertEqual(2, collection.maximum_size) 
+        ])
+        self.assertEqual(2, collection.maximum_size)
 
     def test_search_returns_records_from_invalid_daterange(self):
         day_after_tomorrow = datetime.now() + timedelta(days=1)
@@ -1638,7 +1637,7 @@ class TestTransactionSearch(unittest.TestCase):
 
         collection = Transaction.search([
             TransactionSearch.ach_return_responses_created_at.between(tomorrow, day_after_tomorrow)
-        ]) 
+        ])
         self.assertEqual(0, collection.maximum_size)
 
     def test_search_returns_records_for_one_reasoncode(self):

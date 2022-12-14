@@ -398,9 +398,9 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual(merchant_account.status, MerchantAccount.Status.Active)
         self.assertTrue(merchant_account.default)
 
-    @raises(NotFoundError)
     def test_find_404(self):
-        MerchantAccount.find("not_a_real_id")
+        with self.assertRaises(NotFoundError):
+            MerchantAccount.find("not_a_real_id")
 
     def test_merchant_account_create_for_currency(self):
         self.gateway = BraintreeGateway(

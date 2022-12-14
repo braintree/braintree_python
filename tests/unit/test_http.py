@@ -6,25 +6,25 @@ from braintree.attribute_getter import AttributeGetter
 from unittest.mock import patch
 
 class TestHttp(unittest.TestCase):
-    @raises(RequestTimeoutError)
     def test_raise_exception_from_request_timeout(self):
-        Http.raise_exception_from_status(408)
+        with self.assertRaises(RequestTimeoutError):
+            Http.raise_exception_from_status(408)
 
-    @raises(UpgradeRequiredError)
     def test_raise_exception_from_status_for_upgrade_required(self):
-        Http.raise_exception_from_status(426)
+        with self.assertRaises(UpgradeRequiredError):
+            Http.raise_exception_from_status(426)
 
-    @raises(TooManyRequestsError)
     def test_raise_exception_from_too_many_requests(self):
-        Http.raise_exception_from_status(429)
+        with self.assertRaises(TooManyRequestsError):
+            Http.raise_exception_from_status(429)
 
-    @raises(ServiceUnavailableError)
     def test_raise_exception_from_service_unavailable(self):
-        Http.raise_exception_from_status(503)
+        with self.assertRaises(ServiceUnavailableError):
+            Http.raise_exception_from_status(503)
 
-    @raises(GatewayTimeoutError)
     def test_raise_exception_from_gateway_timeout(self):
-        Http.raise_exception_from_status(504)
+        with self.assertRaises(GatewayTimeoutError):
+            Http.raise_exception_from_status(504)
 
     def test_header_includes_gzip_accept_encoding(self):
         config = AttributeGetter({
@@ -123,21 +123,21 @@ class TestHttp(unittest.TestCase):
 
         return Http(config, "fake_environment")
 
-    @raises(ReadTimeoutError)
     def test_raise_read_timeout_error(self):
         def test_http_do_strategy(http_verb, path, headers, request_body):
             return (200, "")
 
-        http = self.setup_http_strategy(test_http_do_strategy)
-        http.handle_exception(requests.exceptions.ReadTimeout())
+        with self.assertRaises(ReadTimeoutError):
+            http = self.setup_http_strategy(test_http_do_strategy)
+            http.handle_exception(requests.exceptions.ReadTimeout())
 
-    @raises(ConnectTimeoutError)
     def test_raise_connect_timeout_error(self):
         def test_http_do_strategy(http_verb, path, headers, request_body):
             return (200, "")
 
-        http = self.setup_http_strategy(test_http_do_strategy)
-        http.handle_exception(requests.exceptions.ConnectTimeout())
+        with self.assertRaises(ConnectTimeoutError):
+            http = self.setup_http_strategy(test_http_do_strategy)
+            http.handle_exception(requests.exceptions.ConnectTimeout())
 
     def test_request_urls_retain_dots(self):
         with patch('requests.Session.send') as send:

@@ -1,29 +1,29 @@
 from tests.test_helper import *
 
 class TestCustomer(unittest.TestCase):
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_create_raise_exception_with_bad_keys(self):
-        Customer.create({"bad_key": "value"})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            Customer.create({"bad_key": "value"})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: credit_card\[bad_key\]'")
     def test_create_raise_exception_with_bad_nested_keys(self):
-        Customer.create({"credit_card": {"bad_key": "value"}})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: credit_card\[bad_key\]'"):
+            Customer.create({"credit_card": {"bad_key": "value"}})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_update_raise_exception_with_bad_keys(self):
-        Customer.update("id", {"bad_key": "value"})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            Customer.update("id", {"bad_key": "value"})
 
-    @raises_with_regexp(KeyError, "'Invalid keys: credit_card\[bad_key\]'")
     def test_update_raise_exception_with_bad_nested_keys(self):
-        Customer.update("id", {"credit_card": {"bad_key": "value"}})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: credit_card\[bad_key\]'"):
+            Customer.update("id", {"credit_card": {"bad_key": "value"}})
 
-    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        Customer.find(" ")
+        with self.assertRaises(NotFoundError):
+            Customer.find(" ")
 
-    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        Customer.find(None)
+        with self.assertRaises(NotFoundError):
+            Customer.find(None)
 
     def test_initialize_sets_paypal_accounts(self):
         customer = Customer("gateway", {

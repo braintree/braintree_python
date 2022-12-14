@@ -2,9 +2,9 @@ from tests.test_helper import *
 
 class TestCreditCardVerification(unittest.TestCase):
 
-    @raises_with_regexp(KeyError, "'Invalid keys: bad_key'")
     def test_create_raises_exception_with_bad_keys(self):
-        CreditCardVerification.create({"bad_key": "value", "credit_card": {"number": "value"}})
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            CreditCardVerification.create({"bad_key": "value", "credit_card": {"number": "value"}})
 
     def test_constructor_with_amount(self):
         attributes = {
@@ -49,10 +49,10 @@ class TestCreditCardVerification(unittest.TestCase):
         self.assertEqual(verification.network_response_code, None)
         self.assertEqual(verification.network_response_text, None)
 
-    @raises(NotFoundError)
     def test_finding_empty_id_raises_not_found_exception(self):
-        CreditCardVerification.find(" ")
+        with self.assertRaises(NotFoundError):
+            CreditCardVerification.find(" ")
 
-    @raises(NotFoundError)
     def test_finding_none_raises_not_found_exception(self):
-        CreditCardVerification.find(None)
+        with self.assertRaises(NotFoundError):
+            CreditCardVerification.find(None)

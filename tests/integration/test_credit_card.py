@@ -938,21 +938,21 @@ class TestCreditCard(unittest.TestCase):
         result = CreditCard.delete(credit_card.token)
         self.assertTrue(result.is_success)
 
-    @raises(NotFoundError)
     def test_delete_raises_error_when_deleting_twice(self):
-        customer = Customer.create().customer
-        credit_card = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_date": "05/2014"
-        }).credit_card
+        with self.assertRaises(NotFoundError):
+            customer = Customer.create().customer
+            credit_card = CreditCard.create({
+                "customer_id": customer.id,
+                "number": "4111111111111111",
+                "expiration_date": "05/2014"
+            }).credit_card
 
-        CreditCard.delete(credit_card.token)
-        CreditCard.delete(credit_card.token)
+            CreditCard.delete(credit_card.token)
+            CreditCard.delete(credit_card.token)
 
-    @raises(NotFoundError)
     def test_delete_with_invalid_token(self):
-        CreditCard.delete("notreal")
+        with self.assertRaises(NotFoundError):
+            CreditCard.delete("notreal")
 
     def test_find_with_valid_token(self):
         customer = Customer.create().customer
@@ -995,9 +995,9 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(Decimal("1.00"), subscription.price)
         self.assertEqual(credit_card.token, subscription.payment_method_token)
 
-    @raises_with_regexp(NotFoundError, "payment method with token 'bad_token' not found")
     def test_find_with_invalid_token(self):
-        CreditCard.find("bad_token")
+        with self.assertRaisesRegex(NotFoundError, "payment method with token 'bad_token' not found"):
+            CreditCard.find("bad_token")
 
     def test_from_nonce_with_unlocked_nonce(self):
         config = Configuration.instantiate()
@@ -1028,58 +1028,59 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(1, len(customer.credit_cards))
         self.assertEqual(customer.credit_cards[0].token, card.token)
 
-    @raises_with_regexp(NotFoundError, "payment method with nonce .* or not found")
     def test_from_nonce_with_unlocked_nonce_pointing_to_shared_card(self):
-        config = Configuration.instantiate()
+        with self.assertRaisesRegex(NotFoundError, "payment method with nonce .* or not found"):
+            config = Configuration.instantiate()
 
-        client_token = TestHelper.generate_decoded_client_token()
-        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
-        http = ClientApiHttp(config, {
-            "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifier": "fake_identifier",
-            "shared_customer_identifier_type": "testing"
-        })
+            client_token = TestHelper.generate_decoded_client_token()
+            authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+            http = ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing"
+            })
 
-        status_code, response = http.add_card({
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_month": "11",
-                "expiration_year": "2099",
-            },
-            "share": True
-        })
-        self.assertEqual(201, status_code)
-        nonce = json.loads(response)["creditCards"][0]["nonce"]
+            status_code, response = http.add_card({
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_month": "11",
+                    "expiration_year": "2099",
+                },
+                "share": True
+            })
+            self.assertEqual(201, status_code)
+            nonce = json.loads(response)["creditCards"][0]["nonce"]
 
-        CreditCard.from_nonce(nonce)
+            CreditCard.from_nonce(nonce)
 
-    @raises_with_regexp(NotFoundError, ".* consumed .*")
+
     def test_from_nonce_with_consumed_nonce(self):
-        config = Configuration.instantiate()
-        customer = Customer.create().customer
+        with self.assertRaisesRegex(NotFoundError, ".* consumed .*"):
+            config = Configuration.instantiate()
+            customer = Customer.create().customer
 
-        client_token = TestHelper.generate_decoded_client_token({
-            "customer_id": customer.id,
-        })
-        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
-        http = ClientApiHttp(config, {
-            "authorization_fingerprint": authorization_fingerprint,
-            "shared_customer_identifier": "fake_identifier",
-            "shared_customer_identifier_type": "testing"
-        })
+            client_token = TestHelper.generate_decoded_client_token({
+                "customer_id": customer.id,
+            })
+            authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+            http = ClientApiHttp(config, {
+                "authorization_fingerprint": authorization_fingerprint,
+                "shared_customer_identifier": "fake_identifier",
+                "shared_customer_identifier_type": "testing"
+            })
 
-        status_code, response = http.add_card({
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_month": "11",
-                "expiration_year": "2099",
-            }
-        })
-        self.assertEqual(201, status_code)
-        nonce = json.loads(response)["creditCards"][0]["nonce"]
+            status_code, response = http.add_card({
+                "credit_card": {
+                    "number": "4111111111111111",
+                    "expiration_month": "11",
+                    "expiration_year": "2099",
+                }
+            })
+            self.assertEqual(201, status_code)
+            nonce = json.loads(response)["creditCards"][0]["nonce"]
 
-        CreditCard.from_nonce(nonce)
-        CreditCard.from_nonce(nonce)
+            CreditCard.from_nonce(nonce)
+            CreditCard.from_nonce(nonce)
 
     def test_expired_can_iterate_over_all_items(self):
         year = datetime.now().year - 3

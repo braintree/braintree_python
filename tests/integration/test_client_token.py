@@ -160,8 +160,8 @@ class TestClientToken(unittest.TestCase):
 
         self.assertEqual(expected_merchant_account_id, merchant_account_id)
 
-    @raises_with_regexp(Exception, "'Invalid keys: merchant_id'")
     def test_required_data_cannot_be_overridden(self):
-        TestHelper.generate_decoded_client_token({
-            "merchant_id": "1234"
-        })
+        with self.assertRaisesRegex(Exception, "'Invalid keys: merchant_id'"):
+            TestHelper.generate_decoded_client_token({
+                "merchant_id": "1234"
+            })

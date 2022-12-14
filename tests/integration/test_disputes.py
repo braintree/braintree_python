@@ -45,9 +45,9 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(result.errors.for_object("dispute")[0].code, ErrorCodes.Dispute.CanOnlyAcceptOpenDispute)
         self.assertEqual(result.errors.for_object("dispute")[0].message, "Disputes can only be accepted when they are in an Open state")
 
-    @raises_with_regexp(NotFoundError, "dispute with id 'invalid-id' not found")
     def test_accept_raises_error_when_dispute_not_found(self):
-        dispute = Dispute.accept("invalid-id")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id 'invalid-id' not found"):
+            dispute = Dispute.accept("invalid-id")
 
     def test_add_file_evidence_adds_evidence(self):
         dispute = self.create_sample_dispute()
@@ -70,9 +70,9 @@ class TestDisputes(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEqual(result.evidence.category, "GENERAL")
 
-    @raises_with_regexp(NotFoundError, "dispute with id 'unknown_dispute_id' not found")
     def test_add_file_evidence_raises_error_when_dispute_not_found(self):
-        dispute = Dispute.add_file_evidence("unknown_dispute_id", "text evidence")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id 'unknown_dispute_id' not found"):
+            dispute = Dispute.add_file_evidence("unknown_dispute_id", "text evidence")
 
     def test_add_file_evidence_raises_error_when_dispute_not_open(self):
         dispute = self.create_sample_dispute()
@@ -132,9 +132,9 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(evidence.category, "DEVICE_ID")
         self.assertEqual(evidence.sequence_number, 0)
 
-    @raises_with_regexp(NotFoundError, "Dispute with ID 'unknown_dispute_id' not found")
     def test_add_text_evidence_raises_error_when_dispute_not_found(self):
-        dispute = Dispute.add_text_evidence("unknown_dispute_id", "text evidence")
+        with self.assertRaisesRegex(NotFoundError, "Dispute with ID 'unknown_dispute_id' not found"):
+            dispute = Dispute.add_text_evidence("unknown_dispute_id", "text evidence")
 
     def test_add_text_evidence_raises_error_when_dispute_not_open(self):
         dispute = self.create_sample_dispute()
@@ -230,9 +230,9 @@ class TestDisputes(unittest.TestCase):
         error_codes = [error.code for error in result.errors.for_object("dispute")]
         self.assertIn(ErrorCodes.Dispute.NonDisputedPriorTransactionEvidenceMissingDate, error_codes)
 
-    @raises_with_regexp(NotFoundError, "dispute with id 'invalid-id' not found")
     def test_finalize_raises_error_when_dispute_not_found(self):
-        dispute = Dispute.finalize("invalid-id")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id 'invalid-id' not found"):
+            dispute = Dispute.finalize("invalid-id")
 
     def test_find_returns_dispute_with_given_id(self):
         dispute = Dispute.find("open_dispute")
@@ -245,9 +245,9 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(None, dispute.transaction.installment_count)
         self.assertNotEqual(None, dispute.graphql_id)
 
-    @raises_with_regexp(NotFoundError, "dispute with id 'invalid-id' not found")
     def test_find_raises_error_when_dispute_not_found(self):
-        dispute = Dispute.find("invalid-id")
+        with self.assertRaisesRegex(NotFoundError, "dispute with id 'invalid-id' not found"):
+            dispute = Dispute.find("invalid-id")
 
     def test_delete_customer_with_path_traversal(self):
         try:
@@ -269,9 +269,9 @@ class TestDisputes(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
-    @raises_with_regexp(NotFoundError, "evidence with id 'unknown_evidence_id' for dispute with id 'unknown_dispute_id' not found")
     def test_remove_evidence_raises_error_when_dispute_or_evidence_not_found(self):
-        Dispute.remove_evidence("unknown_dispute_id", "unknown_evidence_id")
+        with self.assertRaisesRegex(NotFoundError, "evidence with id 'unknown_evidence_id' for dispute with id 'unknown_dispute_id' not found"):
+            Dispute.remove_evidence("unknown_dispute_id", "unknown_evidence_id")
 
     def test_remove_evidence_errors_when_dispute_not_open(self):
         dispute = self.create_sample_dispute()
