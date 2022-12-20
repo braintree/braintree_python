@@ -177,6 +177,7 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.AvsAndCvv
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
+        * braintree.Transaction.GatewayRejectionReason.ExcessiveRetry
         * braintree.Transaction.GatewayRejectionReason.Fraud
         * braintree.Transaction.GatewayRejectionReason.RiskThreshold
         * braintree.Transaction.GatewayRejectionReason.ThreeDSecure
@@ -187,6 +188,7 @@ class Transaction(Resource):
         AvsAndCvv             = "avs_and_cvv"
         Cvv                   = "cvv"
         Duplicate             = "duplicate"
+        ExcessiveRetry        = "excessive_retry"
         Fraud                 = "fraud"
         RiskThreshold         = "risk_threshold"
         ThreeDSecure          = "three_d_secure"

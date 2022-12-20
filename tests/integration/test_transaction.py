@@ -1104,6 +1104,21 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
+    def test_sale_with_gateway_rejected_with_excessive_retry(self):
+        with DuplicateCheckingMerchant():
+            for _ in range(16):
+                result = Transaction.sale({
+                    "amount": TransactionAmounts.Decline,
+                    "credit_card": {
+                        "number": CreditCardNumbers.Visa,
+                        "expiration_date": "05/2017",
+                        "cvv": "333"
+                    }
+                })
+
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.ExcessiveRetry, result.transaction.gateway_rejection_reason)
+
     def test_sale_with_gateway_rejected_with_fraud(self):
         with AdvancedFraudKountIntegrationMerchant():
             result = Transaction.sale({

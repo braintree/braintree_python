@@ -217,3 +217,12 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.installments["count"], 4)
+
+    def test_gateway_rejection_reason_for_excessive_retry(self):
+        attributes = {
+            'amount': '27.00',
+            'gateway_rejection_reason': 'excessive_retry'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.gateway_rejection_reason, braintree.Transaction.GatewayRejectionReason.ExcessiveRetry)
