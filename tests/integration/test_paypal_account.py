@@ -7,7 +7,7 @@ class TestPayPalAccount(unittest.TestCase):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
         self.assertTrue(result.is_success)
 
@@ -89,7 +89,7 @@ class TestPayPalAccount(unittest.TestCase):
     def test_delete_deletes_paypal_account(self):
         result = PaymentMethod.create({
             "customer_id": Customer.create().customer.id,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
         self.assertTrue(result.is_success)
         paypal_account_token = result.payment_method.token

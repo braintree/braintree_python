@@ -5242,7 +5242,7 @@ class TestTransaction(unittest.TestCase):
     def test_creating_paypal_transaction_with_future_payment_nonce(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
 
         self.assertTrue(result.is_success)
@@ -5302,7 +5302,7 @@ class TestTransaction(unittest.TestCase):
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
 
         self.assertTrue(result.is_success)

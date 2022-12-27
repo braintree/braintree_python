@@ -65,17 +65,17 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual("EciFlag is required.", result.message)
 
-    def test_create_with_paypal_future_payments_nonce(self):
+    def test_create_with_paypal_billing_agreements_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
 
         self.assertTrue(result.is_success)
         created_account = result.payment_method
         self.assertEqual(PayPalAccount, created_account.__class__)
-        self.assertEqual("jane.doe@example.com", created_account.email)
+        self.assertEqual("jane.doe@paypal.com", created_account.email)
         self.assertNotEqual(created_account.image_url, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)

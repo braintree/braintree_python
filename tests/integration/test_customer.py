@@ -416,8 +416,8 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(customer.us_bank_accounts))
         self.assertIsInstance(customer.us_bank_accounts[0], UsBankAccount)
 
-    def test_create_with_paypal_future_payments_nonce(self):
-        result = Customer.create({"payment_method_nonce": Nonces.PayPalFuturePayment})
+    def test_create_with_paypal_billing_agreements_nonce(self):
+        result = Customer.create({"payment_method_nonce": Nonces.PayPalBillingAgreement})
         self.assertTrue(result.is_success)
 
         customer = result.customer
@@ -1121,7 +1121,7 @@ class TestCustomer(unittest.TestCase):
         customer = Customer.create().customer
 
         result = Customer.update(customer.id, {
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
         self.assertTrue(result.is_success)
 
