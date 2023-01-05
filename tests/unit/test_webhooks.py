@@ -328,6 +328,19 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(Dispute.Status.Accepted, notification.dispute.status)
         self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
 
+    def test_builds_notification_for_old_dispute_auto_accepted(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeAutoAccepted,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeAutoAccepted, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.AutoAccepted, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
     def test_builds_notification_for_old_dispute_disputed(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeDisputed,
@@ -408,6 +421,19 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.DisputeAccepted, notification.kind)
         self.assertEqual("my_id", notification.dispute.id)
         self.assertEqual(Dispute.Status.Accepted, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
+    def test_builds_notification_for_new_dispute_auto_accepted(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeAutoAccepted,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeAutoAccepted, notification.kind)
+        self.assertEqual("my_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.AutoAccepted, notification.dispute.status)
         self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
 
     def test_builds_notification_for_new_dispute_disputed(self):

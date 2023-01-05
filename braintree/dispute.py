@@ -11,12 +11,14 @@ class Dispute(AttributeGetter):
         Constants representing dispute statuses. Available types are:
 
         * braintree.Dispute.Status.Accepted
+        * braintree.Dispute.Status.AutoAccepted
         * braintree.Dispute.Status.Disputed
         * braintree.Dispute.Status.Open
         * braintree.Dispute.Status.Won
         * braintree.Dispute.Status.Lost
         """
         Accepted = "accepted"
+        AutoAccepted = "auto_accepted"
         Disputed = "disputed"
         Expired = "expired"
         Open  = "open"
