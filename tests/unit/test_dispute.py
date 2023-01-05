@@ -36,6 +36,7 @@ class TestDispute(unittest.TestCase):
         "kind": "chargeback",
         "merchant_account_id": "abc123",
         "original_dispute_id": "original_dispute_id",
+        "pre_dispute_program": "none",
         "reason": "fraud",
         "reason_code": "83",
         "reason_description": "Reason code 83 description",
@@ -122,6 +123,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.processor_comments, "Forwarded comments")
         self.assertEqual(dispute.merchant_account_id, "abc123")
         self.assertEqual(dispute.original_dispute_id, "original_dispute_id")
+        self.assertEqual(dispute.pre_dispute_program, Dispute.PreDisputeProgram.NONE)
         self.assertEqual(dispute.reason_code, "83")
         self.assertEqual(dispute.reason_description, "Reason code 83 description")
         self.assertEqual(dispute.reference_number, "123456")

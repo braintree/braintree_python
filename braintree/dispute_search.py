@@ -11,6 +11,7 @@ class DisputeSearch:
     id                          =   Search.TextNodeBuilder("id")
     kind                        =   Search.MultipleValueNodeBuilder("kind")
     merchant_account_id         =   Search.MultipleValueNodeBuilder("merchant_account_id")
+    pre_dispute_program         =   Search.MultipleValueNodeBuilder("pre_dispute_program")
     reason                      =   Search.MultipleValueNodeBuilder("reason")
     reason_code                 =   Search.MultipleValueNodeBuilder("reason_code")
     received_date               =   Search.RangeNodeBuilder("received_date")

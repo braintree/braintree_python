@@ -4,6 +4,7 @@
 * Replace nose usage for tests with unittest (Thanks @arthurzam)
 * Remove mock dev dependency (Thanks @arthurzam)
 * Add `ExcessiveRetry` to `GatewayRejectionReason`
+* Add `pre_dispute_program` to `Dispute` and `DisputeSearch`
 
 ## 4.17.1
 * Prepare http request before setting url to resolve issue where dot segments get normalized

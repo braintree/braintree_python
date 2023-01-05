@@ -78,6 +78,17 @@ class Dispute(AttributeGetter):
         Standard       = "standard"
         NotProtected   = "not_protected"
 
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class PreDisputeProgram(object):
+        """
+        Constants representing dispute pre-dispute programs. Available types are:
+
+        * braintree.Dispute.PreDisputeProgram.NONE
+        * braintree.Dispute.PreDisputeProgram.VisaRdr
+        """
+        NONE = "none"
+        VisaRdr = "visa_rdr"
+
     @staticmethod
     def accept(id):
         """
