@@ -1,3 +1,5 @@
+import warnings
+
 class Search:
     """
     Collection of classes used to build search queries.
@@ -73,6 +75,8 @@ class Search:
     class MultipleValueNodeBuilder(object):
         """Builds a query to check membership in a sequence."""
         def __init__(self, name, whitelist = []):
+            if "chargeback_protection_level" == name:
+                warnings.warn("Use protection_level parameter instead", DeprecationWarning)
             self.name = name
             self.whitelist = whitelist
 

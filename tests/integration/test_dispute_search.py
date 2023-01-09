@@ -85,7 +85,9 @@ class TestDisputeSearch(unittest.TestCase):
 
             for dispute in disputes:
                 self.assertEqual(dispute.reason, braintree.Dispute.Reason.Fraud)
+                # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
                 self.assertEqual(dispute.chargeback_protection_level, braintree.Dispute.ChargebackProtectionLevel.Effortless)
+                self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.EffortlessCBP)
 
     def test_advanced_search_returns_disputes_by_pre_dispute_program(self):
             collection = Dispute.search([

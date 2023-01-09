@@ -117,7 +117,9 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.amount_disputed, 100.0)
         self.assertEqual(dispute.amount_won, 0.00)
         self.assertEqual(dispute.case_number, "CB123456")
+        # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
         self.assertEqual(dispute.chargeback_protection_level, "effortless")
+        self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.EffortlessCBP)
         self.assertEqual(dispute.created_at, datetime(2013, 4, 10, 10, 50, 39))
         self.assertEqual(dispute.forwarded_comments, "Forwarded comments")
         self.assertEqual(dispute.processor_comments, "Forwarded comments")
@@ -145,6 +147,50 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.status_history[0].effective_date, "2013-04-10")
         self.assertEqual(dispute.status_history[0].status, "open")
         self.assertEqual(dispute.status_history[0].timestamp, datetime(2013, 4, 10, 10, 50, 39))
+
+    def test_constructor_populates_standard_cbp_level(self):
+        attributes = dict(self.attributes)
+        del attributes["amount"]
+        attributes["chargeback_protection_level"] = "standard"
+
+        dispute = Dispute(attributes)
+
+        # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
+        self.assertEqual(dispute.chargeback_protection_level, braintree.Dispute.ChargebackProtectionLevel.Standard)
+        self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.StandardCBP)
+
+    def test_constructor_populates_none_cbp_level(self):
+        attributes = dict(self.attributes)
+        del attributes["amount"]
+        attributes["chargeback_protection_level"] = None
+
+        dispute = Dispute(attributes)
+
+        # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
+        self.assertEqual(dispute.chargeback_protection_level, None)
+        self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.NoProtection)
+
+    def test_constructor_populates_empty_cbp_level(self):
+        attributes = dict(self.attributes)
+        del attributes["amount"]
+        attributes["chargeback_protection_level"] = ""
+
+        dispute = Dispute(attributes)
+
+        # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
+        self.assertEqual(dispute.chargeback_protection_level, "")
+        self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.NoProtection)
+
+    def test_constructor_populates_not_protected_cbp_level(self):
+        attributes = dict(self.attributes)
+        del attributes["amount"]
+        attributes["chargeback_protection_level"] = "not_protected"
+
+        dispute = Dispute(attributes)
+
+        # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
+        self.assertEqual(dispute.chargeback_protection_level, braintree.Dispute.ChargebackProtectionLevel.NotProtected)
+        self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.NoProtection)
 
     def test_constructor_handles_none_fields(self):
         attributes = dict(self.attributes)
