@@ -8,6 +8,7 @@
 * Add `AutoAccepted` status to `Dispute`
 * Add `DisputeAutoAccepted` to `WebhookNotification.Kind`
 * Deprecate `chargeback_protection_level` and add `protection_level` to `Dispute` and `DisputeSearch`
+* Add `shipping` object to `submit_for_settlement_signature`
 
 ## 4.17.1
 * Prepare http request before setting url to resolve issue where dot segments get normalized

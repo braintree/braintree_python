@@ -3383,6 +3383,36 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
+    def test_submit_for_settlement_with_shipping_data(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+                "discount_amount": "12.33",
+                "shipping_amount": "5.00",
+                "ships_from_postal_code": "90210",
+                "shipping": {
+                    "first_name": "Andrew",
+                    "last_name": "Mason",
+                    "company": "Braintree",
+                    "street_address": "456 W Main St",
+                    "extended_address": "Apt 2F",
+                    "locality": "Bartlett",
+                    "region": "IL",
+                    "postal_code": "60103",
+                    "country_name": "United States of America",
+                    }
+                }
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
     def test_submit_for_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
