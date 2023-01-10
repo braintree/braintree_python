@@ -77,3 +77,4 @@ class Nonces(object):
     SamsungPayDiscover = "tokensam_fake_american_express"
     SamsungPayMasterCard = "tokensam_fake_mastercard"
     SamsungPayVisa = "tokensam_fake_visa"
+    SepaDirectDebit = "fake-sepa-direct-debit-nonce"

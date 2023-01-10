@@ -5327,6 +5327,44 @@ class TestTransaction(unittest.TestCase):
         error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
         self.assertEqual(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
+    def test_creating_sepa_direct_debit_transaction_with_vaulted_fake_nonce(self):
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.SepaDirectDebit,
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction_result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": result.payment_method.token,
+            "options": {
+                "submit_for_settlement": True,
+            }
+        })
+
+        self.assertTrue(transaction_result.is_success)
+        transaction = transaction_result.transaction
+        sdd_details = transaction.sepa_direct_debit_account_details
+
+        self.assertEqual(sdd_details.bank_reference_token, "a-fake-bank-reference-token")
+        self.assertEqual(sdd_details.mandate_type, "RECURRENT")
+        self.assertEqual(sdd_details.last_4, "1234")
+        self.assertEqual(sdd_details.merchant_or_partner_customer_id, "a-fake-mp-customer-id")
+        self.assertEqual(sdd_details.transaction_fee_amount, "0.01")
+        self.assertEqual(sdd_details.transaction_fee_currency_iso_code, "USD")
+        self.assertEqual(sdd_details.token, result.payment_method.token)
+        self.assertTrue(sdd_details.capture_id)
+        self.assertTrue(sdd_details.global_id)
+        self.assertIsNone(sdd_details.refund_id)
+        self.assertIsNone(sdd_details.debug_id)
+        self.assertIsNone(sdd_details.paypal_v2_order_id)
+        self.assertIsNone(sdd_details.refund_from_transaction_fee_amount)
+        self.assertIsNone(sdd_details.refund_from_transaction_fee_currency_iso_code)
+        self.assertIsNone(sdd_details.settlement_type)
+
     def test_creating_paypal_transaction_with_vaulted_token(self):
         customer_id = Customer.create().customer.id
 

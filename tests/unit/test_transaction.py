@@ -55,6 +55,16 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.disbursement_details.funds_held, False)
         self.assertEqual(transaction.is_disbursed, True)
 
+    def test_constructor_includes_sepa_direct_debit_return_code(self):
+        attributes = {
+            'amount': '27.00',
+            'sepa_direct_debit_return_code': 'AM04'
+        }
+
+        transaction = Transaction(None, attributes)
+
+        self.assertEqual(transaction.sepa_direct_debit_return_code, 'AM04')
+
     def test_transaction_handles_nil_risk_data(self):
         attributes = {
             'amount': '27.00',

@@ -425,6 +425,11 @@ class ErrorCodes(object):
         IBANIsRequired = "83303"
         AccountHolderNameIsRequired = "83301"
 
+    class SepaDirectDebitAccount(object):
+        SepaDebitAccountPaymentMethodMandateTypeIsNotSupported = "87115"
+        SepaDebitAccountPaymentMethodCustomerIdIsInvalid = "87116"
+        SepaDebitAccountPaymentMethodCustomerIdIsRequired = "87117"
+
     class Subscription(object):
         BillingDayOfMonthCannotBeUpdated = "91918"
         BillingDayOfMonthIsInvalid = "91914"

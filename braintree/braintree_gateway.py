@@ -16,6 +16,7 @@ from braintree.oauth_gateway import OAuthGateway
 from braintree.payment_method_gateway import PaymentMethodGateway
 from braintree.payment_method_nonce_gateway import PaymentMethodNonceGateway
 from braintree.paypal_account_gateway import PayPalAccountGateway
+from braintree.sepa_direct_debit_account_gateway import SepaDirectDebitAccountGateway
 from braintree.plan_gateway import PlanGateway
 from braintree.settlement_batch_summary_gateway import SettlementBatchSummaryGateway
 from braintree.subscription_gateway import SubscriptionGateway
@@ -57,6 +58,7 @@ class BraintreeGateway(object):
         self.payment_method_nonce = PaymentMethodNonceGateway(self)
         self.paypal_account = PayPalAccountGateway(self)
         self.plan = PlanGateway(self)
+        self.sepa_direct_debit_account = SepaDirectDebitAccountGateway(self)
         self.settlement_batch_summary = SettlementBatchSummaryGateway(self)
         self.subscription = SubscriptionGateway(self)
         self.testing = TestingGateway(self)

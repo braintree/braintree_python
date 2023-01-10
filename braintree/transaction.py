@@ -29,6 +29,7 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.risk_data import RiskData
 from braintree.samsung_pay_card import SamsungPayCard
+from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.status_event import StatusEvent
 from braintree.subscription_details import SubscriptionDetails
 from braintree.successful_result import SuccessfulResult
@@ -721,6 +722,8 @@ class Transaction(Resource):
             self.paypal_here_details = PayPalHere(gateway, attributes.pop("paypal_here"))
         if "local_payment" in attributes:
             self.local_payment_details = LocalPayment(gateway, attributes.pop("local_payment"))
+        if "sepa_debit_account_detail" in attributes:
+            self.sepa_direct_debit_account_details = SepaDirectDebitAccount(gateway, attributes.pop("sepa_debit_account_detail"))
         if "europe_bank_account" in attributes:
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "us_bank_account" in attributes:

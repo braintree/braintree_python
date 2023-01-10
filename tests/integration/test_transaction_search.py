@@ -274,6 +274,40 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.LocalPayment)
         self.assertEqual(transaction.id, collection.first.id)
 
+    def test_advanced_search_with_payment_instrument_type_is_sepa_debit_account(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.SepaDirectDebit
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.payment_instrument_type == "SEPADebitAccount"
+        )
+
+        self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.SepaDirectDebitAccount)
+        self.assertEqual(transaction.id, collection.first.id)
+
+    def test_advanced_search_with_sepa_debit_paypal_v2_order_id(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.SepaDirectDebit
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.sepa_debit_paypal_v2_order_id == transaction.sepa_direct_debit_account_details.paypal_v2_order_id
+        )
+
+        self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.SepaDirectDebitAccount)
+        self.assertEqual(transaction.id, collection.first.id)
+
     def test_advanced_search_with_payment_instrument_type_is_apple_pay(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

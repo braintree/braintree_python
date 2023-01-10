@@ -10,6 +10,7 @@ from braintree.venmo_account import VenmoAccount
 from braintree.us_bank_account import UsBankAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
+from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.unknown_payment_method import UnknownPaymentMethod
 
@@ -27,6 +28,8 @@ def parse_payment_method(gateway, attributes):
     # NEXT_MAJOR_VERSION remove amex express checkout
     elif "amex_express_checkout_card" in attributes:
         return AmexExpressCheckoutCard(gateway, attributes["amex_express_checkout_card"])
+    elif "sepa_debit_account" in attributes:
+        return SepaDirectDebitAccount(gateway, attributes["sepa_debit_account"])
     elif "venmo_account" in attributes:
         return VenmoAccount(gateway, attributes["venmo_account"])
     elif "us_bank_account" in attributes:

@@ -519,7 +519,6 @@ class ClientApiHttp(Http):
 
         return [status_code, nonce]
 
-
     def get_credit_card_nonce(self, credit_card_params):
         url = "/merchants/%s/client_api/v1/payment_methods/credit_cards" % self.config.merchant_id
         params = {"credit_card": credit_card_params}

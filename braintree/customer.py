@@ -8,6 +8,7 @@ from braintree.android_pay_card import AndroidPayCard
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.credit_card import CreditCard
 from braintree.paypal_account import PayPalAccount
+from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.us_bank_account import UsBankAccount
 from braintree.venmo_account import VenmoAccount
@@ -241,6 +242,10 @@ class Customer(Resource):
         if "venmo_accounts" in attributes:
             self.venmo_accounts = [VenmoAccount(gateway, venmo_account) for venmo_account in self.venmo_accounts]
             self.payment_methods += self.venmo_accounts
+
+        if "sepa_debit_accounts" in attributes:
+            self.sepa_direct_debit_accounts  = [SepaDirectDebitAccount(gateway, sepa_direct_debit_account) for sepa_direct_debit_account in self.sepa_debit_accounts]
+            self.payment_methods += self.sepa_direct_debit_accounts
 
         if "us_bank_accounts" in attributes:
             self.us_bank_accounts = [UsBankAccount(gateway, us_bank_account) for us_bank_account in self.us_bank_accounts]

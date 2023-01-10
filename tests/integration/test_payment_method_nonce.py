@@ -1,4 +1,5 @@
 from tests.test_helper import *
+from braintree.test.nonces import Nonces
 
 class TestPaymentMethodNonce(unittest.TestCase):
     indian_payment_token = "india_visa_credit"
@@ -125,6 +126,14 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEquals("99", found_nonce.details["last_two"])
         self.assertEquals("venmojoe", found_nonce.details["username"])
         self.assertEquals("1234567891234567891", found_nonce.details["venmo_user_id"])
+
+    def test_find_nonce_shows_sepa_direct_debit_details(self):
+        found_nonce = PaymentMethodNonce.find(Nonces.SepaDirectDebit)
+
+        self.assertEquals("1234", found_nonce.details["last_4"])
+        self.assertEquals("RECURRENT", found_nonce.details["mandate_type"])
+        self.assertEquals("a-fake-bank-reference-token", found_nonce.details["bank_reference_token"])
+        self.assertEquals("a-fake-mp-customer-id", found_nonce.details["merchant_or_partner_customer_id"])
 
     def test_exposes_null_3ds_info_if_none_exists(self):
         http = ClientApiHttp.create()
