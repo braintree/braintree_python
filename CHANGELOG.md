@@ -1,6 +1,6 @@
 # Changelog
 
-## unreleased
+## 4.18.0
 * Replace nose usage for tests with unittest (Thanks @arthurzam)
 * Remove mock dev dependency (Thanks @arthurzam)
 * Add `ExcessiveRetry` to `GatewayRejectionReason`
