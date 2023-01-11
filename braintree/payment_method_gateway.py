@@ -7,6 +7,7 @@ from braintree.europe_bank_account import EuropeBankAccount
 from braintree.android_pay_card import AndroidPayCard
 # NEXT_MAJOR_VERSION remove amex express checkout
 from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
+from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.venmo_account import VenmoAccount
 from braintree.us_bank_account import UsBankAccount
 from braintree.visa_checkout_card import VisaCheckoutCard

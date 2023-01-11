@@ -81,11 +81,36 @@ class TestDisputeSearch(unittest.TestCase):
             ])
 
             disputes = [dispute for dispute in collection.disputes.items]
-            self.assertEqual(len(disputes), 1)
-            self.assertEqual(disputes[0].case_number, "CASE-CHARGEBACK-PROTECTED")
-            self.assertEqual(disputes[0].reason, braintree.Dispute.Reason.Fraud)
-            self.assertEqual(disputes[0].chargeback_protection_level, braintree.Dispute.ChargebackProtectionLevel.Effortless)
+            self.assertEqual(len(disputes) > 0, True)
 
+            for dispute in disputes:
+                self.assertEqual(dispute.reason, braintree.Dispute.Reason.Fraud)
+                # NEXT_MAJOR_VERSION Remove this assertion when chargeback_protection_level is removed from the SDK
+                self.assertEqual(dispute.chargeback_protection_level, braintree.Dispute.ChargebackProtectionLevel.Effortless)
+                self.assertEqual(dispute.protection_level, braintree.Dispute.ProtectionLevel.EffortlessCBP)
+
+    def test_advanced_search_returns_disputes_by_pre_dispute_program(self):
+            collection = Dispute.search([
+                DisputeSearch.pre_dispute_program.in_list([
+                    braintree.Dispute.PreDisputeProgram.VisaRdr,
+                ])
+            ])
+
+            disputes = [dispute for dispute in collection.disputes.items]
+            self.assertEqual(len(disputes), 1)
+            self.assertEqual(disputes[0].pre_dispute_program, braintree.Dispute.PreDisputeProgram.VisaRdr)
+
+    def test_advanced_search_returns_disputes_with_no_pre_dispute_program(self):
+            collection = Dispute.search([
+                DisputeSearch.pre_dispute_program == braintree.Dispute.PreDisputeProgram.NONE
+            ])
+
+            disputes = [dispute for dispute in collection.disputes.items]
+            pre_dispute_programs = set([dispute.pre_dispute_program for dispute in disputes])
+
+            self.assertGreater(len(disputes), 1)
+            self.assertEqual(len(pre_dispute_programs), 1)
+            self.assertIn(braintree.Dispute.PreDisputeProgram.NONE, pre_dispute_programs)
 
     def test_advanced_search_returns_disputes_by_date_range(self):
         collection = Dispute.search([

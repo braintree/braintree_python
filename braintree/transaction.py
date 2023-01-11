@@ -29,6 +29,7 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.risk_data import RiskData
 from braintree.samsung_pay_card import SamsungPayCard
+from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.status_event import StatusEvent
 from braintree.subscription_details import SubscriptionDetails
 from braintree.successful_result import SuccessfulResult
@@ -177,6 +178,7 @@ class Transaction(Resource):
         * braintree.Transaction.GatewayRejectionReason.AvsAndCvv
         * braintree.Transaction.GatewayRejectionReason.Cvv
         * braintree.Transaction.GatewayRejectionReason.Duplicate
+        * braintree.Transaction.GatewayRejectionReason.ExcessiveRetry
         * braintree.Transaction.GatewayRejectionReason.Fraud
         * braintree.Transaction.GatewayRejectionReason.RiskThreshold
         * braintree.Transaction.GatewayRejectionReason.ThreeDSecure
@@ -187,6 +189,7 @@ class Transaction(Resource):
         AvsAndCvv             = "avs_and_cvv"
         Cvv                   = "cvv"
         Duplicate             = "duplicate"
+        ExcessiveRetry        = "excessive_retry"
         Fraud                 = "fraud"
         RiskThreshold         = "risk_threshold"
         ThreeDSecure          = "three_d_secure"
@@ -668,6 +671,13 @@ class Transaction(Resource):
                         "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",
                     ]
                 },
+                {"shipping":
+                    [
+                        "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
+                        "country_code_numeric", "country_name", "extended_address", "locality",
+                        "postal_code", "region", "street_address",
+                    ]
+                },
             ]
 
     @staticmethod
@@ -712,6 +722,8 @@ class Transaction(Resource):
             self.paypal_here_details = PayPalHere(gateway, attributes.pop("paypal_here"))
         if "local_payment" in attributes:
             self.local_payment_details = LocalPayment(gateway, attributes.pop("local_payment"))
+        if "sepa_debit_account_detail" in attributes:
+            self.sepa_direct_debit_account_details = SepaDirectDebitAccount(gateway, attributes.pop("sepa_debit_account_detail"))
         if "europe_bank_account" in attributes:
             self.europe_bank_account_details = EuropeBankAccount(gateway, attributes.pop("europe_bank_account"))
         if "us_bank_account" in attributes:

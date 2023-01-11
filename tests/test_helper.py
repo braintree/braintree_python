@@ -69,6 +69,18 @@ class EffortlessChargebackProtectionMerchant:
     def __exit__(self, type, value, trace):
         reset_braintree_configuration()
 
+class DuplicateCheckingMerchant:
+    def __enter__(self):
+        Configuration.configure(
+            Environment.Development,
+            "dup_checking_integration_merchant_id",
+            "dup_checking_integration_public_key",
+            "dup_checking_integration_private_key"
+        )
+
+    def __exit__(self, type, value, trace):
+        reset_braintree_configuration()
+
 def showwarning(*_):
     pass
 warnings.showwarning = showwarning
@@ -506,7 +518,6 @@ class ClientApiHttp(Http):
             nonce = json.loads(response)["paypalAccounts"][0]["nonce"]
 
         return [status_code, nonce]
-
 
     def get_credit_card_nonce(self, credit_card_params):
         url = "/merchants/%s/client_api/v1/payment_methods/credit_cards" % self.config.merchant_id

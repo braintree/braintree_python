@@ -1412,7 +1412,7 @@ class TestSubscription(unittest.TestCase):
 
     def test_create_fails_with_paypal_future_payment_method_nonce(self):
         result = Subscription.create({
-            "payment_method_nonce": Nonces.PayPalFuturePayment,
+            "payment_method_nonce": Nonces.PayPalBillingAgreement,
             "plan_id": TestHelper.trialless_plan["id"]
         })
 

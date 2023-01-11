@@ -1104,6 +1104,21 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
+    def test_sale_with_gateway_rejected_with_excessive_retry(self):
+        with DuplicateCheckingMerchant():
+            for _ in range(16):
+                result = Transaction.sale({
+                    "amount": TransactionAmounts.Decline,
+                    "credit_card": {
+                        "number": CreditCardNumbers.Visa,
+                        "expiration_date": "05/2017",
+                        "cvv": "333"
+                    }
+                })
+
+            self.assertFalse(result.is_success)
+            self.assertEqual(Transaction.GatewayRejectionReason.ExcessiveRetry, result.transaction.gateway_rejection_reason)
+
     def test_sale_with_gateway_rejected_with_fraud(self):
         with AdvancedFraudKountIntegrationMerchant():
             result = Transaction.sale({
@@ -3368,6 +3383,36 @@ class TestTransaction(unittest.TestCase):
 
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
+    def test_submit_for_settlement_with_shipping_data(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+                "discount_amount": "12.33",
+                "shipping_amount": "5.00",
+                "ships_from_postal_code": "90210",
+                "shipping": {
+                    "first_name": "Andrew",
+                    "last_name": "Mason",
+                    "company": "Braintree",
+                    "street_address": "456 W Main St",
+                    "extended_address": "Apt 2F",
+                    "locality": "Bartlett",
+                    "region": "IL",
+                    "postal_code": "60103",
+                    "country_name": "United States of America",
+                    }
+                }
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+
     def test_submit_for_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -5227,7 +5272,7 @@ class TestTransaction(unittest.TestCase):
     def test_creating_paypal_transaction_with_future_payment_nonce(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
 
         self.assertTrue(result.is_success)
@@ -5282,12 +5327,50 @@ class TestTransaction(unittest.TestCase):
         error_code = result.errors.for_object("transaction").on("payment_method_nonce")[0].code
         self.assertEqual(error_code, ErrorCodes.Transaction.PaymentMethodNonceUnknown)
 
+    def test_creating_sepa_direct_debit_transaction_with_vaulted_fake_nonce(self):
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.SepaDirectDebit,
+        })
+
+        self.assertTrue(result.is_success)
+
+        transaction_result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_token": result.payment_method.token,
+            "options": {
+                "submit_for_settlement": True,
+            }
+        })
+
+        self.assertTrue(transaction_result.is_success)
+        transaction = transaction_result.transaction
+        sdd_details = transaction.sepa_direct_debit_account_details
+
+        self.assertEqual(sdd_details.bank_reference_token, "a-fake-bank-reference-token")
+        self.assertEqual(sdd_details.mandate_type, "RECURRENT")
+        self.assertEqual(sdd_details.last_4, "1234")
+        self.assertEqual(sdd_details.merchant_or_partner_customer_id, "a-fake-mp-customer-id")
+        self.assertEqual(sdd_details.transaction_fee_amount, "0.01")
+        self.assertEqual(sdd_details.transaction_fee_currency_iso_code, "USD")
+        self.assertEqual(sdd_details.token, result.payment_method.token)
+        self.assertTrue(sdd_details.capture_id)
+        self.assertTrue(sdd_details.global_id)
+        self.assertIsNone(sdd_details.refund_id)
+        self.assertIsNone(sdd_details.debug_id)
+        self.assertIsNone(sdd_details.paypal_v2_order_id)
+        self.assertIsNone(sdd_details.refund_from_transaction_fee_amount)
+        self.assertIsNone(sdd_details.refund_from_transaction_fee_currency_iso_code)
+        self.assertIsNone(sdd_details.settlement_type)
+
     def test_creating_paypal_transaction_with_vaulted_token(self):
         customer_id = Customer.create().customer.id
 
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
 
         self.assertTrue(result.is_success)

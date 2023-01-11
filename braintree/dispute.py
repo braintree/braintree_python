@@ -1,3 +1,4 @@
+import warnings
 from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
 from braintree.transaction_details import TransactionDetails
@@ -11,12 +12,14 @@ class Dispute(AttributeGetter):
         Constants representing dispute statuses. Available types are:
 
         * braintree.Dispute.Status.Accepted
+        * braintree.Dispute.Status.AutoAccepted
         * braintree.Dispute.Status.Disputed
         * braintree.Dispute.Status.Open
         * braintree.Dispute.Status.Won
         * braintree.Dispute.Status.Lost
         """
         Accepted = "accepted"
+        AutoAccepted = "auto_accepted"
         Disputed = "disputed"
         Expired = "expired"
         Open  = "open"
@@ -65,18 +68,43 @@ class Dispute(AttributeGetter):
         PreArbitration = "pre_arbitration"
         Retrieval      = "retrieval"
 
-    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    # NEXT_MAJOR_VERSION Remove this enum
     class ChargebackProtectionLevel(object):
         """
-        Constants representing dispute chargebackProtectionLevel. Available types are:
+        Constants representing dispute ChargebackProtectionLevel. Available types are:
 
         * braintree.Dispute.ChargebackProtectionLevel.EFFORTLESS
         * braintree.Dispute.ChargebackProtectionLevel.STANDARD
         * braintree.Dispute.ChargebackProtectionLevel.NOT_PROTECTED
         """
+        warnings.warn("Use ProtectionLevel enum instead", DeprecationWarning)
         Effortless     = "effortless"
         Standard       = "standard"
         NotProtected   = "not_protected"
+
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class PreDisputeProgram(object):
+        """
+        Constants representing dispute pre-dispute programs. Available types are:
+
+        * braintree.Dispute.PreDisputeProgram.NONE
+        * braintree.Dispute.PreDisputeProgram.VisaRdr
+        """
+        NONE = "none"
+        VisaRdr = "visa_rdr"
+
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class ProtectionLevel(object):
+        """
+        Constants representing dispute ProtectionLevel. Available types are:
+
+        * braintree.Dispute.ProtectionLevel.EffortlessCBP
+        * braintree.Dispute.ProtectionLevel.StandardCBP
+        * braintree.Dispute.ProtectionLevel.NoProtection
+        """
+        EffortlessCBP  = "Effortless Chargeback Protection tool"
+        StandardCBP    = "Chargeback Protection tool"
+        NoProtection   = "No Protection"
 
     @staticmethod
     def accept(id):
@@ -176,6 +204,8 @@ class Dispute(AttributeGetter):
         return Configuration.gateway().dispute.search(*query)
 
     def __init__(self, attributes):
+        if "chargeback_protection_level" in attributes:
+            warnings.warn("Use protection_level attribute instead", DeprecationWarning)
         AttributeGetter.__init__(self, attributes)
 
         if "amount" in attributes and getattr(self, "amount", None) is not None:
@@ -184,6 +214,10 @@ class Dispute(AttributeGetter):
             self.amount_disputed = Decimal(self.amount_disputed)
         if "amount_won" in attributes and getattr(self, "amount_won", None) is not None:
             self.amount_won = Decimal(self.amount_won)
+        if "chargeback_protection_level" in attributes and getattr(self, "chargeback_protection_level", None) in [self.ChargebackProtectionLevel.Effortless, self.ChargebackProtectionLevel.Standard]:
+            self.protection_level = eval("self.ProtectionLevel.{0}CBP".format(self.chargeback_protection_level.capitalize()))
+        else:
+            self.protection_level = self.ProtectionLevel.NoProtection
         if "transaction" in attributes:
             self.transaction_details = TransactionDetails(attributes.pop("transaction"))
             self.transaction = self.transaction_details

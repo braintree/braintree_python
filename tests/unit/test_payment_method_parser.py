@@ -21,6 +21,15 @@ class TestPaymentMethodParser(unittest.TestCase):
         self.assertEqual("1234", paypal_account.token)
         self.assertFalse(paypal_account.default)
 
+    def test_parse_response_returns_a_sepa_direct_debit_account(self):
+        sdd_account = parse_payment_method(BraintreeGateway(None), {
+            "sepa_debit_account": {"token": "1234", "default": False}
+        })
+
+        self.assertEqual(SepaDirectDebitAccount, sdd_account.__class__)
+        self.assertEqual("1234", sdd_account.token)
+        self.assertFalse(sdd_account.default)
+
     def test_parse_response_returns_an_unknown_payment_method(self):
         unknown_payment_method = parse_payment_method(BraintreeGateway(None), {
             "new_fancy_payment_method": {

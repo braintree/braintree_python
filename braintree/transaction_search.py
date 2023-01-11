@@ -42,6 +42,7 @@ class TransactionSearch:
     paypal_payer_email           = Search.TextNodeBuilder("paypal_payer_email")
     paypal_payment_id            = Search.TextNodeBuilder("paypal_payment_id")
     paypal_authorization_id      = Search.TextNodeBuilder("paypal_authorization_id")
+    sepa_debit_paypal_v2_order_id = Search.TextNodeBuilder("sepa_debit_paypal_v2_order_id")
     credit_card_unique_identifier = Search.TextNodeBuilder("credit_card_unique_identifier")
     store_id                     = Search.TextNodeBuilder("store_id")
 

@@ -30,6 +30,7 @@ class WebhookNotification(Resource):
         Disbursement = "disbursement"
         DisbursementException = "disbursement_exception"
         DisputeAccepted = "dispute_accepted"
+        DisputeAutoAccepted = "dispute_auto_accepted"
         DisputeDisputed = "dispute_disputed"
         DisputeExpired = "dispute_expired"
         DisputeLost = "dispute_lost"

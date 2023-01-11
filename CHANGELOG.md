@@ -1,8 +1,20 @@
 # Changelog
 
-## unreleased
+## 4.18.0
 * Replace nose usage for tests with unittest (Thanks @arthurzam)
 * Remove mock dev dependency (Thanks @arthurzam)
+* Add `ExcessiveRetry` to `GatewayRejectionReason`
+* Add `pre_dispute_program` to `Dispute` and `DisputeSearch`
+* Add `AutoAccepted` status to `Dispute`
+* Add `DisputeAutoAccepted` to `WebhookNotification.Kind`
+* Deprecate `chargeback_protection_level` and add `protection_level` to `Dispute` and `DisputeSearch`
+* Add `shipping` object to `submit_for_settlement_signature`
+* Add `SEPADirectDebitAccount` payment method
+* Add `SEPADirectDebitAccount` to transaction object
+* Add `SEPA_DIRECT_DEBIT_ACCOUNT` to `PaymentInstrumentType`
+* Add `sepa_debit_paypal_v2_order_id` to `TransactionSearch`
+* Add `sepa_direct_debit_accounts` to `Customer`
+* Add SEPA Direct Debit specific error codes
 
 ## 4.17.1
 * Prepare http request before setting url to resolve issue where dot segments get normalized

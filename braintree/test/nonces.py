@@ -2,6 +2,7 @@ class Nonces(object):
     Transactable = "fake-valid-nonce"
     Consumed = "fake-consumed-nonce"
     PayPalOneTimePayment = "fake-paypal-one-time-nonce"
+    # NEXT_MAJOR_VERSION - no longer supported in the Gateway, remove this constant
     PayPalFuturePayment = "fake-paypal-future-nonce"
     PayPalBillingAgreement = "fake-paypal-billing-agreement-nonce"
     ApplePayVisa = "fake-apple-pay-visa-nonce"
@@ -76,3 +77,4 @@ class Nonces(object):
     SamsungPayDiscover = "tokensam_fake_american_express"
     SamsungPayMasterCard = "tokensam_fake_mastercard"
     SamsungPayVisa = "tokensam_fake_visa"
+    SepaDirectDebit = "fake-sepa-direct-debit-nonce"

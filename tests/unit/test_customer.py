@@ -30,9 +30,16 @@ class TestCustomer(unittest.TestCase):
             "paypal_accounts": [
                 {"token": "token1"},
                 {"token": "token2"}
+            ],
+            "sepa_debit_accounts": [
+                {"token": "sdd1"},
+                {"token": "sdd2"}
             ]
         })
 
         self.assertEqual(2, len(customer.paypal_accounts))
         self.assertEqual("token1", customer.paypal_accounts[0].token)
         self.assertEqual("token2", customer.paypal_accounts[1].token)
+        self.assertEqual(2, len(customer.sepa_direct_debit_accounts))
+        self.assertEqual("sdd1", customer.sepa_direct_debit_accounts[0].token)
+        self.assertEqual("sdd2", customer.sepa_direct_debit_accounts[1].token)

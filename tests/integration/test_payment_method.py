@@ -65,17 +65,17 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertEqual("EciFlag is required.", result.message)
 
-    def test_create_with_paypal_future_payments_nonce(self):
+    def test_create_with_paypal_billing_agreements_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": Nonces.PayPalFuturePayment
+            "payment_method_nonce": Nonces.PayPalBillingAgreement
         })
 
         self.assertTrue(result.is_success)
         created_account = result.payment_method
         self.assertEqual(PayPalAccount, created_account.__class__)
-        self.assertEqual("jane.doe@example.com", created_account.email)
+        self.assertEqual("jane.doe@paypal.com", created_account.email)
         self.assertNotEqual(created_account.image_url, None)
 
         found_account = PaymentMethod.find(result.payment_method.token)
@@ -1557,3 +1557,27 @@ class TestPaymentMethod(unittest.TestCase):
     def test_payment_method_revoke_raises_on_non_existent_tokens(self):
         granting_gateway, _ = TestHelper.create_payment_method_grant_fixtures()
         self.assertRaises(NotFoundError, granting_gateway.payment_method.revoke, "non-existant-token")
+
+    def test_vault_sepa_direct_debit_payment_method_with_fake_nonce(self):
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": Nonces.SepaDirectDebit,
+            "customer_id": customer_id,
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_delete_sepa_direct_debit_payment_method(self):
+        customer_id = Customer.create().customer.id
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": Nonces.SepaDirectDebit,
+            "customer_id": customer_id,
+        })
+
+        self.assertTrue(result.is_success)
+
+        delete_result = PaymentMethod.delete(result.payment_method.token)
+
+        self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
