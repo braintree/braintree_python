@@ -65,15 +65,12 @@ class TestMerchantAccount(unittest.TestCase):
 
     def test_create_requires_all_fields(self):
         result = MerchantAccount.create(
-            {"master_merchant_account_id": "sandbox_master_merchant_account",
-             "applicant_details": {},
-            "tos_accepted": True}
+            {"master_merchant_account_id": "sandbox_master_merchant_account"}
         )
         self.assertFalse(result.is_success)
 
-        first_name_errors = result.errors.for_object("merchant_account").for_object("applicant_details").on("first_name")
-        self.assertEqual(1, len(first_name_errors))
-        self.assertEqual(ErrorCodes.MerchantAccount.ApplicantDetails.FirstNameIsRequired, first_name_errors[0].code)
+        tos_errors = result.errors.for_object("merchant_account").on("tos_accepted")
+        self.assertEqual(ErrorCodes.MerchantAccount.TosAcceptedIsRequired , tos_errors[0].code)
 
     def test_create_funding_destination_accepts_a_bank(self):
         params = self.VALID_APPLICATION_PARAMS.copy()

@@ -92,3 +92,26 @@ class TestHttp(unittest.TestCase):
             correct_exception = False
 
         self.assertTrue(correct_exception)
+
+    def test_sessions_include_proxy_environments(self):
+        proxies = {'https': 'http://i-clearly-dont-work', 'http': 'https://i-clearly-dont-work'}
+        os.environ['HTTP_PROXY'] = proxies['http']
+        os.environ['HTTPS_PROXY'] = proxies['https']
+        self.assertEqual(requests.utils.getproxies(), proxies)
+
+        config = Configuration(
+            Environment.Development,
+            "integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key",
+            wrap_http_exceptions=True,
+        )
+        gateway = braintree.braintree_gateway.BraintreeGateway(config)
+
+        try:
+            gateway.plan.all()
+            os.environ.clear()
+            assert False, "The proxy is invalid this request should not be successful."
+        except Exception as e:
+            os.environ.clear()
+            assert 'Cannot connect to proxy' in str(e)

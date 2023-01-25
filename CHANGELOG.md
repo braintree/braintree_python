@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.18.1
+* Fixup issue where request sessions weren't including proxy settings (see [#5677](https://github.com/psf/requests/issues/5677) for details).
+
 ## 4.18.0
 * Replace nose usage for tests with unittest (Thanks @arthurzam)
 * Remove mock dev dependency (Thanks @arthurzam)

@@ -122,6 +122,9 @@ class Http(object):
                 files=files)
             prepared_request = request.prepare()
             prepared_request.url = full_path
+            # there's a bug in requests module that requires we manually update proxy settings,
+            # see https://github.com/psf/requests/issues/5677
+            session.proxies.update(requests.utils.getproxies())
 
             response = session.send(prepared_request,
                 verify=verify,

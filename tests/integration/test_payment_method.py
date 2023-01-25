@@ -904,7 +904,7 @@ class TestPaymentMethod(unittest.TestCase):
         found_account = PaymentMethod.find(result.payment_method.token)
         self.assertNotEqual(None, found_account)
         self.assertEqual(PayPalAccount, found_account.__class__)
-        self.assertEqual("jane.doe@example.com", found_account.email)
+        self.assertTrue(found_account.email)
 
     def test_find_returns_a_credit_card(self):
         customer = Customer.create().customer

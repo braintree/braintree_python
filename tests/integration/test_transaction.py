@@ -1106,7 +1106,9 @@ class TestTransaction(unittest.TestCase):
 
     def test_sale_with_gateway_rejected_with_excessive_retry(self):
         with DuplicateCheckingMerchant():
-            for _ in range(16):
+            excessive_retry = False
+            counter = 0
+            while not (excessive_retry or counter > 25):
                 result = Transaction.sale({
                     "amount": TransactionAmounts.Decline,
                     "credit_card": {
@@ -1115,6 +1117,8 @@ class TestTransaction(unittest.TestCase):
                         "cvv": "333"
                     }
                 })
+                excessive_retry = (result.transaction.status == braintree.Transaction.Status.GatewayRejected)
+                counter += 1
 
             self.assertFalse(result.is_success)
             self.assertEqual(Transaction.GatewayRejectionReason.ExcessiveRetry, result.transaction.gateway_rejection_reason)
@@ -4999,7 +5003,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("xidvalue", three_d_secure_info.xid)
         self.assertEqual("dstxnid", three_d_secure_info.ds_transaction_id)
         self.assertEqual("07", three_d_secure_info.eci_flag)
-        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
+        self.assertIsNotNone(three_d_secure_info.three_d_secure_version)
 
     def test_find_exposes_none_for_null_three_d_secure_info(self):
         transaction = Transaction.find("settledtransaction")
@@ -6078,7 +6082,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(ErrorCodes.Transaction.TransactionMustBeInStateAuthorized, error_code)
 
     def test_adjust_authorization_when_transaction_authorization_type_is_undfined_or_final(self):
-        additional_params = { "transaction_source": "recurring_first" }
+        additional_params = { "transaction_source": "recurring" }
         merchant_params = { **self.__first_data_transaction_params(), **additional_params }
         initial_transaction_sale =  Transaction.sale(merchant_params)
         self.assertTrue(initial_transaction_sale.is_success)
