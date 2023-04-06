@@ -4,9 +4,6 @@ class DisputeSearch:
     amount_disputed             =   Search.RangeNodeBuilder("amount_disputed")
     amount_won                  =   Search.RangeNodeBuilder("amount_won")
     case_number                 =   Search.TextNodeBuilder("case_number")
-    # NEXT_MAJOR_VERSION Remove this attribute
-    # DEPRECATED The chargeback_protection_level attribute is deprecated in favor of protection_level
-    chargeback_protection_level =   Search.MultipleValueNodeBuilder("chargeback_protection_level")
     protection_level            =   Search.MultipleValueNodeBuilder("protection_level")
     customer_id                 =   Search.TextNodeBuilder("customer_id")
     disbursement_date           =   Search.RangeNodeBuilder("disbursement_date")
@@ -23,3 +20,10 @@ class DisputeSearch:
     status                      =   Search.MultipleValueNodeBuilder("status")
     transaction_id              =   Search.TextNodeBuilder("transaction_id")
     transaction_source          =   Search.MultipleValueNodeBuilder("transaction_source")
+
+    # NEXT_MAJOR_VERSION Remove this attribute
+    # DEPRECATED The chargeback_protection_level attribute is deprecated in favor of protection_level
+    def __getattr__(self, item):
+        if item == "chargeback_protection_level":
+            return Search.MultipleValueNodeBuilder("chargeback_protection_level")
+        raise AttributeError()

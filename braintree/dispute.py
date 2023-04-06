@@ -77,7 +77,11 @@ class Dispute(AttributeGetter):
         * braintree.Dispute.ChargebackProtectionLevel.STANDARD
         * braintree.Dispute.ChargebackProtectionLevel.NOT_PROTECTED
         """
-        warnings.warn("Use ProtectionLevel enum instead", DeprecationWarning)
+
+        def __getattribute__(self, name):
+            warnings.warn("Use ProtectionLevel enum instead", DeprecationWarning)
+            return super().__getattribute__(name)
+
         Effortless     = "effortless"
         Standard       = "standard"
         NotProtected   = "not_protected"
