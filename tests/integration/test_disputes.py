@@ -185,6 +185,39 @@ class TestDisputes(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    def test_add_text_evidence_adds_category_and_shipping_tracking_carrier_name(self):
+        dispute = self.create_sample_dispute()
+
+        result = Dispute.add_text_evidence(dispute.id, { "content": "UPS", "category": "CARRIER_NAME", "sequence_number": "0" })
+
+        self.assertTrue(result.is_success)
+        evidence = result.evidence
+        self.assertEqual(evidence.comment, "UPS")
+        self.assertEqual(evidence.category, "CARRIER_NAME")
+        self.assertEqual(evidence.sequence_number, 0)
+
+    def test_add_text_evidence_adds_category_and_shipping_tracking_tracking_number(self):
+        dispute = self.create_sample_dispute()
+
+        result = Dispute.add_text_evidence(dispute.id, { "content": "3", "category": "TRACKING_NUMBER", "sequence_number": "0" })
+
+        self.assertTrue(result.is_success)
+        evidence = result.evidence
+        self.assertEqual(evidence.comment, "3")
+        self.assertEqual(evidence.category, "TRACKING_NUMBER")
+        self.assertEqual(evidence.sequence_number, 0)
+
+    def test_add_text_evidence_adds_category_and_shipping_tracking_tracking_url(self):
+        dispute = self.create_sample_dispute()
+
+        result = Dispute.add_text_evidence(dispute.id, { "content": "https://example.com/tracking-number/abc12345", "category": "TRACKING_URL", "sequence_number": "1" })
+
+        self.assertTrue(result.is_success)
+        evidence = result.evidence
+        self.assertEqual(evidence.comment, "https://example.com/tracking-number/abc12345")
+        self.assertEqual(evidence.category, "TRACKING_URL")
+        self.assertEqual(evidence.sequence_number, 1)
+
     def test_finalize_changes_dispute_status_to_disputed(self):
         dispute = self.create_sample_dispute()
 

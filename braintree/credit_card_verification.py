@@ -81,7 +81,24 @@ class CreditCardVerification(AttributeGetter):
         options_params = [
                 "account_type", "amount", "merchant_account_id"
             ]
-        return [{"credit_card": credit_card_params}, {"options": options_params}]
+        three_d_secure_pass_thru_params = [
+                "eci_flag",
+                "cavv",
+                "xid",
+                "authentication_response",
+                "directory_response",
+                "cavv_algorithm",
+                "ds_transaction_id",
+                "three_d_secure_version"
+                ]
+
+        return [
+                {"credit_card": credit_card_params},
+                "intended_transaction_source",
+                {"options": options_params},
+                "payment_method_nonce",
+                "three_d_secure_authentication_id",
+                {"three_d_secure_pass_thru": three_d_secure_pass_thru_params}]
 
     def __eq__(self, other):
         if not isinstance(other, CreditCardVerification):

@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.19.0
+* Add `intended_transaction_source` to `CreditCardVerification`
+* Add `three_d_secure_pass_thru` to `CreditCardVerification`
+* Add `payment_method_nonce` to `CreditCardVerification`
+* Add `three_d_secure_authentication_id` to `CreditCardVerification`
+* Add support for subscriptions in SEPA direct debit accounts
+
 ## 4.18.1
 * Fixup issue where request sessions weren't including proxy settings (see [#5677](https://github.com/psf/requests/issues/5677) for details).
 

@@ -2,7 +2,6 @@ import datetime
 from tests.test_helper import *
 from braintree.test.credit_card_defaults import CreditCardDefaults
 from braintree.test.credit_card_numbers import CreditCardNumbers
-import braintree.test.venmo_sdk as venmo_sdk
 
 class TestCreditCard(unittest.TestCase):
     def test_create_with_three_d_secure_nonce(self):
@@ -87,7 +86,6 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual("05/2014", credit_card.expiration_date)
         self.assertEqual("John Doe", credit_card.cardholder_name)
         self.assertNotEqual(re.search(r"\A\w{32}\Z", credit_card.unique_number_identifier), None)
-        self.assertFalse(credit_card.venmo_sdk)
         self.assertNotEqual(re.search("png", credit_card.image_url), None)
 
     def test_create_and_make_default(self):
@@ -508,31 +506,6 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(1, len(country_name_errors))
         self.assertEqual(ErrorCodes.Address.CountryNameIsNotAccepted, country_name_errors[0].code)
 
-    def test_create_with_venmo_sdk_payment_method_code(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
-            "customer_id": customer.id,
-            "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertEqual("411111", result.credit_card.bin)
-        self.assertFalse(result.credit_card.venmo_sdk)
-
-    def test_create_with_invalid_venmo_sdk_payment_method_code(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
-            "customer_id": customer.id,
-            "venmo_sdk_payment_method_code": venmo_sdk.InvalidPaymentMethodCode
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual("Invalid VenmoSDK payment method code", result.message)
-
-        venmo_sdk_payment_method_code_errors = result.errors.for_object("credit_card").on("venmo_sdk_payment_method_code")
-        self.assertEqual(1, len(venmo_sdk_payment_method_code_errors))
-        self.assertEqual(ErrorCodes.CreditCard.InvalidVenmoSDKPaymentMethodCode, venmo_sdk_payment_method_code_errors[0].code)
-
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()
         authorization_fingerprint = json.loads(TestHelper.generate_decoded_client_token())["authorizationFingerprint"]
@@ -559,36 +532,6 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         self.assertEqual("411111", result.credit_card.bin)
-
-    def test_create_with_venmo_sdk_session(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_date": "05/2014",
-            "cvv": "100",
-            "cardholder_name": "John Doe",
-            "options": {
-                "venmo_sdk_session": venmo_sdk.Session
-            }
-        })
-        self.assertTrue(result.is_success)
-        self.assertFalse(result.credit_card.venmo_sdk)
-
-    def test_create_with_invalid_venmo_sdk_session(self):
-        customer = Customer.create().customer
-        result = CreditCard.create({
-            "customer_id": customer.id,
-            "number": "4111111111111111",
-            "expiration_date": "05/2014",
-            "cvv": "100",
-            "cardholder_name": "John Doe",
-            "options": {
-                "venmo_sdk_session": venmo_sdk.InvalidSession
-            }
-        })
-        self.assertTrue(result.is_success)
-        self.assertFalse(result.credit_card.venmo_sdk)
 
     def test_delete_customer_with_path_traversal(self):
         try:

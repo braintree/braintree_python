@@ -181,3 +181,73 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertTrue(result.is_success)
         verification = result.verification
         self.assertRegex(verification.network_transaction_id, r'\d{15}')
+
+    def test_verification_with_three_d_secure_authentication_id_with_nonce(self):
+        config = Configuration(
+                environment=Environment.Development,
+                merchant_id="integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key"
+                )
+        gateway = BraintreeGateway(config)
+        credit_card = {
+                "credit_card": {
+                    "number": CreditCardNumbers.Visa,
+                    "expiration_month": "05",
+                    "expiration_year": "2029",
+                    }
+                }
+        nonce = TestHelper.generate_three_d_secure_nonce(gateway, credit_card)
+        found_nonce = PaymentMethodNonce.find(nonce)
+        three_d_secure_info = found_nonce.three_d_secure_info
+
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                },
+            "options": {"merchant_account_id": TestHelper.three_d_secure_merchant_account_id},
+            "payment_method_nonce": nonce,
+            "three_d_secure_authentication_id": three_d_secure_info.three_d_secure_authentication_id
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+
+    def test_verification_with_three_d_secure_pass_thru(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2029"},
+            "options": {"merchant_account_id": TestHelper.three_d_secure_merchant_account_id},
+            "three_d_secure_pass_thru": {
+                "eci_flag": "02",
+                "cavv": "some_cavv",
+                "xid": "some_xid",
+                "three_d_secure_version": "1.0.2",
+                "authentication_response": "Y",
+                "directory_response": "Y",
+                "cavv_algorithm": "2",
+                "ds_transaction_id": "some_ds_id"}})
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+
+    def test_verification_with_intended_transaction_source(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2029"},
+            "intended_transaction_source": "installment"
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)

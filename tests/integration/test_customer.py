@@ -1,6 +1,5 @@
 # -*- coding: latin-1 -*-
 from tests.test_helper import *
-import braintree.test.venmo_sdk as venmo_sdk
 from braintree.test.nonces import Nonces
 
 class TestCustomer(unittest.TestCase):
@@ -739,34 +738,6 @@ class TestCustomer(unittest.TestCase):
         custom_fields_errors = result.errors.for_object("customer").on("custom_fields")
         self.assertEqual(1, len(custom_fields_errors))
         self.assertEqual(ErrorCodes.Customer.CustomFieldIsInvalid, custom_fields_errors[0].code)
-
-    def test_create_with_venmo_sdk_session(self):
-        result = Customer.create({
-            "first_name": "Jack",
-            "last_name": "Kennedy",
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2010",
-                "options": {
-                    "venmo_sdk_session": venmo_sdk.Session
-                }
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertFalse(result.customer.credit_cards[0].venmo_sdk)
-
-    def test_create_with_venmo_sdk_payment_method_code(self):
-        result = Customer.create({
-            "first_name": "Jack",
-            "last_name": "Kennedy",
-            "credit_card": {
-                "venmo_sdk_payment_method_code": venmo_sdk.generate_test_payment_method_code("4111111111111111")
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertEqual("411111", result.customer.credit_cards[0].bin)
 
     def test_create_with_payment_method_nonce(self):
         config = Configuration.instantiate()

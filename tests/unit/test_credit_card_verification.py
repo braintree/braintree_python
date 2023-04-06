@@ -6,6 +6,39 @@ class TestCreditCardVerification(unittest.TestCase):
         with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
             CreditCardVerification.create({"bad_key": "value", "credit_card": {"number": "value"}})
 
+    def test_create_signature(self):
+        billing_address_params = [
+                "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric",
+                "country_name", "extended_address", "first_name", "last_name", "locality",
+                "postal_code", "region", "street_address"
+                ]
+        credit_card_params = [
+                "number", "cvv", "cardholder_name", "cvv", "expiration_date", "expiration_month",
+                "expiration_year", {"billing_address": billing_address_params}
+                ]
+        options_params = [
+                "account_type", "amount", "merchant_account_id"
+                ]
+        three_d_secure_pass_thru_params = [
+                "eci_flag",
+                "cavv",
+                "xid",
+                "authentication_response",
+                "directory_response",
+                "cavv_algorithm",
+                "ds_transaction_id",
+                "three_d_secure_version"
+                ]
+        expected = [
+                {"credit_card": credit_card_params},
+                "intended_transaction_source",
+                {"options": options_params},
+                "payment_method_nonce",
+                "three_d_secure_authentication_id",
+                {"three_d_secure_pass_thru": three_d_secure_pass_thru_params}]
+
+        self.assertEqual(expected, CreditCardVerification.create_signature())
+
     def test_constructor_with_amount(self):
         attributes = {
             'amount': '27.00',

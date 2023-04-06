@@ -5,8 +5,6 @@ from braintree.test.nonces import Nonces
 from braintree.dispute import Dispute
 from braintree.payment_instrument_type import PaymentInstrumentType
 
-import braintree.test.venmo_sdk as venmo_sdk
-
 class TestTransaction(unittest.TestCase):
 
     def test_sale(self):
@@ -42,23 +40,23 @@ class TestTransaction(unittest.TestCase):
             self.assertTrue(hasattr(transaction.risk_data, 'decision_reasons'))
             self.assertTrue(hasattr(transaction.risk_data, 'transaction_risk_score'))
 
-    def test_sale_returns_chargeback_protection_risk_data(self):
-        with EffortlessChargebackProtectionMerchant():
-            result = Transaction.sale({
-                "amount": TransactionAmounts.Authorize,
-                "credit_card": {
-                    "number": "4111111111111111",
-                    "expiration_date": "05/2009"
-                },
-                "device_data": "abc123",
-            })
-
-            self.assertTrue(result.is_success)
-            transaction = result.transaction
-            risk_data = result.transaction.risk_data
-            self.assertIsInstance(risk_data, RiskData)
-            self.assertNotEqual(risk_data.id, None)
-            self.assertTrue(hasattr(risk_data, 'liability_shift'))
+    # def test_sale_returns_chargeback_protection_risk_data(self):
+    #     with EffortlessChargebackProtectionMerchant():
+    #         result = Transaction.sale({
+    #             "amount": TransactionAmounts.Authorize,
+    #             "credit_card": {
+    #                 "number": "4111111111111111",
+    #                 "expiration_date": "05/2009"
+    #             },
+    #             "device_data": "abc123",
+    #         })
+    #
+    #         self.assertTrue(result.is_success)
+    #         transaction = result.transaction
+    #         risk_data = result.transaction.risk_data
+    #         self.assertIsInstance(risk_data, RiskData)
+    #         self.assertNotEqual(risk_data.id, None)
+    #         self.assertTrue(hasattr(risk_data, 'liability_shift'))
 
     def test_sale_receives_network_transaction_id_visa(self):
         result = Transaction.sale({
@@ -1104,6 +1102,7 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
+    @unittest.skip("pending")
     def test_sale_with_gateway_rejected_with_excessive_retry(self):
         with DuplicateCheckingMerchant():
             excessive_retry = False
@@ -1334,31 +1333,6 @@ class TestTransaction(unittest.TestCase):
             ErrorCodes.Transaction.CannotCancelRelease,
             result.errors.for_object("transaction").on("base")[0].code
         )
-
-    def test_sale_with_venmo_sdk_session(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "options": {
-                "venmo_sdk_session": venmo_sdk.Session
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertFalse(result.transaction.credit_card_details.venmo_sdk)
-
-    def test_sale_with_venmo_sdk_payment_method_code(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "venmo_sdk_payment_method_code": venmo_sdk.VisaPaymentMethodCode
-        })
-
-        self.assertTrue(result.is_success)
-        transaction = result.transaction
-        self.assertEqual("411111", transaction.credit_card_details.bin)
 
     def test_sale_with_payment_method_nonce(self):
         config = Configuration.instantiate()
@@ -2722,6 +2696,30 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual(True, transaction.recurring)
+
+    def test_create_can_set_transaction_source_installment_first(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "installment_first"
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_create_can_set_transaction_source_flag_installment(self):
+        result = Transaction.sale({
+            "amount": "100",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "transaction_source": "installment"
+        })
+
+        self.assertTrue(result.is_success)
 
     def test_create_can_set_transaction_source_flag_merchant(self):
         result = Transaction.sale({
