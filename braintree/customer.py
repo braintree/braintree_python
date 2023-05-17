@@ -165,7 +165,6 @@ class Customer(Resource):
             {"credit_card": CreditCard.create_signature()},
             {"apple_pay_card": ApplePayCard.signature()},
             {"android_pay_card": AndroidPayCard.signature()},
-            {"android_pay_network_token": AndroidPayCard.signature()},
             {"custom_fields": ["__any_key__"]},
             {"three_d_secure_pass_thru": [
                 "cavv",
@@ -192,7 +191,6 @@ class Customer(Resource):
             {"credit_card": CreditCard.signature("update_via_customer")},
             {"apple_pay_card": ApplePayCard.signature()},
             {"android_pay_card": AndroidPayCard.signature()},
-            {"android_pay_network_token": AndroidPayCard.signature()},
             {"three_d_secure_pass_thru": [
                 "cavv",
                 "ds_transaction_id",
