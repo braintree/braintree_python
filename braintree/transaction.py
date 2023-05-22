@@ -121,6 +121,8 @@ class Transaction(Resource):
         "liability_shift",
         "master_merchant_account_id",
         "merchant_account_id",
+        "merchant_advice_code",
+        "merchant_advice_code_text",
         "network_response_code",
         "network_response_text",
         "network_transaction_id",

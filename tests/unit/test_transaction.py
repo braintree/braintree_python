@@ -236,3 +236,14 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.gateway_rejection_reason, braintree.Transaction.GatewayRejectionReason.ExcessiveRetry)
+
+    def test_merchant_advice_code(self):
+        attributes = {
+            'amount': TransactionAmounts.Decline,
+            'merchant_advice_code': "01",
+            'merchant_advice_code_text': "New account information available"
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.merchant_advice_code, "01")
+        self.assertEqual(transaction.merchant_advice_code_text, "New account information available")

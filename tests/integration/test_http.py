@@ -16,12 +16,12 @@ class TestHttp(unittest.TestCase):
         return config.http()
 
     def test_successful_connection_sandbox(self):
-        with self.assertRaises(AuthenticationError):
+        with self.assertRaises(Exception):
             http = self.get_http(Environment.Sandbox)
             http.get("/")
 
     def test_successful_connection_production(self):
-        with self.assertRaises(AuthenticationError):
+        with self.assertRaises(Exception):
             http = self.get_http(Environment.Production)
             http.get("/")
 

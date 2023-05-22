@@ -599,6 +599,119 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_errors[0].code)
         self.assertEqual(ErrorCodes.Address.PostalCodeInvalidCharacters, postal_errors[0].code)
 
+    def test_create_for_raw_android_pay_card(self):
+        result = Customer.create({
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "android_pay_card": {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2014",
+                "google_transaction_id": "dontbeevil",
+                "billing_address": {
+                    "postal_code": 83704
+                }
+            }
+        })
+
+        customer = result.customer
+        self.assertEqual("Rickey", customer.first_name)
+        self.assertEqual("Crabapple", customer.last_name)
+
+        self.assertTrue(result.is_success)
+        android_pay_card = result.customer.android_pay_cards[0]
+        self.assertEqual("411111", android_pay_card.bin)
+        self.assertEqual("1111", android_pay_card.last_4)
+        self.assertEqual("2014", android_pay_card.expiration_year)
+        self.assertEqual("05", android_pay_card.expiration_month)
+        self.assertEqual("dontbeevil", android_pay_card.google_transaction_id)
+        self.assertEqual(android_pay_card.billing_address["postal_code"], "83704")
+
+    def test_create_for_raw_android_pay_card_with_invalid_params(self):
+        result = Customer.create({
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "android_pay_card": {
+                "number": "4111111111111111",
+                "expiration_year": "2014",
+                "expiration_month": "01",
+                "google_transaction_id": "dontbeevil",
+                "billing_address": {
+                    "street_address": "head 100 yds south once you hear the beehive",
+                    "postal_code": '$$$$',
+                    "country_code_alpha2": "UX",
+                }
+            }
+        })
+
+        errors = result.errors.for_object("android_pay_card").on("billing_address")
+        self.assertFalse(result.is_success)
+
+        postal_errors = result.errors.for_object("android_pay_card").for_object("billing_address").on("postal_code")
+        country_errors = result.errors.for_object("android_pay_card").for_object("billing_address").on("country_code_alpha2")
+        self.assertEqual(1, len(postal_errors))
+        self.assertEqual(1, len(country_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_errors[0].code)
+        self.assertEqual(ErrorCodes.Address.PostalCodeInvalidCharacters, postal_errors[0].code)
+
+    def test_create_for_raw_android_pay_network_token(self):
+        result = Customer.create({
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "android_pay_network_token": {
+                "number": "4111111111111111",
+                "expiration_month": "05",
+                "expiration_year": "2014",
+                "cryptogram": "01010101010101010101",
+                "eci_indicator": "5",
+                "google_transaction_id": "dontbeevil",
+                "billing_address": {
+                    "postal_code": 83704
+                }
+            }
+        })
+        customer = result.customer
+        self.assertEqual("Rickey", customer.first_name)
+        self.assertEqual("Crabapple", customer.last_name)
+
+        self.assertTrue(result.is_success)
+        android_pay_network_token = result.customer.android_pay_cards[0]
+        self.assertEqual("411111", android_pay_network_token.bin)
+        self.assertEqual("1111", android_pay_network_token.last_4)
+        self.assertEqual("2014", android_pay_network_token.expiration_year)
+        self.assertEqual("05", android_pay_network_token.expiration_month)
+        self.assertEqual("dontbeevil", android_pay_network_token.google_transaction_id)
+        self.assertEqual(android_pay_network_token.billing_address["postal_code"], "83704")
+
+    def test_create_for_raw_android_pay_network_token_with_invalid_params(self):
+        result = Customer.create({
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "android_pay_network_token": {
+                "number": "4111111111111111",
+                "expiration_year": "2014",
+                "expiration_month": "01",
+                "google_transaction_id": "dontbeevil",
+                "cryptogram": "01010101010101010101",
+                "cardholder_name": "John Doe",
+                "billing_address": {
+                    "street_address": "head 100 yds south once you hear the beehive",
+                    "postal_code": '$$$$',
+                    "country_code_alpha2": "UX",
+                }
+            }
+        })
+
+        errors = result.errors.for_object("android_pay_network_token").on("billing_address")
+        self.assertFalse(result.is_success)
+
+        postal_errors = result.errors.for_object("android_pay_network_token").for_object("billing_address").on("postal_code")
+        country_errors = result.errors.for_object("android_pay_network_token").for_object("billing_address").on("country_code_alpha2")
+        self.assertEqual(1, len(postal_errors))
+        self.assertEqual(1, len(country_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_errors[0].code)
+        self.assertEqual(ErrorCodes.Address.PostalCodeInvalidCharacters, postal_errors[0].code)
+
     def test_create_customer_and_verify_payment_method(self):
         result = Customer.create({
             "first_name": "Mike",
@@ -1309,6 +1422,138 @@ class TestCustomer(unittest.TestCase):
             self.assertEqual(apple_pay_card.billing_address["country_code_alpha3"], "USA")
             self.assertEqual(apple_pay_card.billing_address["country_code_numeric"], "840")
             self.assertEqual(apple_pay_card.billing_address["country_name"], "United States of America")
+
+    def test_update_works_for_raw_android_pay_card(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer = Customer.create().customer
+            secure_token = TestHelper.random_token_block(None)
+
+            result = Customer.update(customer.id, {
+                "android_pay_card": {
+                    "number": "4111111111111111",
+                    "expiration_month": "05",
+                    "expiration_year": "2014",
+                    "google_transaction_id": "iliketurtles",
+                    "token": secure_token,
+                    "options": {
+                        "make_default": True
+                    },
+                    "billing_address": {
+                        "street_address": "123 Abc Way",
+                        "locality": "Chicago",
+                        "region": "Illinois",
+                        "postal_code": "60622",
+                        "phone_number": "312.555.1234",
+                        "country_code_alpha2": "US",
+                        "country_code_alpha3": "USA",
+                        "country_code_numeric": "840",
+                        "country_name": "United States of America"
+                    }
+                },
+            })
+
+            self.assertTrue(result.is_success)
+            self.assertEqual(secure_token, result.customer.payment_methods[0].token)
+
+            self.assertNotEqual(0, len(result.customer.android_pay_cards))
+            android_pay_card = result.customer.android_pay_cards[0]
+            self.assertTrue(android_pay_card.default)
+            self.assertEqual(android_pay_card.expiration_month, "05")
+            self.assertEqual(android_pay_card.expiration_year, "2014")
+            self.assertEqual(android_pay_card.google_transaction_id, "iliketurtles")
+            self.assertEqual(android_pay_card.bin, "411111")
+
+            self.assertEqual(android_pay_card.billing_address["street_address"], "123 Abc Way")
+            self.assertEqual(android_pay_card.billing_address["locality"], "Chicago")
+            self.assertEqual(android_pay_card.billing_address["region"], "Illinois")
+            self.assertEqual(android_pay_card.billing_address["postal_code"], "60622")
+            self.assertEqual(android_pay_card.billing_address["phone_number"], "312.555.1234")
+            self.assertEqual(android_pay_card.billing_address["country_code_alpha2"], "US")
+            self.assertEqual(android_pay_card.billing_address["country_code_alpha3"], "USA")
+            self.assertEqual(android_pay_card.billing_address["country_code_numeric"], "840")
+            self.assertEqual(android_pay_card.billing_address["country_name"], "United States of America")
+
+    def test_update_for_raw_android_pay_card_with_invalid_params(self):
+        customer = Customer.create().customer
+        secure_token = TestHelper.random_token_block(None)
+
+        result = Customer.update(customer.id, {
+            "first_name": "Rickey",
+            "last_name": "Crabapple",
+            "android_pay_card": {
+                "number": "4111111111111111",
+                "expiration_year": "2014",
+                "expiration_month": "01",
+                "google_transaction_id": "dontbeevil",
+                "billing_address": {
+                    "street_address": "head 100 yds south once you hear the beehive",
+                    "postal_code": '$$$$',
+                    "country_code_alpha2": "UX",
+                }
+            }
+        })
+
+        errors = result.errors.for_object("android_pay_card").on("billing_address")
+        self.assertFalse(result.is_success)
+
+        postal_errors = result.errors.for_object("android_pay_card").for_object("billing_address").on("postal_code")
+        country_errors = result.errors.for_object("android_pay_card").for_object("billing_address").on("country_code_alpha2")
+        self.assertEqual(1, len(postal_errors))
+        self.assertEqual(1, len(country_errors))
+        self.assertEqual(ErrorCodes.Address.CountryCodeAlpha2IsNotAccepted, country_errors[0].code)
+        self.assertEqual(ErrorCodes.Address.PostalCodeInvalidCharacters, postal_errors[0].code)
+
+    def test_update_works_for_raw_android_pay_network_token(self):
+        with FraudProtectionEnterpriseIntegrationMerchant():
+            customer = Customer.create().customer
+            secure_token = TestHelper.random_token_block(None)
+
+            result = Customer.update(customer.id, {
+                "android_pay_network_token": {
+                    "number": "4111111111111111",
+                    "expiration_month": "05",
+                    "expiration_year": "2014",
+                    "cryptogram": "01010101010101010101",
+                    "eci_indicator": "05",
+                    "google_transaction_id": "iliketurtles",
+                    "token": secure_token,
+                    "options": {
+                        "make_default": True
+                    },
+                    "billing_address": {
+                        "street_address": "123 Abc Way",
+                        "locality": "Chicago",
+                        "region": "Illinois",
+                        "postal_code": "60622",
+                        "phone_number": "312.555.1234",
+                        "country_code_alpha2": "US",
+                        "country_code_alpha3": "USA",
+                        "country_code_numeric": "840",
+                        "country_name": "United States of America"
+                    }
+                },
+            })
+
+            self.assertTrue(result.is_success)
+            self.assertEqual(secure_token, result.customer.payment_methods[0].token)
+
+            self.assertNotEqual(0, len(result.customer.android_pay_cards))
+            android_pay_network_token = result.customer.android_pay_cards[0]
+            self.assertTrue(android_pay_network_token.default)
+            self.assertEqual(android_pay_network_token.expiration_month, "05")
+            self.assertEqual(android_pay_network_token.expiration_year, "2014")
+            self.assertEqual(android_pay_network_token.google_transaction_id, "iliketurtles")
+            self.assertEqual(android_pay_network_token.bin, "411111")
+
+            self.assertEqual(android_pay_network_token.billing_address["street_address"], "123 Abc Way")
+            self.assertEqual(android_pay_network_token.billing_address["locality"], "Chicago")
+            self.assertEqual(android_pay_network_token.billing_address["region"], "Illinois")
+            self.assertEqual(android_pay_network_token.billing_address["postal_code"], "60622")
+            self.assertEqual(android_pay_network_token.billing_address["phone_number"], "312.555.1234")
+            self.assertEqual(android_pay_network_token.billing_address["country_code_alpha2"], "US")
+            self.assertEqual(android_pay_network_token.billing_address["country_code_alpha3"], "USA")
+            self.assertEqual(android_pay_network_token.billing_address["country_code_numeric"], "840")
+            self.assertEqual(android_pay_network_token.billing_address["country_name"], "United States of America")
 
     def test_update_with_tax_identifiers(self):
         customer = Customer.create({

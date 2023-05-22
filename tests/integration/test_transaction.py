@@ -6149,3 +6149,16 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertFalse(hasattr(transaction, 'retried'))
+
+    def test_merchant_advice_code(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Decline,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2025"
+                },
+            })
+        transaction = result.transaction
+        self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
+        self.assertEqual("01", transaction.merchant_advice_code)
+        self.assertEqual("New account information available", transaction.merchant_advice_code_text)

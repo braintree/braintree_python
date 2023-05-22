@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.20.0
+* Add `merchant_advice_code` and `merchant_advice_code_text` to Transaction object
+* Allow vaulting of raw AndroidPayCards with billing address via Customer.create/update
+
 ## 4.19.0
 * Add `intended_transaction_source` to `CreditCardVerification`
 * Add `three_d_secure_pass_thru` to `CreditCardVerification`

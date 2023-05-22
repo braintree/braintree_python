@@ -164,6 +164,8 @@ class Customer(Resource):
             {"risk_data": ["customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"]},
             {"credit_card": CreditCard.create_signature()},
             {"apple_pay_card": ApplePayCard.signature()},
+            {"android_pay_card": AndroidPayCard.card_signature()},
+            {"android_pay_network_token": AndroidPayCard.network_token_signature()},
             {"custom_fields": ["__any_key__"]},
             {"three_d_secure_pass_thru": [
                 "cavv",
@@ -189,6 +191,8 @@ class Customer(Resource):
             "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce", "default_payment_method_token",
             {"credit_card": CreditCard.signature("update_via_customer")},
             {"apple_pay_card": ApplePayCard.signature()},
+            {"android_pay_card": AndroidPayCard.card_signature()},
+            {"android_pay_network_token": AndroidPayCard.network_token_signature()},
             {"three_d_secure_pass_thru": [
                 "cavv",
                 "ds_transaction_id",
