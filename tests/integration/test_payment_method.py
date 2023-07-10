@@ -277,6 +277,41 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(int(apple_pay_card.expiration_month) > 0)
         self.assertTrue(int(apple_pay_card.expiration_year) > 0)
 
+    def test_create_with_fake_apple_pay_mpan_nonce(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.ApplePayMpan
+        })
+
+        self.assertTrue(result.is_success)
+        apple_pay_card = result.payment_method
+        self.assertIsInstance(apple_pay_card, ApplePayCard)
+        self.assertNotEqual(apple_pay_card.bin, None)
+        self.assertNotEqual(apple_pay_card.token, None)
+        self.assertNotEqual(apple_pay_card.prepaid, None)
+        self.assertNotEqual(apple_pay_card.healthcare, None)
+        self.assertNotEqual(apple_pay_card.debit, None)
+        self.assertNotEqual(apple_pay_card.durbin_regulated, None)
+        self.assertNotEqual(apple_pay_card.commercial, None)
+        self.assertNotEqual(apple_pay_card.payroll, None)
+        self.assertNotEqual(apple_pay_card.issuing_bank, None)
+        self.assertNotEqual(apple_pay_card.country_of_issuance, None)
+        self.assertNotEqual(apple_pay_card.product_id, None)
+        self.assertNotEqual(apple_pay_card.last_4, None)
+        self.assertNotEqual(apple_pay_card.card_type, None)
+        self.assertNotEqual(apple_pay_card.merchant_token_identifier, None)
+        self.assertNotEqual(apple_pay_card.source_card_last4, None)
+
+        self.assertEqual(apple_pay_card.customer_id, customer_id)
+        self.assertEqual(ApplePayCard.CardType.Visa, apple_pay_card.card_type)
+        self.assertEqual("Visa 8886", apple_pay_card.payment_instrument_name)
+        self.assertEqual("Visa 8886", apple_pay_card.source_description)
+        self.assertTrue(apple_pay_card.default)
+        self.assertIn("apple_pay", apple_pay_card.image_url)
+        self.assertTrue(int(apple_pay_card.expiration_month) > 0)
+        self.assertTrue(int(apple_pay_card.expiration_year) > 0)
+
     def test_create_with_fake_android_pay_proxy_card_nonce(self):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
@@ -936,6 +971,24 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(None, found_android_pay_card)
         self.assertEqual(AndroidPayCard, found_android_pay_card.__class__)
         self.assertEqual(found_android_pay_card.token, android_pay_card.token)
+
+    def test_find_returns_an_apple_pay_mpan_card(self):
+        customer = Customer.create().customer
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayMpan
+        })
+
+        self.assertTrue(result.is_success)
+        apple_pay_card = result.payment_method
+
+        found_apple_pay_card = PaymentMethod.find(apple_pay_card.token)
+        self.assertIsNotNone(found_apple_pay_card)
+        self.assertEqual(ApplePayCard, found_apple_pay_card.__class__)
+        self.assertEqual(found_apple_pay_card.token, apple_pay_card.token)
+        self.assertEqual(apple_pay_card.merchant_token_identifier, "DNITHE302308980427388297")
+        self.assertEqual(apple_pay_card.source_card_last4, "2006")
+         
 
     def test_delete_customer_with_path_traversal(self):
         try:

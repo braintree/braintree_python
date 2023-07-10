@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.21.0
+* Add `evidence_submittable` to `Dispute`
+* Add `merchant_token_identifier` and `source_card_last4` to `ApplePayCard`
+* Add a check for empty month and year before generating `expiration_date` in:
+  * `CrediCard`
+  * `AndroidPayCard`
+  * `ApplePayCard`
+  * `SamsungPayCard`
+  * `VisaCheckoutCard`
+* Add `retry_ids` and `retried_transaction_id` to Transaction object
+
 ## 4.20.0
 * Add `merchant_advice_code` and `merchant_advice_code_text` to Transaction object
 * Allow vaulting of raw AndroidPayCards with billing address via Customer.create/update

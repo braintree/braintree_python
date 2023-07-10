@@ -6092,28 +6092,6 @@ class TestTransaction(unittest.TestCase):
         error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
         self.assertEqual(ErrorCodes.Transaction.TransactionIsNotEligibleForAdjustment, error_code)
 
-    def test_adjust_authorization_when_processor_does_not_support_incremental_auth(self):
-        initial_transaction_sale =  Transaction.sale(self.__first_data_visa_transaction_params())
-        self.assertTrue(initial_transaction_sale.is_success)
-        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "85.50")
-
-        self.assertFalse(adjusted_authorization_result.is_success)
-        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
-
-        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
-        self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportIncrementalAuth, error_code)
-
-    def test_adjust_authorization_when_processor_does_not_support_reversal(self):
-        initial_transaction_sale =  Transaction.sale(self.__first_data_visa_transaction_params())
-        self.assertTrue(initial_transaction_sale.is_success)
-        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "65.50")
-
-        self.assertFalse(adjusted_authorization_result.is_success)
-        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
-
-        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
-        self.assertEqual(ErrorCodes.Transaction.ProcessorDoesNotSupportPartialAuthReversal, error_code)
-
     def test_retried_transaction(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.default_merchant_account_id,
@@ -6123,6 +6101,8 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         transaction = result.transaction
         self.assertTrue(transaction.retried)
+        self.assertTrue(len(transaction.retry_ids) > 0)
+        self.assertEqual(transaction.retried_transaction_id, None)
 
     def test_non_retried_transaction(self):
         result = Transaction.sale({

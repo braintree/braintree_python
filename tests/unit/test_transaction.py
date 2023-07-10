@@ -247,3 +247,14 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.merchant_advice_code, "01")
         self.assertEqual(transaction.merchant_advice_code_text, "New account information available")
+
+    def test_retry_ids_and_retried_transaction_id(self):
+        attributes = {
+            'amount': TransactionAmounts.Decline,
+            'retry_ids': ['retry_id_1','retry_id2'],
+            'retried_transaction_id': '12345'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.retry_ids, ['retry_id_1','retry_id2'])
+        self.assertEqual(transaction.retried_transaction_id, "12345")

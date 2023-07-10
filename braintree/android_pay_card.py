@@ -16,6 +16,8 @@ class AndroidPayCard(Resource):
 
     @property
     def expiration_date(self):
+        if not self.expiration_month or not self.expiration_year:
+            return None
         return self.expiration_month + "/" + self.expiration_year
 
     @property

@@ -94,3 +94,39 @@ class TestCreditCard(unittest.TestCase):
         credit_card = CreditCard(Configuration.gateway(), {"verifications": [verification1, verification2]})
         self.assertEqual(456, credit_card.verification.id)
         self.assertEqual(1.00, credit_card.verification.amount)
+
+    def test_expiration_date(self):
+        credit_card = CreditCard(None, {
+            "customer_id": "12345",
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "2014",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        })
+
+        self.assertEqual("05/2014", credit_card.expiration_date)
+    
+    def test_expiration_date_no_month(self):
+        credit_card = CreditCard(None, {
+            "customer_id": "12345",
+            "number": "4111111111111111",
+            "expiration_month": "",
+            "expiration_year": "2014",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        })
+
+        self.assertEqual(None, credit_card.expiration_date)
+
+    def test_expiration_date_no_year(self):
+        credit_card = CreditCard(None, {
+            "customer_id": "12345",
+            "number": "4111111111111111",
+            "expiration_month": "05",
+            "expiration_year": "",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        })
+
+        self.assertEqual(None, credit_card.expiration_date)

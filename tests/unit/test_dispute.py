@@ -78,6 +78,7 @@ class TestDispute(unittest.TestCase):
             "sender": "seller",
             "sent_at": datetime(2013, 4, 10, 10, 50, 39),
         }],
+        "evidence_submittable": True,
     }
 
     def test_legacy_constructor(self):
@@ -147,6 +148,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.status_history[0].effective_date, "2013-04-10")
         self.assertEqual(dispute.status_history[0].status, "open")
         self.assertEqual(dispute.status_history[0].timestamp, datetime(2013, 4, 10, 10, 50, 39))
+        self.assertEqual(dispute.evidence_submittable, True)
 
     def test_constructor_populates_standard_cbp_level(self):
         attributes = dict(self.attributes)

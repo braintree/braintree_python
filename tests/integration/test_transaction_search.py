@@ -1692,4 +1692,19 @@ class TestTransactionSearch(unittest.TestCase):
         ])
         self.assertEqual(2, collection.maximum_size)
 
+    def test_search_retried_transaction(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.default_merchant_account_id,
+            "amount": TransactionAmounts.Decline,
+            "payment_method_token": "network_tokenized_credit_card",
+            })
+        transaction = result.transaction
+        retry_transaction_id = transaction.retry_ids[0]
 
+        collection = Transaction.search(
+            TransactionSearch.id == retry_transaction_id,
+            TransactionSearch.amount == TransactionAmounts.Decline,
+        )
+        self.assertEqual(1, collection.maximum_size)
+        self.assertIsNotNone(collection.first.retried_transaction_id)
+        self.assertEqual(retry_transaction_id, collection.first.id)
