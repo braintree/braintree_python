@@ -618,6 +618,14 @@ class Transaction(Resource):
                             "overwrite_brand",
                             "selected_brand"
                         ]
+                    },
+                    {
+                        "processing_overrides": [
+                            "customer_email",
+                            "customer_first_name",
+                            "customer_last_name",
+                            "customer_tax_identifier"
+                        ]
                     }
                 ]
             },

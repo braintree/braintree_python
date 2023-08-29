@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.22.0 
+* Add `processing_overrides` to `Transaction.sale` options
+
 ## 4.21.0
 * Add `evidence_submittable` to `Dispute`
 * Add `merchant_token_identifier` and `source_card_last4` to `ApplePayCard`

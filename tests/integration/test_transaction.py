@@ -1475,6 +1475,30 @@ class TestTransaction(unittest.TestCase):
             transaction = result.transaction
             self.assertEqual(transaction.risk_data, None)
 
+    def test_sale_with_processing_overrides_succeeds(self):
+        result = Transaction.sale({
+            "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.AmexPayWithPoints.Success,
+                "expiration_date": "05/2020"
+            },
+            "options" : {
+                "submit_for_settlement" : True,
+                "processing_overrides" : {
+                    "customer_email" : "pythonSDK@example.com",
+                    "customer_first_name" : "pythonSDK_test_customer_first_name",
+                    "customer_last_name" : "pythonSDK_test_customer_last_name",
+                    "customer_tax_identifier" : "1.2.3.4.5.6"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Transaction.Type.Sale, transaction.type)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
+
     def test_sale_with_skip_cvv_option_set(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
