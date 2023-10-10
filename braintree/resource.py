@@ -19,6 +19,8 @@ class Resource(AttributeGetter):
             keys_string = ", ".join(invalid_keys)
             raise KeyError("Invalid keys: " + keys_string)
 
+    # NEXT_MAJOR_VERSION this method misses a check for param keys that have an empty value
+    # Add a check for a val of length 0 for both types, if true, full_key should be appended
     @staticmethod
     def __flattened_params_keys(params, parent=None):
         if isinstance(params, text_type) or isinstance(params, raw_type):

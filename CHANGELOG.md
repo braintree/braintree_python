@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.23.0
+* Deprecate `evidenceSubmittable` in Dispute 
+* Add missing `escape` calls in `generator` for:
+  * list
+  * bool
+  * integer
+  * datetime
+
 ## 4.22.0 
 * Add `processing_overrides` to `Transaction.sale` options
 

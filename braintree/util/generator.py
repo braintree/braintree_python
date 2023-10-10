@@ -47,18 +47,18 @@ class Generator(object):
         elif isinstance(value, dict):
             return open_tag + self.__generate_dict(value) + close_tag
         elif isinstance(value, list):
-            open_tag = "<" + key + " type=\"array\">"
+            open_tag = "<" + self.__escape(key) + " type=\"array\">"
             return open_tag + self.__generate_list(value) + close_tag
         elif isinstance(value, bool):
-            open_tag = "<" + key + " type=\"boolean\">"
+            open_tag = "<" + self.__escape(key) + " type=\"boolean\">"
             return open_tag + self.__generate_boolean(value) + close_tag
         elif isinstance(value, integer_types) and not isinstance(value, bool):
-            open_tag = "<" + key + " type=\"integer\">"
+            open_tag = "<" + self.__escape(key) + " type=\"integer\">"
             return open_tag + str(value) + close_tag
         elif isinstance(value, type(None)):
             return open_tag + close_tag
         elif isinstance(value, datetime.datetime) or isinstance(value, datetime.date):
-            open_tag = "<" + key + " type=\"datetime\">"
+            open_tag = "<" + self.__escape(key) + " type=\"datetime\">"
             return open_tag + self.__generate_datetime(value) + close_tag
         else:
             raise RuntimeError("Unexpected XML node type: " + str(type(value)))

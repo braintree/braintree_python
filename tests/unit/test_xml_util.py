@@ -110,6 +110,26 @@ class TestXmlUtil(unittest.TestCase):
         test_dict = {"k<ey": "va&lue"}
         self.assertEqual("<k&lt;ey>va&amp;lue</k&lt;ey>", XmlUtil.xml_from_dict(test_dict))
 
+    def test_xml_from_dict_escapes_keys_list(self):
+        test_dict = {"k<ey": []}
+        self.assertEqual("<k&lt;ey type=\"array\"></k&lt;ey>", XmlUtil.xml_from_dict(test_dict))
+
+    def test_xml_from_dict_escapes_keys_bool(self):
+        test_dict = {"k<ey": True}
+        self.assertEqual("<k&lt;ey type=\"boolean\">true</k&lt;ey>", XmlUtil.xml_from_dict(test_dict))
+
+    def test_xml_from_dict_escapes_keys_int(self):
+        test_dict = {"k<ey": 10}
+        self.assertEqual("<k&lt;ey type=\"integer\">10</k&lt;ey>", XmlUtil.xml_from_dict(test_dict))
+
+    def test_xml_from_dict_escapes_keys_datetime(self):
+        test_dict = {"k<ey": datetime(2023, 1, 2, 3, 4, 5)}
+        self.assertEqual("<k&lt;ey type=\"datetime\">2023-01-02T03:04:05Z</k&lt;ey>", XmlUtil.xml_from_dict(test_dict))
+
+    def test_xml_from_dict_with_xml_injection(self):
+        test_dict = {"<merchant-account-id>12345</merchant-account-id>": []}
+        self.assertEqual("<&lt;merchant-account-id&gt;12345&lt;/merchant-account-id&gt; type=\"array\"></&lt;merchant-account-id&gt;12345&lt;/merchant-account-id&gt;>", XmlUtil.xml_from_dict(test_dict))
+
     def test_xml_from_dict_simple(self):
         test_dict = {"a": "b"}
         self.assertEqual(test_dict, self.__xml_and_back(test_dict))

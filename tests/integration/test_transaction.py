@@ -6139,7 +6139,7 @@ class TestTransaction(unittest.TestCase):
             })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertFalse(hasattr(transaction, 'retried'))
+        self.assertFalse(transaction.retried)
 
     def test_ineligible_retry_transaction(self):
         result = Transaction.sale({
@@ -6152,7 +6152,7 @@ class TestTransaction(unittest.TestCase):
             })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertFalse(hasattr(transaction, 'retried'))
+        self.assertFalse(transaction.retried)
 
     def test_merchant_advice_code(self):
         result = Transaction.sale({
