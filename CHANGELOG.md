@@ -1,7 +1,7 @@
 # Changelog
 
-## 4.24.0
-* Fix unittest compatibility with Python 3.12
+## Unreleased
+* Fix unittest compatibility with Python 3.12 (Thanks @mgorny)
 
 ## 4.23.0
 * Deprecate `evidenceSubmittable` in Dispute 
