@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Fix unittest compatibility with Python 3.12 (Thanks @mgorny)
+
 ## 4.23.0
 * Deprecate `evidenceSubmittable` in Dispute 
 * Add missing `escape` calls in `generator` for:
