@@ -308,6 +308,33 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.SepaDirectDebitAccount)
         self.assertEqual(transaction.id, collection.first.id)
 
+    def test_advanced_search_with_payment_instrument_type_is_meta_checkout(self):
+        card_tx = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.MetaCheckoutCard
+        }).transaction
+
+        token_tx = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "options": {
+                "submit_for_settlement": True,
+            },
+            "payment_method_nonce": Nonces.MetaCheckoutToken
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.payment_instrument_type == "MetaCheckout"
+        )
+
+        self.assertTrue(collection.maximum_size >= 2)
+
+        tx_id_map = list(map(lambda x: x.id, collection))
+        self.assertTrue(card_tx.id in tx_id_map)
+        self.assertTrue(token_tx.id in tx_id_map)
+
     def test_advanced_search_with_payment_instrument_type_is_apple_pay(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

@@ -70,6 +70,8 @@ class Nonces(object):
     MasterpassDiscover = "fake-masterpass-discover-nonce"
     MasterpassMasterCard = "fake-masterpass-mastercard-nonce"
     MasterpassVisa = "fake-masterpass-visa-nonce"
+    MetaCheckoutCard = "fake-meta-checkout-card-nonce"
+    MetaCheckoutToken = "fake-meta-checkout-token-nonce"
     VisaCheckoutAmEx = "fake-visa-checkout-amex-nonce"
     VisaCheckoutDiscover = "fake-visa-checkout-discover-nonce"
     VisaCheckoutMasterCard = "fake-visa-checkout-mastercard-nonce"
@@ -79,3 +81,4 @@ class Nonces(object):
     SamsungPayMasterCard = "tokensam_fake_mastercard"
     SamsungPayVisa = "tokensam_fake_visa"
     SepaDirectDebit = "fake-sepa-direct-debit-nonce"
+    UsBankAccount = "fake-us-bank-account-nonce"

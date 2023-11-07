@@ -1,5 +1,7 @@
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.meta_checkout_card import MetaCheckoutCard
+from braintree.meta_checkout_token import MetaCheckoutToken
 from datetime import datetime
 from datetime import date
 from braintree.authorization_adjustment import AuthorizationAdjustment
@@ -260,3 +262,21 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.retry_ids, ['retry_id_1','retry_id2'])
         self.assertEqual(transaction.retried_transaction_id, "12345")
         self.assertTrue(transaction.retried)
+
+    def test_transaction_meta_checkout_card_attributes(self):
+        attributes = {
+            'amount': '420',
+            'meta_checkout_card': {}
+        }
+
+        transaction = Transaction(None, attributes) 
+        self.assertIsInstance(transaction.meta_checkout_card_details, MetaCheckoutCard)
+
+    def test_transaction_meta_checkout_token_attributes(self):
+        attributes = {
+            'amount': '69',
+            'meta_checkout_token': {}
+        }
+
+        transaction = Transaction(None, attributes) 
+        self.assertIsInstance(transaction.meta_checkout_token_details, MetaCheckoutToken)

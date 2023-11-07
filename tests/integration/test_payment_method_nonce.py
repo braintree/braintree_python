@@ -123,17 +123,39 @@ class TestPaymentMethodNonce(unittest.TestCase):
     def test_find_nonce_shows_venmo_details(self):
         found_nonce = PaymentMethodNonce.find("fake-venmo-account-nonce")
 
-        self.assertEquals("99", found_nonce.details["last_two"])
-        self.assertEquals("venmojoe", found_nonce.details["username"])
-        self.assertEquals("1234567891234567891", found_nonce.details["venmo_user_id"])
+        self.assertEqual("99", found_nonce.details["last_two"])
+        self.assertEqual("venmojoe", found_nonce.details["username"])
+        self.assertEqual("1234567891234567891", found_nonce.details["venmo_user_id"])
 
     def test_find_nonce_shows_sepa_direct_debit_details(self):
         found_nonce = PaymentMethodNonce.find(Nonces.SepaDirectDebit)
 
-        self.assertEquals("1234", found_nonce.details["last_4"])
-        self.assertEquals("RECURRENT", found_nonce.details["mandate_type"])
-        self.assertEquals("a-fake-bank-reference-token", found_nonce.details["bank_reference_token"])
-        self.assertEquals("a-fake-mp-customer-id", found_nonce.details["merchant_or_partner_customer_id"])
+        self.assertEqual("1234", found_nonce.details["last_4"])
+        self.assertEqual("RECURRENT", found_nonce.details["mandate_type"])
+        self.assertEqual("a-fake-bank-reference-token", found_nonce.details["bank_reference_token"])
+        self.assertEqual("a-fake-mp-customer-id", found_nonce.details["merchant_or_partner_customer_id"])
+
+    def test_find_nonce_shows_meta_checkout_card_details(self):
+        found_nonce = PaymentMethodNonce.find(Nonces.MetaCheckoutCard)
+
+        self.assertEqual("401288", found_nonce.details["bin"])
+        self.assertEqual("81", found_nonce.details["last_two"])
+        self.assertEqual("1881", found_nonce.details["last_four"])
+        self.assertEqual("Visa", found_nonce.details["card_type"])
+        self.assertEqual("Meta Checkout Card Cardholder", found_nonce.details["cardholder_name"])
+        self.assertEqual("2024", found_nonce.details["expiration_year"])
+        self.assertEqual("12", found_nonce.details["expiration_month"])
+
+    def test_find_nonce_shows_meta_checkout_token_details(self):
+        found_nonce = PaymentMethodNonce.find(Nonces.MetaCheckoutToken)
+
+        self.assertEqual("401288", found_nonce.details["bin"])
+        self.assertEqual("81", found_nonce.details["last_two"])
+        self.assertEqual("1881", found_nonce.details["last_four"])
+        self.assertEqual("Visa", found_nonce.details["card_type"])
+        self.assertEqual("Meta Checkout Token Cardholder", found_nonce.details["cardholder_name"])
+        self.assertEqual("2024", found_nonce.details["expiration_year"])
+        self.assertEqual("12", found_nonce.details["expiration_month"])
 
     def test_exposes_null_3ds_info_if_none_exists(self):
         http = ClientApiHttp.create()

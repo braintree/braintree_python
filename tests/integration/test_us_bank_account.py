@@ -17,7 +17,7 @@ class TestUsBankAccount(unittest.TestCase):
         self.assertEqual(found_account.last_4, "1234")
         self.assertEqual(found_account.account_type, "checking")
         self.assertEqual(found_account.account_holder_name, "Dan Schulman")
-        self.assertRegexpMatches(found_account.bank_name, r".*CHASE.*")
+        self.assertRegex(found_account.bank_name, r".*CHASE.*")
         self.assertEqual(found_account.default, True)
         self.assertEqual(found_account.ach_mandate.text, "cl mandate text")
         self.assertIsNotNone(found_account.ach_mandate.accepted_at)

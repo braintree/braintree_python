@@ -36,7 +36,72 @@ class PaymentMethodWithUsBankAccountTest(unittest.TestCase):
         customer_id = Customer.create().customer.id
         result = PaymentMethod.create({
             "customer_id": customer_id,
-            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce("021000021", "1000000000"),
+            "payment_method_nonce": Nonces.UsBankAccount,
+            "options": {
+                "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id,
+                "us_bank_account_verification_method": UsBankAccountVerification.VerificationMethod.NetworkCheck,
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        us_bank_account = result.payment_method
+        self.assertIsInstance(us_bank_account, UsBankAccount)
+        self.assertEqual(us_bank_account.routing_number, "123456789")
+        self.assertEqual(us_bank_account.last_4, "0000")
+        self.assertEqual(us_bank_account.account_type, "checking")
+        self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
+        self.assertEqual(us_bank_account.bank_name, "Wells Fargo")
+        self.assertEqual(us_bank_account.default, True)
+        self.assertEqual(us_bank_account.ach_mandate.text, "example mandate text")
+        self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
+        self.assertEqual(us_bank_account.verified, True)
+
+        self.assertEqual(len(us_bank_account.verifications), 1)
+
+        verification = us_bank_account.verifications[0]
+
+        self.assertEqual(verification.status, UsBankAccountVerification.Status.Verified)
+        self.assertEqual(verification.verification_method, UsBankAccountVerification.VerificationMethod.NetworkCheck)
+        self.assertEqual(verification.processor_response_code, "1000")
+
+    def test_create_with_verification_add_ons(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": Nonces.UsBankAccount,
+            "options": {
+                "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id,
+                "us_bank_account_verification_method": UsBankAccountVerification.VerificationMethod.NetworkCheck,
+                "verification_add_ons": UsBankAccountVerification.VerificationAddOns.CustomerVerification,
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        us_bank_account = result.payment_method
+        self.assertIsInstance(us_bank_account, UsBankAccount)
+        self.assertEqual(us_bank_account.routing_number, "123456789")
+        self.assertEqual(us_bank_account.last_4, "0000")
+        self.assertEqual(us_bank_account.account_type, "checking")
+        self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
+        self.assertEqual(us_bank_account.bank_name, "Wells Fargo")
+        self.assertEqual(us_bank_account.default, True)
+        self.assertEqual(us_bank_account.ach_mandate.text, "example mandate text")
+        self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
+        self.assertEqual(us_bank_account.verified, True)
+
+        self.assertEqual(len(us_bank_account.verifications), 1)
+
+        verification = us_bank_account.verifications[0]
+
+        self.assertEqual(verification.status, UsBankAccountVerification.Status.Verified)
+        self.assertEqual(verification.verification_method, UsBankAccountVerification.VerificationMethod.NetworkCheck)
+        self.assertEqual(verification.processor_response_code, "1000")
+
+    def test_returns_additional_processor_response_for_failed_verifications(self):
+        customer_id = Customer.create().customer.id
+        result = PaymentMethod.create({
+            "customer_id": customer_id,
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce("021000021", "1000000005"),
             "options": {
                 "verification_merchant_account_id": TestHelper.us_bank_merchant_account_id,
                 "us_bank_account_verification_method": UsBankAccountVerification.VerificationMethod.NetworkCheck,
@@ -47,21 +112,23 @@ class PaymentMethodWithUsBankAccountTest(unittest.TestCase):
         us_bank_account = result.payment_method
         self.assertIsInstance(us_bank_account, UsBankAccount)
         self.assertEqual(us_bank_account.routing_number, "021000021")
-        self.assertEqual(us_bank_account.last_4, "0000")
+        self.assertEqual(us_bank_account.last_4, "0005")
         self.assertEqual(us_bank_account.account_type, "checking")
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
         self.assertEqual(us_bank_account.default, True)
         self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
-        self.assertEqual(us_bank_account.verified, True)
+        self.assertEqual(us_bank_account.verified, False)
 
         self.assertEqual(len(us_bank_account.verifications), 1)
 
         verification = us_bank_account.verifications[0]
 
-        self.assertEqual(verification.status, UsBankAccountVerification.Status.Verified)
+        self.assertEqual(verification.status, UsBankAccountVerification.Status.ProcessorDeclined)
         self.assertEqual(verification.verification_method, UsBankAccountVerification.VerificationMethod.NetworkCheck)
+        self.assertEqual(verification.processor_response_code, "2061")
+        self.assertEqual(verification.additional_processor_response, "Invalid routing number")
 
     def test_create_fails_with_invalid_us_bank_account_nonce(self):
         customer_id = Customer.create().customer.id

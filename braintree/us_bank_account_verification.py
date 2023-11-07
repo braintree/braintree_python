@@ -27,7 +27,7 @@ class UsBankAccountVerification(AttributeGetter):
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class VerificationMethod(object):
         """
-        Constants representing transaction statuses. Available statuses are:
+        Constants representing verification types. Available types are:
 
         * braintree.UsBankAccountVerification.VerificationMethod.NetworkCheck
         * braintree.UsBankAccountVerification.VerificationMethod.IndependentCheck
@@ -39,6 +39,15 @@ class UsBankAccountVerification(AttributeGetter):
         IndependentCheck = "independent_check"
         TokenizedCheck = "tokenized_check"
         MicroTransfers = "micro_transfers"
+
+    class VerificationAddOns(object):
+        """
+        Constants representing verification add on types. Available statuses are:
+
+        * braintree.UsBankAccountVerification.VerificationAddOns.CustomerVerification
+        """
+
+        CustomerVerification = "customer_verification"
 
     def __init__(self, gateway, attributes):
         AttributeGetter.__init__(self, attributes)

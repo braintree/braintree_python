@@ -22,6 +22,8 @@ from braintree.facilitator_details import FacilitatorDetails
 from braintree.liability_shift import LiabilityShift
 from braintree.local_payment import LocalPayment
 from braintree.masterpass_card import MasterpassCard
+from braintree.meta_checkout_card import MetaCheckoutCard
+from braintree.meta_checkout_token import MetaCheckoutToken
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.paypal_account import PayPalAccount
 from braintree.paypal_here import PayPalHere
@@ -640,7 +642,7 @@ class Transaction(Resource):
                         "data": [
                             "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate",
                             "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "issued_date", "travel_agency_name", "travel_agency_code", "ticket_number",
-                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "room_tax", "tax_amount", "restricted_ticket", "no_show", "advanced_deposit", "fire_safe", "property_phone",
+                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "room_tax", "tax_amount", "restricted_ticket", "no_show", "advanced_deposit", "fire_safe", "property_phone", "arrival_date", "ticket_issuer_address", "date_of_birth", "country_code",
                             {
                                 "legs": [
                                     "conjunction_ticket", "exchange_ticket", "coupon_number", "service_class", "carrier_code", "fare_basis_code", "flight_number", "departure_date", "departure_airport_code", "departure_time",
@@ -678,6 +680,29 @@ class Transaction(Resource):
                 "discount_amount",
                 "shipping_amount",
                 "ships_from_postal_code",
+                {"industry":
+                    [
+                        "industry_type",
+                        {
+                            "data": [
+                                "advanced_deposit", "arrival_date", "check_in_date", "check_out_date", "customer_code", "departure_date", "fare_amount", "fee_amount", "fire_safe", "folio_number", "issued_date",  "issuing_carrier_code",
+                                "lodging_check_in_date", "lodging_check_out_date", "lodging_name", "no_show", "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "property_phone",
+                                "restricted_ticket", "room_rate",  "room_tax", "tax_amount", "ticket_issuer_address", "ticket_number", "travel_agency_code", "travel_agency_name", "travel_package",
+                                {
+                                    "legs": [
+                                        "arrival_airport_code", "arrival_time", "carrier_code", "conjunction_ticket", "coupon_number", "departure_airport_code", "departure_date", "departure_time", "endorsement_or_restrictions",
+                                        "exchange_ticket", "fare_amount", "fare_basis_code", "fee_amount",  "flight_number", "service_class", "stopover_permitted", "tax_amount"
+                                    ]
+                                },
+                                {
+                                    "additional_charges": [
+                                      "amount", "kind"
+                                    ],
+                                }
+                            ]
+                        }
+                    ]
+                },
                 {"line_items":
                     [
                         "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",
@@ -688,6 +713,29 @@ class Transaction(Resource):
                         "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
                         "country_code_numeric", "country_name", "extended_address", "locality",
                         "postal_code", "region", "street_address",
+                    ]
+                },
+                {"industry":
+                    [
+                        "industry_type",
+                        {
+                            "data": [
+                                "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate",
+                                "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "issued_date", "travel_agency_name", "travel_agency_code", "ticket_number",
+                                "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "room_tax", "tax_amount", "restricted_ticket", "no_show", "advanced_deposit", "fire_safe", "property_phone", "arrival_date", "ticket_issuer_address", "date_of_birth", "country_code",
+                                {
+                                    "legs": [
+                                        "conjunction_ticket", "exchange_ticket", "coupon_number", "service_class", "carrier_code", "fare_basis_code", "flight_number", "departure_date", "departure_airport_code", "departure_time",
+                                        "arrival_airport_code", "arrival_time", "stopover_permitted", "fare_amount", "fee_amount", "tax_amount", "endorsement_or_restrictions"
+                                    ]
+                                },
+                                {
+                                    "additional_charges": [
+                                        "kind", "amount"
+                                    ],
+                                }
+                            ]
+                        }
                     ]
                 },
             ]
@@ -757,6 +805,10 @@ class Transaction(Resource):
             self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
         if "samsung_pay_card" in attributes:
             self.samsung_pay_card_details = SamsungPayCard(gateway, attributes.pop("samsung_pay_card"))
+        if "meta_checkout_card" in attributes:
+            self.meta_checkout_card_details = MetaCheckoutCard(gateway, attributes.pop("meta_checkout_card"))
+        if "meta_checkout_token" in attributes:
+            self.meta_checkout_token_details = MetaCheckoutToken(gateway, attributes.pop("meta_checkout_token"))
         if "sca_exemption_requested" in attributes:
             self.sca_exemption_requested = attributes.pop("sca_exemption_requested")
         else:

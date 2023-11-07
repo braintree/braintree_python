@@ -1207,7 +1207,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(CreditCard.Healthcare.Unknown, credit_card.healthcare)
         self.assertEqual(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
         self.assertEqual(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
-        self.assertEquals(CreditCard.ProductId.Unknown, credit_card.product_id)
+        self.assertEqual(CreditCard.ProductId.Unknown, credit_card.product_id)
 
     def test_card_with_account_type_debit(self):
         customer = Customer.create().customer

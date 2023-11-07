@@ -396,13 +396,13 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertNotEqual(amex_express_checkout_card.token, None)
         self.assertTrue(amex_express_checkout_card.default)
         self.assertEqual("American Express", amex_express_checkout_card.card_type)
-        self.assertRegexpMatches(amex_express_checkout_card.bin, r"\A\d{6}\Z")
-        self.assertRegexpMatches(amex_express_checkout_card.expiration_month, r"\A\d{2}\Z")
-        self.assertRegexpMatches(amex_express_checkout_card.expiration_year, r"\A\d{4}\Z")
-        self.assertRegexpMatches(amex_express_checkout_card.card_member_number, r"\A\d{4}\Z")
-        self.assertRegexpMatches(amex_express_checkout_card.card_member_expiry_date, r"\A\d{2}/\d{2}\Z")
-        self.assertRegexpMatches(amex_express_checkout_card.source_description, r"\AAmEx \d{4}\Z")
-        self.assertRegexpMatches(amex_express_checkout_card.image_url, r"\.png")
+        self.assertRegex(amex_express_checkout_card.bin, r"\A\d{6}\Z")
+        self.assertRegex(amex_express_checkout_card.expiration_month, r"\A\d{2}\Z")
+        self.assertRegex(amex_express_checkout_card.expiration_year, r"\A\d{4}\Z")
+        self.assertRegex(amex_express_checkout_card.card_member_number, r"\A\d{4}\Z")
+        self.assertRegex(amex_express_checkout_card.card_member_expiry_date, r"\A\d{2}/\d{2}\Z")
+        self.assertRegex(amex_express_checkout_card.source_description, r"\AAmEx \d{4}\Z")
+        self.assertRegex(amex_express_checkout_card.image_url, r"\.png")
         self.assertEqual(customer_id, amex_express_checkout_card.customer_id)
 
     def test_create_with_venmo_account_nonce(self):
@@ -421,7 +421,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertEqual("venmojoe", venmo_account.username)
         self.assertEqual("1234567891234567891", venmo_account.venmo_user_id)
         self.assertEqual("Venmo Account: venmojoe", venmo_account.source_description)
-        self.assertRegexpMatches(venmo_account.image_url, r"\.png")
+        self.assertRegex(venmo_account.image_url, r"\.png")
         self.assertEqual(customer_id, venmo_account.customer_id)
 
     def test_create_with_abstract_payment_method_nonce(self):

@@ -9,6 +9,8 @@ class PaymentInstrumentType():
     EuropeBankAccount = "europe_bank_account"
     LocalPayment = "local_payment"
     MasterpassCard = "masterpass_card"
+    MetaCheckoutCard = "meta_checkout_card"
+    MetaCheckoutToken = "meta_checkout_token"
     PayPalAccount = "paypal_account"
     PayPalHere = "paypal_here"
     SamsungPayCard = "samsung_pay_card"

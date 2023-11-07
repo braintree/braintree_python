@@ -21,7 +21,8 @@ class TestUsBankAccountVerification(unittest.TestCase):
             "us_bank_account": {
                 "token": "abc123",
                 "last_4": 9999,
-            }
+            },
+            "additional_processor_response": "Yikes"
         }
 
         verification = UsBankAccountVerification({}, attributes)
@@ -29,6 +30,7 @@ class TestUsBankAccountVerification(unittest.TestCase):
         self.assertEqual(verification.id, "my_favorite_id")
         self.assertEqual(verification.status, UsBankAccountVerification.Status.Verified)
         self.assertEqual(verification.verification_determined_at, datetime(2018, 11, 11, 23, 59, 59))
+        self.assertEqual(verification.additional_processor_response, "Yikes")
         self.assertEqual(
             verification.verification_method,
             UsBankAccountVerification.VerificationMethod.IndependentCheck

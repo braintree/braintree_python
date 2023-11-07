@@ -77,6 +77,8 @@ class WebhookTestingGateway(object):
             return self.__dispute_disputed_sample_xml(id)
         elif kind == WebhookNotification.Kind.DisputeExpired:
             return self.__dispute_expired_sample_xml(id)
+        elif kind == WebhookNotification.Kind.SubscriptionBillingSkipped:
+            return self.__subscription_billing_skipped_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
             return self.__subscription_charged_successfully_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedUnsuccessfully:
@@ -750,6 +752,16 @@ class WebhookTestingGateway(object):
             </subscription>
         """ % id
 
+    def __subscription_billing_skipped_sample_xml(self, id):
+        return """
+            <subscription>
+                <id>%s</id>
+                <transactions type="array"></transactions>
+                <add_ons type="array"></add_ons>
+                <discounts type="array"></discounts>
+            </subscription>
+        """ % id
+
     def __subscription_charged_successfully_sample_xml(self, id):
         return """
             <subscription>
@@ -984,6 +996,20 @@ class WebhookTestingGateway(object):
                         <last-name>Doe</last-name>
                         <phone-number>1231231234</phone-number>
                         <email>john.doe@paypal.com</email>
+                        <billing-address>
+                            <street-address>Street Address</street-address>
+                            <extended-address>Extended Address</extended-address>
+                            <locality>Locality</locality>
+                            <region>Region</region>
+                            <postal-code >Postal Code</postal-code>
+                        </billing-address>
+                        <shipping-address>
+                            <street-address>Street Address</street-address>
+                            <extended-address>Extended Address</extended-address>
+                            <locality>Locality</locality>
+                            <region>Region</region>
+                            <postal-code >Postal Code</postal-code>
+                        </shipping-address>
                     </profile-data>
                 </enriched-customer-data>
             </payment-method-customer-data-updated-metadata>

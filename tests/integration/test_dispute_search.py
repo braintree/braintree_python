@@ -20,7 +20,6 @@ class TestDisputeSearch(unittest.TestCase):
                 "expiration_date": "12/2019",
             },
             "customer_id": customer.id,
-            "merchant_account_id": "14LaddersLLC_instant",
             "options": {
                 "submit_for_settlement": True,
             },
@@ -32,7 +31,7 @@ class TestDisputeSearch(unittest.TestCase):
         ])
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(0, len(disputes))
+        self.assertEqual(0, len(disputes))
 
     def test_advanced_search_returns_single_dispute_by_customer_id(self):
         transaction = self.create_sample_disputed_transaction()
@@ -42,12 +41,12 @@ class TestDisputeSearch(unittest.TestCase):
         ])
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(1, len(disputes))
+        self.assertEqual(1, len(disputes))
 
         dispute = disputes[0]
 
-        self.assertEquals(dispute.id, transaction.disputes[0].id)
-        self.assertEquals(dispute.status, Dispute.Status.Open)
+        self.assertEqual(dispute.id, transaction.disputes[0].id)
+        self.assertEqual(dispute.status, Dispute.Status.Open)
 
     def test_advanced_search_returns_single_dispute_by_id(self):
         collection = Dispute.search([
@@ -55,12 +54,12 @@ class TestDisputeSearch(unittest.TestCase):
         ])
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(1, len(disputes))
+        self.assertEqual(1, len(disputes))
 
         dispute = disputes[0]
 
-        self.assertEquals(dispute.id, "open_dispute")
-        self.assertEquals(dispute.status, Dispute.Status.Open)
+        self.assertEqual(dispute.id, "open_dispute")
+        self.assertEqual(dispute.status, Dispute.Status.Open)
 
     def test_advanced_search_returns_disputes_by_multiple_reasons(self):
         collection = Dispute.search([
@@ -119,7 +118,7 @@ class TestDisputeSearch(unittest.TestCase):
         disputes = [dispute for dispute in collection.disputes.items]
         self.assertGreaterEqual(len(disputes), 1)
 
-        self.assertEquals(disputes[0].received_date, date(2014, 3, 4))
+        self.assertEqual(disputes[0].received_date, date(2014, 3, 4))
 
     def test_advanced_search_returns_disputes_by_disbursement_date_range(self):
         transaction = self.create_sample_disputed_transaction()
@@ -132,7 +131,7 @@ class TestDisputeSearch(unittest.TestCase):
         disputes = [dispute for dispute in collection.disputes.items]
         self.assertGreaterEqual(len(disputes), 1)
 
-        self.assertEquals(disputes[0].status_history[0].disbursement_date, disbursement_date)
+        self.assertEqual(disputes[0].status_history[0].disbursement_date, disbursement_date)
 
     def test_advanced_search_returns_disputes_by_effective_date_range(self):
         transaction = self.create_sample_disputed_transaction()
@@ -145,7 +144,7 @@ class TestDisputeSearch(unittest.TestCase):
         disputes = [dispute for dispute in collection.disputes.items]
         self.assertGreaterEqual(len(disputes), 1)
 
-        self.assertEquals(disputes[0].status_history[0].effective_date, effective_date)
+        self.assertEqual(disputes[0].status_history[0].effective_date, effective_date)
 
     def test_advanced_search_returns_disputes_by_amount_and_status(self):
         collection = Dispute.search([
@@ -154,7 +153,7 @@ class TestDisputeSearch(unittest.TestCase):
         ])
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(1, len(disputes))
+        self.assertEqual(1, len(disputes))
 
     def test_advanced_search_can_take_one_criteria(self):
         collection = Dispute.search(
@@ -162,4 +161,4 @@ class TestDisputeSearch(unittest.TestCase):
         )
 
         disputes = [dispute for dispute in collection.disputes.items]
-        self.assertEquals(0, len(disputes))
+        self.assertEqual(0, len(disputes))

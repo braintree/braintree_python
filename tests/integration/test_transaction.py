@@ -3497,6 +3497,164 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("amount")[0].code
         )
 
+    def test_submit_for_settlement_with_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {
+                "submit_for_settlement": False
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        params = {
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "passenger_first_name": "John",
+                    "passenger_last_name": "Doe",
+                    "passenger_middle_initial": "M",
+                    "passenger_title": "Mr.",
+                    "issued_date": date(2018, 1, 1),
+                    "travel_agency_name": "Expedia",
+                    "travel_agency_code": "12345678",
+                    "ticket_number": "ticket-number",
+                    "issuing_carrier_code": "AA",
+                    "customer_code": "customer-code",
+                    "fare_amount": "70.00",
+                    "fee_amount": "10.00",
+                    "tax_amount": "20.00",
+                    "restricted_ticket": False,
+                    "date_of_birth": "2012-12-12",
+                    "country_code": "US",
+                    "legs": [
+                        {
+                            "conjunction_ticket": "CJ0001",
+                            "exchange_ticket": "ET0001",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA100",
+                            "departure_date": date(2018, 1, 2),
+                            "departure_airport_code": "MDW",
+                            "departure_time": "08:00",
+                            "arrival_airport_code": "ATX",
+                            "arrival_time": "10:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        },
+                        {
+                            "conjunction_ticket": "CJ0002",
+                            "exchange_ticket": "ET0002",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA200",
+                            "departure_date": date(2018, 1, 3),
+                            "departure_airport_code": "ATX",
+                            "departure_time": "12:00",
+                            "arrival_airport_code": "MDW",
+                            "arrival_time": "14:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        }
+                    ]
+                }
+            }
+        }
+
+        submitted_transaction = Transaction.submit_for_settlement(result.transaction.id, TransactionAmounts.Authorize, params).transaction
+
+        self.assertEqual(Transaction.Status.Settling, submitted_transaction.status)
+
+    def test_submit_for_partial_settlement_with_industry_data(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "options": {
+                "submit_for_settlement": False
+            }
+        })
+
+        self.assertTrue(result.is_success)
+
+        params = {
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "passenger_first_name": "John",
+                    "passenger_last_name": "Doe",
+                    "passenger_middle_initial": "M",
+                    "passenger_title": "Mr.",
+                    "issued_date": date(2018, 1, 1),
+                    "travel_agency_name": "Expedia",
+                    "travel_agency_code": "12345678",
+                    "ticket_number": "ticket-number",
+                    "issuing_carrier_code": "AA",
+                    "customer_code": "customer-code",
+                    "fare_amount": "70.00",
+                    "fee_amount": "10.00",
+                    "tax_amount": "20.00",
+                    "restricted_ticket": False,
+                    "date_of_birth": "2012-12-12",
+                    "country_code": "US",
+                    "legs": [
+                        {
+                            "conjunction_ticket": "CJ0001",
+                            "exchange_ticket": "ET0001",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA100",
+                            "departure_date": date(2018, 1, 2),
+                            "departure_airport_code": "MDW",
+                            "departure_time": "08:00",
+                            "arrival_airport_code": "ATX",
+                            "arrival_time": "10:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        },
+                        {
+                            "conjunction_ticket": "CJ0002",
+                            "exchange_ticket": "ET0002",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA200",
+                            "departure_date": date(2018, 1, 3),
+                            "departure_airport_code": "ATX",
+                            "departure_time": "12:00",
+                            "arrival_airport_code": "MDW",
+                            "arrival_time": "14:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        }
+                    ]
+                }
+            }
+        }
+
+        submitted_transaction = Transaction.submit_for_partial_settlement(result.transaction.id, Decimal("500.00"), params).transaction
+
+        self.assertEqual(Transaction.Status.Settling, submitted_transaction.status)
+
     def test_update_details_with_valid_params(self):
         transaction = Transaction.sale({
             "amount": "10.00",
@@ -4126,6 +4284,10 @@ class TestTransaction(unittest.TestCase):
                     "fee_amount": "10.00",
                     "tax_amount": "20.00",
                     "restricted_ticket": False,
+                    "arrival_date": date(2022, 2, 3),
+                    "ticket_issuer_address": "ti-address",
+                    "date_of_birth": "2012-12-12",
+                    "country_code": "US",
                     "legs": [
                         {
                             "conjunction_ticket": "CJ0001",
@@ -4171,6 +4333,83 @@ class TestTransaction(unittest.TestCase):
         })
 
         self.assertTrue(result.is_success)
+
+    def test_transaction_submit_for_settlement_with_travel_flight_industry_data(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.fake_first_data_merchant_account_id,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        params = {
+            "industry": {
+                "industry_type": Transaction.IndustryType.TravelAndFlight,
+                "data": {
+                    "passenger_first_name": "John",
+                    "passenger_last_name": "Doe",
+                    "passenger_middle_initial": "M",
+                    "passenger_title": "Mr.",
+                    "issued_date": date(2018, 1, 1),
+                    "travel_agency_name": "Expedia",
+                    "travel_agency_code": "12345678",
+                    "ticket_number": "ticket-number",
+                    "issuing_carrier_code": "AA",
+                    "customer_code": "customer-code",
+                    "fare_amount": "70.00",
+                    "fee_amount": "10.00",
+                    "tax_amount": "20.00",
+                    "restricted_ticket": False,
+                    "arrival_date": date(2022, 2, 3),
+                    "ticket_issuer_address": "ti-address",
+                    "legs": [
+                        {
+                            "conjunction_ticket": "CJ0001",
+                            "exchange_ticket": "ET0001",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA100",
+                            "departure_date": date(2018, 1, 2),
+                            "departure_airport_code": "MDW",
+                            "departure_time": "08:00",
+                            "arrival_airport_code": "ATX",
+                            "arrival_time": "10:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        },
+                        {
+                            "conjunction_ticket": "CJ0002",
+                            "exchange_ticket": "ET0002",
+                            "coupon_number": "1",
+                            "service_class": "Y",
+                            "carrier_code": "AA",
+                            "fare_basis_code": "W",
+                            "flight_number": "AA200",
+                            "departure_date": date(2018, 1, 3),
+                            "departure_airport_code": "ATX",
+                            "departure_time": "12:00",
+                            "arrival_airport_code": "MDW",
+                            "arrival_time": "14:00",
+                            "stopover_permitted": False,
+                            "fare_amount": "35.00",
+                            "fee_amount": "5.00",
+                            "tax_amount": "10.00",
+                            "endorsement_or_restrictions": "NOT REFUNDABLE"
+                        }
+                    ]
+                }
+            }
+        }
+
+        submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_transactions_return_validation_errors_on_travel_flight_industry_data(self):
         result = Transaction.sale({
@@ -5391,6 +5630,56 @@ class TestTransaction(unittest.TestCase):
         self.assertIsNone(sdd_details.refund_from_transaction_fee_currency_iso_code)
         self.assertIsNone(sdd_details.settlement_type)
 
+    def test_creating_meta_checkout_card_transaction_with_fake_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.MetaCheckoutCard,
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        details = transaction.meta_checkout_card_details
+
+        self.assertEqual(details.bin, "401288")
+        self.assertEqual(details.card_type, "Visa")
+        self.assertEqual(details.cardholder_name, "Meta Checkout Card Cardholder")
+        self.assertEqual(details.container_id, "container123")
+        self.assertEqual(details.customer_location, "US")
+        self.assertEqual(details.expiration_date, "12/2024")
+        self.assertEqual(details.expiration_month, "12")
+        self.assertEqual(details.expiration_year, "2024")
+        self.assertEqual(details.image_url, "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=development")
+        self.assertEqual(details.is_network_tokenized, False)
+        self.assertEqual(details.last_4, "1881")
+        self.assertEqual(details.masked_number, "401288******1881")
+        self.assertEqual(details.prepaid, "No")
+
+    def test_creating_meta_checkout_token_transaction_with_fake_nonce(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": Nonces.MetaCheckoutToken,
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        details = transaction.meta_checkout_token_details
+
+        self.assertEqual(details.bin, "401288")
+        self.assertEqual(details.card_type, "Visa")
+        self.assertEqual(details.cardholder_name, "Meta Checkout Token Cardholder")
+        self.assertEqual(details.container_id, "container123")
+        self.assertEqual(details.cryptogram, "AlhlvxmN2ZKuAAESNFZ4GoABFA==")
+        self.assertEqual(details.customer_location, "US")
+        self.assertEqual(details.ecommerce_indicator, "07")
+        self.assertEqual(details.expiration_date, "12/2024")
+        self.assertEqual(details.expiration_month, "12")
+        self.assertEqual(details.expiration_year, "2024")
+        self.assertEqual(details.image_url, "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=development")
+        self.assertEqual(details.is_network_tokenized, True)
+        self.assertEqual(details.last_4, "1881")
+        self.assertEqual(details.masked_number, "401288******1881")
+        self.assertEqual(details.prepaid, "No")
+
     def test_creating_paypal_transaction_with_vaulted_token(self):
         customer_id = Customer.create().customer.id
 
@@ -5999,11 +6288,11 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEqual("1000", transaction.processor_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
-        self.assertEquals(4, transaction.installment_count)
-        self.assertEquals(4, len(transaction.installments))
+        self.assertEqual(4, transaction.installment_count)
+        self.assertEqual(4, len(transaction.installments))
         for i, t in enumerate(transaction.installments) :
-            self.assertEquals('250.00', t['amount'])
-            self.assertEquals('% s_INST_% s'%(transaction.id,i+1), t['id'])
+            self.assertEqual('250.00', t['amount'])
+            self.assertEqual('% s_INST_% s'%(transaction.id,i+1), t['id'])
 
         result = Transaction.refund(transaction.id,"20.00")
         self.assertTrue(result.is_success)
@@ -6011,8 +6300,8 @@ class TestTransaction(unittest.TestCase):
         refund = result.transaction
 
         for t in refund.refunded_installments :
-            self.assertEquals('-5.00', t['adjustments'][0]['amount'])
-            self.assertEquals("REFUND",t['adjustments'][0]['kind'])
+            self.assertEqual('-5.00', t['adjustments'][0]['amount'])
+            self.assertEqual("REFUND",t['adjustments'][0]['kind'])
 
     def test_manual_key_entry_transactions_with_valid_card_details(self):
         result = Transaction.sale({

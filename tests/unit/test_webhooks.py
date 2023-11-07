@@ -543,6 +543,20 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("my_id", notification.connected_merchant_paypal_status_changed.merchant_id)
         self.assertEqual("oauth_application_client_id", notification.connected_merchant_paypal_status_changed.oauth_application_client_id)
 
+    def test_builds_notification_for_subscription_billing_skipped(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.SubscriptionBillingSkipped,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.SubscriptionBillingSkipped, notification.kind)
+        self.assertEqual("my_id", notification.subscription.id)
+        self.assertTrue(len(notification.subscription.transactions) == 0)
+        self.assertTrue(len(notification.subscription.discounts) == 0)
+        self.assertTrue(len(notification.subscription.add_ons) == 0)
+
     def test_builds_notification_for_subscription_charged_successfully(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionChargedSuccessfully,
@@ -834,9 +848,19 @@ class TestWebhooks(unittest.TestCase):
         enriched_customer_data = payment_method_customer_data_updated.enriched_customer_data
         self.assertEqual(enriched_customer_data.fields_updated, ["username"])
 
+        address = {
+            "street_address": "Street Address",
+            "extended_address": "Extended Address",
+            "locality": "Locality",
+            "region": "Region",
+            "postal_code":"Postal Code"
+        }
+
         profile_data = enriched_customer_data.profile_data
         self.assertEqual(profile_data.first_name, "John")
         self.assertEqual(profile_data.last_name, "Doe")
         self.assertEqual(profile_data.username, "venmo_username")
         self.assertEqual(profile_data.phone_number, "1231231234")
         self.assertEqual(profile_data.email, "john.doe@paypal.com")
+        self.assertEqual(profile_data.billing_address, address)
+        self.assertEqual(profile_data.shipping_address, address)

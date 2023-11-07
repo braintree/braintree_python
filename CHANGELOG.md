@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## 4.24.0
+* Add `SubscriptionBillingSkipped` to `WebhookNotification.Kind`
+* Add `arrivalDate` and `ticketIssuerAddress` to `Transaction.sale` request and `industry` data support for Transaction.submitForSettlement
+* Add `date_of_birth` and `country_code` to IndustryData params
+* Add `MetaCheckoutCard`, `MetaCheckoutToken` payment methods
+* Add `MetaCheckoutCardDetails`, `MetaCheckoutTokenDetails` to `Transaction`
+* Add `verification_add_ons` to `PaymentMethod` create options for `ACH NetworkCheck`
 * Fix unittest compatibility with Python 3.12 (Thanks @mgorny)
 
 ## 4.23.0
