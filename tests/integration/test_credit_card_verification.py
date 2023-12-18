@@ -113,6 +113,41 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(1, len(account_type_errors))
         self.assertEqual(ErrorCodes.Verification.Options.AccountTypeIsInvalid, account_type_errors[0].code)
 
+    def test_create_with_external_vault(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+            },
+            "external_vault": {
+                "status": "will_vault"
+            }
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+
+    def test_create_with_risk_data(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+            },
+            "risk_data": {
+                "customer_browser": "IE7",
+                "customer_ip": "192.168.0.1"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+
     def test_find_with_verification_id(self):
         customer = Customer.create({
             "credit_card": {

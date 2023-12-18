@@ -78,8 +78,16 @@ class CreditCardVerification(AttributeGetter):
                 "number", "cvv", "cardholder_name", "cvv", "expiration_date", "expiration_month",
                 "expiration_year", {"billing_address": billing_address_params}
             ]
+        external_vault_params = [
+                "previous_network_transaction_id",
+                "status"
+            ]
         options_params = [
                 "account_type", "amount", "merchant_account_id"
+            ]
+        risk_data_params = [
+                "customer_browser",
+                "customer_ip"
             ]
         three_d_secure_pass_thru_params = [
                 "eci_flag",
@@ -94,9 +102,11 @@ class CreditCardVerification(AttributeGetter):
 
         return [
                 {"credit_card": credit_card_params},
+                {"external_vault": external_vault_params},
                 "intended_transaction_source",
                 {"options": options_params},
                 "payment_method_nonce",
+                {"risk_data": risk_data_params},
                 "three_d_secure_authentication_id",
                 {"three_d_secure_pass_thru": three_d_secure_pass_thru_params}]
 

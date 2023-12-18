@@ -53,6 +53,7 @@ class Customer(Resource):
                     "postal_code": "60606",
                     "region": "IL",
                     "country_name": "United States of America"
+                    "phone_number": "312-123-4567"
                 },
                 "options": {
                     "verify_card": True,

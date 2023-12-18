@@ -4,7 +4,7 @@ from braintree.resource import Resource
 from braintree.address import Address
 from braintree.configuration import Configuration
 from braintree.credit_card_verification import CreditCardVerification
-
+from enum import Enum
 
 class CreditCard(Resource):
     """
@@ -28,6 +28,7 @@ class CreditCard(Resource):
                 "postal_code": "60606",
                 "region": "IL",
                 "country_name": "United States of America"
+                "phone_number": "312-123-4567"
             },
             "options": {
                 "verify_card": True,
@@ -107,6 +108,24 @@ class CreditCard(Resource):
         Yes = "Yes"
         No = "No"
         Unknown = "Unknown"
+
+    class DebitNetwork(Enum):
+        """
+        Constants representing the debit networks used for processing a pinless debit transaction
+
+        * braintree.CreditCard.DebitNetwork.Accel
+        * braintree.CreditCard.DebitNetwork.Maestro
+        * braintree.CreditCard.DebitNetwork.Nyce
+        * braintree.CreditCard.DebitNetwork.Pulse
+        * braintree.CreditCard.DebitNetwork.Star
+        * braintree.CreditCard.DebitNetwork.Star_Access
+        """
+        Accel = "ACCEL"
+        Maestro= "MAESTRO"
+        Nyce = "NYCE"
+        Pulse = "PULSE"
+        Star = "STAR"
+        Star_Access = "STAR_ACCESS"
 
     Commercial = DurbinRegulated = Debit = Healthcare = \
             CountryOfIssuance = IssuingBank = Payroll = Prepaid = ProductId = CardTypeIndicator
@@ -211,7 +230,8 @@ class CreditCard(Resource):
             "locality",
             "postal_code",
             "region",
-            "street_address"
+            "street_address",
+            "phone_number"
         ]
 
         options = [

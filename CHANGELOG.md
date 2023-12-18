@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.25.0
+* Add `PickupInStore` to `ShippingMethod` enum
+* Add `external_vault` and `risk_data` to `CreditCardVerification.create` request
+* Add `phone_number` in `CreditCard`
+* Add `debit_network` to `Transaction` field
+* Add `debit_network` to `TransactionSearch` Request
+* Add `DebitNetwork` enum to `CreditCard`
+
 ## 4.24.0
 * Add `SubscriptionBillingSkipped` to `WebhookNotification.Kind`
 * Add `arrivalDate` and `ticketIssuerAddress` to `Transaction.sale` request and `industry` data support for Transaction.submitForSettlement

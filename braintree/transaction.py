@@ -76,6 +76,7 @@ class Transaction(Resource):
                 "region": "IL",
                 "postal_code": "60622",
                 "country_name": "United States of America"
+                "phone_number": "312-123-4567"
             },
             "shipping": {
                 "first_name": "Andrew",
@@ -87,6 +88,7 @@ class Transaction(Resource):
                 "region": "IL",
                 "postal_code": "60103",
                 "country_name": "United States of America"
+                "phone_number": "312-123-4567"
             }
         })
 
@@ -115,6 +117,7 @@ class Transaction(Resource):
         "currency_iso_code",
         "customer_id",
         "cvv_response_code",
+        "debit_network",
         "discount_amount",
         "disputes",
         "escrow_status",

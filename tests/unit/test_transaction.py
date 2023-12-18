@@ -263,6 +263,14 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.retried_transaction_id, "12345")
         self.assertTrue(transaction.retried)
 
+    def test_debit_network(self):
+        attributes = {
+            'amount': '27.00',
+            'debit_network' : CreditCard.DebitNetwork.Star
+        }
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.debit_network, CreditCard.DebitNetwork.Star)
+        
     def test_transaction_meta_checkout_card_attributes(self):
         attributes = {
             'amount': '420',

@@ -2619,6 +2619,23 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("line_items")[0].code
         )
 
+    def test_sale_with_debit_network(self):
+        result = Transaction.sale({
+        
+        "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.pinless_debit_merchant_account_id,
+            #"currency_iso_code": "USD",
+            "payment_method_nonce": Nonces.TransactablePinlessDebitVisa,
+            "options": {
+                "submit_for_settlement": True
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
+        self.assertTrue(hasattr(transaction, 'debit_network'))
+        self.assertIsNotNone(transaction.debit_network)
+
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

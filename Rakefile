@@ -6,31 +6,31 @@ namespace :test do
 
   # Usage:
   #   rake test:unit
-  #   rake test:unit[test_configuration]
-  #   rake test:unit[test_configuration,test_base_merchant_path_for_development]
+  #   rake test:unit[test_file]
+  #   rake test:unit[test_file,test_class,test_method]
   desc "run unit tests"
-  task :unit, [:file_name, :test_name] do |task, args|
+  task :unit, [:file_name, :class_name, :test_name] do |task, args|
     if args.file_name.nil?
-      sh "python3 -m unittest tests/unit"
-    elsif args.test_name.nil?
+      sh "python3 -m unittest discover tests/unit"
+    elsif args.class_name.nil?
       sh "python3 -m unittest tests/unit/#{args.file_name}.py"
     else
-      sh "python3 -m unittest tests/unit/#{args.file_name}.py -m #{args.test_name}"
+      sh "python3 -m unittest tests.unit.#{args.file_name}.#{args.class_name}.#{args.test_name}"
     end
   end
 
   # Usage:
   #   rake test:integration
-  #   rake test:integration[test_plan]
-  #   rake test:integration[test_plan,test_all_returns_all_the_plans]
+  #   rake test:integration[test_file]
+  #   rake test:integration[test_file,test_class,test_method]
   desc "run integration tests"
-  task :integration, [:file_name, :test_name] do |task, args|
+  task :integration, [:file_name, :class_name, :test_name] do |task, args|
     if args.file_name.nil?
-      sh "python3 -m unittest tests/integration"
-    elsif args.test_name.nil?
+      sh "python3 -m unittest discover tests/integration"
+    elsif args.class_name.nil?
       sh "python3 -m unittest tests/integration/#{args.file_name}.py"
     else
-      sh "python3 -m unittest tests/integration/#{args.file_name}.py -m #{args.test_name}"
+      sh "python3 -m unittest tests.integration.#{args.file_name}.#{args.class_name}.#{args.test_name}"
     end
   end
 

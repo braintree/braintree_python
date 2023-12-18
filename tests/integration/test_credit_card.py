@@ -190,7 +190,8 @@ class TestCreditCard(unittest.TestCase):
                 "country_code_alpha2": "MX",
                 "country_code_alpha3": "MEX",
                 "country_code_numeric": "484",
-                "country_name": "Mexico"
+                "country_name": "Mexico",
+                "phone_number": "312-123-4567"
             }
         })
 
@@ -204,6 +205,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual("MEX", address.country_code_alpha3)
         self.assertEqual("484", address.country_code_numeric)
         self.assertEqual("Mexico", address.country_name)
+        self.assertEqual("312-123-4567", address.phone_number)
 
     def test_create_with_billing_address_id(self):
         customer = Customer.create().customer

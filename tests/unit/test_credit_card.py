@@ -18,7 +18,8 @@ class TestCreditCard(unittest.TestCase):
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
-                    "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address"
+                    "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address",
+                    "phone_number"
                 ]
             },
             {"options": [
@@ -49,7 +50,7 @@ class TestCreditCard(unittest.TestCase):
             {
                 "billing_address": [
                     "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
-                    "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address",
+                    "extended_address", "first_name", "last_name", "locality", "postal_code", "region", "street_address", "phone_number",
                     {"options": ["update_existing"]}
                 ]
             },

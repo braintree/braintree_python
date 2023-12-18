@@ -349,6 +349,39 @@ class TestTransactionSearch(unittest.TestCase):
         self.assertEqual(transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
         self.assertEqual(transaction.id, collection.first.id)
 
+    def test_advanced_search_with_debit_network(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.pinless_debit_merchant_account_id,
+            #"currency_iso_code": "USD",
+            "payment_method_nonce": Nonces.TransactablePinlessDebitVisa,
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.credit_card_card_type == transaction.credit_card_details.card_type
+        )
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(transaction.id, collection.first.id)
+
+        collection = Transaction.search(
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.debit_network.in_list(Constants.get_all_enum_values(CreditCard.DebitNetwork))
+        )
+
+        self.assertEqual(1, collection.maximum_size)
+
+    def test_advanced_search_multiple_value_node_allowed_values_debit_network(self):
+        with self.assertRaisesRegex(AttributeError,
+                "Invalid argument\(s\) for debit_network: noSuchDebitNetwork"):
+            Transaction.search([
+                TransactionSearch.debit_network == "noSuchDebitNetwork"
+            ])
+
     def test_advanced_search_text_node_contains(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

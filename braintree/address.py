@@ -57,6 +57,7 @@ class Address(Resource):
         * braintree.Address.ShippingMethod.Ground
         * braintree.Address.ShippingMethod.Electronic
         * braintree.Address.ShippingMethod.ShipToStore
+        * braintree.Address.ShippingMethod.PickupInStore
         """
         SameDay     = "same_day"
         NextDay     = "next_day"
@@ -64,6 +65,7 @@ class Address(Resource):
         Ground      = "ground"
         Electronic  = "electronic"
         ShipToStore = "ship_to_store"
+        PickupInStore = "pickup_in_store"
 
     @staticmethod
     def create(params=None):
