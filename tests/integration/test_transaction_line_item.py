@@ -16,6 +16,9 @@ class TestTransactionLineItem(unittest.TestCase):
                 "kind": TransactionLineItem.Kind.Debit,
                 "unit_amount": "45.1232",
                 "total_amount": "45.15",
+                "upc_code": "123456789",
+                "upc_type": "UPC-A",
+                "image_url": "https://google.com/image.png",
             }]
         }).transaction
 
@@ -27,3 +30,7 @@ class TestTransactionLineItem(unittest.TestCase):
         self.assertEqual(TransactionLineItem.Kind.Debit, lineItem.kind)
         self.assertEqual("45.1232", lineItem.unit_amount)
         self.assertEqual("45.15", lineItem.total_amount)
+        self.assertEqual("123456789", lineItem.upc_code)
+        self.assertEqual("UPC-A", lineItem.upc_type)
+        self.assertEqual("https://google.com/image.png",lineItem.image_url)
+

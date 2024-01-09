@@ -1,5 +1,6 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
+from datetime import date
 
 class TestPaymentMethodNonce(unittest.TestCase):
     indian_payment_token = "india_visa_credit"
@@ -143,7 +144,7 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("1881", found_nonce.details["last_four"])
         self.assertEqual("Visa", found_nonce.details["card_type"])
         self.assertEqual("Meta Checkout Card Cardholder", found_nonce.details["cardholder_name"])
-        self.assertEqual("2024", found_nonce.details["expiration_year"])
+        self.assertEqual(str(date.today().year + 1), found_nonce.details["expiration_year"])
         self.assertEqual("12", found_nonce.details["expiration_month"])
 
     def test_find_nonce_shows_meta_checkout_token_details(self):
@@ -154,7 +155,7 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual("1881", found_nonce.details["last_four"])
         self.assertEqual("Visa", found_nonce.details["card_type"])
         self.assertEqual("Meta Checkout Token Cardholder", found_nonce.details["cardholder_name"])
-        self.assertEqual("2024", found_nonce.details["expiration_year"])
+        self.assertEqual(str(date.today().year + 1), found_nonce.details["expiration_year"])
         self.assertEqual("12", found_nonce.details["expiration_month"])
 
     def test_exposes_null_3ds_info_if_none_exists(self):

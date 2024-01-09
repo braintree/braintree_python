@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.26.0
+* Remove usage of standard library deprecated `cgi` module. _Note: this will break integrations on versions of Python below 3.2. However, this is NOT a breaking change to this library, due to our current support of Python 3.5+._
+* Add `PackageDetails` class.
+* Add `packages` to `Transaction` attributes.
+* Add `package_tracking` method to `TransactionGateway` to make request to add tracking information to transactions.
+* Add `process_debit_as_credit` to `credit_card` field in `options` field during Transaction create.
+* Deprecate `three_d_secure_token` in favor of `three_d_secure_authentication_id`
+* Add `upc_code`, `upc_type`, and `image_url` to `line_items` in `transaction`
+* Deprecate `venmo_sdk_session` and `venmo_sdk_payment_method_code`
+
 ## 4.25.0
 * Add `PickupInStore` to `ShippingMethod` enum
 * Add `external_vault` and `risk_data` to `CreditCardVerification.create` request

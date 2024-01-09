@@ -145,6 +145,21 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    def package_tracking(self, transaction_id, params=None):
+        try:
+            if params is None:
+                params = {}
+            if transaction_id is None or transaction_id.strip() == "":
+                raise NotFoundError()
+            Resource.verify_keys(params, Transaction.package_tracking_signature())
+            response = self.config.http().post(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/shipments", {"shipment": params})
+            if "transaction" in response:
+                return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+            elif "api_error_response" in response:
+                return ErrorResult(self.gateway, response["api_error_response"])
+        except NotFoundError:
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
     def void(self, transaction_id):
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/void")
         if "transaction" in response:
@@ -179,8 +194,13 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    # NEXT_MAJOR_VERSION remove these checks when the attributes are removed
     def __check_for_deprecated_attributes(self, params):
         if "device_session_id" in params.keys():
             warnings.warn("device_session_id is deprecated, use device_data parameter instead", DeprecationWarning)
         if "fraud_merchant_id" in params.keys():
             warnings.warn("fraud_merchant_id is deprecated, use device_data parameter instead", DeprecationWarning)
+        if "three_d_secure_token" in params.keys():
+            warnings.warn("three_d_secure_token is deprecated, use three_d_secure_authentication_id parameter instead", DeprecationWarning)
+        if "venmo_sdk_payment_method_code" in params.keys() or "venmo_sdk_session" in params.keys():
+            warnings.warn("The Venmo SDK integration is Unsupported. Please update your integration to use Pay with Venmo instead.", DeprecationWarning)

@@ -1,8 +1,4 @@
-try:
-    from html import escape
-except ImportError:
-    from cgi import escape
-
+from html import escape
 from braintree.apple_pay_options import ApplePayOptions
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult

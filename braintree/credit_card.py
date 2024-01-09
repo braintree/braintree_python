@@ -238,7 +238,7 @@ class CreditCard(Resource):
             "fail_on_duplicate_payment_method",
             "make_default",
             "skip_advanced_fraud_checking",
-            "venmo_sdk_session",
+            "venmo_sdk_session",  # NEXT_MJOR_VERSION remove venmo_sdk_session
             "verification_account_type",
             "verification_amount",
             "verification_merchant_account_id",
@@ -268,7 +268,7 @@ class CreditCard(Resource):
             "expiration_year",
             "number",
             "token",
-            "venmo_sdk_payment_method_code",
+            "venmo_sdk_payment_method_code", # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
             "device_data",
             "payment_method_nonce",
             "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id

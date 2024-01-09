@@ -95,7 +95,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "number",
             "payment_method_nonce",
             "token",
-            "venmo_sdk_payment_method_code",
+            "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
             "device_session_id",
             "fraud_merchant_id",
             {
@@ -103,7 +103,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
                     "make_default",
                     "skip_advanced_fraud_checking",
                     "us_bank_account_verification_method",
-                    "venmo_sdk_session",
+                    "venmo_sdk_session", # NEXT_MJOR_VERSION remove venmo_sdk_session
                     "verification_account_type",
                     "verification_add_ons",
                     "verification_amount",

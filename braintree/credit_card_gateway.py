@@ -89,8 +89,11 @@ class CreditCardGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    # NEXT_MAJOR_VERSION remove these checks when the attributes are removed
     def __check_for_deprecated_attributes(self, params):
         if "device_session_id" in params.keys():
             warnings.warn("device_session_id is deprecated, use device_data parameter instead", DeprecationWarning)
         if "fraud_merchant_id" in params.keys():
             warnings.warn("fraud_merchant_id is deprecated, use device_data parameter instead", DeprecationWarning)
+        if "venmo_sdk_payment_method_code" in params.keys() or "venmo_sdk_session" in params.keys():
+            warnings.warn("The Venmo SDK integration is Unsupported. Please update your integration to use Pay with Venmo instead.", DeprecationWarning)

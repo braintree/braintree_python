@@ -32,6 +32,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.risk_data import RiskData
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
+from braintree.package_details import PackageDetails
 from braintree.status_event import StatusEvent
 from braintree.subscription_details import SubscriptionDetails
 from braintree.successful_result import SuccessfulResult
@@ -132,6 +133,7 @@ class Transaction(Resource):
         "network_response_text",
         "network_transaction_id",
         "order_id",
+        "packages",
         "payment_instrument_type",
         "payment_method_token",
         "plan_id",
@@ -529,8 +531,9 @@ class Transaction(Resource):
             "device_data", "billing_address_id", "payment_method_nonce", "product_sku", "tax_amount",
             "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
             "discount_amount", "shipping_amount", "ships_from_postal_code",
-            "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", "type", "venmo_sdk_payment_method_code", "service_fee_amount",
-            "sca_exemption","exchange_rate_quote_id",
+            "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", # NEXT_MAJOR_VERSION Remove three_d_secure_token
+            "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
+            "service_fee_amount", "sca_exemption","exchange_rate_quote_id",
             "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "risk_data": [
@@ -582,7 +585,7 @@ class Transaction(Resource):
                     "store_in_vault_on_success",
                     "store_shipping_address_in_vault",
                     "submit_for_settlement",
-                    "venmo_sdk_session",
+                    "venmo_sdk_session", # NEXT_MJOR_VERSION remove venmo_sdk_session
                     "payee_id",
                     "payee_email",
                     "skip_advanced_fraud_checking",
@@ -590,7 +593,8 @@ class Transaction(Resource):
                     "skip_cvv",
                     {
                         "credit_card": [
-                            "account_type"
+                            "account_type",
+                            "process_debit_as_credit"
                         ],
                         "paypal": [
                             "payee_id",
@@ -663,7 +667,7 @@ class Transaction(Resource):
             },
             {"line_items":
                 [
-                    "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",
+                    "commodity_code", "description", "discount_amount", "image_url", "kind", "name", "product_code", "quantity", "tax_amount", "total_amount", "unit_amount", "unit_of_measure", "unit_tax_amount", "upc_code", "upc_type", "url",
                 ]
             },
             {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
@@ -708,7 +712,7 @@ class Transaction(Resource):
                 },
                 {"line_items":
                     [
-                        "quantity", "name", "description", "kind", "unit_amount", "unit_tax_amount", "total_amount", "discount_amount", "tax_amount", "unit_of_measure", "product_code", "commodity_code", "url",
+                        "commodity_code", "description", "discount_amount", "image_url", "kind", "name", "product_code", "quantity", "tax_amount", "total_amount", "unit_amount", "unit_of_measure", "unit_tax_amount", "upc_code", "upc_type", "url,"
                     ]
                 },
                 {"shipping":
@@ -742,6 +746,32 @@ class Transaction(Resource):
                     ]
                 },
             ]
+
+    @staticmethod
+    def package_tracking_signature():
+        return [ "carrier", "notify_payer", "tracking_number",
+                { "line_items": [
+                    "commodity_code", "description", "discount_amount", "image_url", "kind", "name",
+                    "product_code", "quantity", "tax_amount", "total_amount", "unit_amount", "unit_of_measure",
+                    "unit_tax_amount", "upc_code", "upc_type", "url"
+                    ]
+                },
+            ]
+
+    @staticmethod
+    def package_tracking(transaction_id, params=None):
+        """
+        Creates a request to send package tracking information for a transaction which has already submitted for settlement.
+
+        Requires the transaction id of the transaction and the package tracking request details::
+
+            result = braintree.Transaction.package_tracking("my_transaction_id", params )
+
+        """
+        if params is None:
+            params = {}
+        return Configuration.gateway().transaction.package_tracking(transaction_id, params)
+
 
     @staticmethod
     def update_details_signature():
@@ -779,6 +809,8 @@ class Transaction(Resource):
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:
             self.credit_card_details = CreditCard(gateway, attributes.pop("credit_card"))
+        if "shipments" in attributes:
+            self.packages = [PackageDetails(detail) for detail in self.shipments]
         if "paypal" in attributes:
             self.paypal_details = PayPalAccount(gateway, attributes.pop("paypal"))
         if "paypal_here" in attributes:

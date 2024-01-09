@@ -204,6 +204,59 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction_adjustment.processor_response_code, "1000")
         self.assertEqual(transaction_adjustment.processor_response_text, "Approved")
 
+    def test_constructor_parses_shipments_into_packages(self):
+        attributes = {
+            'amount': '27.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'tax_amount': '1.00',
+            'shipments': [
+                 {
+                    'id': 'id1',
+                    'carrier': 'UPS',
+                    'tracking_number': 'tracking_number_1',
+                    'paypal_tracking_id': 'pp_tracking_number_1',
+                },
+                {
+                    'id': 'id2',
+                    'carrier': 'FEDEX',
+                    'tracking_number': 'tracking_number_2',
+                    'paypal_tracking_id': 'pp_tracking_number_2',
+                },
+            ],
+        }
+
+        transaction = Transaction(None, attributes)
+        package_detail_1 = transaction.packages[0]
+        self.assertEqual(package_detail_1.id, "id1")
+        self.assertEqual(package_detail_1.carrier, "UPS")
+        self.assertEqual(package_detail_1.tracking_number, "tracking_number_1")
+        self.assertEqual(package_detail_1.paypal_tracking_id, "pp_tracking_number_1")
+
+        package_detail_2 = transaction.packages[1]
+        self.assertEqual(package_detail_2.id, "id2")
+        self.assertEqual(package_detail_2.carrier, "FEDEX")
+        self.assertEqual(package_detail_2.tracking_number, "tracking_number_2")
+        self.assertEqual(package_detail_2.paypal_tracking_id, "pp_tracking_number_2")
+
+    def test_constructor_works_with_empty_shipments_list(self):
+        attributes = {
+            'amount': '27.00',
+            'customer_id': '4096',
+            'merchant_account_id': '8192',
+            'payment_method_token': 'sometoken',
+            'purchase_order_number': '20202',
+            'recurring': 'False',
+            'tax_amount': '1.00',
+            'shipments': [],
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(len(transaction.packages), 0)
+
     def test_constructor_includes_network_transaction_id_and_response_code_and_response_text(self):
         attributes = {
             'amount': '27.00',

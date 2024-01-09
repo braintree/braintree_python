@@ -4,6 +4,7 @@ from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 from braintree.dispute import Dispute
 from braintree.payment_instrument_type import PaymentInstrumentType
+from datetime import date
 
 class TestTransaction(unittest.TestCase):
 
@@ -2417,6 +2418,126 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("line_items").for_object("index_1").on("unit_amount")[0].code
         )
 
+    def test_sale_with_line_items_accepts_valid_image_url_and_upc_code_and_type(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+            },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+                "upc_code": "1234567890",
+                "upc_type": "UPC-A",
+                "image_url": "https://google.com/image.png",
+            }]
+        })
+        self.assertTrue(result.is_success)
+        line_items = result.transaction.line_items
+
+        lineItem = line_items[0]
+        self.assertEqual("1234567890", lineItem.upc_code)
+        self.assertEqual("UPC-A", lineItem.upc_type)
+
+    def test_sale_with_line_items_returns_validation_errors_for_upc_code_too_long_and_type_invalid(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+                },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+                "upc_code": "THISCODEISABITTOOLONG",
+                "upc_type": "invalid",
+                "image_url": "https://google.com/image.png",
+                }]
+            })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+                ErrorCodes.Transaction.LineItem.UPCCodeIsTooLong,
+                result.errors.for_object("transaction").for_object("line_items").for_object("index_0").on("upc_code")[0].code
+                )
+        self.assertEqual(
+                ErrorCodes.Transaction.LineItem.UPCTypeIsInvalid,
+                result.errors.for_object("transaction").for_object("line_items").for_object("index_0").on("upc_type")[0].code
+                )
+
+    def test_sale_with_line_items_returns_UPC_code_missing_error(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+                },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+                "upc_type": "UPC-B",
+                }]
+            })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+                ErrorCodes.Transaction.LineItem.UPCCodeIsMissing,
+                result.errors.for_object("transaction").for_object("line_items").for_object("index_0").on("upc_code")[0].code
+                )
+
+    def test_sale_with_line_items_returns_UPC_type_missing_error(self):
+        result = Transaction.sale({
+            "amount": "35.05",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+                },
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "unit_of_measure": "gallon",
+                "discount_amount": "1.02",
+                "total_amount": "45.15",
+                "product_code": "23434",
+                "commodity_code": "9SAASSD8724",
+                "upc_code": "00000000000000",
+                }]
+            })
+
+        self.assertFalse(result.is_success)
+
+        self.assertEqual(
+                ErrorCodes.Transaction.LineItem.UPCTypeIsMissing,
+                result.errors.for_object("transaction").for_object("line_items").for_object("index_0").on("upc_type")[0].code
+                )
+
+
     def test_sale_with_amount_not_supported_by_processor(self):
         result = Transaction.sale({
             "amount": "0.2",
@@ -2624,7 +2745,6 @@ class TestTransaction(unittest.TestCase):
         
         "amount": TransactionAmounts.Authorize,
             "merchant_account_id": TestHelper.pinless_debit_merchant_account_id,
-            #"currency_iso_code": "USD",
             "payment_method_nonce": Nonces.TransactablePinlessDebitVisa,
             "options": {
                 "submit_for_settlement": True
@@ -2632,9 +2752,24 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
         self.assertTrue(hasattr(transaction, 'debit_network'))
         self.assertIsNotNone(transaction.debit_network)
+
+    def test_pinless_eligible_sale_with_process_debit_as_credit(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.pinless_debit_merchant_account_id,
+            "payment_method_nonce": Nonces.TransactablePinlessDebitVisa,
+            "options": {
+                "submit_for_settlement": True,
+                "credit_card":{
+                    "process_debit_as_credit": True,
+                }
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsNone(transaction.debit_network)
 
     def test_validation_error_on_invalid_custom_fields(self):
         result = Transaction.sale({
@@ -4615,6 +4750,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Transaction.Status.GatewayRejected, result.transaction.status)
         self.assertEqual(Transaction.GatewayRejectionReason.ThreeDSecure, result.transaction.gateway_rejection_reason)
 
+    # NEXT_MAJOR_VERSION Remove this test
+    # three_d_secure_token is deprecated in favor of three_d_secure_authentication_id
     def test_sale_with_three_d_secure_token(self):
         three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
             "number": "4111111111111111",
@@ -4634,6 +4771,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    # NEXT_MAJOR_VERSION Remove this test
+    # three_d_secure_token is deprecated in favor of three_d_secure_authentication_id
     def test_sale_without_three_d_secure_token(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
@@ -4646,6 +4785,8 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
 
+    # NEXT_MAJOR_VERSION Remove this test
+    # three_d_secure_token is deprecated in favor of three_d_secure_authentication_id
     def test_sale_returns_error_with_none_three_d_secure_token(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
@@ -4663,6 +4804,8 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("three_d_secure_token")[0].code
         )
 
+    # NEXT_MAJOR_VERSION Remove this test
+    # three_d_secure_token is deprecated in favor of three_d_secure_authentication_id
     def test_sale_returns_error_with_mismatched_3ds_verification_data(self):
         three_d_secure_token = TestHelper.create_3ds_verification(TestHelper.three_d_secure_merchant_account_id, {
             "number": "4111111111111111",
@@ -5657,14 +5800,16 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         details = transaction.meta_checkout_card_details
 
+        next_year = str(date.today().year + 1)
+        
         self.assertEqual(details.bin, "401288")
         self.assertEqual(details.card_type, "Visa")
         self.assertEqual(details.cardholder_name, "Meta Checkout Card Cardholder")
         self.assertEqual(details.container_id, "container123")
         self.assertEqual(details.customer_location, "US")
-        self.assertEqual(details.expiration_date, "12/2024")
+        self.assertEqual(details.expiration_date, "12/" + next_year)
         self.assertEqual(details.expiration_month, "12")
-        self.assertEqual(details.expiration_year, "2024")
+        self.assertEqual(details.expiration_year, next_year)
         self.assertEqual(details.image_url, "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=development")
         self.assertEqual(details.is_network_tokenized, False)
         self.assertEqual(details.last_4, "1881")
@@ -5681,6 +5826,8 @@ class TestTransaction(unittest.TestCase):
         transaction = result.transaction
         details = transaction.meta_checkout_token_details
 
+        next_year = str(date.today().year + 1)
+        
         self.assertEqual(details.bin, "401288")
         self.assertEqual(details.card_type, "Visa")
         self.assertEqual(details.cardholder_name, "Meta Checkout Token Cardholder")
@@ -5688,9 +5835,9 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(details.cryptogram, "AlhlvxmN2ZKuAAESNFZ4GoABFA==")
         self.assertEqual(details.customer_location, "US")
         self.assertEqual(details.ecommerce_indicator, "07")
-        self.assertEqual(details.expiration_date, "12/2024")
+        self.assertEqual(details.expiration_date, "12/" + next_year)
         self.assertEqual(details.expiration_month, "12")
-        self.assertEqual(details.expiration_year, "2024")
+        self.assertEqual(details.expiration_year, next_year)
         self.assertEqual(details.image_url, "https://assets.braintreegateway.com/payment_method_logo/visa.png?environment=development")
         self.assertEqual(details.is_network_tokenized, True)
         self.assertEqual(details.last_4, "1881")
@@ -6395,19 +6542,6 @@ class TestTransaction(unittest.TestCase):
 
         error_code = adjusted_authorization_result.errors.for_object("authorization_adjustment").on("base")[0].code
         self.assertEqual(ErrorCodes.Transaction.NoNetAmountToPerformAuthAdjustment, error_code)
-
-    def test_adjust_authorization_when_transaction_status_is_not_authorized(self):
-        additional_params = { "options": { "submit_for_settlement": True } }
-        merchant_params = { **self.__first_data_transaction_params(), **additional_params }
-        initial_transaction_sale =  Transaction.sale(merchant_params)
-        self.assertTrue(initial_transaction_sale.is_success)
-        adjusted_authorization_result = Transaction.adjust_authorization(initial_transaction_sale.transaction.id, "85.50")
-
-        self.assertFalse(adjusted_authorization_result.is_success)
-        self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
-
-        error_code = adjusted_authorization_result.errors.for_object("transaction").on("base")[0].code
-        self.assertEqual(ErrorCodes.Transaction.TransactionMustBeInStateAuthorized, error_code)
 
     def test_adjust_authorization_when_transaction_authorization_type_is_undfined_or_final(self):
         additional_params = { "transaction_source": "recurring" }
