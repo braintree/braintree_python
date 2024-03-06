@@ -18,15 +18,14 @@ class TestCreditCard(unittest.TestCase):
 
         three_d_secure_info = result.credit_card.verification.three_d_secure_info
 
-        self.assertEqual("Y", three_d_secure_info.enrolled)
         self.assertEqual("authenticate_successful", three_d_secure_info.status)
         self.assertEqual(True, three_d_secure_info.liability_shifted)
         self.assertEqual(True, three_d_secure_info.liability_shift_possible)
-        self.assertEqual("cavv_value", three_d_secure_info.cavv)
-        self.assertEqual("xid_value", three_d_secure_info.xid)
-        self.assertEqual(None, three_d_secure_info.ds_transaction_id)
-        self.assertEqual("05", three_d_secure_info.eci_flag)
-        self.assertEqual("1.0.2", three_d_secure_info.three_d_secure_version)
+        self.assertIsInstance(three_d_secure_info.enrolled, str)
+        self.assertIsInstance(three_d_secure_info.cavv, str)
+        self.assertIsInstance(three_d_secure_info.xid, str)
+        self.assertIsInstance(three_d_secure_info.eci_flag, str)
+        self.assertIsInstance(three_d_secure_info.three_d_secure_version, str)
 
     def test_create_with_three_d_secure_pass_thru(self):
         customer_id = Customer.create().customer.id

@@ -272,6 +272,19 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("update_funding_information", notification.disbursement.follow_up_action)
         self.assertEqual(date(2014, 2, 9), notification.disbursement.disbursement_date)
 
+    def test_builds_notification_for_old_dispute_under_review(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeUnderReview,
+            "legacy_dispute_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeUnderReview, notification.kind)
+        self.assertEqual("legacy_dispute_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.UnderReview, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
     def test_builds_notification_for_old_dispute_opened(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.DisputeOpened,
@@ -365,6 +378,19 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(WebhookNotification.Kind.DisputeExpired, notification.kind)
         self.assertEqual("legacy_dispute_id", notification.dispute.id)
         self.assertEqual(Dispute.Status.Expired, notification.dispute.status)
+        self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
+
+    def test_builds_notification_for_new_dispute_under_review(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.DisputeUnderReview,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.DisputeUnderReview, notification.kind)
+        self.assertEqual("my_id", notification.dispute.id)
+        self.assertEqual(Dispute.Status.UnderReview, notification.dispute.status)
         self.assertEqual(Dispute.Kind.Chargeback, notification.dispute.kind)
 
     def test_builds_notification_for_new_dispute_opened(self):

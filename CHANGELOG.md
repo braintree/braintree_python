@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.27.0
+* Add `UnderReview` status to `Dispute`
+* Add `DisputeUnderReview` to `WebhookNotification.Kind`
+
 ## 4.26.0
 * Remove usage of standard library deprecated `cgi` module. _Note: this will break integrations on versions of Python below 3.2. However, this is NOT a breaking change to this library, due to our current support of Python 3.5+._
 * Add `PackageDetails` class.

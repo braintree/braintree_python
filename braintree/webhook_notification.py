@@ -35,6 +35,7 @@ class WebhookNotification(Resource):
         DisputeExpired = "dispute_expired"
         DisputeLost = "dispute_lost"
         DisputeOpened = "dispute_opened"
+        DisputeUnderReview = "dispute_under_review"
         DisputeWon = "dispute_won"
         GrantedPaymentMethodRevoked = "granted_payment_method_revoked"
         GrantorUpdatedGrantedPaymentMethod = "grantor_updated_granted_payment_method"

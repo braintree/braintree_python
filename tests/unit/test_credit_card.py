@@ -131,3 +131,26 @@ class TestCreditCard(unittest.TestCase):
         })
 
         self.assertEqual(None, credit_card.expiration_date)
+
+    def test_masked_number_with_standard_bin(self):
+        credit_card = CreditCard(
+            None,
+            {
+                "bin": "411111",
+                "last_4": "1111",
+            },
+        )
+
+        self.assertEqual(credit_card.masked_number, "411111******1111")
+
+    def test_masked_number_with_extended_bin(self):
+        credit_card = CreditCard(
+            None,
+            {
+                "bin": "411111",
+                "bin_extended": "41111111",
+                "last_4": "1111",
+            },
+        )
+
+        self.assertEqual(credit_card.masked_number, "41111111****1111")

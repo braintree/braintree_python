@@ -322,4 +322,7 @@ class CreditCard(Resource):
         """
         Returns the masked number of the CreditCard.
         """
-        return self.bin + "******" + self.last_4
+        bin = self.bin_extended if hasattr(self, "bin_extended") else self.bin
+        mask_length = 16 - len(bin) - len(self.last_4)
+        mask = "*" * mask_length
+        return bin + mask + self.last_4

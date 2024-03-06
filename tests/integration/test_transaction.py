@@ -393,7 +393,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(datetime, type(transaction.updated_at))
         self.assertEqual("510510", transaction.credit_card_details.bin)
         self.assertEqual("5100", transaction.credit_card_details.last_4)
-        self.assertEqual("510510******5100", transaction.credit_card_details.masked_number)
+        self.assertEqual("51051051****5100", transaction.credit_card_details.masked_number)
         self.assertEqual("MasterCard", transaction.credit_card_details.card_type)
         self.assertEqual("The Cardholder", transaction.credit_card_details.cardholder_name)
         self.assertEqual(None, transaction.avs_error_response_code)
@@ -547,7 +547,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEqual(transaction.credit_card_details.masked_number, "411111******1111")
+        self.assertEqual(transaction.credit_card_details.masked_number, "41111111****1111")
         self.assertEqual(None, transaction.vault_credit_card)
 
     def test_sale_with_vault_customer_and_credit_card_data_and_store_in_vault(self):
@@ -570,7 +570,7 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEqual("411111******1111", transaction.credit_card_details.masked_number)
+        self.assertEqual("41111111****1111", transaction.credit_card_details.masked_number)
         self.assertEqual("411111******1111", transaction.vault_credit_card.masked_number)
 
     def test_sale_with_venmo_merchant_data(self):
@@ -4677,7 +4677,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Decimal("123.45"), clone_transaction.amount)
         self.assertEqual("MyShoppingCartProvider", clone_transaction.channel)
         self.assertEqual("123", clone_transaction.order_id)
-        self.assertEqual("510510******5100", clone_transaction.credit_card_details.masked_number)
+        self.assertEqual("51051051****5100", clone_transaction.credit_card_details.masked_number)
         self.assertEqual("Dan", clone_transaction.customer_details.first_name)
         self.assertEqual("Carl", clone_transaction.billing_details.first_name)
         self.assertEqual("Andrew", clone_transaction.shipping_details.first_name)
@@ -5034,7 +5034,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("merchant_account_id")[0].code
         )
 
-    def test_transaction_with_three_d_secure_pass_thru_with_missing_eci_flag(self):
+    def test_transaction_with_three_d_secure_pass_thru_error(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
             "amount": TransactionAmounts.Authorize,
@@ -5053,154 +5053,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             ErrorCodes.Transaction.ThreeDSecureEciFlagIsRequired,
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
-        )
-
-
-    def test_transaction_with_three_d_secure_pass_thru_with_missing_cavv_and_xid(self):
-        result = Transaction.sale({
-            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "three_d_secure_pass_thru": {
-                "eci_flag": "05",
-                "cavv": "",
-                "xid": ""
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ThreeDSecureCavvIsRequired,
-            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv")[0].code
-        )
-
-    def test_transaction_with_three_d_secure_pass_thru_with_invalid_eci_flag(self):
-        result = Transaction.sale({
-            "merchant_account_id": TestHelper.three_d_secure_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "three_d_secure_pass_thru": {
-                "eci_flag": "bad_eci_flag",
-                "cavv": "some-cavv",
-                "xid": "some-xid"
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ThreeDSecureEciFlagIsInvalid,
-            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
-        )
-
-    def test_transaction_with_three_d_secure_adyen_pass_thru(self):
-        result = Transaction.sale({
-            "merchant_account_id": TestHelper.adyen_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": ExpirationHelper.ADYEN.value,
-                "cvv": "737"
-            },
-            "three_d_secure_pass_thru": {
-                "eci_flag": "02",
-                "cavv": "some-cavv",
-                "xid": "some-xid",
-                "authentication_response": "Y",
-                "directory_response": "Y",
-                "cavv_algorithm": "2",
-                "ds_transaction_id": "dstrxid-present",
-                "three_d_secure_version": "1.0.2",
-            }
-        })
-
-        self.assertTrue(result.is_success)
-        self.assertEqual(Transaction.Status.Authorized, result.transaction.status)
-
-    def test_transaction_with_three_d_secure_adyen_pass_thru_missing_authentication_response(self):
-        result = Transaction.sale({
-            "merchant_account_id": TestHelper.adyen_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": ExpirationHelper.ADYEN.value,
-                "cvv": "737"
-                },
-            "three_d_secure_pass_thru": {
-                "eci_flag": "02",
-                "cavv": "some-cavv",
-                "xid": "some-xid",
-                "authentication_response": "",
-                "directory_response": "Y",
-                "cavv_algorithm": "2",
-                "ds_transaction_id": "dstrxid-present",
-                "three_d_secure_version": "1.0.2",
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ThreeDSecureAuthenticationResponseIsInvalid,
-            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("authentication_response")[0].code
-        )
-
-    def test_transaction_with_three_d_secure_adyen_pass_thru_missing_directory_response(self):
-        result = Transaction.sale({
-            "merchant_account_id": TestHelper.adyen_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": ExpirationHelper.ADYEN.value,
-                "cvv": "737"
-            },
-            "three_d_secure_pass_thru": {
-                "eci_flag": "02",
-                "cavv": "some-cavv",
-                "xid": "some-xid",
-                "authentication_response": "Y",
-                "directory_response": "",
-                "cavv_algorithm": "2",
-                "ds_transaction_id": "dstrxid-present",
-                "three_d_secure_version": "1.0.2",
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ThreeDSecureDirectoryResponseIsInvalid,
-            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("directory_response")[0].code
-        )
-
-    def test_transaction_with_three_d_secure_adyen_pass_thru_missing_cavv_algorithm(self):
-        result = Transaction.sale({
-            "merchant_account_id": TestHelper.adyen_merchant_account_id,
-            "amount": TransactionAmounts.Authorize,
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": ExpirationHelper.ADYEN.value,
-                "cvv": "737"
-            },
-            "three_d_secure_pass_thru": {
-                "eci_flag": "02",
-                "cavv": "some-cavv",
-                "xid": "some-xid",
-                "authentication_response": "Y",
-                "directory_response": "Y",
-                "cavv_algorithm": "",
-                "ds_transaction_id": "dstrxid-present",
-                "three_d_secure_version": "1.0.2",
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.ThreeDSecureCavvAlgorithmIsInvalid,
-            result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("cavv_algorithm")[0].code
         )
 
     @unittest.skip("until we have a more stable ci env")

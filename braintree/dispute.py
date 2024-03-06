@@ -14,17 +14,20 @@ class Dispute(AttributeGetter):
         * braintree.Dispute.Status.Accepted
         * braintree.Dispute.Status.AutoAccepted
         * braintree.Dispute.Status.Disputed
-        * braintree.Dispute.Status.Open
-        * braintree.Dispute.Status.Won
+        * braintree.Dispute.Status.Expired
         * braintree.Dispute.Status.Lost
+        * braintree.Dispute.Status.Open
+        * braintree.Dispute.Status.UnderReview
+        * braintree.Dispute.Status.Won
         """
         Accepted = "accepted"
         AutoAccepted = "auto_accepted"
         Disputed = "disputed"
         Expired = "expired"
-        Open  = "open"
-        Won  = "won"
         Lost = "lost"
+        Open  = "open"
+        UnderReview = "under_review"
+        Won  = "won"
 
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Reason(object):
