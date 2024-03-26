@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.28.0
+* Add `domains` parameter support to `ClientToken.generate`
+
 ## 4.27.0
 * Add `UnderReview` status to `Dispute`
 * Add `DisputeUnderReview` to `WebhookNotification.Kind`

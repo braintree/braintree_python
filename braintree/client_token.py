@@ -22,8 +22,9 @@ class ClientToken(object):
     def generate_signature():
         return [
             "customer_id",
+            "merchant_account_id",
             "proxy_merchant_id",
             "version",
-            "merchant_account_id",
+            {"domains": ["__any_key__"]},
             {"options": ["make_default", "verify_card", "fail_on_duplicate_payment_method"]}
         ]

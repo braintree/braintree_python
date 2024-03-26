@@ -77,13 +77,15 @@ class ErrorCodes(object):
         OptionsNotAllowedWithoutCustomer = "93207"
 
     class ClientToken(object):
-        MakeDefaultRequiresCustomerId = "92801"
-        VerifyCardRequiresCustomerId = "92802"
-        FailOnDuplicatePaymentMethodRequiresCustomerId = "92803"
         CustomerDoesNotExist = "92804"
-        ProxyMerchantDoesNotExist = "92805"
-        UnsupportedVersion = "92806"
+        FailOnDuplicatePaymentMethodRequiresCustomerId = "92803"
+        InvalidDomainFormat = "92011"
+        MakeDefaultRequiresCustomerId = "92801"
         MerchantAccountDoesNotExist = "92807"
+        ProxyMerchantDoesNotExist = "92805"
+        TooManyDomains = "92810"
+        UnsupportedVersion = "92806"
+        VerifyCardRequiresCustomerId = "92802"
 
     class CreditCard(object):
         BillingAddressConflict = "91701"

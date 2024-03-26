@@ -12,6 +12,26 @@ class TestClientTokenGenerate(unittest.TestCase):
         version = json.loads(client_token)["version"]
         self.assertEqual(1, version)
 
+    def test_allows_client_token_domains_to_be_specified(self):
+        client_token = ClientToken.generate({"domains": ["example.com"]})
+        self.assertIsNotNone(client_token)
+
+    def test_error_for_invalid_domain_format(self):
+        self.assertRaises(ValueError, ClientToken.generate, {"domains": ["example"]
+        })
+
+    def test_error_for_too_many_domains(self):
+        self.assertRaises(ValueError, ClientToken.generate,
+            {"domains": [
+                "example1.com",
+                "example2.com",
+                "example3.com",
+                "example4.com",
+                "example5.com",
+                "example6.com",
+            ]}
+        )
+
     def test_error_in_generate_raises_value_error(self):
         self.assertRaises(ValueError, ClientToken.generate, {
             "customer_id": "i_am_not_a_real_customer"
