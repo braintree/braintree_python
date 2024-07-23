@@ -355,6 +355,7 @@ class TestTransaction(unittest.TestCase):
                 "locality": "Chicago",
                 "region": "IL",
                 "phone_number": "122-555-1237",
+                "international_phone": {"country_code": "1", "national_number": "3121234567"},
                 "postal_code": "60622",
                 "country_name": "United States of America",
                 "country_code_alpha2": "US",
@@ -370,6 +371,7 @@ class TestTransaction(unittest.TestCase):
                 "locality": "Bartlett",
                 "region": "IL",
                 "phone_number": "122-555-1236",
+                "international_phone": {"country_code": "1", "national_number": "3121234567"},
                 "postal_code": "60103",
                 "country_name": "Mexico",
                 "country_code_alpha2": "MX",
@@ -418,6 +420,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("US", transaction.billing_details.country_code_alpha2)
         self.assertEqual("USA", transaction.billing_details.country_code_alpha3)
         self.assertEqual("840", transaction.billing_details.country_code_numeric)
+        self.assertEqual("1", transaction.billing_details.international_phone["country_code"])
+        self.assertEqual("3121234567", transaction.billing_details.international_phone["national_number"])
         self.assertEqual("Andrew", transaction.shipping_details.first_name)
         self.assertEqual("Mason", transaction.shipping_details.last_name)
         self.assertEqual("Braintree", transaction.shipping_details.company)
@@ -430,6 +434,8 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("MX", transaction.shipping_details.country_code_alpha2)
         self.assertEqual("MEX", transaction.shipping_details.country_code_alpha3)
         self.assertEqual("484", transaction.shipping_details.country_code_numeric)
+        self.assertEqual("1", transaction.shipping_details.international_phone["country_code"])
+        self.assertEqual("3121234567", transaction.shipping_details.international_phone["national_number"])
         self.assertEqual(None, transaction.additional_processor_response)
 
     def test_sale_with_exchange_rate_quote_id(self):
@@ -5922,6 +5928,37 @@ class TestTransaction(unittest.TestCase):
         refreshed_authorized_transaction = Transaction.find(authorized_transaction.id)
         self.assertEqual(2, len(refreshed_authorized_transaction.partial_settlement_transaction_ids))
 
+    def test_transaction_submit_for_partial_settlement_with_final_capture(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+                }
+            })
+
+        self.assertTrue(result.is_success)
+
+        authorized_transaction = result.transaction
+        options = { "final_capture": "true" }
+        partial_settlement_result1 = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("500.00"))
+        partial_settlement_transaction1 = partial_settlement_result1.transaction
+        self.assertTrue(partial_settlement_result1.is_success)
+        self.assertEqual(partial_settlement_transaction1.amount, Decimal("500.00"))
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, partial_settlement_transaction1.status)
+
+        refreshed_authorized_transaction1 = Transaction.find(authorized_transaction.id)
+        self.assertEqual(Transaction.Status.SettlementPending, refreshed_authorized_transaction1.status)
+
+        partial_settlement_result2 = Transaction.submit_for_partial_settlement(authorized_transaction.id, Decimal("100.00"), options)
+        partial_settlement_transaction2 = partial_settlement_result2.transaction
+        self.assertTrue(partial_settlement_result2.is_success)
+        self.assertEqual(partial_settlement_transaction2.amount, Decimal("100.00"))
+
+        refreshed_authorized_transaction2 = Transaction.find(authorized_transaction.id)
+        self.assertEqual(2, len(refreshed_authorized_transaction2.partial_settlement_transaction_ids))
+        self.assertEqual(Transaction.Status.SettlementPending, refreshed_authorized_transaction2.status)
+
     def test_transaction_submit_for_partial_settlement_unsuccessful(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -6458,3 +6495,41 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Transaction.Status.ProcessorDeclined, transaction.status)
         self.assertEqual("01", transaction.merchant_advice_code)
         self.assertEqual("New account information available", transaction.merchant_advice_code_text)
+
+    def test_foreign_retailer_to_be_true_when_set_to_true_in_the_request(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2025"
+            },
+            "foreign_retailer": "true",
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertTrue(transaction.foreign_retailer)
+
+    def test_foreign_retailer_to_be_skipped_when_set_to_false_in_the_request(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2025"
+            },
+            "foreign_retailer": "false",
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertFalse(hasattr(transaction, 'foreign_retailer'))
+
+    def test_foreign_retailer_to_be_skipped_when_not_set_in_the_request(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2025"
+            },
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertFalse(hasattr(transaction, 'foreign_retailer'))

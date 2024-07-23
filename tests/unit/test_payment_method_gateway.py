@@ -56,6 +56,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
                                     "customer_id",
                                     "extended_address",
                                     "first_name",
+                                    {"international_phone": ["country_code", "national_number"]},
                                     "last_name",
                                     "locality",
                                     "phone_number",

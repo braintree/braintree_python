@@ -17,6 +17,7 @@ class TestCustomer(unittest.TestCase):
             "company": "Fake Company",
             "email": "joe@email.com",
             "phone": "312.555.1234",
+            "international_phone": {"country_code": "1", "national_number": "3121234567"},
             "fax": "614.555.5678",
             "website": "www.email.com"
         })
@@ -29,6 +30,8 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("Fake Company", customer.company)
         self.assertEqual("joe@email.com", customer.email)
         self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("1", customer.international_phone["country_code"])
+        self.assertEqual("3121234567", customer.international_phone["national_number"])
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)
@@ -1026,6 +1029,7 @@ class TestCustomer(unittest.TestCase):
             "company": "Fake Company",
             "email": "joe@email.com",
             "phone": "312.555.1234",
+            "international_phone": {"country_code": "1", "national_number": "3121234567"},
             "fax": "614.555.5678",
             "website": "www.email.com"
         })
@@ -1038,6 +1042,8 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual("Fake Company", customer.company)
         self.assertEqual("joe@email.com", customer.email)
         self.assertEqual("312.555.1234", customer.phone)
+        self.assertEqual("1", customer.international_phone["country_code"])
+        self.assertEqual("3121234567", customer.international_phone["national_number"])
         self.assertEqual("614.555.5678", customer.fax)
         self.assertEqual("www.email.com", customer.website)
         self.assertNotEqual(None, customer.id)

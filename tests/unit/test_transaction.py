@@ -218,13 +218,17 @@ class TestTransaction(unittest.TestCase):
                     'id': 'id1',
                     'carrier': 'UPS',
                     'tracking_number': 'tracking_number_1',
+                    # NEXT_MAJOR_VERSION remove paypal_tracking_id
                     'paypal_tracking_id': 'pp_tracking_number_1',
+                    'paypal_tracker_id': 'pp_tracker_id_1',
                 },
                 {
                     'id': 'id2',
                     'carrier': 'FEDEX',
                     'tracking_number': 'tracking_number_2',
+                    # NEXT_MAJOR_VERSION remove paypal_tracking_id
                     'paypal_tracking_id': 'pp_tracking_number_2',
+                    'paypal_tracker_id': 'pp_tracker_id_2',
                 },
             ],
         }
@@ -234,13 +238,17 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(package_detail_1.id, "id1")
         self.assertEqual(package_detail_1.carrier, "UPS")
         self.assertEqual(package_detail_1.tracking_number, "tracking_number_1")
+        # NEXT_MAJOR_VERSION remove paypal_tracking_id assertions.
         self.assertEqual(package_detail_1.paypal_tracking_id, "pp_tracking_number_1")
+        self.assertEqual(package_detail_1.paypal_tracker_id, "pp_tracker_id_1")
 
         package_detail_2 = transaction.packages[1]
         self.assertEqual(package_detail_2.id, "id2")
         self.assertEqual(package_detail_2.carrier, "FEDEX")
         self.assertEqual(package_detail_2.tracking_number, "tracking_number_2")
+        # NEXT_MAJOR_VERSION remove paypal_tracking_id assertions.
         self.assertEqual(package_detail_2.paypal_tracking_id, "pp_tracking_number_2")
+        self.assertEqual(package_detail_2.paypal_tracker_id, "pp_tracker_id_2")
 
     def test_constructor_works_with_empty_shipments_list(self):
         attributes = {
@@ -323,14 +331,14 @@ class TestTransaction(unittest.TestCase):
         }
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.debit_network, CreditCard.DebitNetwork.Star)
-        
+
     def test_transaction_meta_checkout_card_attributes(self):
         attributes = {
             'amount': '420',
             'meta_checkout_card': {}
         }
 
-        transaction = Transaction(None, attributes) 
+        transaction = Transaction(None, attributes)
         self.assertIsInstance(transaction.meta_checkout_card_details, MetaCheckoutCard)
 
     def test_transaction_meta_checkout_token_attributes(self):
@@ -339,5 +347,14 @@ class TestTransaction(unittest.TestCase):
             'meta_checkout_token': {}
         }
 
-        transaction = Transaction(None, attributes) 
+        transaction = Transaction(None, attributes)
         self.assertIsInstance(transaction.meta_checkout_token_details, MetaCheckoutToken)
+
+    def test_foreign_retailer(self):
+        attributes = {
+            'amount': TransactionAmounts.Authorize,
+            'foreign_retailer': True,
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertTrue(transaction.foreign_retailer)

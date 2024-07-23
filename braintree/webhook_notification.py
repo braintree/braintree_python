@@ -50,6 +50,7 @@ class WebhookNotification(Resource):
         PaymentMethodCustomerDataUpdated = "payment_method_customer_data_updated"
         PaymentMethodRevokedByCustomer = "payment_method_revoked_by_customer"
         RecipientUpdatedGrantedPaymentMethod = "recipient_updated_granted_payment_method"
+        RefundFailed = "refund_failed"
         SubMerchantAccountApproved = "sub_merchant_account_approved"
         SubMerchantAccountDeclined = "sub_merchant_account_declined"
         SubscriptionBillingSkipped = "subscription_billing_skipped"

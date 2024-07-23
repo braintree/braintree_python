@@ -135,7 +135,7 @@ class TransactionGateway(object):
     def submit_for_partial_settlement(self, transaction_id, amount, params=None):
         if params is None:
             params = {}
-        Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
+        Resource.verify_keys(params, Transaction.submit_for_partial_settlement_signature())
         transaction_params = {"amount": amount}
         transaction_params.update(params)
         response = self.config.http().post(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/submit_for_partial_settlement",

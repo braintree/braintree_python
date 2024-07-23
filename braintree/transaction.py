@@ -68,28 +68,30 @@ class Transaction(Resource):
                 "website": "https://www.braintreepayments.com"
             },
             "billing": {
-                "first_name": "Carl",
-                "last_name": "Jones",
                 "company": "Braintree",
-                "street_address": "123 E Main St",
+                "country_name": "United States of America",
                 "extended_address": "Suite 403",
+                "first_name": "Carl",
+                "international_phone": { "country_code": "1", "national_number": "3121234567" },
+                "last_name": "Jones",
                 "locality": "Chicago",
-                "region": "IL",
+                "phone_number": "312-123-4567",
                 "postal_code": "60622",
-                "country_name": "United States of America"
-                "phone_number": "312-123-4567"
+                "region": "IL",
+                "street_address": "123 E Main St"
             },
             "shipping": {
-                "first_name": "Andrew",
-                "last_name": "Mason",
                 "company": "Braintree",
-                "street_address": "456 W Main St",
+                "country_name": "United States of America",
                 "extended_address": "Apt 2F",
+                "first_name": "Andrew",
+                "international_phone": { "country_code": "1", "national_number": "3121234567" },
+                "last_name": "Mason",
                 "locality": "Bartlett",
-                "region": "IL",
+                "phone_number": "312-123-4567",
                 "postal_code": "60103",
-                "country_name": "United States of America"
-                "phone_number": "312-123-4567"
+                "region": "IL",
+                "street_address": "456 W Main St"
             }
         })
 
@@ -122,6 +124,7 @@ class Transaction(Resource):
         "discount_amount",
         "disputes",
         "escrow_status",
+        "foreign_retailer",
         "gateway_rejection_reason",
         "installments",
         "liability_shift",
@@ -533,7 +536,7 @@ class Transaction(Resource):
             "discount_amount", "shipping_amount", "ships_from_postal_code",
             "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", # NEXT_MAJOR_VERSION Remove three_d_secure_token
             "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
-            "service_fee_amount", "sca_exemption","exchange_rate_quote_id",
+            "service_fee_amount", "sca_exemption","exchange_rate_quote_id", "foreign_retailer",
             "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "risk_data": [
@@ -553,16 +556,20 @@ class Transaction(Resource):
             },
             {
                 "billing": [
-                    "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
-                    "country_code_numeric", "country_name", "extended_address", "locality",
-                    "phone_number", "postal_code", "region", "street_address"
+                    "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "first_name",
+                    {"international_phone": ["country_code", "national_number"]},
+                    "last_name", "locality", "phone_number",
+                    "postal_code", "region", "street_address"
                 ]
             },
             {
                 "shipping": [
-                    "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
-                    "country_code_numeric", "country_name", "extended_address", "locality",
-                    "phone_number", "postal_code", "region", "shipping_method", "street_address"
+                    "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "first_name",
+                    {"international_phone": ["country_code", "national_number"]},
+                    "last_name", "locality", "phone_number",
+                    "postal_code", "region", "shipping_method", "street_address"
                 ]
             },
             {
@@ -746,6 +753,12 @@ class Transaction(Resource):
                     ]
                 },
             ]
+
+    @staticmethod
+    def submit_for_partial_settlement_signature():
+        return Transaction.submit_for_settlement_signature() + [
+            "final_capture"
+        ]
 
     @staticmethod
     def package_tracking_signature():

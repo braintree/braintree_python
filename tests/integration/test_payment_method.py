@@ -644,7 +644,8 @@ class TestPaymentMethod(unittest.TestCase):
             "payment_method_nonce": nonce,
             "customer_id": customer_id,
             "billing_address": {
-                "street_address": "123 Abc Way"
+                "street_address": "123 Abc Way",
+                "international_phone": {"country_code": "1", "national_number": "3121234567"}
             }
         })
 
@@ -655,6 +656,8 @@ class TestPaymentMethod(unittest.TestCase):
         found_credit_card = CreditCard.find(token)
         self.assertFalse(found_credit_card is None)
         self.assertTrue(found_credit_card.billing_address.street_address == "123 Abc Way")
+        self.assertEqual("1", found_credit_card.billing_address.international_phone["country_code"])
+        self.assertEqual("3121234567", found_credit_card.billing_address.international_phone["national_number"])
 
     def test_create_overrides_the_billing_address_in_the_nonce(self):
         customer_id = Customer.create().customer.id
@@ -1210,12 +1213,15 @@ class TestPaymentMethod(unittest.TestCase):
         })
         update_result = PaymentMethod.update(credit_card_result.credit_card.token, {
             "billing_address": {
-                "region": "IL"
+                "region": "IL",
+                "international_phone": {"country_code": "1", "national_number": "3121234567"}
             }
         })
         self.assertTrue(update_result.is_success)
         updated_credit_card = update_result.payment_method
         self.assertTrue(updated_credit_card.billing_address.region == "IL")
+        self.assertEqual("1", updated_credit_card.billing_address.international_phone["country_code"])
+        self.assertEqual("3121234567", updated_credit_card.billing_address.international_phone["national_number"])
         self.assertTrue(updated_credit_card.billing_address.street_address is None)
         self.assertFalse(updated_credit_card.billing_address.id == credit_card_result.credit_card.billing_address.id)
 

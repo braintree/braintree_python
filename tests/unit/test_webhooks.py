@@ -569,6 +569,17 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual("my_id", notification.connected_merchant_paypal_status_changed.merchant_id)
         self.assertEqual("oauth_application_client_id", notification.connected_merchant_paypal_status_changed.oauth_application_client_id)
 
+    def test_builds_notification_for_refund_failed(self):
+        sample_notification = WebhookTesting.sample_notification(
+                WebhookNotification.Kind.RefundFailed,
+                "my_id"
+         )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.RefundFailed, notification.kind)
+        self.assertEqual("my_id", notification.transaction.id)
+
     def test_builds_notification_for_subscription_billing_skipped(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.SubscriptionBillingSkipped,

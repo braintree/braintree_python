@@ -41,6 +41,9 @@ class ErrorCodes(object):
         StreetAddressIsTooLong = "81812"
         TooManyAddressesPerCustomer = "91818"
 
+    class AndroidPay(object):
+        AndroidPayCardsAreNotAccepted = "83708"
+
     class ApplePay(object):
         ApplePayCardsAreNotAccepted = "83501"
         CustomerIdIsRequiredForVaulting = "83502"

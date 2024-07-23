@@ -29,40 +29,42 @@ class Customer(Resource):
     An example of creating an customer with all available fields::
 
         result = braintree.Customer.create({
-            "id": "my_customer_id",
             "company": "Some company",
-            "email": "john.doe@example.com",
-            "fax": "123-555-1212",
-            "first_name": "John",
-            "last_name": "Doe",
-            "phone": "123-555-1221",
-            "website": "http://www.example.com",
             "credit_card": {
+                "billing_address": {
+                    "company": "Braintree",
+                    "country_name": "United States of America",
+                    "extended_address": "Unit 1",
+                    "first_name": "John",
+                    "international_phone": { "country_code": "1", "national_number": "3121234567" },
+                    "last_name": "Doe",
+                    "locality": "Chicago",
+                    "phone_number": "312-123-4567",
+                    "postal_code": "60606",
+                    "region": "IL",
+                    "street_address": "111 First Street"
+                },
                 "cardholder_name": "John Doe",
                 "cvv": "123",
                 "expiration_date": "12/2012",
                 "number": "4111111111111111",
-                "token": "my_token",
-                "billing_address": {
-                    "first_name": "John",
-                    "last_name": "Doe",
-                    "company": "Braintree",
-                    "street_address": "111 First Street",
-                    "extended_address": "Unit 1",
-                    "locality": "Chicago",
-                    "postal_code": "60606",
-                    "region": "IL",
-                    "country_name": "United States of America"
-                    "phone_number": "312-123-4567"
-                },
                 "options": {
-                    "verify_card": True,
-                    "verification_amount": "2.00"
-                }
+                    "verification_amount": "2.00",
+                    "verify_card": True
+                },
+                "token": "my_token"
             },
             "custom_fields": {
                 "my_key": "some value"
-            }
+            },
+            "email": "john.doe@example.com",
+            "fax": "123-555-1212",
+            "first_name": "John",
+            "id": "my_customer_id",
+            "international_phone": { "country_code": "1", "national_number": "3121234567" },
+            "last_name": "Doe",
+            "phone": "123-555-1221",
+            "website": "http://www.example.com"
         })
 
         print(result.customer.id)
@@ -74,18 +76,19 @@ class Customer(Resource):
 
     def __repr__(self):
         detail_list = [
-            "id",
-            "graphql_id",
             "company",
             "created_at",
             "email",
             "fax",
             "first_name",
+            "graphql_id",
+            "id",
+            "international_phone",
             "last_name",
             "merchant_id",
             "phone",
             "updated_at",
-            "website",
+            "website"
         ]
 
         return super(Customer, self).__repr__(detail_list)
@@ -160,7 +163,9 @@ class Customer(Resource):
     @staticmethod
     def create_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "payment_method_nonce",
+            "company", "email", "fax", "first_name", "id",
+            {"international_phone": ["country_code", "national_number"]},
+            "last_name", "phone", "website", "device_data", "payment_method_nonce",
             "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {"risk_data": ["customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"]},
             {"credit_card": CreditCard.create_signature()},
@@ -189,7 +194,10 @@ class Customer(Resource):
     @staticmethod
     def update_signature():
         return [
-            "company", "email", "fax", "first_name", "id", "last_name", "phone", "website", "device_data", "device_session_id", "fraud_merchant_id", "payment_method_nonce", "default_payment_method_token",
+            "company", "email", "fax", "first_name", "id",
+            {"international_phone": ["country_code", "national_number"]},
+            "last_name", "phone", "website", "device_data", "device_session_id",
+            "fraud_merchant_id", "payment_method_nonce", "default_payment_method_token",
             {"credit_card": CreditCard.signature("update_via_customer")},
             {"apple_pay_card": ApplePayCard.signature()},
             {"android_pay_card": AndroidPayCard.card_signature()},

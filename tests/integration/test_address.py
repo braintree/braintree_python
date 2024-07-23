@@ -14,6 +14,7 @@ class TestAddress(unittest.TestCase):
             "region": "Illinois",
             "postal_code": "60622",
             "phone_number": "8675309",
+            "international_phone": {"country_code": "1", "national_number": "3121234567"},
             "country_name": "United States of America",
             "country_code_alpha2": "US",
             "country_code_alpha3": "USA",
@@ -32,6 +33,8 @@ class TestAddress(unittest.TestCase):
         self.assertEqual("Illinois", address.region)
         self.assertEqual("60622", address.postal_code)
         self.assertEqual("8675309", address.phone_number)
+        self.assertEqual("1", address.international_phone["country_code"])
+        self.assertEqual("3121234567", address.international_phone["national_number"])
         self.assertEqual("US", address.country_code_alpha2)
         self.assertEqual("USA", address.country_code_alpha3)
         self.assertEqual("840", address.country_code_numeric)
@@ -123,7 +126,9 @@ class TestAddress(unittest.TestCase):
             "country_code_alpha2": "MX",
             "country_code_alpha3": "MEX",
             "country_code_numeric": "484",
-            "country_name": "Mexico"
+            "country_name": "Mexico",
+            "phone_number": "8675309",
+            "international_phone": {"country_code": "1", "national_number": "3121234567"}
         })
 
         self.assertTrue(result.is_success)
@@ -138,6 +143,9 @@ class TestAddress(unittest.TestCase):
         self.assertEqual("MEX", address.country_code_alpha3)
         self.assertEqual("484", address.country_code_numeric)
         self.assertEqual("Mexico", address.country_name)
+        self.assertEqual("8675309", address.phone_number)
+        self.assertEqual("1", address.international_phone["country_code"])
+        self.assertEqual("3121234567", address.international_phone["national_number"])
 
     def test_update_with_invalid_values(self):
         customer = Customer.create().customer

@@ -86,6 +86,7 @@ class PackageTracking(unittest.TestCase):
         self.assertIsNotNone(package_result_1.transaction.packages[0])
         self.assertEqual("UPS", package_result_1.transaction.packages[0].carrier)
         self.assertEqual("1Z5338FF0107231059", package_result_1.transaction.packages[0].tracking_number)
+        self.assertIsNone(package_result_1.transaction.packages[0].paypal_tracker_id)
 
         # Create second package with 1 more product
         package_result_2 = Transaction.package_tracking(
@@ -107,4 +108,23 @@ class PackageTracking(unittest.TestCase):
         self.assertIsNotNone(package_result_2.transaction.packages[1])
         self.assertEqual("FEDEX", package_result_2.transaction.packages[1].carrier)
         self.assertEqual("08594809767HGH0L", package_result_2.transaction.packages[1].tracking_number)
-        self.assertIsNotNone(Transaction.find(package_result_2.transaction.id))
+        self.assertIsNone(package_result_2.transaction.packages[1].paypal_tracker_id)
+
+        transaction_found = Transaction.find(package_result_2.transaction.id)
+        self.assertTrue(2, len(transaction_found.packages))
+        self.assertIsNotNone(transaction_found.packages[0].id)
+        self.assertEqual("UPS", transaction_found.packages[0].carrier)
+        self.assertEqual("1Z5338FF0107231059", transaction_found.packages[0].tracking_number)
+        # In test environment, since we do not have jobstream setup paypal tracker id is going to be nil, this is just to assert that we could access it
+        self.assertIsNone(transaction_found.packages[0].paypal_tracker_id)
+
+        self.assertIsNotNone(transaction_found.packages[1].id)
+        self.assertEqual("FEDEX", transaction_found.packages[1].carrier)
+        self.assertEqual("08594809767HGH0L", transaction_found.packages[1].tracking_number)
+        self.assertIsNone(transaction_found.packages[1].paypal_tracker_id)
+
+    def test_package_tracking_render_paypal_tracker_id(self):
+        #find transaction with existing tracker created
+        transaction_found = Transaction.find("package_tracking_tx")
+        self.assertEqual("paypal_tracker_id_1", transaction_found.packages[0].paypal_tracker_id)
+        self.assertEqual("paypal_tracker_id_2", transaction_found.packages[1].paypal_tracker_id)

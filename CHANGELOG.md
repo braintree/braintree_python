@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.29.0
+* Add `foreign_retailer` to Transaction
+* Add `international_phone` to `Address` and `Customer`
+* Add `funding_source_description` to PayPalAccount
+* Add missing `AndroidPayCard` error code
+* Add `REFUND_FAILED` to `WebhookNotification.Kind`
+* Add `final_capture` to Transaction `submit_for_partial_settlement_signature`
+* Deprecate `paypal_tracking_id` in favor of `paypal_tracker_id` in `package_details`
+
 ## 4.28.0
 * Add `domains` parameter support to `ClientToken.generate`
 

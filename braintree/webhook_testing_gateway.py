@@ -79,6 +79,8 @@ class WebhookTestingGateway(object):
             return self.__dispute_under_review_sample_xml(id)
         elif kind == WebhookNotification.Kind.DisputeWon:
             return self.__dispute_won_sample_xml(id)
+        elif kind == WebhookNotification.Kind.RefundFailed:
+            return self.__refund_failed_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionBillingSkipped:
             return self.__subscription_billing_skipped_sample_xml(id)
         elif kind == WebhookNotification.Kind.SubscriptionChargedSuccessfully:
@@ -809,6 +811,20 @@ class WebhookTestingGateway(object):
           <date-opened type=\"date\">2014-03-28</date-opened>
         </dispute>
         """ % (id, id)
+
+    def __refund_failed_sample_xml(self, id):
+        return """
+            <transaction>
+            <id>%s</id>
+            <amount>100</amount>
+            <credit-card>
+                <number>1234560000001234</number>
+                <cvv>123</cvv>
+            </credit-card>
+            <status>processor_declined</status>
+            <refunded-transaction-fk>1</refunded-transaction-fk>
+            </transaction>
+        """ % id
 
     def __subscription_sample_xml(self, id):
         return """
