@@ -92,6 +92,15 @@ class TestCreditCardVerification(unittest.TestCase):
         self.assertEqual(verification.network_response_code, None)
         self.assertEqual(verification.network_response_text, None)
 
+    def test_constructor_when_ani_result_code_is_included(self):
+        attributes = {
+            'ani_first_name_response_code': 'M',
+            'ani_last_name_response_code': 'N'
+        }
+        verification = CreditCardVerification(None, attributes)
+        self.assertEqual(verification.ani_first_name_response_code, 'M')
+        self.assertEqual(verification.ani_last_name_response_code, 'N')
+
     def test_finding_empty_id_raises_not_found_exception(self):
         with self.assertRaises(NotFoundError):
             CreditCardVerification.find(" ")

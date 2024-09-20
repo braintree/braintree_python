@@ -18,7 +18,8 @@ class TestPayPalAccount(unittest.TestCase):
         self.assertNotEqual(None, found_account.image_url)
         self.assertNotEqual(None, found_account.created_at)
         self.assertNotEqual(None, found_account.updated_at)
-        self.assertIsNone(found_account.funding_source_description)
+        self.assertIsNone(found_account.funding_source_description) 
+        self.assertFalse(hasattr(found_account, "edit_paypal_vault_id"))
         self.assertIsNone(found_account.revoked_at)
 
     def test_find_raises_on_not_found_token(self):

@@ -159,6 +159,28 @@ class TestTransaction(unittest.TestCase):
         transaction_param = transaction_gateway._post.call_args[0][1]
         self.assertTrue('skip_advanced_fraud_checking' not in transaction_param['transaction']['options'])
 
+    def test_sale_with_external_network_token_option(self):
+        attributes = {
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009",
+                "network_tokenization_attributes": {
+                    "cryptogram": "/wAAAAAAAcb8AlGUF/1JQEkAAAA=",
+                    "ecommerce_indicator": "45310020105",
+                    "token_requestor_id" : "05"
+                }
+            }
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+        transaction_gateway.sale(attributes)
+        transaction_param = transaction_gateway._post.call_args[0][1]
+        self.assertTrue('network_tokenization_attributes' in transaction_param['transaction']['credit_card'])
+        self.assertEqual(transaction_param['transaction']['credit_card']['network_tokenization_attributes']['cryptogram'], "/wAAAAAAAcb8AlGUF/1JQEkAAAA=")
+        self.assertEqual(transaction_param['transaction']['credit_card']['network_tokenization_attributes']['ecommerce_indicator'], "45310020105")
+        self.assertEqual(transaction_param['transaction']['credit_card']['network_tokenization_attributes']['token_requestor_id'], "05")
+
     def setup_transaction_gateway_and_mock_post(self):
         transaction_gateway = TransactionGateway(BraintreeGateway(None))
         transaction_gateway._post = MagicMock(name='config.http.post')

@@ -286,3 +286,17 @@ class TestCreditCardVerfication(unittest.TestCase):
         verification = result.verification
         self.assertEqual("1000", verification.processor_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+
+    def test_verification_with_ani_response_codes(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2029",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual("I", verification.ani_first_name_response_code)
+        self.assertEqual("I", verification.ani_last_name_response_code)

@@ -104,70 +104,71 @@ class Transaction(Resource):
 
     def __repr__(self):
       detail_list = [
-        "id",
-        "graphql_id",
-        "additional_processor_response",
-        "amount",
-        "acquirer_reference_number",
-        "authorization_adjustments",
-        "authorization_expires_at",
-        "avs_error_response_code",
-        "avs_postal_code_response_code",
-        "avs_street_address_response_code",
-        "channel",
-        "created_at",
-        "credit_card_details",
-        "currency_iso_code",
-        "customer_id",
-        "cvv_response_code",
-        "debit_network",
-        "discount_amount",
-        "disputes",
-        "escrow_status",
-        "foreign_retailer",
-        "gateway_rejection_reason",
-        "installments",
-        "liability_shift",
-        "master_merchant_account_id",
-        "merchant_account_id",
-        "merchant_advice_code",
-        "merchant_advice_code_text",
-        "network_response_code",
-        "network_response_text",
-        "network_transaction_id",
-        "order_id",
-        "packages",
-        "payment_instrument_type",
-        "payment_method_token",
-        "plan_id",
-        "processed_with_network_token",
-        "processor_authorization_code",
-        "processor_response_code",
-        "processor_response_text",
-        "processor_settlement_response_code",
-        "processor_settlement_response_text",
-        "purchase_order_number",
-        "recurring",
-        "refund_id",
-        "refunded_transaction_id",
-        "retried",
-        "retried_transaction_id",
-        "retrieval_reference_number",
-        "retry_ids",
-        "service_fee_amount",
-        "settlement_batch_id",
-        "shipping_amount",
-        "ships_from_postal_code",
-        "status",
-        "status_history",
-        "sub_merchant_account_id",
-        "subscription_id",
-        "tax_amount",
-        "tax_exempt",
-        "type",
-        "updated_at",
-        "voice_referral_number",
-      ]
+       "acquirer_reference_number",
+       "additional_processor_response",
+       "amount",
+       "authorization_adjustments",
+       "authorization_expires_at",
+       "avs_error_response_code",
+       "avs_postal_code_response_code",
+       "avs_street_address_response_code",
+       "channel",
+       "created_at",
+       "credit_card_details",
+       "currency_iso_code",
+       "customer_id",
+       "cvv_response_code",
+       "debit_network",
+       "discount_amount",
+       "disputes",
+       "escrow_status",
+       "foreign_retailer",
+       "gateway_rejection_reason",
+       "graphql_id",
+       "id",
+       "installments",
+       "liability_shift",
+       "master_merchant_account_id",
+       "merchant_account_id",
+       "merchant_advice_code",
+       "merchant_advice_code_text",
+       "network_response_code",
+       "network_response_text",
+       "network_transaction_id",
+       "order_id",
+       "packages",
+       "payment_instrument_type",
+       "payment_method_token",
+       "plan_id",
+       "processed_with_network_token",
+       "processor_authorization_code",
+       "processor_response_code",
+       "processor_response_text",
+       "processor_settlement_response_code",
+       "processor_settlement_response_text",
+       "purchase_order_number",
+       "recurring",
+       "refund_id",
+       "refunded_transaction_id",
+       "retried",
+       "retried_transaction_id",
+       "retrieval_reference_number",
+       "retry_ids",
+       "service_fee_amount",
+       "settlement_batch_id",
+       "shipping_amount",
+       "shipping_tax_amount",
+       "ships_from_postal_code",
+       "status",
+       "status_history",
+       "sub_merchant_account_id",
+       "subscription_id",
+       "tax_amount",
+       "tax_exempt",
+       "type",
+       "updated_at",
+       "voice_referral_number",
+       ]
 
       return super(Transaction, self).__repr__(detail_list)
 
@@ -529,31 +530,10 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
-            "amount", "customer_id", "merchant_account_id", "order_id", "channel",
-            "payment_method_token", "purchase_order_number", "recurring", "transaction_source", "shipping_address_id",
-            "device_data", "billing_address_id", "payment_method_nonce", "product_sku", "tax_amount",
-            "shared_payment_method_token", "shared_customer_id", "shared_billing_address_id", "shared_shipping_address_id", "shared_payment_method_nonce",
-            "discount_amount", "shipping_amount", "ships_from_postal_code",
-            "tax_exempt", "three_d_secure_authentication_id", "three_d_secure_token", # NEXT_MAJOR_VERSION Remove three_d_secure_token
-            "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
-            "service_fee_amount", "sca_exemption","exchange_rate_quote_id", "foreign_retailer",
-            "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
-            {
-                "risk_data": [
-                    "customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"
-                ]
-            },
-            {
-                "credit_card": [
-                    "token", "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year", "number",
-                    {"payment_reader_card_details": ["encrypted_card_data", "key_serial_number"]}
-                ]
-            },
-            {
-                "customer": [
-                    "id", "company", "email", "fax", "first_name", "last_name", "phone", "website"
-                ]
-            },
+            "amount",
+            # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
+            {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
+            {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
             {
                 "billing": [
                     "company", "country_code_alpha2", "country_code_alpha3",
@@ -563,27 +543,62 @@ class Transaction(Resource):
                     "postal_code", "region", "street_address"
                 ]
             },
+            "billing_address_id",
             {
-                "shipping": [
-                    "company", "country_code_alpha2", "country_code_alpha3",
-                    "country_code_numeric", "country_name", "extended_address", "first_name",
-                    {"international_phone": ["country_code", "national_number"]},
-                    "last_name", "locality", "phone_number",
-                    "postal_code", "region", "shipping_method", "street_address"
+                "credit_card": [
+                    "cardholder_name", "cvv", "expiration_date", "expiration_month", "expiration_year",
+                    {"network_tokenization_attributes": ["cryptogram", "ecommerce_indicator", "token_requestor_id"]},
+                    "number",
+                    {"payment_reader_card_details": ["encrypted_card_data", "key_serial_number"]},
+                    "token"
                 ]
             },
             {
-                "three_d_secure_pass_thru": [
-                    "eci_flag",
-                    "cavv",
-                    "xid",
-                    "authentication_response",
-                    "directory_response",
-                    "cavv_algorithm",
-                    "ds_transaction_id",
-                    "three_d_secure_version"
+                "customer": [
+                    "id", "company", "email", "fax", "first_name", "last_name", "phone", "website"
                 ]
             },
+            "customer_id",
+            {"custom_fields": ["__any_key__"]},
+            "channel",
+            {"descriptor": ["name", "phone", "url"]},
+            "device_data",
+            "device_session_id", # NEXT_MAJOR_VERSION remove device_session_id
+            "discount_amount",
+            "exchange_rate_quote_id",
+            {"external_vault": ["status", "previous_network_transaction_id"]},
+            "foreign_retailer",
+            "fraud_merchant_id", # NEXT_MAJOR_VERSION remove fraud_merchant_id
+            {"industry":
+                [
+                    "industry_type",
+                    {
+                        "data": [
+                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate",
+                            "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "issued_date", "travel_agency_name", "travel_agency_code", "ticket_number",
+                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "room_tax", "tax_amount", "restricted_ticket", "no_show", "advanced_deposit", "fire_safe", "property_phone", "arrival_date", "ticket_issuer_address", "date_of_birth", "country_code",
+                            {
+                                "legs": [
+                                    "conjunction_ticket", "exchange_ticket", "coupon_number", "service_class", "carrier_code", "fare_basis_code", "flight_number", "departure_date", "departure_airport_code", "departure_time",
+                                    "arrival_airport_code", "arrival_time", "stopover_permitted", "fare_amount", "fee_amount", "tax_amount", "endorsement_or_restrictions"
+                                ]
+                            },
+                            {
+                                "additional_charges": [
+                                  "kind", "amount"
+                                ],
+                            }
+                        ]
+                    }
+                ]
+            },
+            {"installments": {"count"}},
+            {"line_items":
+                [
+                    "commodity_code", "description", "discount_amount", "image_url", "kind", "name", "product_code", "quantity", "tax_amount", "total_amount", "unit_amount", "unit_of_measure", "unit_tax_amount", "upc_code", "upc_type", "url",
+                ]
+            },
+            "merchant_account_id",
             {
                 "options": [
                     "add_billing_address_to_payment_method",
@@ -645,42 +660,45 @@ class Transaction(Resource):
                     }
                 ]
             },
-            {"custom_fields": ["__any_key__"]},
-            {"external_vault": ["status", "previous_network_transaction_id"]},
-            {"descriptor": ["name", "phone", "url"]},
+            "order_id",
+            "payment_method_nonce", "payment_method_token", "product_sku", "purchase_order_number",
             {"paypal_account": ["payee_id", "payee_email", "payer_id", "payment_id"]},
-            {"industry":
-                [
-                    "industry_type",
-                    {
-                        "data": [
-                            "folio_number", "check_in_date", "check_out_date", "departure_date", "lodging_check_in_date", "lodging_check_out_date", "travel_package", "lodging_name", "room_rate",
-                            "passenger_first_name", "passenger_last_name", "passenger_middle_initial", "passenger_title", "issued_date", "travel_agency_name", "travel_agency_code", "ticket_number",
-                            "issuing_carrier_code", "customer_code", "fare_amount", "fee_amount", "room_tax", "tax_amount", "restricted_ticket", "no_show", "advanced_deposit", "fire_safe", "property_phone", "arrival_date", "ticket_issuer_address", "date_of_birth", "country_code",
-                            {
-                                "legs": [
-                                    "conjunction_ticket", "exchange_ticket", "coupon_number", "service_class", "carrier_code", "fare_basis_code", "flight_number", "departure_date", "departure_airport_code", "departure_time",
-                                    "arrival_airport_code", "arrival_time", "stopover_permitted", "fare_amount", "fee_amount", "tax_amount", "endorsement_or_restrictions"
-                                ]
-                            },
-                            {
-                                "additional_charges": [
-                                  "kind", "amount"
-                                ],
-                            }
-                        ]
-                    }
+            "recurring",
+            {
+                "risk_data": [
+                    "customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"
                 ]
             },
-            {"line_items":
-                [
-                    "commodity_code", "description", "discount_amount", "image_url", "kind", "name", "product_code", "quantity", "tax_amount", "total_amount", "unit_amount", "unit_of_measure", "unit_tax_amount", "upc_code", "upc_type", "url",
+            "sca_exemption", "service_fee_amount",
+            "shared_customer_id", "shared_billing_address_id", "shared_payment_method_nonce", "shared_payment_method_token", "shared_shipping_address_id",
+            {
+                "shipping": [
+                    "company", "country_code_alpha2", "country_code_alpha3",
+                    "country_code_numeric", "country_name", "extended_address", "first_name",
+                    {"international_phone": ["country_code", "national_number"]},
+                    "last_name", "locality", "phone_number",
+                    "postal_code", "region", "shipping_method", "street_address"
                 ]
             },
-            {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
-            # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
-            {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
-            {"installments": {"count"}},
+            "shipping_address_id",
+            "shipping_amount", "shipping_tax_amount", "ships_from_postal_code",
+            "tax_amount",
+            "tax_exempt", "three_d_secure_authentication_id",
+            {
+                "three_d_secure_pass_thru": [
+                    "eci_flag",
+                    "cavv",
+                    "xid",
+                    "authentication_response",
+                    "directory_response",
+                    "cavv_algorithm",
+                    "ds_transaction_id",
+                    "three_d_secure_version"
+                ]
+            },
+            "three_d_secure_token", # NEXT_MAJOR_VERSION Remove three_d_secure_token
+            "transaction_source",
+            "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
         ]
 
     @staticmethod
@@ -693,6 +711,7 @@ class Transaction(Resource):
                 "tax_exempt",
                 "discount_amount",
                 "shipping_amount",
+                "shipping_tax_amount",
                 "ships_from_postal_code",
                 {"industry":
                     [
@@ -818,6 +837,8 @@ class Transaction(Resource):
             self.discount_amount = Decimal(self.discount_amount)
         if "shipping_amount" in attributes and getattr(self, "shipping_amount", None):
             self.shipping_amount = Decimal(self.shipping_amount)
+        if "shipping_tax_amount" in attributes and getattr(self, "shipping_tax_amount", None):
+            self.shipping_tax_amount = Decimal(self.shipping_tax_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:

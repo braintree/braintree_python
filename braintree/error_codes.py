@@ -113,6 +113,7 @@ class ErrorCodes(object):
         ExpirationYearIsInvalid = "81713"
         InvalidParamsForCreditCardUpdate = "91745"
         InvalidVenmoSDKPaymentMethodCode = "91727" # NEXT_MJOR_VERSION remove this code
+        NetworkTokenizationAttributeCryptogramIsRequired = "81762"
         NumberHasInvalidLength = NumberLengthIsInvalid = "81716"
         NumberIsInvalid = "81715"
         NumberIsProhibited = "81750"

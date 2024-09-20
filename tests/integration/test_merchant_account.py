@@ -378,7 +378,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = gateway.merchant.create({
             "email": "name@email.com",
-            "country_code_alpha3": "USA",
+            "country_code_alpha3": "GBR",
             "payment_methods": ["credit_card", "paypal"]
         })
 
@@ -391,7 +391,7 @@ class TestMerchantAccount(unittest.TestCase):
         self.assertEqual(len(merchant_accounts), 1)
 
         merchant_account = merchant_accounts[0]
-        self.assertEqual(merchant_account.currency_iso_code, "USD")
+        self.assertEqual(merchant_account.currency_iso_code, "GBP")
         self.assertEqual(merchant_account.status, MerchantAccount.Status.Active)
         self.assertTrue(merchant_account.default)
 
@@ -407,7 +407,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = self.gateway.merchant.create({
             "email": "name@email.com",
-            "country_code_alpha3": "USA",
+            "country_code_alpha3": "GBR",
             "payment_methods": ["credit_card", "paypal"]
         })
 
@@ -416,12 +416,12 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         result = gateway.merchant_account.create_for_currency({
-            "currency": "GBP",
+            "currency": "USD",
             "id": "custom_id"
         })
 
         self.assertTrue(result.is_success)
-        self.assertEqual(result.merchant_account.currency_iso_code, "GBP")
+        self.assertEqual(result.merchant_account.currency_iso_code, "USD")
         self.assertEqual(result.merchant_account.id, "custom_id")
 
     def test_merchant_account_create_for_currency_handles_invalid_currency(self):
@@ -432,7 +432,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = self.gateway.merchant.create({
             "email": "name@email.com",
-            "country_code_alpha3": "USA",
+            "country_code_alpha3": "GBR",
             "payment_methods": ["credit_card", "paypal"]
         })
 
@@ -455,7 +455,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = self.gateway.merchant.create({
             "email": "name@email.com",
-            "country_code_alpha3": "USA",
+            "country_code_alpha3": "GBR",
             "payment_methods": ["credit_card", "paypal"]
         })
 
@@ -476,7 +476,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = self.gateway.merchant.create({
             "email": "name@email.com",
-            "country_code_alpha3": "USA",
+            "country_code_alpha3": "GBR",
             "payment_methods": ["credit_card", "paypal"]
         })
 
@@ -485,7 +485,7 @@ class TestMerchantAccount(unittest.TestCase):
         )
 
         result = gateway.merchant_account.create_for_currency({
-            "currency": "USD",
+            "currency": "GBP",
         })
 
         self.assertFalse(result.is_success)
@@ -499,7 +499,7 @@ class TestMerchantAccount(unittest.TestCase):
 
         result = self.gateway.merchant.create({
             "email": "name@email.com",
-            "country_code_alpha3": "USA",
+            "country_code_alpha3": "GBR",
             "payment_methods": ["credit_card", "paypal"]
         })
 

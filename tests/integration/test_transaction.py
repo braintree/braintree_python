@@ -845,6 +845,27 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Decimal("2.00"), transaction.shipping_amount)
         self.assertEqual("12345", transaction.ships_from_postal_code)
 
+    def test_sale_with_shipping_tax_amount(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "purchase_order_number": "12345",
+            "discount_amount": Decimal("1.00"),
+            "shipping_amount": Decimal("2.00"),
+            "shipping_tax_amount": Decimal("3.00"),
+            "ships_from_postal_code": "12345",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Decimal("1.00"), transaction.discount_amount)
+        self.assertEqual(Decimal("2.00"), transaction.shipping_amount)
+        self.assertEqual(Decimal("3.00"), transaction.shipping_tax_amount)
+        self.assertEqual("12345", transaction.ships_from_postal_code)
+
     def test_sca_exemption_successful_result(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -3553,6 +3574,7 @@ class TestTransaction(unittest.TestCase):
         params = {
                 "discount_amount": "12.33",
                 "shipping_amount": "5.00",
+                "shipping_tax_amount": "2.00",
                 "ships_from_postal_code": "90210",
                 "line_items": [{
                     "quantity": "1.0232",
@@ -3565,6 +3587,7 @@ class TestTransaction(unittest.TestCase):
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
 
+        self.assertEqual(Decimal("2.00"), submitted_transaction.shipping_tax_amount)
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
     def test_submit_for_settlement_with_shipping_data(self):
@@ -6383,6 +6406,42 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(result.is_success)
         error_code = result.errors.for_object("transaction")[0].code
         self.assertEqual(ErrorCodes.Transaction.PaymentInstrumentNotSupportedByMerchantAccount, error_code)
+
+    def test_external_network_token_transaction_with_token_details(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009",
+                "network_tokenization_attributes": {
+                    "cryptogram": "/wAAAAAAAcb8AlGUF/1JQEkAAAA=",
+                    "ecommerce_indicator": "45310020105",
+                    "token_requestor_id" : "05"
+                    }
+                },
+            })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertTrue(transaction.processed_with_network_token)
+        self.assertTrue(transaction.network_token['is_network_tokenized'])
+
+    def test_external_network_token_transaction_with_invalid_token_details(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "06/2009",
+                "network_tokenization_attributes": {
+                    "ecommerce_indicator": "45310020105",
+                    "token_requestor_id" : "05"
+                    }
+                },
+            })
+
+        self.assertFalse(result.is_success)
+        error_code = result.errors.for_object("transaction").for_object("credit_card").on("network_tokenization_attributes")[0].code
+        self.assertEqual(ErrorCodes.CreditCard.NetworkTokenizationAttributeCryptogramIsRequired, error_code)
 
     def test_adjust_authorization_for_successful_adjustment(self):
         initial_transaction_sale = Transaction.sale(self.__first_data_transaction_params())
