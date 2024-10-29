@@ -25,6 +25,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             {
                 "options": [
                     "fail_on_duplicate_payment_method",
+                    "fail_on_duplicate_payment_method_for_customer",
                     "make_default",
                     "skip_advanced_fraud_checking",
                     "us_bank_account_verification_method",
@@ -101,6 +102,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "fraud_merchant_id",
             {
                 "options": [
+                    "fail_on_duplicate_payment_method_for_customer",
                     "make_default",
                     "skip_advanced_fraud_checking",
                     "us_bank_account_verification_method",

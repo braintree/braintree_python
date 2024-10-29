@@ -82,6 +82,7 @@ class ErrorCodes(object):
     class ClientToken(object):
         CustomerDoesNotExist = "92804"
         FailOnDuplicatePaymentMethodRequiresCustomerId = "92803"
+        FailOnDuplicatePaymentMethodForCustomerRequiresCustomerId = "92805"
         InvalidDomainFormat = "92011"
         MakeDefaultRequiresCustomerId = "92801"
         MerchantAccountDoesNotExist = "92807"
@@ -105,6 +106,7 @@ class ErrorCodes(object):
         CvvIsRequired = "81706"
         CvvVerificationFailed = "81736"
         DuplicateCardExists = "81724"
+        DuplicateCardExistsForCustomer = "81763"
         ExpirationDateConflict = "91708"
         ExpirationDateIsInvalid = "81710"
         ExpirationDateIsRequired = "81709"
@@ -113,6 +115,7 @@ class ErrorCodes(object):
         ExpirationYearIsInvalid = "81713"
         InvalidParamsForCreditCardUpdate = "91745"
         InvalidVenmoSDKPaymentMethodCode = "91727" # NEXT_MJOR_VERSION remove this code
+        LimitExceededforDuplicatePaymentMethodCheckForCustomer = "81764"
         NetworkTokenizationAttributeCryptogramIsRequired = "81762"
         NumberHasInvalidLength = NumberLengthIsInvalid = "81716"
         NumberIsInvalid = "81715"

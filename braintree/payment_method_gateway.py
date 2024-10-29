@@ -13,6 +13,7 @@ from braintree.us_bank_account import UsBankAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 # NEXT_MAJOR_VERSION remove masterpass
 from braintree.masterpass_card import MasterpassCard
+# NEXT_MAJOR_VERSION remove SamsungPayCard
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
@@ -159,3 +160,6 @@ class PaymentMethodGateway(object):
             warnings.warn("fraud_merchant_id is deprecated, use device_data parameter instead", DeprecationWarning)
         if "venmo_sdk_payment_method_code" in params.keys() or "venmo_sdk_session" in params.keys():
             warnings.warn("The Venmo SDK integration is Unsupported. Please update your integration to use Pay with Venmo instead.", DeprecationWarning)
+        if "samsung_pay_card" in params.keys():
+            warnings.warn("SamsungPay is deprecated", DeprecationWarning)
+

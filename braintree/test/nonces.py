@@ -40,6 +40,7 @@ class Nonces(object):
     VisaCheckoutDiscover = "fake-visa-checkout-discover-nonce"
     VisaCheckoutMasterCard = "fake-visa-checkout-mastercard-nonce"
     VisaCheckoutVisa = "fake-visa-checkout-visa-nonce"
+    # NEXT_MAJOR_VERSION remove SamsungPay nonces
     SamsungPayAmex = "tokensam_fake_american_express"
     SamsungPayDiscover = "tokensam_fake_american_express"
     SamsungPayMasterCard = "tokensam_fake_mastercard"

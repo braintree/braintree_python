@@ -13,7 +13,7 @@ class ClientTokenGateway(object):
         if params is None:
             params = {}
         if "options" in params and "customer_id" not in params:
-            for option in ["verify_card", "make_default", "fail_on_duplicate_payment_method"]:
+            for option in ["fail_on_duplicate_payment_method", "fail_on_duplicate_payment_method_for_customer", "make_default", "verify_card"]:
                 if option in params["options"]:
                     raise exceptions.InvalidSignatureError("cannot specify %s without a customer_id" % option)
 

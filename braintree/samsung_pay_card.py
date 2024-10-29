@@ -2,6 +2,8 @@ import braintree
 from braintree.address import Address
 from braintree.resource import Resource
 
+# NEXT_MAJOR_VERSION remove this class
+# SamsungPay is deprecated
 class SamsungPayCard(Resource):
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)

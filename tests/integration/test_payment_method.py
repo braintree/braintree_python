@@ -595,6 +595,39 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertFalse(result.is_success)
         self.assertTrue(result.errors.deep_errors[0].code == "81724")
 
+    def test_create_respects_fail_on_duplicate_payment_method_for_customer_when_included_outside_of_the_nonce(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2012"
+        })
+        self.assertTrue(credit_card_result.is_success)
+
+        config = Configuration.instantiate()
+        client_token = json.loads(TestHelper.generate_decoded_client_token())
+        authorization_fingerprint = client_token["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+                    "authorization_fingerprint": authorization_fingerprint,
+                    "shared_customer_identifier": "fake_identifier",
+                    "shared_customer_identifier_type": "testing"
+                })
+        status_code, nonce = http.get_credit_card_nonce({
+            "number": "4111111111111111",
+            "expiration_date": "05/2014"
+        })
+        self.assertTrue(status_code == 201)
+
+        result = PaymentMethod.create({
+            "payment_method_nonce": nonce,
+            "customer_id": customer_id,
+            "options": {
+                "fail_on_duplicate_payment_method_for_customer": "true"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertTrue(result.errors.deep_errors[0].code == "81763")
 
     def test_create_allows_passing_billing_address_id_outside_the_nonce(self):
         customer_id = Customer.create().customer.id
@@ -735,6 +768,7 @@ class TestPaymentMethod(unittest.TestCase):
             "options": {
                 "verify_card": "true",
                 "fail_on_duplicate_payment_method": "true",
+                "fail_on_duplicate_payment_method_for_customer": "true",
                 "verification_merchant_account_id": "not_a_real_merchant_account_id"
             }
         })
@@ -803,7 +837,7 @@ class TestPaymentMethod(unittest.TestCase):
             "payment_method_nonce": nonce,
             "options": {
                 "verify_card": "true",
-                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_amount": "1.02",
                 "verification_account_type": "debit",
             },
@@ -852,7 +886,7 @@ class TestPaymentMethod(unittest.TestCase):
             "cvv": "100",
             "cardholder_name": "John Doe",
             "options": {
-                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_account_type": "debit",
                 "verify_card": True,
             }
@@ -1144,7 +1178,7 @@ class TestPaymentMethod(unittest.TestCase):
             "number": CreditCardNumbers.Hiper,
             "expiration_date": "06/2013",
             "options": {
-                "verification_merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_account_type": "debit",
                 "verify_card": True,
             }
@@ -1553,6 +1587,33 @@ class TestPaymentMethod(unittest.TestCase):
         errors = updated_result.errors.deep_errors
         self.assertEqual(1, len(errors))
         self.assertEqual("92906", errors[0].code)
+
+    def test_update_respects_fail_on_duplicate_payment_method_for_customer_when_included_outside_of_the_nonce(self):
+        customer_id = Customer.create().customer.id
+        credit_card_result = CreditCard.create({
+            "customer_id": customer_id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2012"
+        })
+        self.assertTrue(credit_card_result.is_success)
+
+        credit_card_result_2 = CreditCard.create({
+            "customer_id": customer_id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2012"
+        })
+        self.assertTrue(credit_card_result_2.is_success)
+
+        update_result = PaymentMethod.update(credit_card_result_2.credit_card.token, {
+            "cardholder_name": "New Holder",
+            "number": "4111111111111111",
+            "expiration_date": "05/2014",
+            "options": {
+                "fail_on_duplicate_payment_method_for_customer": "true"
+            }
+        })
+        self.assertFalse(update_result.is_success)
+        self.assertTrue(update_result.errors.deep_errors[0].code == "81763")
 
     def test_payment_method_grant_raises_on_non_existent_tokens(self):
         granting_gateway, _ = TestHelper.create_payment_method_grant_fixtures()

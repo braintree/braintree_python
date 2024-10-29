@@ -171,6 +171,50 @@ class TestClientToken(unittest.TestCase):
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(1, len(customer.credit_cards))
 
+    def test_can_pass_fail_on_duplicate_payment_method_for_customer(self):
+        config = Configuration.instantiate()
+        result = braintree.Customer.create()
+        customer_id = result.customer.id
+
+        client_token = TestHelper.generate_decoded_client_token({
+            "customer_id": customer_id,
+        })
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        http = ClientApiHttp(config, {
+            "authorization_fingerprint": authorization_fingerprint,
+            "shared_customer_identifier": "fake_identifier",
+            "shared_customer_identifier_type": "testing"
+        })
+
+        status_code, _ = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            }
+        })
+        self.assertEqual(201, status_code)
+
+        client_token = TestHelper.generate_decoded_client_token({
+            "customer_id": customer_id,
+            "options": {
+                "fail_on_duplicate_payment_method_for_customer": True
+            }
+        })
+        authorization_fingerprint = json.loads(client_token)["authorizationFingerprint"]
+        http.set_authorization_fingerprint(authorization_fingerprint)
+        status_code, _ = http.add_card({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_month": "11",
+                "expiration_year": "2099",
+            }
+        })
+        self.assertEqual(422, status_code)
+
+        customer = braintree.Customer.find(customer_id)
+        self.assertEqual(1, len(customer.credit_cards))
+
     def test_can_pass_merchant_account_id(self):
         expected_merchant_account_id = TestHelper.non_default_merchant_account_id
         client_token = TestHelper.generate_decoded_client_token({

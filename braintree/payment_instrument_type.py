@@ -1,7 +1,7 @@
 
 class PaymentInstrumentType():
-    # NEXT_MAJOR_VERSION remove amex express checkout
-    # NEXT_MAJOR_VERSION remove masterpass
+    # NEXT_MAJOR_VERSION remove amex express checkout, masterpass, 
+    # and SamsungPayCard. They have been deprecated
     AmexExpressCheckoutCard = "amex_express_checkout_card"
     AndroidPayCard = "android_pay_card"
     ApplePayCard = "apple_pay_card"

@@ -869,9 +869,10 @@ class Transaction(Resource):
             self.venmo_account_details = VenmoAccount(gateway, attributes.pop("venmo_account"))
         if "visa_checkout_card" in attributes:
             self.visa_checkout_card_details = VisaCheckoutCard(gateway, attributes.pop("visa_checkout_card"))
-        # NEXt_MAJOR_VERSION remove masterpass
+        # NEXT_MAJOR_VERSION remove masterpass
         if "masterpass_card" in attributes:
             self.masterpass_card_details = MasterpassCard(gateway, attributes.pop("masterpass_card"))
+        # NEXT_MAJOR_VERSION remove SamsungPayCard
         if "samsung_pay_card" in attributes:
             self.samsung_pay_card_details = SamsungPayCard(gateway, attributes.pop("samsung_pay_card"))
         if "meta_checkout_card" in attributes:

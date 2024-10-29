@@ -26,5 +26,5 @@ class ClientToken(object):
             "proxy_merchant_id",
             "version",
             {"domains": ["__any_key__"]},
-            {"options": ["make_default", "verify_card", "fail_on_duplicate_payment_method"]}
+            {"options": ["fail_on_duplicate_payment_method", "fail_on_duplicate_payment_method_for_customer", "make_default", "verify_card"]}
         ]

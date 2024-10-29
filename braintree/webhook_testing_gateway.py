@@ -98,7 +98,7 @@ class WebhookTestingGateway(object):
         elif kind == WebhookNotification.Kind.GrantedPaymentMethodRevoked:
             return self.__granted_payment_method_revoked(id)
         elif kind == WebhookNotification.Kind.LocalPaymentCompleted:
-            return self.__local_payment_completed()
+            return self.__local_payment_completed(id)
         elif kind == WebhookNotification.Kind.LocalPaymentExpired:
             return self.__local_payment_expired()
         elif kind == WebhookNotification.Kind.LocalPaymentFunded:
@@ -1020,11 +1020,42 @@ class WebhookTestingGateway(object):
             </paypal-account>
         """ % id
 
-    def __local_payment_completed(self):
+    def __local_payment_completed(self, id):
+        if id == "blik_one_click_id":
+            return self.__blik_one_click_local_payment_completed()
+        else:
+            return self.__default_local_payment_completed()
+
+    def __default_local_payment_completed(self):
         return """
             <local-payment>
                 <bic>a-bic</bic>
                 <iban-last-chars>1234</iban-last-chars>
+                <payer-id>a-payer-id</payer-id>
+                <payer-id>a-payer-id</payer-id>
+                <payer-name>a-payer-name</payer-name>
+                <payment-id>a-payment-id</payment-id>
+                <payment-method-nonce>ee257d98-de40-47e8-96b3-a6954ea7a9a4</payment-method-nonce>
+                <transaction>
+                    <id>1</id>
+                    <status>authorizing</status>
+                    <amount>10.00</amount>
+                    <order-id>order1234</order-id>
+                </transaction>
+            </local-payment>
+            """
+    def __blik_one_click_local_payment_completed(self):
+        return """
+            <local-payment>
+                <bic>a-bic</bic>
+                <blik-aliases type='array'>
+                    <blik-alias>
+                        <key>alias-key-1</key>
+                        <label>alias-label-1</label>
+                    </blik-alias>
+                </blik-aliases>
+                <iban-last-chars>1234</iban-last-chars>
+                <payer-id>a-payer-id</payer-id>
                 <payer-id>a-payer-id</payer-id>
                 <payer-name>a-payer-name</payer-name>
                 <payment-id>a-payment-id</payment-id>

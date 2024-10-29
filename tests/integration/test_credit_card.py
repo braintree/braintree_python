@@ -460,6 +460,28 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(1, len(credit_card_number_errors))
         self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, credit_card_number_errors[0].code)
 
+    def test_create_with_fail_on_duplicate_payment_method_for_customer_set_to_true(self):
+        customer = Customer.create().customer
+        CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2014"
+        })
+
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4000111111111115",
+            "expiration_date": "05/2014",
+            "options": {"fail_on_duplicate_payment_method_for_customer": True}
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual("Duplicate card exists in the vault for the customer.", result.message)
+
+        credit_card_number_errors = result.errors.for_object("credit_card").on("number")
+        self.assertEqual(1, len(credit_card_number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExistsForCustomer, credit_card_number_errors[0].code)
+
     def test_create_with_invalid_invalid_options(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -871,6 +893,30 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(1, len(number_errors))
         self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, number_errors[0].code)
 
+    def test_update_returns_error_with_duplicate_payment_method_for_customer_if_fail_on_duplicate_payment_method_is_set(self):
+        create_result = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2021",
+            }
+        })
+        self.assertTrue(create_result.is_success)
+
+        update_result = Customer.update(create_result.customer.id, {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2021",
+                "options": {
+                    "fail_on_duplicate_payment_method_for_customer": True,
+                },
+            }
+        })
+
+        self.assertFalse(update_result.is_success)
+        number_errors = update_result.errors.for_object("customer").for_object("credit_card").on("number")
+        self.assertEqual(1, len(number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExistsForCustomer, number_errors[0].code)
+
     def test_delete_with_valid_token(self):
         customer = Customer.create().customer
         credit_card = CreditCard.create({
@@ -1218,7 +1264,7 @@ class TestCreditCard(unittest.TestCase):
             "expiration_date": "05/2014",
             "options": {
                 "verify_card": True,
-                "verification_merchant_account_id": "hiper_brl",
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_account_type": "debit"
             }
         })
@@ -1229,7 +1275,7 @@ class TestCreditCard(unittest.TestCase):
         updated_result = CreditCard.update(result.credit_card.token, {
             "options": {
                 "verify_card": True,
-                "verification_merchant_account_id": "hiper_brl",
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_account_type": "debit"
             }
         })
@@ -1272,7 +1318,7 @@ class TestCreditCard(unittest.TestCase):
             "expiration_date": "05/2014",
             "options": {
                 "verify_card": True,
-                "verification_merchant_account_id": "hiper_brl",
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_account_type": "credit"
             }
         })
@@ -1283,7 +1329,7 @@ class TestCreditCard(unittest.TestCase):
         updated_result = CreditCard.update(result.credit_card.token, {
             "options": {
                 "verify_card": True,
-                "verification_merchant_account_id": "hiper_brl",
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "verification_account_type": "debit"
             }
         })

@@ -1,5 +1,7 @@
 from tests.test_helper import *
 
+# NEXT_MAJOR_VERSION remove this class
+# SamsungPay is deprecated
 class TestSamsungPayCard(unittest.TestCase):
     def test_expiration_date(self):
         card = SamsungPayCard(None, {

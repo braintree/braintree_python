@@ -1,5 +1,8 @@
 from tests.test_helper import *
 
+# NEXT_MAJOR_VERSION remove this class
+# SamsungPay is deprecated
+@unittest.skip("deperacated - remove in next MAJOR release")
 class TestSamsungPay(unittest.TestCase):
     def test_create_from_nonce(self):
         customer = Customer.create().customer

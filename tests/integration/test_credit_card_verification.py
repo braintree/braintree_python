@@ -51,7 +51,7 @@ class TestCreditCardVerfication(unittest.TestCase):
                 "cvv": "737",
             },
             "options": {
-                "merchant_account_id": TestHelper.hiper_brl_merchant_account_id,
+                "merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                 "account_type": "debit",
             },
         })

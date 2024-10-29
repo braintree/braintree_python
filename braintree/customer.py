@@ -19,6 +19,7 @@ from braintree.configuration import Configuration
 from braintree.ids_search import IdsSearch
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource_collection import ResourceCollection
+# NEXT_MAJOR_VERSION remove SamsungPayCard
 from braintree.samsung_pay_card import SamsungPayCard
 
 
@@ -273,6 +274,7 @@ class Customer(Resource):
             self.masterpass_cards = [MasterpassCard(gateway, masterpass_card) for masterpass_card in self.masterpass_cards]
             self.payment_methods += self.masterpass_cards
 
+        # NEXT_MAJOR_VERSION remove all deprecated SamsungPayCard
         if "samsung_pay_cards" in attributes:
             self.samsung_pay_cards = [SamsungPayCard(gateway, samsung_pay_card) for samsung_pay_card in self.samsung_pay_cards]
             self.payment_methods += self.samsung_pay_cards

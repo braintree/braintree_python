@@ -24,6 +24,7 @@ class TestCreditCard(unittest.TestCase):
             },
             {"options": [
                 "fail_on_duplicate_payment_method",
+                "fail_on_duplicate_payment_method_for_customer",
                 "make_default",
                 "skip_advanced_fraud_checking",
                 "venmo_sdk_session", # NEXT_MJOR_VERSION remove venmo_sdk_session
@@ -56,6 +57,7 @@ class TestCreditCard(unittest.TestCase):
             },
             {"options": [
                 "fail_on_duplicate_payment_method",
+                "fail_on_duplicate_payment_method_for_customer",
                 "make_default",
                 "skip_advanced_fraud_checking",
                 "venmo_sdk_session", # NEXT_MJOR_VERSION remove venmo_sdk_session

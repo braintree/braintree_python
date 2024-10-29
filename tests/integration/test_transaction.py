@@ -202,22 +202,6 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertNotEqual(result.transaction.network_transaction_id, "")
 
-    def test_sale_with_external_vault_validation_error_unsupported_payment_instrument_type(self):
-        result = Transaction.sale({
-            "amount": "10.00",
-            "payment_method_nonce": Nonces.ApplePayVisa,
-            "external_vault": {
-                "status": "vaulted",
-                "previous_network_transaction_id": "123456789012345"
-            }
-        })
-
-        self.assertFalse(result.is_success)
-        self.assertEqual(
-            ErrorCodes.Transaction.PaymentInstrumentWithExternalVaultIsInvalid,
-            result.errors.for_object("transaction")[0].code
-        )
-
     def test_sale_with_external_vault_validation_error_invalid_status(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

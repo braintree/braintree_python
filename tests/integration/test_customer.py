@@ -198,7 +198,7 @@ class TestCustomer(unittest.TestCase):
                 "expiration_date": "05/2010",
                 "options": {
                     "verify_card": True,
-                    "verification_merchant_account_id": "hiper_brl",
+                    "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id,
                     "verification_account_type": "debit",
                     }
                 },
@@ -764,6 +764,33 @@ class TestCustomer(unittest.TestCase):
         card_number_errors = result.errors.for_object("customer").for_object("credit_card").on("number")
         self.assertEqual(1, len(card_number_errors))
         self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExists, card_number_errors[0].code)
+
+    def test_create_customer_with_check_duplicate_payment_method_for_customer(self):
+        attributes = {
+            "first_name": "Mike",
+            "last_name": "Jones",
+            "credit_card": {
+                "number": "4000111111111115",
+                "expiration_date": "05/2010",
+                "cvv": "100",
+            }
+        }
+
+        customer = Customer.create(attributes).customer
+        result = Customer.update(customer.id, {
+            "credit_card": {
+                "expiration_date": "12/12",
+                "number": "4000111111111115",
+                "options": {"fail_on_duplicate_payment_method_for_customer": True}
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual("Duplicate card exists in the vault for the customer.", result.message)
+
+        card_number_errors = result.errors.for_object("customer").for_object("credit_card").on("number")
+        self.assertEqual(1, len(card_number_errors))
+        self.assertEqual(ErrorCodes.CreditCard.DuplicateCardExistsForCustomer, card_number_errors[0].code)
 
     def test_create_customer_with_payment_method_and_billing_address(self):
         result = Customer.create({

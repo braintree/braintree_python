@@ -11,6 +11,7 @@ from braintree.us_bank_account import UsBankAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
 from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
+# NEXT_MAJOR_VERSION remove SamsungPayCard
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.unknown_payment_method import UnknownPaymentMethod
 

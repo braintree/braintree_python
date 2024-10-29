@@ -50,7 +50,7 @@ class TestHttp(unittest.TestCase):
             return
 
         #any endpoint that returns valid XML with a status of 3xx or less and serves SSL
-        environment = Environment("test", "aws.amazon.com/ec2", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
+        environment = Environment("test", "github.com", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")
