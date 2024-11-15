@@ -1,32 +1,54 @@
-# Braintree Python library
+
+# Braintree Python Library
 
 The Braintree Python library provides integration access to the Braintree Gateway.
 
-## TLS 1.2 required
-> **The Payment Card Industry (PCI) Council has [mandated](https://blog.pcisecuritystandards.org/migrating-from-ssl-and-early-tls) that early versions of TLS be retired from service.  All organizations that handle credit card information are required to comply with this standard. As part of this obligation, Braintree has updated its services to require TLS 1.2 for all HTTPS connections. Braintrees require HTTP/1.1 for all connections. Please see our [technical documentation](https://github.com/paypal/tls-update) for more information.**
+## TLS 1.2 Required
 
-## Dependencies
+> **The Payment Card Industry (PCI) Council has [mandated](https://blog.pcisecuritystandards.org/migrating-from-ssl-and-early-tls) that early versions of TLS be retired from service.  
+> All organizations that handle credit card information are required to comply with this standard. As part of this obligation, Braintree has updated its services to require TLS 1.2 for all HTTPS connections.  
+> Braintree requires HTTP/1.1 for all connections. Please see our [technical documentation](https://github.com/paypal/tls-update) for more information.**
 
-* [requests](http://docs.python-requests.org/en/latest/)
+## Prerequisites
 
-The Braintree Python SDK is tested against Python versions 3.5.3 and 3.12.0.
+Make sure you have the following prerequisites installed before proceeding:
 
-_The Python core development community has released [End-of-Life branches](https://devguide.python.org/devcycle/#end-of-life-branches) for Python versions 2.7 - 3.4, and are no longer receiving [security updates](https://devguide.python.org/#branchstatus). As a result, Braintree no longer supports these versions of Python._
+- Python 3.5.3 or higher (tested up to 3.12.0)
+- [requests](http://docs.python-requests.org/en/latest/)
 
-## Versions
+_Note: Python versions 2.7 - 3.4 have reached their [End-of-Life](https://devguide.python.org/devcycle/#end-of-life-branches) and are no longer supported._
 
-Braintree employs a deprecation policy for our SDKs. For more information on the statuses of an SDK check our [developer docs](https://developer.paypal.com/braintree/docs/reference/general/server-sdk-deprecation-policy).
+## Installation Steps
 
-| Major version number | Status | Released | Deprecated | Unsupported |
-| -------------------- | ------ | -------- | ---------- | ----------- |
-| 4.x.x | Active | March 2020 | TBA | TBA |
-| 3.x.x | Inactive | June 2014 | March 2022 | March 2023 |
+### Option 1: Manual Installation
 
-## Documentation
+To manually install the Braintree Python SDK, download the repository and follow the instructions in the [Documentation](https://developer.paypal.com/braintree/docs/start/hello-server/python).
 
- * [Official documentation](https://developer.paypal.com/braintree/docs/start/hello-server/python)
+### Option 2: Using Package Manager
 
-Updating from an Inactive, Deprecated, or Unsupported version of this SDK? Check our [Migration Guide](https://developer.paypal.com/braintree/docs/reference/general/server-sdk-migration-guide/python) for tips.
+Install via pip:
+
+```bash
+pip install braintree
+```
+
+### Verification
+
+To verify the successful installation, create a simple script to check the version:
+
+```python
+import braintree
+print(braintree.__version__)
+```
+
+## Version History
+
+Braintree employs a deprecation policy for our SDKs. For more information, check our [developer docs](https://developer.paypal.com/braintree/docs/reference/general/server-sdk-deprecation-policy).
+
+| Major Version Number | Status    | Released    | Deprecated | Unsupported |
+|-----------------------|-----------|-------------|------------|-------------|
+| 4.x.x                | Active    | March 2020  | TBA        | TBA         |
+| 3.x.x                | Inactive  | June 2014   | March 2022 | March 2023  |
 
 ## Quick Start Example
 
@@ -63,40 +85,56 @@ else:
         print("  message: " + error.message)
 ```
 
+## External Documentation
+- For additional information, please visit [Official documentation](https://developer.paypal.com/braintree/docs/start/hello-server/python)
+- Updating from an Inactive, Deprecated, or Unsupported version of this SDK? Check our [Migration Guide](https://developer.paypal.com/braintree/docs/reference/general/server-sdk-migration-guide/python) for tips.
+
 ## Developing
 
-1. Create a [virtualenv](https://virtualenv.pypa.io/) called `venv`:
+1. Create a virtual environment called `venv`:
 
-   ```
+   ```bash
    virtualenv venv
    ```
 
-2. Start the virtualenv:
+2. Activate the virtual environment:
 
-   ```
+   ```bash
    source venv/bin/activate
    ```
 
 3. Install dependencies:
 
-   ```
+   ```bash
    pip3 install -r dev_requirements.txt
    ```
 
 ## Developing (Docker)
 
-The `Makefile` and `Dockerfile` will build an image containing the dependencies and drop you to a terminal where you can run tests.
+Use the `Makefile` and `Dockerfile` to build an image containing dependencies and drop into a terminal where you can run tests.
 
-```
+```bash
 make
 ```
 
 ## Testing
 
-Our friends at [Venmo](https://venmo.com) have [an open source library](https://github.com/venmo/btnamespace) designed to simplify testing of applications using this library.
+The unit tests can be run on any system. Use the following commands:
 
-If you wish to run the tests, make sure you are set up for development (see instructions above). The unit specs can be run by anyone on any system, but the integration specs are meant to be run against a local development server of our gateway code. These integration specs are not meant for public consumption and will likely fail if run on your system. To run unit tests use rake (`rake test:unit`) or unittest (`python3 -m unittest discover tests/unit`).
+- Run unit tests:
+
+   ```bash
+   rake test:unit
+   ```
+
+- Alternatively, use Python's unittest:
+
+   ```bash
+   python3 -m unittest discover tests/unit
+   ```
+
+Integration tests require a local development server of the gateway code and are not meant for public use.
 
 ## License
 
-See the [LICENSE](LICENSE) file for more info.
+See the [LICENSE](LICENSE) file for more information.
