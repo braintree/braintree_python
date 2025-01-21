@@ -6575,4 +6575,28 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertFalse(hasattr(transaction, 'foreign_retailer'))
+        self.assertFalse(hasattr(transaction, 'foreign_retailer')) 
+    
+    def test_contact_details_returned_fom_transaction(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.PayPalOneTimePayment,
+            "paypal_account": {},
+            "options": {
+                "paypal": {}
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+
+        self.assertEqual(transaction.paypal_details.payer_email, "payer@example.com")
+        self.assertNotEqual(None, re.search(r'PAY-\w+', transaction.paypal_details.payment_id))
+        self.assertNotEqual(None, re.search(r'AUTH-\w+', transaction.paypal_details.authorization_id))
+        self.assertNotEqual(None, transaction.paypal_details.image_url)
+        self.assertNotEqual(None, transaction.paypal_details.debug_id)
+        self.assertTrue(hasattr(transaction.paypal_details, 'recipient_email'))
+        self.assertTrue(hasattr(transaction.paypal_details, 'recipient_phone'))
+        self.assertEqual(transaction.paypal_details.recipient_email, "test@paypal.com")
+      
+

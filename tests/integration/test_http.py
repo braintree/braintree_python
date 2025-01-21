@@ -62,8 +62,7 @@ class TestHttp(unittest.TestCase):
             self.fail("Expected to receive an SSL error but no exception was raised")
 
     def test_unsuccessful_connection_to_ssl_server_with_wrong_domain(self):
-        #ip address of api.braintreegateway.com
-        environment = Environment("test", "204.109.13.121", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
+        environment = Environment("test", "52.40.66.148", "443", "http://auth.venmo.dev:9292", True, Environment.Production.ssl_certificate)
         http = self.get_http(environment)
         try:
             http.get("/")

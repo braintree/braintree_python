@@ -591,7 +591,7 @@ class Transaction(Resource):
                         ]
                     }
                 ]
-            },
+            }, 
             {"installments": {"count"}},
             {"line_items":
                 [
@@ -603,26 +603,28 @@ class Transaction(Resource):
                 "options": [
                     "add_billing_address_to_payment_method",
                     "hold_in_escrow",
-                    "store_in_vault",
-                    "store_in_vault_on_success",
-                    "store_shipping_address_in_vault",
-                    "submit_for_settlement",
-                    "venmo_sdk_session", # NEXT_MJOR_VERSION remove venmo_sdk_session
                     "payee_id",
                     "payee_email",
                     "skip_advanced_fraud_checking",
                     "skip_avs",
                     "skip_cvv",
+                    "store_in_vault",
+                    "store_in_vault_on_success",
+                    "store_shipping_address_in_vault",
+                    "submit_for_settlement",
+                    "venmo_sdk_session", # NEXT_MJOR_VERSION remove venmo_sdk_session
                     {
                         "credit_card": [
                             "account_type",
                             "process_debit_as_credit"
                         ],
                         "paypal": [
+                            "custom_field",
+                            "description", 
                             "payee_id",
                             "payee_email",
-                            "custom_field",
-                            "description",
+                            "recipient_email",
+                            {"recipient_phone":["country_code", "national_number"]},
                             {"supplementary_data": ["__any_key__"]}
                         ],
                         "three_d_secure": [
