@@ -10,6 +10,7 @@ from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.exceptions.upgrade_required_error import UpgradeRequiredError
 from braintree.util.http import Http
 
+
 class GraphQLClient(Http):
 
     @staticmethod
@@ -44,13 +45,11 @@ class GraphQLClient(Http):
         self.graphql_headers = {
             "Accept": "application/json",
             "Braintree-Version": config.graphql_api_version(),
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
     def query(self, definition, variables=None, operation_name=None):
-        graphql_request = {
-            "query": definition
-        }
+        graphql_request = {"query": definition}
 
         if variables is not None:
             graphql_request["variables"] = variables
@@ -58,9 +57,35 @@ class GraphQLClient(Http):
         if operation_name is not None:
             graphql_request["operationName"] = operation_name
 
-        response = self._make_request("POST", self.config.graphql_base_url(),
-                                      Http.ContentType.Json, json.dumps(graphql_request),
-                                      header_overrides=self.graphql_headers)
+        response = self._make_request(
+            "POST",
+            self.config.graphql_base_url(),
+            Http.ContentType.Json,
+            json.dumps(graphql_request),
+            header_overrides=self.graphql_headers,
+        )
         self.raise_exception_for_graphql_error(response)
 
         return response
+
+    @staticmethod
+    def get_validation_errors(response):
+        if "errors" not in response or not isinstance(response["errors"], list):
+            return None
+
+        validation_errors = [
+            {
+                "attribute": "",
+                "code": GraphQLClient.get_validation_error_code(error),
+                "message": error["message"],
+            }
+            for error in response["errors"]
+        ]
+        return {"errors": validation_errors}
+
+    @staticmethod
+    def get_validation_error_code(error):
+        try:
+            return error["extensions"]["legacyCode"]
+        except KeyError:
+            return None

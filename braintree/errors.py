@@ -2,7 +2,8 @@ from braintree.validation_error_collection import ValidationErrorCollection
 
 class Errors(object):
     def __init__(self, data):
-        data["errors"] = []
+        if "errors" not in data:
+            data["errors"] = []
         self.errors = ValidationErrorCollection(data)
         self.size = self.errors.deep_size
 

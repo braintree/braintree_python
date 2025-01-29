@@ -6,6 +6,7 @@ from braintree.configuration import Configuration
 from braintree.credit_card_gateway import CreditCardGateway
 from braintree.credit_card_verification_gateway import CreditCardVerificationGateway
 from braintree.customer_gateway import CustomerGateway
+from braintree.customer_session_gateway import CustomerSessionGateway
 from braintree.discount_gateway import DiscountGateway
 from braintree.dispute_gateway import DisputeGateway
 from braintree.document_upload_gateway import DocumentUploadGateway
@@ -40,17 +41,19 @@ class BraintreeGateway(object):
                 access_token=kwargs.get("access_token"),
                 http_strategy=kwargs.get("http_strategy")
             )
+        self.graphql_client = self.config.graphql_client()
+
         self.add_on = AddOnGateway(self)
         self.address = AddressGateway(self)
         self.apple_pay = ApplePayGateway(self)
         self.client_token = ClientTokenGateway(self)
         self.credit_card = CreditCardGateway(self)
         self.customer = CustomerGateway(self)
+        self.customer_session = CustomerSessionGateway(self)
         self.discount = DiscountGateway(self)
         self.dispute = DisputeGateway(self)
         self.document_upload = DocumentUploadGateway(self)
         self.exchange_rate_quote = ExchangeRateQuoteGateway(self)
-        self.graphql_client = self.config.graphql_client()
         self.merchant = MerchantGateway(self)
         self.merchant_account = MerchantAccountGateway(self)
         self.oauth = OAuthGateway(self)

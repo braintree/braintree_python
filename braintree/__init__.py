@@ -35,6 +35,7 @@ from braintree.error_codes import ErrorCodes
 from braintree.error_result import ErrorResult
 from braintree.errors import Errors
 from braintree.europe_bank_account import EuropeBankAccount
+from braintree.graphql import *
 from braintree.liability_shift import LiabilityShift
 from braintree.local_payment_completed import LocalPaymentCompleted
 from braintree.local_payment_reversed import LocalPaymentReversed
