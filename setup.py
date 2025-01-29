@@ -18,7 +18,7 @@ setup(
     author="Braintree",
     author_email="support@braintreepayments.com",
     url="https://developer.paypal.com/braintree/docs/reference/overview",
-    packages=["braintree", "braintree.dispute_details", "braintree.exceptions", "braintree.exceptions.http",  "braintree.graphql", "braintree.merchant_account", "braintree.util", "braintree.test"],
+    packages=["braintree", "braintree.dispute_details", "braintree.exceptions", "braintree.exceptions.http",  "braintree.graphql", "braintree.graphql.enums", "braintree.merchant_account", "braintree.util", "braintree.test"],
     package_data={"braintree": ["ssl/*"]},
     install_requires=["requests>=0.11.1,<3.0"],
     zip_safe=False,

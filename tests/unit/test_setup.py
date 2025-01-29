@@ -9,7 +9,7 @@ class TestSetup(unittest.TestCase):
         packages_from_setup = re.findall('"(.*?)"', str(packages_line))
 
         packages_from_directories = ['braintree']
-        directories_that_dont_have_packages = ['braintree.ssl', 'braintree.graphql.enums', 'braintree.graphql.inputs', 'braintree.graphql.types', 'braintree.graphql.unions']
+        directories_that_dont_have_packages = ['braintree.ssl', 'braintree.graphql.inputs', 'braintree.graphql.types', 'braintree.graphql.unions']
         for dirname, dirnames, _ in os.walk('braintree'):
             for subdirname in dirnames:
                 package_from_directory = re.sub('/', '.', os.path.join(dirname, subdirname))
