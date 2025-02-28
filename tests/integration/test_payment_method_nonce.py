@@ -217,6 +217,12 @@ class TestPaymentMethodNonce(unittest.TestCase):
 
         self.assertEqual(CreditCard.Prepaid.Yes, bin_data.prepaid)
 
+    def test_bin_data_prepaid_reloadable(self):
+        found_nonce = PaymentMethodNonce.find("fake-valid-prepaid-reloadable-nonce")
+        bin_data = found_nonce.bin_data
+
+        self.assertEqual(CreditCard.PrepaidReloadable.Yes, bin_data.prepaid_reloadable)
+
     def test_bin_data_unknown_values(self):
         found_nonce = PaymentMethodNonce.find("fake-valid-unknown-indicators-nonce")
         bin_data = found_nonce.bin_data
@@ -229,6 +235,7 @@ class TestPaymentMethodNonce(unittest.TestCase):
         self.assertEqual(CreditCard.IssuingBank.Unknown, bin_data.issuing_bank)
         self.assertEqual(CreditCard.Payroll.Unknown, bin_data.payroll)
         self.assertEqual(CreditCard.Prepaid.Unknown, bin_data.prepaid)
+        self.assertEqual(CreditCard.PrepaidReloadable.Unknown, bin_data.prepaid_reloadable)
         self.assertEqual(CreditCard.ProductId.Unknown, bin_data.product_id)
 
     def _request_authentication_insights(self, merchant_account_id, payment_method_token, amount = None, recurring_customer_consent = None, recurring_max_amount = None):

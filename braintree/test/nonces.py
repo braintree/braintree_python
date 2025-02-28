@@ -79,6 +79,7 @@ class Nonces(object):
     TransactablePayroll = "fake-valid-payroll-nonce"
     TransactablePinlessDebitVisa = "fake-pinless-debit-visa-nonce"
     TransactablePrepaid = "fake-valid-prepaid-nonce"
+    TransactablePrepaidReloadable = "fake-valid-prepaid-reloadable-nonce"
     TransactableUnknownIndicators = "fake-valid-unknown-indicators-nonce"
     TransactableVisa = "fake-valid-visa-nonce"
     VenmoAccount = "fake-venmo-account-nonce"

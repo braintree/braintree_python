@@ -1,4 +1,7 @@
 # Changelog
+## 4.34.0
+* Add prepaid_reloadable from bin data in credit card responses
+* Add support for `PayPalPaymentResource` requests
 
 ## 4.33.1
 * Fixes issue related to missing folders in package paths

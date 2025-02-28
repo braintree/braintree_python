@@ -127,8 +127,8 @@ class CreditCard(Resource):
         Star = "STAR"
         Star_Access = "STAR_ACCESS"
 
-    Commercial = DurbinRegulated = Debit = Healthcare = \
-            CountryOfIssuance = IssuingBank = Payroll = Prepaid = ProductId = CardTypeIndicator
+    Commercial = CountryOfIssuance = Debit = DurbinRegulated = \
+            Healthcare = IssuingBank = Payroll = Prepaid = PrepaidReloadable = ProductId = CardTypeIndicator
 
     @staticmethod
     def create(params=None):

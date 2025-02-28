@@ -219,6 +219,7 @@ class TestHelper(object):
             "Accept": "application/xml",
             "Content-type": "application/x-www-form-urlencoded",
         }
+    
 
     @staticmethod
     def generate_decoded_client_token(params=None):
@@ -231,6 +232,7 @@ class TestHelper(object):
         decoded_client_token = b64decode(client_token).decode()
         return decoded_client_token
 
+
     @staticmethod
     def nonce_for_paypal_account(paypal_account_details):
         client_token = json.loads(TestHelper.generate_decoded_client_token())
@@ -240,6 +242,16 @@ class TestHelper(object):
 
         _, nonce = client.get_paypal_nonce(paypal_account_details)
         return nonce
+
+    @staticmethod
+    def nonce_for_paypal_order_payment():
+        http = ClientApiHttp.create()
+        _, payment_method_nonce = http.get_paypal_nonce({
+            "intent": "order",
+            "payment-token": "fake-paypal-payment-token",
+            "payer-id": "fake-paypal-payer-id"
+        })
+        return payment_method_nonce
 
     @staticmethod
     def random_token_block(x):

@@ -1216,6 +1216,19 @@ class TestCreditCard(unittest.TestCase):
 
         self.assertEqual(CreditCard.Prepaid.Yes, credit_card.prepaid)
 
+    def test_prepaid_reloadable_card(self):
+        customer = Customer.create().customer
+        result = CreditCard.create({
+            "customer_id": customer.id,
+            "number": CreditCardNumbers.CardTypeIndicators.PrepaidReloadable,
+            "expiration_date": "05/2014",
+            "options": {"verify_card": True}
+        })
+
+        credit_card = result.credit_card
+
+        self.assertEqual(CreditCard.PrepaidReloadable.Yes, credit_card.prepaid_reloadable)
+
     def test_all_negative_card_type_indicators(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -1227,13 +1240,14 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
+        self.assertEqual("MSB", credit_card.product_id)
+        self.assertEqual(CreditCard.Commercial.No, credit_card.commercial)
         self.assertEqual(CreditCard.Debit.No, credit_card.debit)
         self.assertEqual(CreditCard.DurbinRegulated.No, credit_card.durbin_regulated)
-        self.assertEqual(CreditCard.Prepaid.No, credit_card.prepaid)
-        self.assertEqual(CreditCard.Payroll.No, credit_card.payroll)
-        self.assertEqual(CreditCard.Commercial.No, credit_card.commercial)
         self.assertEqual(CreditCard.Healthcare.No, credit_card.healthcare)
-        self.assertEqual("MSB", credit_card.product_id)
+        self.assertEqual(CreditCard.Payroll.No, credit_card.payroll)
+        self.assertEqual(CreditCard.Prepaid.No, credit_card.prepaid)
+        self.assertEqual(CreditCard.PrepaidReloadable.No, credit_card.prepaid_reloadable)
 
     def test_card_without_card_type_indicators(self):
         customer = Customer.create().customer
@@ -1246,14 +1260,15 @@ class TestCreditCard(unittest.TestCase):
 
         credit_card = result.credit_card
 
+        self.assertEqual(CreditCard.Commercial.Unknown, credit_card.commercial)
+        self.assertEqual(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
         self.assertEqual(CreditCard.Debit.Unknown, credit_card.debit)
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, credit_card.durbin_regulated)
-        self.assertEqual(CreditCard.Prepaid.Unknown, credit_card.prepaid)
-        self.assertEqual(CreditCard.Payroll.Unknown, credit_card.payroll)
-        self.assertEqual(CreditCard.Commercial.Unknown, credit_card.commercial)
         self.assertEqual(CreditCard.Healthcare.Unknown, credit_card.healthcare)
         self.assertEqual(CreditCard.IssuingBank.Unknown, credit_card.issuing_bank)
-        self.assertEqual(CreditCard.CountryOfIssuance.Unknown, credit_card.country_of_issuance)
+        self.assertEqual(CreditCard.Payroll.Unknown, credit_card.payroll)
+        self.assertEqual(CreditCard.Prepaid.Unknown, credit_card.prepaid)
+        self.assertEqual(CreditCard.PrepaidReloadable.Unknown, credit_card.prepaid_reloadable)
         self.assertEqual(CreditCard.ProductId.Unknown, credit_card.product_id)
 
     def test_card_with_account_type_debit(self):

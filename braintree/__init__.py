@@ -50,6 +50,7 @@ from braintree.payment_method_customer_data_updated_metadata import PaymentMetho
 from braintree.payment_method_nonce import PaymentMethodNonce
 from braintree.payment_method_parser import parse_payment_method
 from braintree.paypal_account import PayPalAccount
+from braintree.paypal_payment_resource import PayPalPaymentResource
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
 from braintree.processor_response_types import ProcessorResponseTypes

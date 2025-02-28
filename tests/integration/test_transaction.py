@@ -2813,14 +2813,15 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertEqual(CreditCard.Prepaid.Unknown, transaction.credit_card_details.prepaid)
-        self.assertEqual(CreditCard.Debit.Unknown, transaction.credit_card_details.debit)
+        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
+        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
         self.assertEqual(CreditCard.Commercial.Unknown, transaction.credit_card_details.commercial)
+        self.assertEqual(CreditCard.Debit.Unknown, transaction.credit_card_details.debit)
+        self.assertEqual(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
         self.assertEqual(CreditCard.Healthcare.Unknown, transaction.credit_card_details.healthcare)
         self.assertEqual(CreditCard.Payroll.Unknown, transaction.credit_card_details.payroll)
-        self.assertEqual(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
-        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
-        self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
+        self.assertEqual(CreditCard.Prepaid.Unknown, transaction.credit_card_details.prepaid)
+        self.assertEqual(CreditCard.PrepaidReloadable.Unknown, transaction.credit_card_details.prepaid_reloadable)
         self.assertEqual(CreditCard.ProductId.Unknown, transaction.credit_card_details.product_id)
 
     def test_create_can_set_recurring_flag(self):
@@ -5680,6 +5681,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(details.last_4, "1881")
         self.assertEqual(details.masked_number, "401288******1881")
         self.assertEqual(details.prepaid, "No")
+        self.assertEqual(details.prepaid_reloadable, "Unknown")
 
     def test_creating_meta_checkout_token_transaction_with_fake_nonce(self):
         result = Transaction.sale({
@@ -5708,6 +5710,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(details.last_4, "1881")
         self.assertEqual(details.masked_number, "401288******1881")
         self.assertEqual(details.prepaid, "No")
+        self.assertEqual(details.prepaid_reloadable, "Unknown")
 
     def test_creating_paypal_transaction_with_vaulted_token(self):
         customer_id = Customer.create().customer.id

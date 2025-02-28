@@ -47,3 +47,19 @@ class TestApplePay(unittest.TestCase):
         result = self.get_gateway().apple_pay.registered_domains()
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], "www.example.com")
+
+    def test_prepaid_reloadable(self):
+        customer = Customer.create().customer
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa
+        })
+
+        self.assertTrue(result.is_success)
+
+        apple_pay_card = result.payment_method
+        self.assertIsNotNone(apple_pay_card.prepaid_reloadable)
+
+        customer = Customer.find(customer.id)
+        self.assertEqual(len(customer.apple_pay_cards), 1)
+        self.assertEqual(result.payment_method.token, customer.apple_pay_cards[0].token)

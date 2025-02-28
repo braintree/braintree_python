@@ -178,14 +178,15 @@ class TestCreditCardVerfication(unittest.TestCase):
             CreditCardVerificationSearch.credit_card_cardholder_name == cardholder_name
         )
 
-        self.assertEqual(CreditCard.Prepaid.Unknown, found_verifications.first.credit_card['prepaid'])
-        self.assertEqual(CreditCard.Debit.Unknown, found_verifications.first.credit_card['debit'])
         self.assertEqual(CreditCard.Commercial.Unknown, found_verifications.first.credit_card['commercial'])
-        self.assertEqual(CreditCard.Healthcare.Unknown, found_verifications.first.credit_card['healthcare'])
-        self.assertEqual(CreditCard.Payroll.Unknown, found_verifications.first.credit_card['payroll'])
-        self.assertEqual(CreditCard.DurbinRegulated.Unknown, found_verifications.first.credit_card['durbin_regulated'])
-        self.assertEqual(CreditCard.IssuingBank.Unknown, found_verifications.first.credit_card['issuing_bank'])
         self.assertEqual(CreditCard.CountryOfIssuance.Unknown, found_verifications.first.credit_card['country_of_issuance'])
+        self.assertEqual(CreditCard.Debit.Unknown, found_verifications.first.credit_card['debit'])
+        self.assertEqual(CreditCard.DurbinRegulated.Unknown, found_verifications.first.credit_card['durbin_regulated'])
+        self.assertEqual(CreditCard.Healthcare.Unknown, found_verifications.first.credit_card['healthcare'])
+        self.assertEqual(CreditCard.IssuingBank.Unknown, found_verifications.first.credit_card['issuing_bank'])
+        self.assertEqual(CreditCard.Payroll.Unknown, found_verifications.first.credit_card['payroll'])
+        self.assertEqual(CreditCard.Prepaid.Unknown, found_verifications.first.credit_card['prepaid'])
+        self.assertEqual(CreditCard.PrepaidReloadable.Unknown, found_verifications.first.credit_card['prepaid_reloadable'])
         self.assertEqual(CreditCard.ProductId.Unknown, found_verifications.first.credit_card['product_id'])
 
     def test_create_success_network_response_code_text(self):
