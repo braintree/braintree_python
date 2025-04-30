@@ -306,8 +306,8 @@ class TestPaymentMethod(unittest.TestCase):
 
         self.assertEqual(apple_pay_card.customer_id, customer_id)
         self.assertEqual(ApplePayCard.CardType.Visa, apple_pay_card.card_type)
-        self.assertEqual("Visa 8886", apple_pay_card.payment_instrument_name)
-        self.assertEqual("Visa 8886", apple_pay_card.source_description)
+        self.assertEqual("Visa 2006", apple_pay_card.payment_instrument_name)
+        self.assertEqual("Visa 2006", apple_pay_card.source_description)
         self.assertTrue(apple_pay_card.default)
         self.assertIn("apple_pay", apple_pay_card.image_url)
         self.assertTrue(int(apple_pay_card.expiration_month) > 0)

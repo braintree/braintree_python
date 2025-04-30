@@ -1,4 +1,9 @@
 # Changelog
+
+## 4.35.0
+* Add support for capturing payment facilitator and sub-merchant details with transactions 
+* Remove marketplace features
+
 ## 4.34.0
 * Add prepaid_reloadable from bin data in credit card responses
 * Add support for `PayPalPaymentResource` requests

@@ -16,10 +16,6 @@ class TestTestingGateway(unittest.TestCase):
         with self.assertRaises(TestOperationPerformedInProductionError):
             self.gateway.make_past_due("")
 
-    def test_error_is_raised_in_production_for_escrow_transaction(self):
-        with self.assertRaises(TestOperationPerformedInProductionError):
-            self.gateway.escrow_transaction("")
-
     def test_error_is_raised_in_production_for_settlement_confirm_transaction(self):
         with self.assertRaises(TestOperationPerformedInProductionError):
             self.gateway.settlement_confirm_transaction("")

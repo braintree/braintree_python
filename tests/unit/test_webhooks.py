@@ -150,36 +150,6 @@ class TestWebhooks(unittest.TestCase):
         else:
             self.assertFalse("raises exception")
 
-    def test_builds_notification_for_approved_sub_merchant_account(self):
-        sample_notification = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.SubMerchantAccountApproved,
-            "my_id"
-        )
-
-        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
-
-        self.assertEqual(WebhookNotification.Kind.SubMerchantAccountApproved, notification.kind)
-        self.assertEqual("my_id", notification.merchant_account.id)
-        self.assertEqual(MerchantAccount.Status.Active, notification.merchant_account.status)
-        self.assertEqual("master_ma_for_my_id", notification.merchant_account.master_merchant_account.id)
-        self.assertEqual(MerchantAccount.Status.Active, notification.merchant_account.master_merchant_account.status)
-
-    def test_builds_notification_for_declined_sub_merchant_account(self):
-        sample_notification = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.SubMerchantAccountDeclined,
-            "my_id"
-        )
-
-        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
-
-        self.assertEqual(WebhookNotification.Kind.SubMerchantAccountDeclined, notification.kind)
-        self.assertEqual("my_id", notification.merchant_account.id)
-        self.assertEqual(MerchantAccount.Status.Suspended, notification.merchant_account.status)
-        self.assertEqual("master_ma_for_my_id", notification.merchant_account.master_merchant_account.id)
-        self.assertEqual(MerchantAccount.Status.Suspended, notification.merchant_account.master_merchant_account.status)
-        self.assertEqual("Credit score is too low", notification.message)
-        self.assertEqual(ErrorCodes.MerchantAccount.DeclinedOFAC, notification.errors.for_object("merchant_account").on("base")[0].code)
-
     def test_builds_notification_for_disbursed_transactions(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.TransactionDisbursed,
@@ -255,21 +225,6 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(100, notification.disbursement.amount)
         self.assertEqual(None, notification.disbursement.exception_message)
         self.assertEqual(None, notification.disbursement.follow_up_action)
-        self.assertEqual(date(2014, 2, 9), notification.disbursement.disbursement_date)
-
-    def test_builds_notification_for_disbursement_exceptions(self):
-        sample_notification = WebhookTesting.sample_notification(
-            WebhookNotification.Kind.DisbursementException,
-            "my_id"
-        )
-
-        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
-
-        self.assertEqual(WebhookNotification.Kind.DisbursementException, notification.kind)
-        self.assertEqual("my_id", notification.disbursement.id)
-        self.assertEqual(100, notification.disbursement.amount)
-        self.assertEqual("bank_rejected", notification.disbursement.exception_message)
-        self.assertEqual("update_funding_information", notification.disbursement.follow_up_action)
         self.assertEqual(date(2014, 2, 9), notification.disbursement.disbursement_date)
 
     def test_builds_notification_for_old_dispute_under_review(self):

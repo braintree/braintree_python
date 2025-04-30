@@ -1,3 +1,4 @@
+import warnings
 from braintree.error_result import ErrorResult
 from braintree.merchant_account import MerchantAccount
 from braintree.paginated_collection import PaginatedCollection
@@ -7,23 +8,10 @@ from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
 
-
 class MerchantAccountGateway(object):
     def __init__(self, gateway):
         self.gateway = gateway
         self.config = gateway.config
-
-    def create(self, params=None):
-        if params is None:
-            params = {}
-        Resource.verify_keys(params, MerchantAccountGateway._create_signature())
-        return self._post("/merchant_accounts/create_via_api", {"merchant_account": params})
-
-    def update(self, merchant_account_id, params=None):
-        if params is None:
-            params = {}
-        Resource.verify_keys(params, MerchantAccountGateway._update_signature())
-        return self._put("/merchant_accounts/%s/update_via_api" % merchant_account_id, {"merchant_account": params})
 
     def find(self, merchant_account_id):
         try:
@@ -70,86 +58,3 @@ class MerchantAccountGateway(object):
             return SuccessfulResult({"merchant_account": MerchantAccount(self.gateway, response["merchant_account"])})
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
-
-    @staticmethod
-    def _create_signature():
-        return [
-            {'individual': [
-                'first_name',
-                'last_name',
-                'email',
-                'phone',
-                'date_of_birth',
-                'ssn',
-                {'address': [
-                    'street_address',
-                    'postal_code',
-                    'locality',
-                    'region']}
-                ]
-            },
-            {'business': [
-                'dba_name',
-                'legal_name',
-                'tax_id',
-                {'address': [
-                    'street_address',
-                    'postal_code',
-                    'locality',
-                    'region']}
-                ]
-            },
-            {'funding': [
-                'routing_number',
-                'account_number',
-                'destination',
-                'email',
-                'mobile_phone',
-                'descriptor',
-                ]
-            },
-            'tos_accepted',
-            'master_merchant_account_id',
-            'id'
-        ]
-
-    @staticmethod
-    def _update_signature():
-        return [
-            {'individual': [
-                'first_name',
-                'last_name',
-                'email',
-                'phone',
-                'date_of_birth',
-                'ssn',
-                {'address': [
-                    'street_address',
-                    'postal_code',
-                    'locality',
-                    'region']}
-                ]
-            },
-            {'business': [
-                'dba_name',
-                'legal_name',
-                'tax_id',
-                {'address': [
-                    'street_address',
-                    'postal_code',
-                    'locality',
-                    'region']}
-                ]
-            },
-            {'funding': [
-                'routing_number',
-                'account_number',
-                'destination',
-                'email',
-                'mobile_phone',
-                'descriptor',
-                ]
-            },
-            'master_merchant_account_id',
-            'id'
-        ]

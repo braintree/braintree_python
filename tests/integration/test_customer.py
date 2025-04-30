@@ -593,7 +593,7 @@ class TestCustomer(unittest.TestCase):
                 }
             }
         })
-#
+
         errors = result.errors.for_object("apple_pay").on("billing_address")
         self.assertFalse(result.is_success)
 

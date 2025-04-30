@@ -24,6 +24,7 @@ from braintree.local_payment import LocalPayment
 from braintree.masterpass_card import MasterpassCard
 from braintree.meta_checkout_card import MetaCheckoutCard
 from braintree.meta_checkout_token import MetaCheckoutToken
+from braintree.payment_facilitator import PaymentFacilitator
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.paypal_account import PayPalAccount
 from braintree.paypal_here import PayPalHere
@@ -121,14 +122,12 @@ class Transaction(Resource):
        "debit_network",
        "discount_amount",
        "disputes",
-       "escrow_status",
        "foreign_retailer",
        "gateway_rejection_reason",
        "graphql_id",
        "id",
        "installments",
        "liability_shift",
-       "master_merchant_account_id",
        "merchant_account_id",
        "merchant_advice_code",
        "merchant_advice_code_text",
@@ -154,14 +153,12 @@ class Transaction(Resource):
        "retried_transaction_id",
        "retrieval_reference_number",
        "retry_ids",
-       "service_fee_amount",
        "settlement_batch_id",
        "shipping_amount",
        "shipping_tax_amount",
        "ships_from_postal_code",
        "status",
        "status_history",
-       "sub_merchant_account_id",
        "subscription_id",
        "tax_amount",
        "tax_exempt",
@@ -219,24 +216,6 @@ class Transaction(Resource):
         Api          = "api"
         ControlPanel = "control_panel"
         Recurring    = "recurring"
-
-    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
-    class EscrowStatus(object):
-        """
-        Constants representing transaction escrow statuses. Available statuses are:
-
-        * braintree.Transaction.EscrowStatus.HoldPending
-        * braintree.Transaction.EscrowStatus.Held
-        * braintree.Transaction.EscrowStatus.ReleasePending
-        * braintree.Transaction.EscrowStatus.Released
-        * braintree.Transaction.EscrowStatus.Refunded
-        """
-
-        HoldPending    = "hold_pending"
-        Held           = "held"
-        ReleasePending = "release_pending"
-        Released       = "released"
-        Refunded       = "refunded"
 
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
@@ -316,19 +295,6 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.clone_transaction(transaction_id, params)
 
     @staticmethod
-    def cancel_release(transaction_id):
-        """
-        Cancels a pending release from escrow for a transaction.
-
-        Requires the transaction id::
-
-            result = braintree.Transaction.cancel_release("my_transaction_id")
-
-        """
-
-        return Configuration.gateway().transaction.cancel_release(transaction_id)
-
-    @staticmethod
     def credit(params=None):
         """
         Creates a transaction of type Credit.
@@ -370,18 +336,6 @@ class Transaction(Resource):
             transaction = braintree.Transaction.find("my_transaction_id")
         """
         return Configuration.gateway().transaction.find(transaction_id)
-
-    @staticmethod
-    def hold_in_escrow(transaction_id):
-        """
-        Holds an existing submerchant transaction for escrow.
-
-        It expects a transaction_id.::
-
-            result = braintree.Transaction.hold_in_escrow("my_transaction_id")
-        """
-        return Configuration.gateway().transaction.hold_in_escrow(transaction_id)
-
 
     @staticmethod
     def refund(transaction_id, amount_or_options=None):
@@ -431,19 +385,6 @@ class Transaction(Resource):
     @staticmethod
     def search(*query):
         return Configuration.gateway().transaction.search(*query)
-
-    @staticmethod
-    def release_from_escrow(transaction_id):
-        """
-        Submits an escrowed transaction for release.
-
-        Requires the transaction id::
-
-            result = braintree.Transaction.release_from_escrow("my_transaction_id")
-
-        """
-
-        return Configuration.gateway().transaction.release_from_escrow(transaction_id)
 
     @staticmethod
     def submit_for_settlement(transaction_id, amount=None, params=None):
@@ -602,7 +543,6 @@ class Transaction(Resource):
             {
                 "options": [
                     "add_billing_address_to_payment_method",
-                    "hold_in_escrow",
                     "payee_id",
                     "payee_email",
                     "skip_advanced_fraud_checking",
@@ -671,7 +611,7 @@ class Transaction(Resource):
                     "customer_browser", "customer_device_id", "customer_ip", "customer_location_zip", "customer_tenure"
                 ]
             },
-            "sca_exemption", "service_fee_amount",
+            "sca_exemption",
             "shared_customer_id", "shared_billing_address_id", "shared_payment_method_nonce", "shared_payment_method_token", "shared_shipping_address_id",
             {
                 "shipping": [
@@ -699,6 +639,25 @@ class Transaction(Resource):
                 ]
             },
             "three_d_secure_token", # NEXT_MAJOR_VERSION Remove three_d_secure_token
+            {
+                "payment_facilitator":[
+                    "payment_facilitator_id",
+                    {
+                        "sub_merchant":[
+                            "reference_number",
+                            "tax_id",
+                            "legal_name",
+                            {
+                                "address": [
+                                    "street_address", "locality", "region", "country_code_alpha2", "postal_code",
+                                    {"international_phone": ["country_code", "national_number"]}
+                                ]
+                            }
+
+                        ]
+                    }
+                ]
+            },
             "transaction_source",
             "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
         ]
@@ -921,6 +880,8 @@ class Transaction(Resource):
             self.facilitator_details = FacilitatorDetails(attributes.pop("facilitator_details"))
         if "network_transaction_id" in attributes:
             self.network_transaction_id = attributes["network_transaction_id"]
+        if "payment_facilitator" in attributes:
+            self.payment_facilitator = PaymentFacilitator(attributes.pop("payment_facilitator"))
 
     @property
     def vault_billing_address(self):

@@ -13,10 +13,6 @@ class TestingGateway(object):
         self.__check_environment()
         self.config.http().put(self.config.base_merchant_path() + "/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription_id, number_of_days_past_due))
 
-    def escrow_transaction(self, transaction_id):
-        self.__check_environment()
-        self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/escrow")
-
     def settle_transaction(self, transaction_id):
         self.__check_environment()
         return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settle"))

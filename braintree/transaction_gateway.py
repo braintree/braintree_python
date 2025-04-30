@@ -53,19 +53,6 @@ class TransactionGateway(object):
         except NotFoundError:
             raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
 
-    def hold_in_escrow(self, transaction_id):
-        """
-        Holds an existing submerchant transaction for escrow. It expects a transaction_id. ::
-
-            result = braintree.Transaction.hold_in_escrow("my_transaction_id")
-        """
-
-        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/hold_in_escrow", {})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(self.gateway, response["api_error_response"])
-
     def refund(self, transaction_id, amount_or_options=None):
         """
         Refunds an existing transaction. It expects a transaction_id. ::
@@ -100,13 +87,6 @@ class TransactionGateway(object):
             return ResourceCollection(query, response, self.__fetch)
         else:
             raise RequestTimeoutError("search timeout")
-
-    def release_from_escrow(self, transaction_id):
-        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/release_from_escrow", {})
-        if "transaction" in response:
-            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
-        elif "api_error_response" in response:
-            return ErrorResult(self.gateway, response["api_error_response"])
 
     def submit_for_settlement(self, transaction_id, amount=None, params=None):
         if params is None:

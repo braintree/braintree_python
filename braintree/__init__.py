@@ -41,9 +41,10 @@ from braintree.local_payment_completed import LocalPaymentCompleted
 from braintree.local_payment_reversed import LocalPaymentReversed
 from braintree.merchant import Merchant
 from braintree.merchant_account import MerchantAccount
-from braintree.merchant_account_gateway import MerchantAccountGateway
+from braintree.merchant_account_gateway import MerchantAccountGateway 
 from braintree.oauth_access_revocation import OAuthAccessRevocation
 from braintree.partner_merchant import PartnerMerchant
+from braintree.payment_facilitator import PaymentFacilitator
 from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.payment_method import PaymentMethod
 from braintree.payment_method_customer_data_updated_metadata import PaymentMethodCustomerDataUpdatedMetadata
@@ -62,6 +63,7 @@ from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.signature_service import SignatureService
 from braintree.status_event import StatusEvent
+from braintree.sub_merchant import SubMerchant
 from braintree.subscription import Subscription
 from braintree.subscription_gateway import SubscriptionGateway
 from braintree.subscription_search import SubscriptionSearch

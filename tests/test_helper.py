@@ -96,7 +96,6 @@ class TestHelper(object):
     fake_venmo_account_merchant_account_id = "fake_first_data_venmo_account"
     hiper_brl_merchant_account_id = "hiper_brl"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
-    non_default_sub_merchant_account_id = "sandbox_sub_merchant_account"
     pinless_debit_merchant_account_id = "pinless_debit"
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     us_bank_merchant_account_id = "us_bank_merchant_account"
@@ -140,10 +139,6 @@ class TestHelper(object):
     @staticmethod
     def make_past_due(subscription, number_of_days_past_due=1):
         Configuration.gateway().testing.make_past_due(subscription.id, number_of_days_past_due)
-
-    @staticmethod
-    def escrow_transaction(transaction_id):
-        Configuration.gateway().testing.escrow_transaction(transaction_id)
 
     @staticmethod
     def settle_transaction(transaction_id):

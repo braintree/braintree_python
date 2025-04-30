@@ -4,12 +4,8 @@ from datetime import date
 class TestDisbursement(unittest.TestCase):
     attributes = {
         "merchant_account": {
-            "id": "sub_merchant_account",
+            "id": "merchant_account",
             "status": "active",
-            "master_merchant_account": {
-                "id": "master_merchant_account",
-                "status": "active"
-            },
         },
         "id": "123456",
         "exception_message": "invalid_account_number",
@@ -26,7 +22,8 @@ class TestDisbursement(unittest.TestCase):
         self.assertEqual("123456", disbursement.id)
         self.assertEqual(Decimal("100.00"), disbursement.amount)
         self.assertEqual(["asdf", "qwer"], disbursement.transaction_ids)
-        self.assertEqual("master_merchant_account", disbursement.merchant_account.master_merchant_account.id)
+        self.assertEqual("active", disbursement.merchant_account.status)
+        self.assertEqual("merchant_account", disbursement.merchant_account.id)
 
     def test_credit(self):
         disbursement = Disbursement(None, TestDisbursement.attributes)

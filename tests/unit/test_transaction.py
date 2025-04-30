@@ -1,11 +1,14 @@
 from tests.test_helper import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
+from braintree.payment_facilitator import PaymentFacilitator
+from braintree.sub_merchant import SubMerchant
 from braintree.meta_checkout_card import MetaCheckoutCard
 from braintree.meta_checkout_token import MetaCheckoutToken
 from datetime import datetime
 from datetime import date
 from braintree.authorization_adjustment import AuthorizationAdjustment
 from unittest.mock import MagicMock
+
 
 class TestTransaction(unittest.TestCase):
     def test_clone_transaction_raises_exception_with_bad_keys(self):
@@ -380,3 +383,32 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
         self.assertTrue(transaction.foreign_retailer)
+
+    def test_payment_facilitator(self):
+        attributes = {
+            'amount': TransactionAmounts.Authorize,
+            "payment_facilitator": {
+                "payment_facilitator_id": "98765432109",
+                "sub_merchant": {
+                    "reference_number": "123456789012345",
+                    "tax_id": "99112233445577",
+                    "legal_name": "Fooda",
+                    "address": {
+                        "street_address": "10880 Ibitinga",
+                        "locality": "Araraquara",
+                        "region": "SP",
+                        "country_code_alpha2": "BR",
+                        "postal_code": "13525000",
+                        "international_phone": {
+                            "country_code": "55",
+                            "national_number": "9876543210",
+                        },
+                    },
+                },
+            }
+        }
+
+        transaction = Transaction(None, attributes)
+
+        self.assertIsInstance(transaction.payment_facilitator, PaymentFacilitator)
+        self.assertIsInstance(transaction.payment_facilitator.sub_merchant, SubMerchant)

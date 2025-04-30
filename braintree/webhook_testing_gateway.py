@@ -39,10 +39,6 @@ class WebhookTestingGateway(object):
             return self.__connected_merchant_status_transitioned_xml(id)
         if kind == WebhookNotification.Kind.ConnectedMerchantPayPalStatusChanged:
             return self.__connected_merchant_paypal_status_changed_xml(id)
-        if kind == WebhookNotification.Kind.SubMerchantAccountApproved:
-            return self.__merchant_account_approved_sample_xml(id)
-        elif kind == WebhookNotification.Kind.SubMerchantAccountDeclined:
-            return self.__merchant_account_declined_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionDisbursed:
             return self.__transaction_disbursed_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionReviewed:

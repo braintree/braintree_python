@@ -56,7 +56,7 @@ class BraintreeGateway(object):
         self.document_upload = DocumentUploadGateway(self)
         self.exchange_rate_quote = ExchangeRateQuoteGateway(self)
         self.merchant = MerchantGateway(self)
-        self.merchant_account = MerchantAccountGateway(self)
+        self.merchant_account = MerchantAccountGateway(self) 
         self.oauth = OAuthGateway(self)
         self.payment_method = PaymentMethodGateway(self)
         self.payment_method_nonce = PaymentMethodNonceGateway(self)
