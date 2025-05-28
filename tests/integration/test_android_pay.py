@@ -8,7 +8,7 @@ class TestAndroidPay(unittest.TestCase):
                                private_key="integration_private_key")
         return BraintreeGateway(config)
     
-    def test_prepaid_reloadable(self):
+    def test_bin_fields(self):
         customer = Customer.create().customer
         result = PaymentMethod.create({
             "customer_id": customer.id,
@@ -19,6 +19,10 @@ class TestAndroidPay(unittest.TestCase):
 
         android_pay_card = result.payment_method
         self.assertIsNotNone(android_pay_card.prepaid_reloadable)
+        self.assertIsNotNone(android_pay_card.business)
+        self.assertIsNotNone(android_pay_card.consumer)
+        self.assertIsNotNone(android_pay_card.corporate)
+        self.assertIsNotNone(android_pay_card.purchase)
 
         customer = Customer.find(customer.id)
         self.assertEqual(len(customer.android_pay_cards), 1)

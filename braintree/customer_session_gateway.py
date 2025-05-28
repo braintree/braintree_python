@@ -10,9 +10,9 @@ from braintree.graphql import (
     CustomerRecommendations,
     CustomerRecommendationsInput,
     CustomerRecommendationsPayload,
+    RecommendedPaymentOption,
     PaymentOptions,
 )
-
 
 class CustomerSessionGateway:
     """
@@ -109,7 +109,7 @@ class CustomerSessionGateway:
         variables = dict({"input": update_customer_session_input.to_graphql_variables()})
         return self._execute_mutation(mutation, variables, "updateCustomerSession")
 
-    def get_customer_recommendations(self, customer_recommendations_input: CustomerRecommendationsInput):
+    def get_customer_recommendations(self, get_customer_recommendations_input: CustomerRecommendationsInput):
         """
         Retrieves customer recommendations associated with a customer session.
 
@@ -117,51 +117,52 @@ class CustomerSessionGateway:
 
           recommendations_input = (
             CustomerRecommendationsInput
-              .builder(session_id, [Recommendations.PAYMENT_RECOMMENDATIONS])
+              .builder()
+              .session_id(session_id)
               .build()
           )
 
           result = gateway.customer_session.get_customer_recommendations(recommendations_input)
          
           if result.is_success:
-            print(result.customer_recommendations)
+            print(result.customer_recommendations.recommendations.payment_recommendations)
 
         Args:
-            CustomerRecommendationsInput: Input object for retrieving customer recommendations.
+            GenerateCustomerRecommendationsInput: Input object for retrieving customer recommendations.
         
         Returns:
-            (Successful|Error)Result: A result object containing a CustomerRecommendationsPayload and a success flag if successful, or errors otherwise.
+            (Successful|Error)Result: A result object containing a GenerateCustomerRecommendationsPayload and a success flag if successful, or errors otherwise.
 
         Raises:
             UnexpectedError: If there is an unexpected error during the process.
         """
         query = """
-            query CustomerRecommendations($input: CustomerRecommendationsInput!) {
-                customerRecommendations(input: $input) {
+            mutation GenerateCustomerRecommendations($input: GenerateCustomerRecommendationsInput!) {
+                generateCustomerRecommendations(input: $input) {
                   isInPayPalNetwork
-                  recommendations {
-                    ... on PaymentRecommendations {
-                      paymentOptions {
-                        paymentOption
-                        recommendedPriority
-                      }
-                    }
+                  paymentRecommendations{
+                    paymentOption
+                    recommendedPriority
                   }
                 }
               }
         """
-        variables = dict({"input": customer_recommendations_input.to_graphql_variables()})
-
+        variables = dict({"input": get_customer_recommendations_input.to_graphql_variables()})
         response = self.graphql_client.query(query, variables)
         errors = GraphQLClient.get_validation_errors(response)
+
         if errors:
             return ErrorResult(self.gateway, {"errors": errors, "message": "Validation errors were found."})
         try:
-            recommendations_payload = self._extract_customer_recommendations_payload(response)
-            return SuccessfulResult({"customer_recommendations": recommendations_payload})
+            recommendations_payload = response["data"]
+            customer_recommendations = CustomerRecommendationsPayload(
+                response = recommendations_payload
+            )
+            return SuccessfulResult({"customer_recommendations": customer_recommendations})
         except KeyError:
             raise UnexpectedError("Couldn't parse response")
 
+    
     def _execute_mutation(self, mutation: str, variables: Dict, operation: str):
         response = self.graphql_client.query(mutation, variables)
         errors = GraphQLClient.get_validation_errors(response)
@@ -172,22 +173,3 @@ class CustomerSessionGateway:
             return  SuccessfulResult({"session_id": session_id})
         except KeyError:
             raise UnexpectedError("Couldn't parse response")
-
-    def _extract_customer_recommendations_payload(self, response):
-        customer_recommendations = response["data"]["customerRecommendations"]
-
-        is_in_paypal_network = customer_recommendations["isInPayPalNetwork"]
-        recommendations = [] if customer_recommendations["recommendations"] is None else customer_recommendations["recommendations"]["paymentOptions"]
-        payment_options = [
-            PaymentOptions(
-                    recommendation_data["paymentOption"],
-                    recommendation_data["recommendedPriority"]
-            ) 
-            for recommendation_data in recommendations
-        ]
-
-        recommendations_union = CustomerRecommendations(payment_options)
-        return CustomerRecommendationsPayload(is_in_paypal_network, recommendations_union)
-
-
-

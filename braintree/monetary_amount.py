@@ -1,7 +1,7 @@
 from decimal import Decimal
 from braintree.attribute_getter import AttributeGetter
 
-class MontaryAmount(AttributeGetter):
+class MonetaryAmount(AttributeGetter):
     def __init__(self,attributes):
         AttributeGetter.__init__(self,attributes)
         if getattr(self, "value", None) is not None:

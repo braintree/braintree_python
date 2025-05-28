@@ -21,7 +21,7 @@ class TestCreditCardVerification(unittest.TestCase):
                 "status"
                 ]
         options_params = [
-                "account_type", "amount", "merchant_account_id"
+                "account_type", "amount", "merchant_account_id", "account_information_inquiry"
                 ]
         risk_data_params = [
                 "customer_browser",
@@ -108,3 +108,18 @@ class TestCreditCardVerification(unittest.TestCase):
     def test_finding_none_raises_not_found_exception(self):
         with self.assertRaises(NotFoundError):
             CreditCardVerification.find(None)
+
+    def test_bin_data(self):
+        attributes = {
+            'credit_card': {
+                'business': 'Unknown',
+                'consumer': 'Unknown',
+                'corporate': 'Unknown',
+                'purchase': 'Unknown'
+            }
+        }
+        verification = CreditCardVerification(None, attributes)
+        self.assertEqual(verification.credit_card['business'], CreditCard.Business.Unknown)
+        self.assertEqual(verification.credit_card['consumer'], CreditCard.Consumer.Unknown)
+        self.assertEqual(verification.credit_card['corporate'], CreditCard.Corporate.Unknown)
+        self.assertEqual(verification.credit_card['purchase'], CreditCard.Purchase.Unknown)

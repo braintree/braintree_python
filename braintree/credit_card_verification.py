@@ -83,7 +83,7 @@ class CreditCardVerification(AttributeGetter):
                 "status"
             ]
         options_params = [
-                "account_type", "amount", "merchant_account_id"
+                "account_type", "amount", "merchant_account_id", "account_information_inquiry"
             ]
         risk_data_params = [
                 "customer_browser",

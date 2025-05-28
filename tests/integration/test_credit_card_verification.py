@@ -178,7 +178,10 @@ class TestCreditCardVerfication(unittest.TestCase):
             CreditCardVerificationSearch.credit_card_cardholder_name == cardholder_name
         )
 
+        self.assertEqual(CreditCard.Business.Unknown, found_verifications.first.credit_card['business'])
         self.assertEqual(CreditCard.Commercial.Unknown, found_verifications.first.credit_card['commercial'])
+        self.assertEqual(CreditCard.Consumer.Unknown, found_verifications.first.credit_card['consumer'])
+        self.assertEqual(CreditCard.Corporate.Unknown, found_verifications.first.credit_card['corporate'])
         self.assertEqual(CreditCard.CountryOfIssuance.Unknown, found_verifications.first.credit_card['country_of_issuance'])
         self.assertEqual(CreditCard.Debit.Unknown, found_verifications.first.credit_card['debit'])
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, found_verifications.first.credit_card['durbin_regulated'])
@@ -188,6 +191,7 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual(CreditCard.Prepaid.Unknown, found_verifications.first.credit_card['prepaid'])
         self.assertEqual(CreditCard.PrepaidReloadable.Unknown, found_verifications.first.credit_card['prepaid_reloadable'])
         self.assertEqual(CreditCard.ProductId.Unknown, found_verifications.first.credit_card['product_id'])
+        self.assertEqual(CreditCard.Purchase.Unknown, found_verifications.first.credit_card['purchase'])
 
     def test_create_success_network_response_code_text(self):
         result = CreditCardVerification.create({
@@ -301,3 +305,20 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual("1000", verification.processor_response_code)
         self.assertEqual("I", verification.ani_first_name_response_code)
         self.assertEqual("I", verification.ani_last_name_response_code)
+
+    def test_verification_with_ani_response_codes_when_account_information_inquiry_is_present_in_options(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2029",
+                },
+            "options": {"account_information_inquiry": "send_data"}
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual("I", verification.ani_first_name_response_code)
+        self.assertEqual("I", verification.ani_last_name_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+        self.assertNotEqual(None, verification.graphql_id)

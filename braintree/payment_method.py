@@ -32,6 +32,7 @@ class PaymentMethod(Resource):
     @staticmethod
     def signature(type):
         options = [
+            "account_information_inquiry",
             "fail_on_duplicate_payment_method",
             "fail_on_duplicate_payment_method_for_customer",
             "make_default",
@@ -120,6 +121,7 @@ class PaymentMethod(Resource):
             "device_session_id", "fraud_merchant_id", # NEXT_MAJOR_VERSION remove device_session_id and fraud_merchant_id
             {
                 "options": [
+                    "account_information_inquiry",
                     "fail_on_duplicate_payment_method_for_customer",
                     "make_default",
                     "skip_advanced_fraud_checking",

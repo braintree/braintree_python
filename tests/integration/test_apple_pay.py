@@ -48,7 +48,7 @@ class TestApplePay(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], "www.example.com")
 
-    def test_prepaid_reloadable(self):
+    def test_bin_fields(self):
         customer = Customer.create().customer
         result = PaymentMethod.create({
             "customer_id": customer.id,
@@ -59,6 +59,10 @@ class TestApplePay(unittest.TestCase):
 
         apple_pay_card = result.payment_method
         self.assertIsNotNone(apple_pay_card.prepaid_reloadable)
+        self.assertIsNotNone(apple_pay_card.business)
+        self.assertIsNotNone(apple_pay_card.consumer)
+        self.assertIsNotNone(apple_pay_card.corporate)
+        self.assertIsNotNone(apple_pay_card.purchase)
 
         customer = Customer.find(customer.id)
         self.assertEqual(len(customer.apple_pay_cards), 1)

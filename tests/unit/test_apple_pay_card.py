@@ -36,3 +36,16 @@ class TestApplePayCard(unittest.TestCase):
         })
 
         self.assertEqual(None, card.expiration_date)
+
+    def test_bin_data(self):
+        card = ApplePayCard(None, {
+            "business": "Unknown",
+            "consumer": "Unknown",
+            "corporate": "Unknown",
+            "purchase": "Unknown"
+        })
+
+        self.assertEqual(CreditCard.Business.Unknown, card.business)
+        self.assertEqual(CreditCard.Consumer.Unknown, card.consumer)
+        self.assertEqual(CreditCard.Corporate.Unknown, card.corporate)
+        self.assertEqual(CreditCard.Purchase.Unknown, card.purchase)

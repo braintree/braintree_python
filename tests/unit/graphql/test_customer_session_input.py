@@ -10,7 +10,9 @@ class TestCustomerSessionInput(unittest.TestCase):
 
         input_ = CustomerSessionInput.builder() \
             .email("test@example.com") \
+            .hashed_email("hashedEmail@example.com") \
             .phone(phone_input) \
+            .hashed_phone_number("000-000-0000") \
             .device_fingerprint_id("device_fingerprint_id") \
             .paypal_app_installed(True) \
             .venmo_app_installed(False) \
@@ -20,6 +22,7 @@ class TestCustomerSessionInput(unittest.TestCase):
         graphql_variables = input_.to_graphql_variables()
 
         self.assertEqual("test@example.com", graphql_variables["email"])
+        self.assertEqual("hashedEmail@example.com", graphql_variables["hashedEmail"])
         self.assertEqual("device_fingerprint_id", graphql_variables["deviceFingerprintId"])
         self.assertTrue(graphql_variables["paypalAppInstalled"])
         self.assertFalse(graphql_variables["venmoAppInstalled"])
@@ -27,11 +30,14 @@ class TestCustomerSessionInput(unittest.TestCase):
         self.assertEqual("1", graphql_variables["phone"]["countryPhoneCode"])
         self.assertEqual("5551234567", graphql_variables["phone"]["phoneNumber"])
         self.assertEqual("1234", graphql_variables["phone"]["extensionNumber"])
+        self.assertEqual("000-000-0000", graphql_variables["hashedPhoneNumber"])
+
 
 
     def test_to_graphql_variables_without_phone(self):
         input_ = CustomerSessionInput.builder() \
             .email("test@example.com") \
+            .hashed_email("hashedEmail@example.com") \
             .device_fingerprint_id("device_fingerprint_id") \
             .paypal_app_installed(True) \
             .venmo_app_installed(False).build()
@@ -39,6 +45,7 @@ class TestCustomerSessionInput(unittest.TestCase):
         graphql_variables = input_.to_graphql_variables()
 
         self.assertEqual("test@example.com", graphql_variables["email"])
+        self.assertEqual("hashedEmail@example.com", graphql_variables["hashedEmail"])
         self.assertEqual("device_fingerprint_id", graphql_variables["deviceFingerprintId"])
         self.assertTrue(graphql_variables["paypalAppInstalled"])
         self.assertFalse(graphql_variables["venmoAppInstalled"])

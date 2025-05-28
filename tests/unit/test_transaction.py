@@ -412,3 +412,21 @@ class TestTransaction(unittest.TestCase):
 
         self.assertIsInstance(transaction.payment_facilitator, PaymentFacilitator)
         self.assertIsInstance(transaction.payment_facilitator.sub_merchant, SubMerchant)
+
+    def test_bin_data(self):
+        attributes = {
+            "amount": "50.00",
+            "credit_card_details": {
+                "business": "Yes",
+                "consumer": "No",
+                "corporate": "No",
+                "purchase": "No"
+            }
+        }
+
+        transaction = Transaction(None, attributes)
+
+        self.assertEqual(CreditCard.Business.Yes, transaction.credit_card_details['business'])
+        self.assertEqual(CreditCard.Consumer.No, transaction.credit_card_details['consumer'])
+        self.assertEqual(CreditCard.Corporate.No, transaction.credit_card_details['corporate'])
+        self.assertEqual(CreditCard.Purchase.No, transaction.credit_card_details['purchase'])

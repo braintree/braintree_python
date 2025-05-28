@@ -1,5 +1,13 @@
 from tests.test_helper import unittest
-from braintree.graphql import CreateCustomerSessionInput, CustomerSessionInput, PhoneInput
+from decimal import Decimal 
+from braintree.graphql import (
+    CreateCustomerSessionInput, 
+    CustomerSessionInput, 
+    PhoneInput, 
+    MonetaryAmountInput, 
+    PayPalPayeeInput, 
+    PayPalPurchaseUnitInput
+)
 
 class TestCreateCustomerSessionInput(unittest.TestCase):
     def test_to_graphql_variables_with_all_fields(self):
@@ -10,15 +18,32 @@ class TestCreateCustomerSessionInput(unittest.TestCase):
 
         customer_input = CustomerSessionInput.builder() \
             .email("test@example.com") \
+            .hashed_email("hashedEmail@example.com") \
             .phone(phone_input) \
+            .hashed_phone_number("000-000-0000") \
             .device_fingerprint_id("device_fingerprint_id") \
             .paypal_app_installed(True) \
-            .venmo_app_installed(False).build()
+            .venmo_app_installed(False) \
+            .user_agent("Mozilla") \
+            .build()
 
+        amount = MonetaryAmountInput(currency_code="USD", value=Decimal("10.00"))
+        payee = (
+            PayPalPayeeInput.builder()
+            .email_address("test@example.com")
+            .client_id("client456")
+            .build()
+        ) 
+        
+        purchase_units = []
+        purchase_unit = PayPalPurchaseUnitInput.builder(amount).payee(payee).build()
+        purchase_units.append(purchase_unit)
+ 
         input_ = CreateCustomerSessionInput.builder() \
             .merchant_account_id("merchant_account_id") \
             .session_id("session_id") \
             .customer(customer_input) \
+            .purchase_units(purchase_units) \
             .domain("example.com").build()
 
 
@@ -27,6 +52,7 @@ class TestCreateCustomerSessionInput(unittest.TestCase):
         self.assertEqual("merchant_account_id", graphql_variables["merchantAccountId"])
         self.assertEqual("session_id", graphql_variables["sessionId"])
         self.assertEqual("example.com", graphql_variables["domain"])
+        self.assertTrue(graphql_variables["purchaseUnits"])
 
         customer_variables = graphql_variables["customer"]
         self.assertEqual("test@example.com", customer_variables["email"])
@@ -36,6 +62,12 @@ class TestCreateCustomerSessionInput(unittest.TestCase):
         self.assertEqual("1", customer_variables["phone"]["countryPhoneCode"])
         self.assertEqual("5551234567", customer_variables["phone"]["phoneNumber"])
         self.assertEqual("1234", customer_variables["phone"]["extensionNumber"])
+
+        purchase_variables = graphql_variables["purchaseUnits"][0]
+
+        self.assertEqual(Decimal("10.00"), Decimal(purchase_variables["amount"]["value"]))
+        self.assertEqual("USD", purchase_variables["amount"]["currencyCode"])
+        self.assertEqual("test@example.com", purchase_variables["payee"]["emailAddress"])
 
     def test_to_graphql_variables_without_optional_fields(self):
         input_ = CreateCustomerSessionInput.builder() \

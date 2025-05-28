@@ -166,6 +166,27 @@ class TestCustomer(unittest.TestCase):
             verification = result.customer.credit_cards[0].verification
             self.assertIsNone(verification.risk_data)
 
+    def test_create_includes_ani_in_verification_when_account_information_inquiry_is_present(self):
+        result = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2034",
+                "billing_address": {
+                    "first_name": "John",
+                    "last_name": "Doe"
+                    },
+                "options": {
+                    "verify_card": True,
+                    "account_information_inquiry": "send_data",
+                    },
+                },
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.customer.credit_cards[0].verification
+        self.assertIsNotNone(verification.ani_first_name_response_code)
+        self.assertIsNotNone(verification.ani_last_name_response_code)
+
     def test_create_and_update_with_verification_account_type(self):
         result_with_account_type_credit = Customer.create({
             "first_name": "Joe",
@@ -286,8 +307,11 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(customer.apple_pay_cards))
         self.assertIsInstance(customer.apple_pay_cards[0], ApplePayCard)
         self.assertNotEqual(customer.apple_pay_cards[0].bin, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].business, None)
         self.assertNotEqual(customer.apple_pay_cards[0].card_type, None)
         self.assertNotEqual(customer.apple_pay_cards[0].commercial, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].consumer, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].corporate, None)
         self.assertNotEqual(customer.apple_pay_cards[0].country_of_issuance, None)
         self.assertNotEqual(customer.apple_pay_cards[0].debit, None)
         self.assertNotEqual(customer.apple_pay_cards[0].durbin_regulated, None)
@@ -298,6 +322,7 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(customer.apple_pay_cards[0].prepaid, None)
         self.assertNotEqual(customer.apple_pay_cards[0].prepaid_reloadable, None)
         self.assertNotEqual(customer.apple_pay_cards[0].product_id, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].purchase, None)
         self.assertNotEqual(customer.apple_pay_cards[0].token, None)
 
     def test_create_with_three_d_secure_nonce(self):
@@ -375,8 +400,11 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(1, len(customer.android_pay_cards))
         self.assertIsInstance(customer.android_pay_cards[0], AndroidPayCard)
         self.assertNotEqual(customer.android_pay_cards[0].bin, None)
+        self.assertNotEqual(customer.android_pay_cards[0].business, None)
         self.assertNotEqual(customer.android_pay_cards[0].card_type, None)
         self.assertNotEqual(customer.android_pay_cards[0].commercial, None)
+        self.assertNotEqual(customer.android_pay_cards[0].consumer, None)
+        self.assertNotEqual(customer.android_pay_cards[0].corporate, None)
         self.assertNotEqual(customer.android_pay_cards[0].country_of_issuance, None)
         self.assertNotEqual(customer.android_pay_cards[0].debit, None)
         self.assertNotEqual(customer.android_pay_cards[0].durbin_regulated, None)
@@ -387,6 +415,7 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(customer.android_pay_cards[0].prepaid, None)
         self.assertNotEqual(customer.android_pay_cards[0].prepaid_reloadable, None)
         self.assertNotEqual(customer.android_pay_cards[0].product_id, None)
+        self.assertNotEqual(customer.android_pay_cards[0].purchase, None)
         self.assertNotEqual(customer.android_pay_cards[0].token, None)
 
     def test_create_with_amex_express_checkout_card_nonce(self):
@@ -1405,6 +1434,29 @@ class TestCustomer(unittest.TestCase):
             self.assertTrue(result.is_success)
             verification = result.customer.credit_cards[0].verification
             self.assertIsNone(verification.risk_data)
+
+    def test_update_includes_ani_in_verification_when_account_information_inquiry_is_present(self):
+        customer = Customer.create().customer
+        result = Customer.update(customer.id, {
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2034",
+                "cvv": "100",
+                "billing_address": {
+                    "first_name": "John",
+                    "last_name": "Doe"
+                    },
+                "options": {
+                    "verify_card": True,
+                    "account_information_inquiry": "send_data",
+                    }
+                }
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.customer.credit_cards[0].verification
+        self.assertIsNotNone(verification.ani_first_name_response_code)
+        self.assertIsNotNone(verification.ani_last_name_response_code)
 
     def test_update_works_for_raw_apple_pay(self):
         with FraudProtectionEnterpriseIntegrationMerchant():

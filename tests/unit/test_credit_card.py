@@ -23,6 +23,7 @@ class TestCreditCard(unittest.TestCase):
                 ]
             },
             {"options": [
+                "account_information_inquiry",
                 "fail_on_duplicate_payment_method",
                 "fail_on_duplicate_payment_method_for_customer",
                 "make_default",
@@ -56,6 +57,7 @@ class TestCreditCard(unittest.TestCase):
                 ]
             },
             {"options": [
+                "account_information_inquiry",
                 "fail_on_duplicate_payment_method",
                 "fail_on_duplicate_payment_method_for_customer",
                 "make_default",
@@ -156,3 +158,19 @@ class TestCreditCard(unittest.TestCase):
         )
 
         self.assertEqual(credit_card.masked_number, "41111111****1111")
+
+    def test_bin_data(self):
+        credit_card = CreditCard(
+            None,
+            {
+                "business": "No",
+                "consumer": "Yes",
+                "corporate": "No",
+                "purchase": "Yes",
+            },
+        )
+
+        self.assertEqual(credit_card.business, CreditCard.Business.No)
+        self.assertEqual(credit_card.consumer, CreditCard.Consumer.Yes)
+        self.assertEqual(credit_card.corporate, CreditCard.Corporate.No)
+        self.assertEqual(credit_card.purchase, CreditCard.Purchase.Yes)

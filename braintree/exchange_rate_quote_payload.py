@@ -1,5 +1,5 @@
 from braintree.exchange_rate_quote import ExchangeRateQuote
-from braintree.montary_amount import MontaryAmount
+from braintree.monetary_amount import MonetaryAmount
 
 class ExchangeRateQuotePayload(object):
     def __init__(self, data):
@@ -11,10 +11,10 @@ class ExchangeRateQuotePayload(object):
                 quote_amount_obj = quote_obj.get("quoteAmount")
                 base_attrs = {"value":base_amount_obj.get("value"),
                               "currency_code":base_amount_obj.get("currencyCode")}
-                base_amount = MontaryAmount(base_attrs)
+                base_amount = MonetaryAmount(base_attrs)
                 quote_attrs = {"value":quote_amount_obj.get("value"),
                                "currency_code":quote_amount_obj.get("currencyCode")}
-                quote_amount = MontaryAmount(quote_attrs)
+                quote_amount = MonetaryAmount(quote_attrs)
                 attributes = {"id":quote_obj.get("id"),
                               "exchange_rate":quote_obj.get("exchangeRate"),
                               "trade_rate":quote_obj.get("tradeRate"),

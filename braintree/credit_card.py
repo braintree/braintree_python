@@ -128,6 +128,7 @@ class CreditCard(Resource):
         Star_Access = "STAR_ACCESS"
 
     Commercial = CountryOfIssuance = Debit = DurbinRegulated = \
+            Business = Consumer = Corporate = Purchase = \
             Healthcare = IssuingBank = Payroll = Prepaid = PrepaidReloadable = ProductId = CardTypeIndicator
 
     @staticmethod
@@ -235,6 +236,7 @@ class CreditCard(Resource):
         ]
 
         options = [
+            "account_information_inquiry",
             "fail_on_duplicate_payment_method",
             "fail_on_duplicate_payment_method_for_customer",
             "make_default",

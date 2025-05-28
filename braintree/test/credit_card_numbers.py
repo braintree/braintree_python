@@ -1,12 +1,16 @@
 class CreditCardNumbers(object):
     class CardTypeIndicators(object):
+        Business = "4229989800000003"
         Commercial = "4111111111131010"
+        Consumer = "4229989700000004"
+        Corporate = "4229989100000000"
         DurbinRegulated = "4111161010101010"
         Debit = "4117101010101010"
         Healthcare = "4111111510101010"
         Payroll  = "4111111114101010"
         Prepaid = "4111111111111210"
         PrepaidReloadable = "4229989900000002"
+        Purchase = "4229989500000006"
         IssuingBank = "4111111141010101"
         CountryOfIssuance = "4111111111121102"
 

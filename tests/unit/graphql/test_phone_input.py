@@ -6,7 +6,7 @@ class TestPhoneInput(unittest.TestCase):
         input_ = PhoneInput.builder() \
             .country_phone_code("1") \
             .phone_number("5551234567") \
-            .extension_number("1234").build();
+            .extension_number("1234").build()
 
         graphql_variables = input_.to_graphql_variables()
 

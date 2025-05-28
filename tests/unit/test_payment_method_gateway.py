@@ -24,6 +24,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
                 "billing_address": Address.create_signature()},
             {
                 "options": [
+                    "account_information_inquiry",
                     "fail_on_duplicate_payment_method",
                     "fail_on_duplicate_payment_method_for_customer",
                     "make_default",
@@ -102,6 +103,7 @@ class TestPaymentMethodGateway(unittest.TestCase):
             "fraud_merchant_id",
             {
                 "options": [
+                    "account_information_inquiry",
                     "fail_on_duplicate_payment_method_for_customer",
                     "make_default",
                     "skip_advanced_fraud_checking",

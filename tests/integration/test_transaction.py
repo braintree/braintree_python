@@ -2649,9 +2649,12 @@ class TestTransaction(unittest.TestCase):
 
         self.assertTrue(result.is_success)
         transaction = result.transaction
+        self.assertEqual(CreditCard.Business.Unknown, transaction.credit_card_details.business)
         self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.country_of_issuance)
         self.assertEqual(CreditCard.CardTypeIndicator.Unknown, transaction.credit_card_details.issuing_bank)
         self.assertEqual(CreditCard.Commercial.Unknown, transaction.credit_card_details.commercial)
+        self.assertEqual(CreditCard.Consumer.Unknown, transaction.credit_card_details.consumer)
+        self.assertEqual(CreditCard.Corporate.Unknown, transaction.credit_card_details.corporate)
         self.assertEqual(CreditCard.Debit.Unknown, transaction.credit_card_details.debit)
         self.assertEqual(CreditCard.DurbinRegulated.Unknown, transaction.credit_card_details.durbin_regulated)
         self.assertEqual(CreditCard.Healthcare.Unknown, transaction.credit_card_details.healthcare)
@@ -2659,6 +2662,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(CreditCard.Prepaid.Unknown, transaction.credit_card_details.prepaid)
         self.assertEqual(CreditCard.PrepaidReloadable.Unknown, transaction.credit_card_details.prepaid_reloadable)
         self.assertEqual(CreditCard.ProductId.Unknown, transaction.credit_card_details.product_id)
+        self.assertEqual(CreditCard.Purchase.Unknown, transaction.credit_card_details.purchase)
 
     def test_create_can_set_recurring_flag(self):
         result = Transaction.sale({
@@ -5453,9 +5457,12 @@ class TestTransaction(unittest.TestCase):
         next_year = str(date.today().year + 1)
         
         self.assertEqual(details.bin, "401288")
+        self.assertEqual(details.business, "Unknown")
         self.assertEqual(details.card_type, "Visa")
         self.assertEqual(details.cardholder_name, "Meta Checkout Card Cardholder")
+        self.assertEqual(details.consumer, "Unknown")
         self.assertEqual(details.container_id, "container123")
+        self.assertEqual(details.corporate, "Unknown")
         self.assertEqual(details.customer_location, "US")
         self.assertEqual(details.expiration_date, "12/" + next_year)
         self.assertEqual(details.expiration_month, "12")
@@ -5466,6 +5473,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(details.masked_number, "401288******1881")
         self.assertEqual(details.prepaid, "No")
         self.assertEqual(details.prepaid_reloadable, "Unknown")
+        self.assertEqual(details.purchase, "Unknown")
 
     def test_creating_meta_checkout_token_transaction_with_fake_nonce(self):
         result = Transaction.sale({
@@ -5480,9 +5488,12 @@ class TestTransaction(unittest.TestCase):
         next_year = str(date.today().year + 1)
         
         self.assertEqual(details.bin, "401288")
+        self.assertEqual(details.business, "Unknown")
         self.assertEqual(details.card_type, "Visa")
         self.assertEqual(details.cardholder_name, "Meta Checkout Token Cardholder")
+        self.assertEqual(details.consumer, "Unknown")
         self.assertEqual(details.container_id, "container123")
+        self.assertEqual(details.corporate, "Unknown")
         self.assertEqual(details.cryptogram, "AlhlvxmN2ZKuAAESNFZ4GoABFA==")
         self.assertEqual(details.customer_location, "US")
         self.assertEqual(details.ecommerce_indicator, "07")
@@ -5495,6 +5506,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(details.masked_number, "401288******1881")
         self.assertEqual(details.prepaid, "No")
         self.assertEqual(details.prepaid_reloadable, "Unknown")
+        self.assertEqual(details.purchase, "Unknown")
 
     def test_creating_paypal_transaction_with_vaulted_token(self):
         customer_id = Customer.create().customer.id

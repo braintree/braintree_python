@@ -1,3 +1,7 @@
+from braintree.util.experimental import Experimental
+
+@Experimental
+# This class is Experiemental and may change in future releases.
 class PhoneInput:
     """
     Phone number input for PayPal customer session.

@@ -8,13 +8,14 @@ from braintree.graphql import (
     CustomerRecommendations,
     CustomerRecommendationsPayload,
     PaymentOptions,
+    RecommendedPaymentOption,
+    Recommendations
 )
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from unittest.mock import patch, MagicMock
-import unittest
-from tests.test_helper import *
-
+from tests.test_helper import unittest
+import json 
 
 class TestCustomerSessionGateway(unittest.TestCase):
     def setUp(self):
@@ -91,25 +92,27 @@ class TestCustomerSessionGateway(unittest.TestCase):
     def test_get_customer_recommendations_returns_successful_result(self):
         response = {
             "data": {
-                "customerRecommendations": {
+                "generateCustomerRecommendations": {
                     "isInPayPalNetwork": True,
-                    "recommendations": {
-                        "paymentOptions": [{"paymentOption": "PAYPAL", "recommendedPriority": 1}]
-                    }
+                    "paymentRecommendations": [
+                        {"paymentOption": "PAYPAL", "recommendedPriority": 1},
+                        {"paymentOption": "VENMO", "recommendedPriority": 2}
+                  ]
                 }
             }
         }
         self.mock_graphql_client.query.return_value = response
 
-        customer_recommendations_input = CustomerRecommendationsInput.Builder("session-id", []).merchant_account_id("merchant-account-id").build()
+        customer_recommendations_input = CustomerRecommendationsInput.Builder().session_id("session-id").merchant_account_id("merchant-account-id").build()
         result = self.customer_session_gateway.get_customer_recommendations(customer_recommendations_input)
 
         self.assertTrue(result.is_success)
+
         self.assertTrue(result.customer_recommendations.is_in_paypal_network)
-        payment_options = result.customer_recommendations.recommendations.payment_options
-        self.assertEqual(len(payment_options), 1)
-        self.assertEqual(payment_options[0].payment_option, "PAYPAL")
-        self.assertEqual(payment_options[0].recommended_priority, 1)
+        payment_recommendations = result.customer_recommendations.recommendations.payment_recommendations
+        self.assertEqual(len(payment_recommendations), 2)
+        self.assertEqual(payment_recommendations[0].payment_option.PAYPAL.value, "PAYPAL")
+        self.assertEqual(payment_recommendations[0].recommended_priority, 1)
 
     def test_get_customer_recommendations_returns_error_result(self):
         errors = {
@@ -119,11 +122,11 @@ class TestCustomerSessionGateway(unittest.TestCase):
         }
 
         self.mock_graphql_client.query.return_value = errors
-        customer_recommendations_input = CustomerRecommendationsInput.Builder("session-id", []).merchant_account_id("merchant-account-id").build()
+        recommendations = [Recommendations.PAYMENT_RECOMMENDATIONS]
+        customer_recommendations_input = CustomerRecommendationsInput.Builder().session_id("session-id").merchant_account_id("merchant-account-id").build()
 
         result = self.customer_session_gateway.get_customer_recommendations(customer_recommendations_input)
         self.assertFalse(result.is_success)
         self.assertEqual('123', result.errors.deep_errors[0].code)
         self.assertEqual('Error 1', result.errors.deep_errors[0].message)
-
-
+        

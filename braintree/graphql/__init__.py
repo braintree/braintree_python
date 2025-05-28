@@ -1,6 +1,6 @@
 from braintree.graphql.enums import (
     RecommendedPaymentOption,
-    Recommendations
+    Recommendations, 
 )
 from braintree.graphql.inputs import (
     PhoneInput,
@@ -8,10 +8,14 @@ from braintree.graphql.inputs import (
     CreateCustomerSessionInput,
     UpdateCustomerSessionInput,
     CustomerRecommendationsInput,
+    MonetaryAmountInput, 
+    PayPalPayeeInput,
+    PayPalPurchaseUnitInput,
 )
 from braintree.graphql.types import (
     CustomerRecommendationsPayload,
-    PaymentOptions
+    PaymentOptions, 
+    PaymentRecommendation
 )
 from braintree.graphql.unions import (
     CustomerRecommendations

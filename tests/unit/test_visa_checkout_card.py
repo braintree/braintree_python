@@ -37,3 +37,16 @@ class TestVisaCheckoutCard(unittest.TestCase):
         })
 
         self.assertEqual(None, card.expiration_date)
+
+    def test_bin_data(self):
+        card = VisaCheckoutCard(None, {
+            "business": "No",
+            "consumer": "Yes",
+            "corporate": "No",
+            "purchase": "Yes",
+        })
+
+        self.assertEqual(card.business, CreditCard.Business.No)
+        self.assertEqual(card.consumer, CreditCard.Consumer.Yes)
+        self.assertEqual(card.corporate, CreditCard.Corporate.No)
+        self.assertEqual(card.purchase, CreditCard.Purchase.Yes)
