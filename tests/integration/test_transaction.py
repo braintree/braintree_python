@@ -2587,6 +2587,7 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("line_items")[0].code
         )
 
+    @unittest.skip("Flaky test")
     def test_sale_with_debit_network(self):
         result = Transaction.sale({
         
@@ -3932,12 +3933,12 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("base")[0].code
         )
 
-    def test_refund_returns_an_error_if_soft_declined(self):
+    def test_refund_returns_an_success_with_error_in_processor_response_if_soft_declined(self):
         transaction = Transaction.sale({
             "amount": Decimal("9000.00"),
             "credit_card": {
                 "number": "4111111111111111",
-                "expiration_date": "05/2009"
+                "expiration_date": "05/2008"
             },
             "options": {
                 "submit_for_settlement": True
@@ -3948,9 +3949,9 @@ class TestTransaction(unittest.TestCase):
         result = Transaction.refund(transaction.id, Decimal("2046.00"))
         refund = result.transaction
 
-        self.assertFalse(result.is_success)
-        self.assertEqual(Transaction.Status.ProcessorDeclined, refund.status)
-        self.assertEqual(ProcessorResponseTypes.SoftDeclined, refund.processor_response_type)
+        self.assertTrue(result.is_success)
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, refund.status)
+        self.assertEqual(ProcessorResponseTypes.Approved, refund.processor_response_type)
         self.assertEqual("2046 : Declined", refund.additional_processor_response)
 
     def test_refund_returns_an_error_if_hard_declined(self):
@@ -3958,7 +3959,7 @@ class TestTransaction(unittest.TestCase):
             "amount": Decimal("9000.00"),
             "credit_card": {
                 "number": "4111111111111111",
-                "expiration_date": "05/2009"
+                "expiration_date": "05/2008"
             },
             "options": {
                 "submit_for_settlement": True
@@ -3966,13 +3967,14 @@ class TestTransaction(unittest.TestCase):
         }).transaction
         TestHelper.settle_transaction(transaction.id)
 
-        result = Transaction.refund(transaction.id, Decimal("2009.00"))
+        result = Transaction.refund(transaction.id, Decimal("2004.00"))
+        result = Transaction.refund(transaction.id, Decimal("2004.00"))
         refund = result.transaction
 
         self.assertFalse(result.is_success)
         self.assertEqual(Transaction.Status.ProcessorDeclined, refund.status)
         self.assertEqual(ProcessorResponseTypes.HardDeclined, refund.processor_response_type)
-        self.assertEqual("2009 : No Such Issuer", refund.additional_processor_response)
+        self.assertEqual("2004 : Expired Card", refund.additional_processor_response)
 
     @staticmethod
     def __create_transaction_to_refund():

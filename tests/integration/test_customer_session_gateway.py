@@ -124,6 +124,7 @@ class CustomerSessionIT(unittest.TestCase):
         payload = result.customer_recommendations
         
         self.assertTrue(payload.is_in_paypal_network)
+        self.assertEqual("94f0b2db-5323-4d86-add3-paypal000000", payload.session_id)
         
         recommendation = payload.recommendations.payment_recommendations[0]
         self.assertEqual(RecommendedPaymentOption.PAYPAL, recommendation.payment_option)

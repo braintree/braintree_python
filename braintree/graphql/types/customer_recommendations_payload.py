@@ -13,13 +13,15 @@ class CustomerRecommendationsPayload:
     Represents the customer recommendations information associated with a PayPal customer session.
     """
 
-    def __init__(self, is_in_paypal_network: bool = None, recommendations: CustomerRecommendations = None, response: Dict[str, Any] = None):
+    def __init__(self, session_id: str = None, is_in_paypal_network: bool = None, recommendations: CustomerRecommendations = None, response: Dict[str, Any] = None):
         if response:
             # Constructor for response map
+            self.session_id = self._get_value(response, "generateCustomerRecommendations.sessionId")
             self.is_in_paypal_network = self._get_value(response, "generateCustomerRecommendations.isInPayPalNetwork")
             self.recommendations = self._extract_recommendations(response)
         else:
             # Constructor for direct values
+            self.session_id = session_id
             self.is_in_paypal_network = is_in_paypal_network
             self.recommendations = recommendations
 
@@ -59,8 +61,7 @@ class CustomerRecommendationsPayload:
             
             return customer_recommendations
         except Exception as e:
-            import traceback
-            raise ServerError(f"Error extracting recommendations: {str(e)}")
+            raise ServerError("Error extracting recommendations: {}".format(str(e)))
 
     @staticmethod
     def _get_value(response: Dict[str, Any], key: str) -> Any:

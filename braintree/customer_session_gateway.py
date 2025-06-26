@@ -139,6 +139,7 @@ class CustomerSessionGateway:
         query = """
             mutation GenerateCustomerRecommendations($input: GenerateCustomerRecommendationsInput!) {
                 generateCustomerRecommendations(input: $input) {
+                  sessionId
                   isInPayPalNetwork
                   paymentRecommendations{
                     paymentOption

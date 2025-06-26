@@ -93,6 +93,7 @@ class TestCustomerSessionGateway(unittest.TestCase):
         response = {
             "data": {
                 "generateCustomerRecommendations": {
+                    "sessionId": "session-id",
                     "isInPayPalNetwork": True,
                     "paymentRecommendations": [
                         {"paymentOption": "PAYPAL", "recommendedPriority": 1},
@@ -109,6 +110,7 @@ class TestCustomerSessionGateway(unittest.TestCase):
         self.assertTrue(result.is_success)
 
         self.assertTrue(result.customer_recommendations.is_in_paypal_network)
+        self.assertEqual(result.customer_recommendations.session_id, "session-id")
         payment_recommendations = result.customer_recommendations.recommendations.payment_recommendations
         self.assertEqual(len(payment_recommendations), 2)
         self.assertEqual(payment_recommendations[0].payment_option.PAYPAL.value, "PAYPAL")
