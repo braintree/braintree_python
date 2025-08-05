@@ -4,7 +4,7 @@ from braintree.test.credit_card_numbers import CreditCardNumbers
 from braintree.test.nonces import Nonces
 from braintree.dispute import Dispute
 from braintree.payment_instrument_type import PaymentInstrumentType
-from datetime import date
+from datetime import date, datetime, timedelta
 
 class TestTransaction(unittest.TestCase):
 
@@ -6399,4 +6399,9 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(hasattr(transaction.paypal_details, 'recipient_email'))
         self.assertTrue(hasattr(transaction.paypal_details, 'recipient_phone'))
         self.assertEqual(transaction.paypal_details.recipient_email, "test@paypal.com")
+
+    def test_upcoming_retry_date_field(self):
+        transaction = Transaction.find("first_attempted_ach_transaction")
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+        self.assertEqual(transaction.upcoming_retry_date, tomorrow)
 

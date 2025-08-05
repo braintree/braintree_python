@@ -39,6 +39,7 @@ from braintree.subscription_details import SubscriptionDetails
 from braintree.successful_result import SuccessfulResult
 from braintree.three_d_secure_info import ThreeDSecureInfo
 from braintree.transaction_line_item import TransactionLineItem
+from braintree.transfer import Transfer
 from braintree.us_bank_account import UsBankAccount
 from braintree.venmo_account import VenmoAccount
 from braintree.visa_checkout_card import VisaCheckoutCard
@@ -105,6 +106,7 @@ class Transaction(Resource):
 
     def __repr__(self):
       detail_list = [
+       "account_funding_transaction",
        "acquirer_reference_number",
        "additional_processor_response",
        "amount",
@@ -163,6 +165,7 @@ class Transaction(Resource):
        "tax_amount",
        "tax_exempt",
        "type",
+       "upcoming_retry_date",
        "updated_at",
        "voice_referral_number",
        ]
@@ -471,6 +474,7 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
+            "account_funding_transaction",
             "amount",
             # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
             {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
@@ -659,6 +663,11 @@ class Transaction(Resource):
                 ]
             },
             "transaction_source",
+            {
+                "transfer":[
+                    "type",
+                ]
+            },
             "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
         ]
 
@@ -882,6 +891,8 @@ class Transaction(Resource):
             self.network_transaction_id = attributes["network_transaction_id"]
         if "payment_facilitator" in attributes:
             self.payment_facilitator = PaymentFacilitator(attributes.pop("payment_facilitator"))
+        if "transfer" in attributes:
+            self.transfer = Transfer(attributes.pop("transfer"))
 
     @property
     def vault_billing_address(self):

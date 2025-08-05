@@ -277,6 +277,31 @@ class TestDisputes(unittest.TestCase):
         self.assertEqual(dispute.transaction.id, "open_disputed_transaction")
         self.assertEqual(None, dispute.transaction.installment_count)
         self.assertNotEqual(None, dispute.graphql_id)
+        
+    def test_dispute_contains_remaining_file_evidence_storage(self):
+        dispute = self.create_sample_dispute()
+        
+        self.assertIsNotNone(dispute.remaining_file_evidence_storage)
+        self.assertTrue(isinstance(dispute.remaining_file_evidence_storage, int))
+        
+    def test_remaining_file_evidence_storage_changes_after_file_evidence_addition(self):
+        dispute = self.create_sample_dispute()
+        
+        initial_storage = dispute.remaining_file_evidence_storage
+        self.assertIsNotNone(initial_storage)
+        initial_storage_value = int(initial_storage)
+        
+        document = self.create_evidence_document()
+        
+        result = Dispute.add_file_evidence(dispute.id, document.id)
+        self.assertTrue(result.is_success)
+        
+        updated_dispute = Dispute.find(dispute.id)
+        
+        self.assertIsNotNone(updated_dispute.remaining_file_evidence_storage)
+        updated_storage_value = int(updated_dispute.remaining_file_evidence_storage)
+        
+        self.assertLess(updated_storage_value, initial_storage_value)
 
     def test_find_raises_error_when_dispute_not_found(self):
         with self.assertRaisesRegex(NotFoundError, "dispute with id 'invalid-id' not found"):

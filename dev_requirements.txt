@@ -1,2 +1,2 @@
-twine>=1.9,<2.0
+twine>=4.0,<6.0
 -r requirements.txt

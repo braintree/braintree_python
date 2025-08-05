@@ -78,6 +78,7 @@ from braintree.transaction_details import TransactionDetails
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.transaction_search import TransactionSearch
+from braintree.transfer import Transfer
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.us_bank_account import UsBankAccount
 from braintree.validation_error_collection import ValidationErrorCollection

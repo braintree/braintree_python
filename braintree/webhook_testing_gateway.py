@@ -41,6 +41,8 @@ class WebhookTestingGateway(object):
             return self.__connected_merchant_paypal_status_changed_xml(id)
         elif kind == WebhookNotification.Kind.TransactionDisbursed:
             return self.__transaction_disbursed_sample_xml(id)
+        elif kind == WebhookNotification.Kind.TransactionRetried:
+            return self.__transaction_retried_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionReviewed:
             return self.__transaction_reviewed_sample_xml(id)
         elif kind == WebhookNotification.Kind.TransactionSettled:
@@ -124,6 +126,18 @@ class WebhookTestingGateway(object):
                 <settlement-currency-exchange-rate>10</settlement-currency-exchange-rate>
                 <disbursement-date type="datetime">2013-07-09T18:23:29Z</disbursement-date>
               </disbursement-details>
+            </transaction>
+        """ % id
+
+    def __transaction_retried_sample_xml(self, id):
+        return """
+            <transaction>
+              <id>%s</id>
+              <amount>100</amount>
+              <status>submitted_for_settlement</status>
+              <type>sale</type>
+              <currency-iso-code>USD</currency-iso-code>
+              <retried-transaction-id>original_txn_id</retried-transaction-id>
             </transaction>
         """ % id
 

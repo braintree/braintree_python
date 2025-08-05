@@ -163,6 +163,20 @@ class TestWebhooks(unittest.TestCase):
         self.assertEqual(100, notification.transaction.amount)
         self.assertEqual(datetime(2013, 7, 9, 18, 23, 29), notification.transaction.disbursement_details.disbursement_date)
 
+    def test_builds_notification_for_retried_transactions(self):
+        sample_notification = WebhookTesting.sample_notification(
+            WebhookNotification.Kind.TransactionRetried,
+            "my_id"
+        )
+
+        notification = WebhookNotification.parse(sample_notification['bt_signature'], sample_notification['bt_payload'])
+
+        self.assertEqual(WebhookNotification.Kind.TransactionRetried, notification.kind)
+        self.assertEqual("my_id", notification.transaction.id)
+        self.assertEqual(100, notification.transaction.amount)
+        self.assertEqual("submitted_for_settlement", notification.transaction.status)
+        self.assertEqual("original_txn_id", notification.transaction.retried_transaction_id)
+
     def test_builds_notification_for_reviewed_transactions(self):
         sample_notification = WebhookTesting.sample_notification(
             WebhookNotification.Kind.TransactionReviewed,

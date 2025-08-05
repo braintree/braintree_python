@@ -42,6 +42,7 @@ class TestDispute(unittest.TestCase):
         "reason_description": "Reason code 83 description",
         "received_date": date(2013, 4, 10),
         "reference_number": "123456",
+        "remaining_file_evidence_storage": "3189762",
         "reply_by_date": date(2013, 4, 17),
         "status": "open",
         "updated_at": datetime(2013, 4, 10, 10, 50, 39),
@@ -132,6 +133,7 @@ class TestDispute(unittest.TestCase):
         self.assertEqual(dispute.reason_code, "83")
         self.assertEqual(dispute.reason_description, "Reason code 83 description")
         self.assertEqual(dispute.reference_number, "123456")
+        self.assertEqual(dispute.remaining_file_evidence_storage, "3189762")
         self.assertEqual(dispute.updated_at, datetime(2013, 4, 10, 10, 50, 39))
         self.assertIsNone(dispute.evidence[0].comment)
         self.assertEqual(dispute.evidence[0].created_at, datetime(2013, 4, 11, 10, 50, 39))

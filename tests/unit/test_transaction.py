@@ -341,13 +341,15 @@ class TestTransaction(unittest.TestCase):
             'amount': TransactionAmounts.Decline,
             'retry_ids': ['retry_id_1','retry_id2'],
             'retried_transaction_id': '12345',
-            'retried': True
+            'retried': True,
+            'upcoming_retry_date': '2025-07-08'
         }
 
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.retry_ids, ['retry_id_1','retry_id2'])
         self.assertEqual(transaction.retried_transaction_id, "12345")
         self.assertTrue(transaction.retried)
+        self.assertEqual(transaction.upcoming_retry_date, '2025-07-08')
 
     def test_debit_network(self):
         attributes = {
