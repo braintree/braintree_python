@@ -91,6 +91,12 @@ class PaymentMethod(Resource):
             },
             {
                 "three_d_secure_pass_thru": three_d_secure_pass_thru
+            },
+            {
+                "us_bank_account": [
+                    "ach_mandate_text",
+                    "ach_mandate_accepted_at"
+                ]
             }
 
         ]

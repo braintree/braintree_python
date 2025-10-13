@@ -336,6 +336,17 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.merchant_advice_code, "01")
         self.assertEqual(transaction.merchant_advice_code_text, "New account information available")
 
+    def test_ach_return_code_and_ach_reject_reason(self):
+        attributes = {
+            'amount': TransactionAmounts.Decline,
+            'ach_return_code': 'RJCT',
+            'ach_reject_reason': 'some reason'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.ach_return_code, 'RJCT')
+        self.assertEqual(transaction.ach_reject_reason, 'some reason')
+
     def test_retry_ids_and_retried_transaction_id(self):
         attributes = {
             'amount': TransactionAmounts.Decline,

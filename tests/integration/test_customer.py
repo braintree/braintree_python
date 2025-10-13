@@ -316,6 +316,7 @@ class TestCustomer(unittest.TestCase):
         self.assertNotEqual(customer.apple_pay_cards[0].debit, None)
         self.assertNotEqual(customer.apple_pay_cards[0].durbin_regulated, None)
         self.assertNotEqual(customer.apple_pay_cards[0].healthcare, None)
+        self.assertNotEqual(customer.apple_pay_cards[0].is_device_token, None)
         self.assertNotEqual(customer.apple_pay_cards[0].issuing_bank, None)
         self.assertNotEqual(customer.apple_pay_cards[0].last_4, None)
         self.assertNotEqual(customer.apple_pay_cards[0].payroll, None)

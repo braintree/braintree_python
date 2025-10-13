@@ -49,3 +49,14 @@ class TestApplePayCard(unittest.TestCase):
         self.assertEqual(CreditCard.Consumer.Unknown, card.consumer)
         self.assertEqual(CreditCard.Corporate.Unknown, card.corporate)
         self.assertEqual(CreditCard.Purchase.Unknown, card.purchase)
+
+    def test_mpan_fields(self):
+        card = ApplePayCard(None, {
+            "customer_id": "12345",
+            "number": "4111111111111111",
+            "is_device_token": False,
+            "merchant_token_identifier": "a-merchant-token-identifier"
+        })
+
+        self.assertEqual(False, card.is_device_token)
+        self.assertEqual("a-merchant-token-identifier", card.merchant_token_identifier)

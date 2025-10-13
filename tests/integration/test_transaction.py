@@ -51,7 +51,7 @@ class TestTransaction(unittest.TestCase):
                 },
                 "device_data": "abc123",
             })
-    
+
             self.assertTrue(result.is_success)
             transaction = result.transaction
             risk_data = result.transaction.risk_data
@@ -1227,6 +1227,26 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(int(apple_pay_details.expiration_month) > 0)
         self.assertTrue(int(apple_pay_details.expiration_year) > 0)
         self.assertNotEqual(None, apple_pay_details.cardholder_name)
+        self.assertTrue(apple_pay_details.is_device_token)
+
+    def test_sale_with_fake_apple_pay_mpan_nonce(self):
+        result = Transaction.sale({
+            "amount": "10.00",
+            "payment_method_nonce": Nonces.ApplePayMpan
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(result.transaction.amount, 10.00)
+        self.assertEqual(result.transaction.payment_instrument_type, PaymentInstrumentType.ApplePayCard)
+        apple_pay_details = result.transaction.apple_pay_details
+        self.assertNotEqual(None, apple_pay_details)
+        self.assertEqual(ApplePayCard.CardType.Visa, apple_pay_details.card_type)
+        self.assertEqual("Visa 2006", apple_pay_details.payment_instrument_name)
+        self.assertTrue(int(apple_pay_details.expiration_month) > 0)
+        self.assertTrue(int(apple_pay_details.expiration_year) > 0)
+        self.assertNotEqual(None, apple_pay_details.cardholder_name)
+        self.assertFalse(apple_pay_details.is_device_token)
+        self.assertNotEqual(None, apple_pay_details.merchant_token_identifier)
 
     def test_sale_with_fake_android_pay_proxy_card_nonce(self):
         result = Transaction.sale({
@@ -2590,7 +2610,7 @@ class TestTransaction(unittest.TestCase):
     @unittest.skip("Flaky test")
     def test_sale_with_debit_network(self):
         result = Transaction.sale({
-        
+
         "amount": TransactionAmounts.Authorize,
             "merchant_account_id": TestHelper.pinless_debit_merchant_account_id,
             "payment_method_nonce": Nonces.TransactablePinlessDebitVisa,
@@ -5457,7 +5477,7 @@ class TestTransaction(unittest.TestCase):
         details = transaction.meta_checkout_card_details
 
         next_year = str(date.today().year + 1)
-        
+
         self.assertEqual(details.bin, "401288")
         self.assertEqual(details.business, "Unknown")
         self.assertEqual(details.card_type, "Visa")
@@ -5488,7 +5508,7 @@ class TestTransaction(unittest.TestCase):
         details = transaction.meta_checkout_token_details
 
         next_year = str(date.today().year + 1)
-        
+
         self.assertEqual(details.bin, "401288")
         self.assertEqual(details.business, "Unknown")
         self.assertEqual(details.card_type, "Visa")
@@ -6376,8 +6396,8 @@ class TestTransaction(unittest.TestCase):
         })
         self.assertTrue(result.is_success)
         transaction = result.transaction
-        self.assertFalse(hasattr(transaction, 'foreign_retailer')) 
-    
+        self.assertFalse(hasattr(transaction, 'foreign_retailer'))
+
     def test_contact_details_returned_fom_transaction(self):
         result = Transaction.sale({
             "amount": "10.00",
@@ -6405,3 +6425,7 @@ class TestTransaction(unittest.TestCase):
         tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
         self.assertEqual(transaction.upcoming_retry_date, tomorrow)
 
+    def test_ach_reject_reason_field(self):
+        transaction = Transaction.find("ach_txn_ret3")
+        self.assertEqual(transaction.ach_return_code, "RJCT")
+        self.assertEqual(transaction.ach_reject_reason, "Bank accounts located outside of the U.S. are not supported.")

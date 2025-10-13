@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+* Add Bank Account Instant Verification functionality
+* Add `BankAccountInstantVerificationGateway` for creating JWTs
+* Add `BankAccountInstantVerificationJwt` response object
+* Add `BankAccountInstantVerificationJwtRequest` for JWT creation
+* Add `ach_mandate_text` and `ach_mandate_accepted_at` fields to `TransactionUsBankAccountRequest`
+* Add `INSTANT_VERIFICATION_ACCOUNT_VALIDATION` method to `UsBankAccountVerification.VerificationMethod`
+* Add support for US bank account ACH mandate fields in transaction requests
+* Add `ach_reject_reason` field to Transaction
+* Add `sender` and `receiver` to `transfer` in `Transaction`
+* Add `is_device_token` to ApplePayCard and ApplePayDetails
+
 ## 4.38.0
 * Add `upcoming_retry_date` field to Transaction
 * Add `remaining_file_evidence_storage` to Dispute
@@ -20,7 +32,7 @@
 * Add business, consumer, corporate, purchase from bin data in credit card responses
 
 ## 4.35.0
-* Add support for capturing payment facilitator and sub-merchant details with transactions 
+* Add support for capturing payment facilitator and sub-merchant details with transactions
 * Remove marketplace features
 
 ## 4.34.0
@@ -34,11 +46,11 @@
 * Add support for creating and updating PayPal customer session
 * Add support for getting PayPal customer recommendations
 
-## 4.32.0 
-* Add recipient/contact info: `recipient_email`and `recipient_phone` to `Transaction` 
+## 4.32.0
+* Add recipient/contact info: `recipient_email`and `recipient_phone` to `Transaction`
 
 ## 4.31.0
-* Add `fail_on_duplicate_payment_method_for_customer` option to 
+* Add `fail_on_duplicate_payment_method_for_customer` option to
   * `ClientToken`
   * `PaymentMethod`
   * `CreditCard`
@@ -98,14 +110,14 @@
 * Fix unittest compatibility with Python 3.12 (Thanks @mgorny)
 
 ## 4.23.0
-* Deprecate `evidenceSubmittable` in Dispute 
+* Deprecate `evidenceSubmittable` in Dispute
 * Add missing `escape` calls in `generator` for:
   * list
   * bool
   * integer
   * datetime
 
-## 4.22.0 
+## 4.22.0
 * Add `processing_overrides` to `Transaction.sale` options
 
 ## 4.21.0

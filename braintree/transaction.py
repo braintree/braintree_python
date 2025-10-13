@@ -666,9 +666,43 @@ class Transaction(Resource):
             {
                 "transfer":[
                     "type",
+                    {
+                        "sender": [
+                            "account_reference_number",
+                            "first_name",
+                            "last_name",
+                            "tax_id",
+                            {
+                                "address": [
+                                    "street_address", "extended_address", "locality", "region", "country_code_alpha2", "postal_code",
+                                    {"international_phone": ["country_code", "national_number"]}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "receiver": [
+                            "account_reference_number",
+                            "first_name",
+                            "last_name",
+                            "tax_id",
+                            {
+                                "address": [
+                                    "street_address", "extended_address", "locality", "region", "country_code_alpha2", "postal_code",
+                                    {"international_phone": ["country_code", "national_number"]}
+                                ]
+                            }
+                        ]
+                    }
                 ]
             },
             "type", "venmo_sdk_payment_method_code",  # NEXT_MJOR_VERSION remove venmo_sdk_payment_method_code
+            {
+                "us_bank_account": [
+                    "ach_mandate_text",
+                    "ach_mandate_accepted_at"
+                ]
+            },
         ]
 
     @staticmethod

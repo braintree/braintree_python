@@ -585,6 +585,8 @@ class ErrorCodes(object):
         TransactionIsNotEligibleForAdjustment = "915219"
         TransactionMustBeInStateAuthorized = "915218"
         TransactionSourceIsInvalid = "915133"
+        TransferTypeIsInvalid = "97501"
+        TransferDetailsAreRequired = "97510"
         TypeIsInvalid = "91523"
         TypeIsRequired = "91524"
         UnsupportedVoiceAuthorization = "91539"

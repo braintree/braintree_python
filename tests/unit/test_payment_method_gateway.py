@@ -80,6 +80,12 @@ class TestPaymentMethodGateway(unittest.TestCase):
                     "xid"
                     ]
             },
+            {
+                "us_bank_account": [
+                    "ach_mandate_text",
+                    "ach_mandate_accepted_at"
+                ]
+            },
         ]
 
         self.assertEqual(expected_signature, actual_signature)

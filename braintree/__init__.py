@@ -7,6 +7,9 @@ from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
 from braintree.android_pay_card import AndroidPayCard
 from braintree.apple_pay_card import ApplePayCard
 from braintree.apple_pay_gateway import ApplePayGateway
+from braintree.bank_account_instant_verification_gateway import BankAccountInstantVerificationGateway
+from braintree.bank_account_instant_verification_jwt import BankAccountInstantVerificationJwt
+from braintree.bank_account_instant_verification_jwt_request import BankAccountInstantVerificationJwtRequest
 from braintree.blik_alias import BlikAlias
 from braintree.braintree_gateway import BraintreeGateway
 from braintree.client_token import ClientToken
@@ -56,10 +59,12 @@ from braintree.paypal_payment_resource import PayPalPaymentResource
 from braintree.plan import Plan
 from braintree.plan_gateway import PlanGateway
 from braintree.processor_response_types import ProcessorResponseTypes
+from braintree.receiver import Receiver
 from braintree.resource_collection import ResourceCollection
 from braintree.risk_data import RiskData
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.search import Search
+from braintree.sender import Sender
 from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.signature_service import SignatureService
@@ -78,9 +83,11 @@ from braintree.transaction_details import TransactionDetails
 from braintree.transaction_gateway import TransactionGateway
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.transaction_search import TransactionSearch
+from braintree.transaction_us_bank_account_request import TransactionUsBankAccountRequest
 from braintree.transfer import Transfer
 from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.us_bank_account import UsBankAccount
+from braintree.us_bank_account_verification import UsBankAccountVerification
 from braintree.validation_error_collection import ValidationErrorCollection
 from braintree.venmo_account import VenmoAccount
 from braintree.venmo_profile_data import VenmoProfileData
