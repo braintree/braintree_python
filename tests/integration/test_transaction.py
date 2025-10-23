@@ -484,6 +484,54 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(1, len(tax_amount_errors))
         self.assertEqual(ErrorCodes.Transaction.TaxAmountIsRequiredForAibSwedish, tax_amount_errors[0].code)
 
+    def test_sale_with_processing_merchant_category_code(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2028"
+            },
+            "processing_merchant_category_code": "5411"
+        })
+
+        self.assertTrue(result.is_success)
+
+    def test_sale_with_processing_merchant_category_code_too_long(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2028"
+            },
+            "processing_merchant_category_code": "54111"
+        })
+
+        self._assert_processing_merchant_category_code_invalid(result)
+
+    def test_sale_with_processing_merchant_category_code_alphanumeric(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2028"
+            },
+            "processing_merchant_category_code": "541A"
+        })
+
+        self._assert_processing_merchant_category_code_invalid(result)
+
+    def test_sale_with_processing_merchant_category_code_too_short(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2028"
+            },
+            "processing_merchant_category_code": "541"
+        })
+
+        self._assert_processing_merchant_category_code_invalid(result)
+
     def test_sale_with_invalid_address(self):
         customer = Customer.create({
             "first_name": "Pingu",
@@ -5039,6 +5087,30 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction.find("transactionwithacquirerreferencenumber")
         self.assertEqual("123456789 091019", transaction.acquirer_reference_number)
 
+    def test_find_transaction_with_payment_account_reference(self):
+        transaction = Transaction.find("aft_txn")
+
+        self.assertIsNotNone(transaction.credit_card_details)
+        self.assertTrue(hasattr(transaction.credit_card_details, 'payment_account_reference'))
+
+    def test_find_transaction_with_payment_account_reference_in_apple_pay_details(self):
+        transaction = Transaction.find("apple_pay_transaction")
+
+        self.assertIsNotNone(transaction.apple_pay_details)
+        self.assertTrue(hasattr(transaction.apple_pay_details, 'payment_account_reference'))
+
+    def test_find_transaction_with_payment_account_reference_in_android_pay_details(self):
+        transaction = Transaction.find("android_pay_card_transaction")
+
+        self.assertIsNotNone(transaction.android_pay_card_details)
+        self.assertTrue(hasattr(transaction.android_pay_card_details, 'payment_account_reference'))
+
+    def test_find_transaction_with_payment_account_reference_in_android_pay_network_token_details(self):
+        transaction = Transaction.find("android_pay_network_token_transaction")
+
+        self.assertIsNotNone(transaction.android_pay_card_details)
+        self.assertTrue(hasattr(transaction.android_pay_card_details, 'payment_account_reference'))
+
     def test_find_exposes_authorization_adjustments(self):
         transaction = Transaction.find("authadjustmenttransaction")
         authorization_adjustment = transaction.authorization_adjustments[0]
@@ -6429,3 +6501,9 @@ class TestTransaction(unittest.TestCase):
         transaction = Transaction.find("ach_txn_ret3")
         self.assertEqual(transaction.ach_return_code, "RJCT")
         self.assertEqual(transaction.ach_reject_reason, "Bank accounts located outside of the U.S. are not supported.")
+
+    def _assert_processing_merchant_category_code_invalid(self, result):
+        self.assertFalse(result.is_success)
+        processing_merchant_category_code_errors = result.errors.for_object("transaction").on("processing_merchant_category_code")
+        self.assertEqual(1, len(processing_merchant_category_code_errors))
+        self.assertEqual(ErrorCodes.Transaction.ProcessingMerchantCategoryCodeIsInvalid, processing_merchant_category_code_errors[0].code)

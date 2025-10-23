@@ -322,3 +322,9 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual("I", verification.ani_last_name_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
         self.assertNotEqual(None, verification.graphql_id)
+
+    def test_find_verification_with_payment_account_reference(self):
+        verification = CreditCardVerification.find("threedsecuredverification")
+
+        self.assertIsNotNone(verification.credit_card)
+        self.assertIn("payment_account_reference", verification.credit_card)

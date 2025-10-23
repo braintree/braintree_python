@@ -56,3 +56,10 @@ class TestAndroidPayCard(unittest.TestCase):
         self.assertEqual(CreditCard.Corporate.Yes, card.corporate)
         self.assertEqual(CreditCard.Purchase.No, card.purchase)
 
+    def test_constructor_with_payment_account_reference(self):
+        card = AndroidPayCard(None, {
+            "expiration_month": "05",
+            "expiration_year": "2014",
+            "payment_account_reference": "V0010013019339005665779448477"
+        })
+        self.assertEqual(card.payment_account_reference, "V0010013019339005665779448477")

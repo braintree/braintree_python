@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 4.40.0
+* Add `payment_account_reference` to `Transaction::ApplePayCard`, `Transaction::AndroidPayCard`, `Transaction::CreditCard`, and `CreditCardVerification`
+* Add `processing_merchant_category_code` field in `Transaction`
+* Add missing `transfer` validation error codes in `Transaction`
+
+## 4.39.0
 * Add Bank Account Instant Verification functionality
 * Add `BankAccountInstantVerificationGateway` for creating JWTs
 * Add `BankAccountInstantVerificationJwt` response object

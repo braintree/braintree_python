@@ -174,3 +174,13 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(credit_card.consumer, CreditCard.Consumer.Yes)
         self.assertEqual(credit_card.corporate, CreditCard.Corporate.No)
         self.assertEqual(credit_card.purchase, CreditCard.Purchase.Yes)
+
+    def test_constructor_with_payment_account_reference(self):
+        credit_card = CreditCard(
+            None,
+            {
+                "token": "test_token",
+                "payment_account_reference": "V0010013019339005665779448477"
+            },
+        )
+        self.assertEqual(credit_card.payment_account_reference, "V0010013019339005665779448477")

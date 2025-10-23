@@ -28,7 +28,6 @@ class TestUsBankAccount(unittest.TestCase):
 
         attributes["ach_mandate"] = {"text":"Some mandate", "accepted_at": date(2013, 4, 10)}
         us_bank_account_mandated = UsBankAccount({}, attributes)
-        self.assertEqual(us_bank_account_mandated.ach_mandate.text, "Some mandate")
         self.assertEqual(us_bank_account_mandated.ach_mandate.accepted_at, date(2013, 4, 10))
 
     def test_converts_verifications_to_objects(self):

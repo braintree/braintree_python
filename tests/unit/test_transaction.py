@@ -443,3 +443,56 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(CreditCard.Consumer.No, transaction.credit_card_details['consumer'])
         self.assertEqual(CreditCard.Corporate.No, transaction.credit_card_details['corporate'])
         self.assertEqual(CreditCard.Purchase.No, transaction.credit_card_details['purchase'])
+
+    def test_constructor_with_credit_card_payment_account_reference(self):
+        attributes = {
+            'amount': '27.00',
+            'credit_card': {
+                'token': 'test_token',
+                'payment_account_reference': 'V0010013019339005665779448477'
+            }
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.credit_card_details.payment_account_reference, 'V0010013019339005665779448477')
+
+    def test_constructor_with_apple_pay_payment_account_reference(self):
+        attributes = {
+            'amount': '27.00',
+            'apple_pay': {
+                'expiration_month': '05',
+                'expiration_year': '2014',
+                'payment_account_reference': 'V0010013019339005665779448477'
+            }
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.apple_pay_details.payment_account_reference, 'V0010013019339005665779448477')
+
+    def test_constructor_with_android_pay_payment_account_reference(self):
+        attributes = {
+            'amount': '27.00',
+            'android_pay_card': {
+                'expiration_month': '05',
+                'expiration_year': '2014',
+                'payment_account_reference': 'V0010013019339005665779448477'
+            }
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.android_pay_card_details.payment_account_reference, 'V0010013019339005665779448477')
+
+    def test_sale_with_processing_merchant_category_code(self):
+        attributes = {
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2009"
+            },
+            "processing_merchant_category_code": "5411"
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+        transaction_gateway.sale(attributes)
+        transaction_param = transaction_gateway._post.call_args[0][1]
+        self.assertEqual(transaction_param['transaction']['processing_merchant_category_code'], "5411")

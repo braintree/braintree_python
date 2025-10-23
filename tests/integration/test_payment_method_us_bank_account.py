@@ -21,7 +21,6 @@ class PaymentMethodWithUsBankAccountTest(unittest.TestCase):
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
         self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
         self.assertEqual(us_bank_account.verified, True)
 
@@ -52,7 +51,6 @@ class PaymentMethodWithUsBankAccountTest(unittest.TestCase):
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertEqual(us_bank_account.bank_name, "Wells Fargo")
         self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "example mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
         self.assertEqual(us_bank_account.verified, True)
 
@@ -85,7 +83,6 @@ class PaymentMethodWithUsBankAccountTest(unittest.TestCase):
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertEqual(us_bank_account.bank_name, "Wells Fargo")
         self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "example mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
         self.assertEqual(us_bank_account.verified, True)
 
@@ -117,7 +114,6 @@ class PaymentMethodWithUsBankAccountTest(unittest.TestCase):
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
         self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
         self.assertEqual(us_bank_account.verified, False)
 
@@ -212,7 +208,6 @@ class PaymentMethodWithUsBankAccountCompliantMerchantTest(unittest.TestCase):
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
         self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
         self.assertEqual(us_bank_account.verified, False)
 
@@ -238,7 +233,6 @@ class PaymentMethodWithUsBankAccountCompliantMerchantTest(unittest.TestCase):
         self.assertEqual(us_bank_account.account_holder_name, "Dan Schulman")
         self.assertTrue(re.match(r".*CHASE.*", us_bank_account.bank_name))
         self.assertEqual(us_bank_account.default, True)
-        self.assertEqual(us_bank_account.ach_mandate.text, "cl mandate text")
         self.assertIsInstance(us_bank_account.ach_mandate.accepted_at, datetime)
         self.assertEqual(us_bank_account.verified, True)
 

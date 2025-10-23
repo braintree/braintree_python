@@ -60,3 +60,11 @@ class TestApplePayCard(unittest.TestCase):
 
         self.assertEqual(False, card.is_device_token)
         self.assertEqual("a-merchant-token-identifier", card.merchant_token_identifier)
+
+    def test_constructor_with_payment_account_reference(self):
+        card = ApplePayCard(None, {
+            "expiration_month": "05",
+            "expiration_year": "2014",
+            "payment_account_reference": "V0010013019339005665779448477"
+        })
+        self.assertEqual(card.payment_account_reference, "V0010013019339005665779448477")

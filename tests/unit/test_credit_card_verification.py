@@ -123,3 +123,17 @@ class TestCreditCardVerification(unittest.TestCase):
         self.assertEqual(verification.credit_card['consumer'], CreditCard.Consumer.Unknown)
         self.assertEqual(verification.credit_card['corporate'], CreditCard.Corporate.Unknown)
         self.assertEqual(verification.credit_card['purchase'], CreditCard.Purchase.Unknown)
+
+    def test_constructor_with_credit_card_payment_account_reference(self):
+        attributes = {
+            'amount': '1.00',
+            'status': 'verified',
+            'credit_card': {
+                'bin': '401288',
+                'last_4': '1881',
+                'card_type': 'Visa',
+                'payment_account_reference': 'V0010013019339005665779448477'
+            }
+        }
+        verification = CreditCardVerification(None, attributes)
+        self.assertEqual(verification.credit_card['payment_account_reference'], 'V0010013019339005665779448477')
