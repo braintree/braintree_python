@@ -581,12 +581,6 @@ class Transaction(Resource):
                             "currency_amount",
                             "currency_iso_code"
                         ],
-                        "venmo_merchant_data": [
-                            "venmo_merchant_public_id",
-                            "originating_transaction_id",
-                            "originating_merchant_id",
-                            "originating_merchant_kind"
-                        ],
                         "venmo": [
                             "profile_id"
                         ],
@@ -670,8 +664,10 @@ class Transaction(Resource):
                     {
                         "sender": [
                             "account_reference_number",
+                            "date_of_birth",
                             "first_name",
                             "last_name",
+                            "middle_name",
                             "tax_id",
                             {
                                 "address": [
@@ -686,6 +682,7 @@ class Transaction(Resource):
                             "account_reference_number",
                             "first_name",
                             "last_name",
+                            "middle_name",
                             "tax_id",
                             {
                                 "address": [

@@ -5,6 +5,8 @@ from decimal import Decimal
 from enum import Enum
 from http.client import HTTPConnection
 from subprocess import Popen, PIPE
+from braintree.successful_result import SuccessfulResult
+from braintree.attribute_getter import AttributeGetter
 from urllib.parse import urlencode, quote_plus
 import json
 import os
@@ -448,6 +450,45 @@ class TestHelper(object):
         resp = requests.post(client_token["braintree_api"]["url"] + "/graphql", headers=headers, data=json.dumps(graphql_request))
         return json.loads(resp.text)
 
+    @staticmethod
+    def get_merchant(params=None):
+        if params is None:
+            params = {}
+
+        environment = str(Configuration.environment).lower()
+
+        gateway = BraintreeGateway(
+            client_id="client_id${}$integration_client_id".format(environment),
+            client_secret="client_secret${}$integration_client_secret".format(environment)
+        )
+
+        code = TestHelper.create_grant(gateway, {
+            "merchant_public_id": "partner_merchant_id",
+            "scope": "read_write"
+        })
+
+        result = gateway.oauth.create_token_from_code({
+            "code": code,
+            "scope": "read_write"
+        })
+
+        merchant_gateway = BraintreeGateway(
+            access_token=result.credentials.access_token
+        )
+
+        ma_result = merchant_gateway.merchant_account.all()
+
+        merchant_obj = AttributeGetter({
+            "id": "partner_merchant_id",
+            "merchant_accounts": ma_result.merchant_accounts
+        })
+
+        return SuccessfulResult({
+            "credentials": result.credentials,
+            "merchant": merchant_obj
+        })
+
+        
 class ClientApiHttp(Http):
     def __init__(self, config, options):
         self.config = config

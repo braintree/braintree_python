@@ -9,18 +9,46 @@ from datetime import date
 from braintree.authorization_adjustment import AuthorizationAdjustment
 from unittest.mock import MagicMock
 
-
+transfer_type = ["account_to_account", "person_to_person", "wallet_transfer", "fund_transfer", "fund_disbursement", "payroll_disbursement", "prepaid_top_up"]
 class TestTransactionTransferType(unittest.TestCase):
     def test_aft_transfer_type(self):
-        attributes = {
-                "amount": TransactionAmounts.Authorize,
-                "transfer": {
-                    "type": "wallet_transfer",
-                    },
-                }
+        for type in transfer_type:
+            attributes = {
+                    "amount": TransactionAmounts.Authorize,
+                    "transfer": {
+                        "type": type,
+                        "sender": {
+                            "first_name": "Alice",
+                            "middle_name": "A",
+                            "last_name": "Silva",
+                            "account_reference_number": "1000012345",
+                            "address": {
+                                "street_address": "1st Main Road",
+                                "locality": "Los Angeles",
+                                "region": "CA",
+                                "country_code_alpha2": "US",
+                                },
+                            "date_of_birth": date(2012,4,10)
+                            },
+                        "receiver": {
+                            "first_name": "Bob",
+                            "middle_name": "A",
+                            "last_name": "Souza",
+                            "address": {
+                                "street_address": "2nd Main Road",
+                                "locality": "Los Angeles",
+                                "region": "CA",
+                                "country_code_alpha2": "US",
+                                }
+                            }
+                        },
+                    }
 
-        transaction = Transaction(None, attributes)
-        self.assertEqual(transaction.transfer.type, 'wallet_transfer')
+            transaction = Transaction(None, attributes)
+            self.assertEqual(transaction.transfer.type, type)
+            self.assertIsInstance(transaction.transfer, Transfer)
+            self.assertIsInstance(transaction.transfer.sender, Sender)
+            self.assertIsInstance(transaction.transfer.receiver, Receiver)
 
     def test_transfer_staged_digital_wallet_operator(self):
         transfer_types = ["account_to_account", "boleto_ticket", "person_to_person", "wallet_transfer"]

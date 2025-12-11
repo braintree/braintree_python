@@ -19,6 +19,30 @@ class TestTransactionTransferType(unittest.TestCase):
                     },
                 "transfer": {
                     "type": "wallet_transfer",
+                    "sender": {
+                        "first_name": "Alice",
+                        "middle_name": "A",
+                        "last_name": "Silva",
+                        "account_reference_number": "1000012345",
+                        "address": {
+                            "street_address": "1st Main Road",
+                            "locality": "Los Angeles",
+                            "region": "CA",
+                            "country_code_alpha2": "US",
+                            },
+                        "date_of_birth": date(2012,4,10)
+                        },
+                    "receiver": {
+                        "first_name": "Bob",
+                        "middle_name": "A",
+                        "last_name": "Souza",
+                        "address": {
+                            "street_address": "2nd Main Road",
+                            "locality": "Los Angeles",
+                            "region": "CA",
+                            "country_code_alpha2": "US",
+                            }
+                        }
                     },
                 }
 

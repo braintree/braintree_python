@@ -611,25 +611,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("41111111****1111", transaction.credit_card_details.masked_number)
         self.assertEqual("411111******1111", transaction.vault_credit_card.masked_number)
 
-    def test_sale_with_venmo_merchant_data(self):
-        result = Transaction.sale({
-            "amount": Decimal(TransactionAmounts.Authorize),
-            "credit_card": {
-                "number": "4111111111111111",
-                "expiration_date": "05/2009"
-            },
-            "options": {
-                "venmo_merchant_data": {
-                    "venmo_merchant_public_id": "12345",
-                    "originating_transaction_id": "abc123",
-                    "originating_merchant_id": "xyz123",
-                    "originating_merchant_kind": "braintree",
-                }
-            }
-        })
-
-        self.assertTrue(result.is_success)
-
     def test_sale_with_custom_fields(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -6354,8 +6335,8 @@ class TestTransaction(unittest.TestCase):
         self.assertFalse(adjusted_authorization_result.is_success)
         self.assertEqual(adjusted_authorization_result.transaction.amount, Decimal("75.50"))
 
-        error_code = adjusted_authorization_result.errors.for_object("authorization_adjustment").on("amount")[0].code
-        self.assertEqual(ErrorCodes.Transaction.AdjustmentAmountMustBeGreaterThanZero, error_code)
+        error_code = adjusted_authorization_result.errors.for_object("transaction").on("amount")[0].code
+        self.assertEqual(ErrorCodes.Transaction.AmountMustBeGreaterThanZero, error_code)
 
     def test_adjust_authorization_when_amount_submitted_same_as_authorized(self):
         initial_transaction_sale =  Transaction.sale(self.__first_data_transaction_params())

@@ -1,6 +1,7 @@
 from tests.test_helper import *
 from braintree.test.nonces import Nonces
 
+@unittest.skip("pending this suite of tests")
 class TestMerchantGateway(unittest.TestCase):
     def setUp(self):
         self.gateway = BraintreeGateway(

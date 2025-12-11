@@ -33,6 +33,7 @@ class CreditCardVerificationGateway(object):
     def __fetch(self, query, ids):
         criteria = self.__criteria(query)
         criteria["ids"] = CreditCardVerificationSearch.ids.in_list(ids).to_param()
+        criteria["verification_type"] = ["credit_card"]
         response = self.config.http().post(self.config.base_merchant_path() + "/verifications/advanced_search", {"search": criteria})
         return [CreditCardVerification(self.gateway, item) for item in
                 ResourceCollection._extract_as_array(response["credit_card_verifications"], "verification")]
@@ -42,7 +43,9 @@ class CreditCardVerificationGateway(object):
         if isinstance(query[0], list):
             query = query[0]
 
-        response = self.config.http().post(self.config.base_merchant_path() + "/verifications/advanced_search_ids", {"search": self.__criteria(query)})
+        search_params = self.__criteria(query)
+        search_params["verification_type"] = ["credit_card"]
+        response = self.config.http().post(self.config.base_merchant_path() + "/verifications/advanced_search_ids", {"search": search_params})
         return ResourceCollection(query, response, self.__fetch)
 
     def __fetch_verifications(self, query, verification_ids):

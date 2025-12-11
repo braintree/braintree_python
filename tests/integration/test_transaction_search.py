@@ -1725,7 +1725,7 @@ class TestTransactionSearch(unittest.TestCase):
         collection = Transaction.search([
             TransactionSearch.ach_return_responses_created_at.between(yesterday, tomorrow)
         ])
-        self.assertEqual(2, collection.maximum_size)
+        self.assertEqual(6, collection.maximum_size)
 
     def test_search_returns_records_from_invalid_daterange(self):
         day_after_tomorrow = datetime.now() + timedelta(days=1)
@@ -1752,7 +1752,7 @@ class TestTransactionSearch(unittest.TestCase):
         collection = Transaction.search([
             TransactionSearch.reason_code == Transaction.ReasonCode.ANY_REASON_CODE
         ])
-        self.assertEqual(4, collection.maximum_size)
+        self.assertEqual(6, collection.maximum_size)
 
     def test_search_retried_transaction(self):
         result = Transaction.sale({

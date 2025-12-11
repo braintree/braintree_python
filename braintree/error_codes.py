@@ -453,7 +453,6 @@ class ErrorCodes(object):
             IdToRemoveIsInvalid = "92025"
 
     class Transaction(object):
-        AdjustmentAmountMustBeGreaterThanZero = "95605"
         AmountCannotBeNegative = "81501"
         AmountDoesNotMatch3DSecureAmount = "91585"
         AmountIsInvalid = AmountFormatIsInvalid = "81503"

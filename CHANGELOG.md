@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.41.0
+* Add extra fields in `sender` and `receiver` details in `transfer` to `Transaction`
+* Remove unused error code `AdjustmentAmountMustBeGreaterThanZero`
+* Removed `venmo_merchant_data` from `Transaction`
+* Filter CreditCardVerification.search() to only return credit card verifications
+
 ## 4.40.0
 * Add `payment_account_reference` to `Transaction::ApplePayCard`, `Transaction::AndroidPayCard`, `Transaction::CreditCard`, and `CreditCardVerification`
 * Add `processing_merchant_category_code` field in `Transaction`

@@ -10,10 +10,15 @@ pipeline {
     SLACK_CHANNEL = "#auto-team-sdk-builds"
   }
 
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '50'))
+    timestamps()
+    timeout(time: 120, unit: 'MINUTES')
+  }
+
   stages {
     stage("Audit") {
       parallel {
-        // Runs a static code analysis scan and posts results to the PayPal Polaris server
         stage("CodeQL") {
           agent {
             node {
@@ -35,6 +40,64 @@ pipeline {
           }
         }
       }
+    }
+
+    stage("SDK Tests") {
+      when {
+        branch 'master'
+      }
+
+      parallel {
+        stage("Python 3.5 Stretch") {
+          agent {
+            node {
+              label ""
+              customWorkspace "workspace/${REPO_NAME}"
+            }
+          }
+
+          steps {
+            build job: 'python_3.5-stretch_server_sdk_master', wait: true
+          }
+
+          post {
+            failure {
+              script {
+                FAILED_STAGE = env.STAGE_NAME
+              }
+            }
+          }
+        }
+
+        stage("Python 3.12 Bullseye") {
+          agent {
+            node {
+              label ""
+              customWorkspace "workspace/${REPO_NAME}"
+            }
+          }
+
+          steps {
+            build job: 'python_3.12-bullseye_server_sdk_master', wait: true
+          }
+
+          post {
+            failure {
+              script {
+                FAILED_STAGE = env.STAGE_NAME
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    unsuccessful {
+      slackSend color: "danger",
+        channel: "${env.SLACK_CHANNEL}",
+        message: "${env.JOB_NAME} - #${env.BUILD_NUMBER} Failure after ${currentBuild.durationString} at stage \"${FAILED_STAGE}\"(<${env.BUILD_URL}|Open>)"
     }
   }
 }

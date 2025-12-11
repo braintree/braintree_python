@@ -105,23 +105,33 @@ class PackageTracking(unittest.TestCase):
                 ],
             })
         self.assertTrue(package_result_2.is_success)
-        self.assertIsNotNone(package_result_2.transaction.packages[1])
-        self.assertEqual("FEDEX", package_result_2.transaction.packages[1].carrier)
-        self.assertEqual("08594809767HGH0L", package_result_2.transaction.packages[1].tracking_number)
-        self.assertIsNone(package_result_2.transaction.packages[1].paypal_tracker_id)
-
+        
+        fedex_package = next(
+            (pkg for pkg in package_result_2.transaction.packages
+             if pkg.carrier == "FEDEX" and pkg.tracking_number == "08594809767HGH0L"),
+            None
+        )
+        self.assertIsNotNone(fedex_package, "FEDEX package with tracking number 08594809767HGH0L not found")
+        self.assertIsNone(fedex_package.paypal_tracker_id)
+        
         transaction_found = Transaction.find(package_result_2.transaction.id)
-        self.assertTrue(2, len(transaction_found.packages))
-        self.assertIsNotNone(transaction_found.packages[0].id)
-        self.assertEqual("UPS", transaction_found.packages[0].carrier)
-        self.assertEqual("1Z5338FF0107231059", transaction_found.packages[0].tracking_number)
-        # In test environment, since we do not have jobstream setup paypal tracker id is going to be nil, this is just to assert that we could access it
-        self.assertIsNone(transaction_found.packages[0].paypal_tracker_id)
+        ups_package = next(
+                (pkg for pkg in transaction_found.packages
+                 if pkg.carrier == "UPS" and pkg.tracking_number == "1Z5338FF0107231059"),
+                 None
+        )
+        self.assertIsNotNone(ups_package, "UPS package not found")
+        self.assertIsNotNone(ups_package.id)
+        self.assertIsNone(ups_package.paypal_tracker_id)
 
-        self.assertIsNotNone(transaction_found.packages[1].id)
-        self.assertEqual("FEDEX", transaction_found.packages[1].carrier)
-        self.assertEqual("08594809767HGH0L", transaction_found.packages[1].tracking_number)
-        self.assertIsNone(transaction_found.packages[1].paypal_tracker_id)
+        fedex_package_found = next(
+                (pkg for pkg in transaction_found.packages
+                 if pkg.carrier == "FEDEX" and pkg.tracking_number == "08594809767HGH0L"),
+                None
+        )
+        self.assertIsNotNone(fedex_package_found, "FEDEX package not found")
+        self.assertIsNotNone(fedex_package_found.id)
+        self.assertIsNone(fedex_package_found.paypal_tracker_id)
 
     def test_package_tracking_render_paypal_tracker_id(self):
         #find transaction with existing tracker created

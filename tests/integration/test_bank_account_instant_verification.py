@@ -35,11 +35,11 @@ class TestBankAccountInstantVerification(unittest.TestCase):
                 self.assert_has_attributes(actual_value, expected_value)
             elif callable(expected_value):
                 # Handle type checks and regex patterns
-                self.assertTrue(expected_value(actual_value), f"Expected {key} to match predicate, got {actual_value}")
+                self.assertTrue(expected_value(actual_value), "Expected {} to match predicate, got {}".format(key, actual_value))
             elif expected_value is not None:
-                self.assertEqual(expected_value, actual_value, f"Expected {key} to be {expected_value}, got {actual_value}")
+                self.assertEqual(expected_value, actual_value, "Expected {} to be {}, got {}".format(key, expected_value, actual_value))
             else:
-                self.assertIsNotNone(actual_value, f"Expected {key} to not be None")
+                self.assertIsNotNone(actual_value, "Expected {} to not be None".format(key))
 
     def generate_us_bank_account_nonce_via_open_banking(self):
         config = Configuration(
@@ -87,7 +87,7 @@ class TestBankAccountInstantVerification(unittest.TestCase):
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Braintree-Version': '2019-01-01',
-            'User-Agent': f'Braintree Python Library {braintree.version.Version}',
+            'User-Agent': 'Braintree Python Library {}'.format(braintree.version.Version),
             'X-ApiVersion': Configuration.api_version()
         }
         
@@ -100,11 +100,11 @@ class TestBankAccountInstantVerification(unittest.TestCase):
         )
 
         if response.status_code != 200:
-            raise Exception(f'HTTP error {response.status_code}: {response.text}')
-        
+            raise Exception('HTTP error {}: {}'.format(response.status_code, response.text))
+
         response_data = response.json()
         if 'tenant_token' not in response_data:
-            raise Exception(f'Open Banking tokenization failed: {response_data}')
+            raise Exception('Open Banking tokenization failed: {}'.format(response_data))
         
         return response_data['tenant_token']
 
@@ -116,7 +116,7 @@ class TestBankAccountInstantVerification(unittest.TestCase):
 
         result = self.gateway.bank_account_instant_verification.create_jwt(request)
 
-        self.assertTrue(result.is_success, f"Expected success but got errors: {getattr(result, 'errors', 'none')}")
+        self.assertTrue(result.is_success, "Expected success but got errors: {}".format(getattr(result, 'errors', 'none')))
         self.assertIsNotNone(result.bank_account_instant_verification_jwt)
         self.assertIsNotNone(result.bank_account_instant_verification_jwt.jwt)
         self.assertNotEqual("", result.bank_account_instant_verification_jwt.jwt)
@@ -167,7 +167,7 @@ class TestBankAccountInstantVerification(unittest.TestCase):
 
         transaction_result = self.us_bank_gateway.transaction.sale(transaction_request)
 
-        self.assertTrue(transaction_result.is_success, f"Expected transaction success but got failure with validation errors")
+        self.assertTrue(transaction_result.is_success, "Expected transaction success but got failure with validation errors")
         transaction = transaction_result.transaction
 
         expected_transaction = {
@@ -210,7 +210,7 @@ class TestBankAccountInstantVerification(unittest.TestCase):
         }
 
         payment_method_result = self.us_bank_gateway.payment_method.create(payment_method_request)
-        self.assertTrue(payment_method_result.is_success, f"Expected payment method creation success but got failure with validation errors")
+        self.assertTrue(payment_method_result.is_success, "Expected payment method creation success but got failure with validation errors")
 
         us_bank_account = payment_method_result.payment_method
 
@@ -242,7 +242,7 @@ class TestBankAccountInstantVerification(unittest.TestCase):
         }
 
         transaction_result = self.us_bank_gateway.transaction.sale(transaction_request)
-        self.assertTrue(transaction_result.is_success, f"Expected transaction success but got failure")
+        self.assertTrue(transaction_result.is_success, "Expected transaction success but got failure")
         transaction = transaction_result.transaction
 
         expected_transaction = {

@@ -1,4 +1,4 @@
-from html import escape
+from urllib.parse import quote
 from braintree.apple_pay_options import ApplePayOptions
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
@@ -18,7 +18,7 @@ class ApplePayGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def unregister_domain(self, domain):
-        self.config.http().delete(self.config.base_merchant_path() + "/processing/apple_pay/unregister_domain?url=" + escape(domain))
+        self.config.http().delete(self.config.base_merchant_path() + "/processing/apple_pay/unregister_domain?url=" + quote(domain))
         return SuccessfulResult()
 
     def registered_domains(self):

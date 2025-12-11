@@ -107,7 +107,7 @@ class CustomerSessionIT(unittest.TestCase):
     def test_get_customer_recommendations(self):
         customer = self.build_customer_session_input()
         recommendation = Recommendations.PAYMENT_RECOMMENDATIONS
-        recommendationsList: List[Recommendations] = []
+        recommendationsList = []
         recommendationsList.append(recommendation)
         customer_recommendations_input = (
             CustomerRecommendationsInput
@@ -139,7 +139,7 @@ class CustomerSessionIT(unittest.TestCase):
             .build()
         )
         recommendation = Recommendations.PAYMENT_RECOMMENDATIONS
-        recommendationsList: List[Recommendations] = []
+        recommendationsList = []
         recommendationsList.append(recommendation)
         customer_recommendations_input = (
             CustomerRecommendationsInput

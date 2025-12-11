@@ -146,19 +146,22 @@ class TestTransactionGateway(unittest.TestCase):
             environment=Environment.Development
         )
 
-        result = gateway.merchant.create({
-            "email": "name@email.com",
-            "country_code_alpha3": "GBR",
-            "payment_methods": ["credit_card", "paypal"]
+        code = TestHelper.create_grant(gateway, {
+            "merchant_public_id": "partner_merchant_id",
+            "scope": "read_write"
         })
 
-        gateway = BraintreeGateway(
+        result = gateway.oauth.create_token_from_code({
+            "code": code,
+            "scope": "read_write"
+        })
+
+        merchant_gateway = BraintreeGateway(
             access_token=result.credentials.access_token,
-            environment=Environment.Development
         )
 
-        result = gateway.transaction.sale({
-            "amount": "4000.00",
+        transaction_result = merchant_gateway.transaction.sale({
+            "amount": "5001.00",
             "billing": {
                 "street_address": "200 Fake Street"
             },
@@ -168,8 +171,8 @@ class TestTransactionGateway(unittest.TestCase):
             }
         })
 
-        self.assertFalse(result.is_success)
-        transaction = result.transaction
+        self.assertFalse(transaction_result.is_success)
+        transaction = transaction_result.transaction
         self.assertEqual(Transaction.GatewayRejectionReason.ApplicationIncomplete, transaction.gateway_rejection_reason)
 
     def test_sale_with_apple_pay_params(self):
