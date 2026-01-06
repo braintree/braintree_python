@@ -1,5 +1,7 @@
 # Changelog
 
+* Requests sessions is initialized only once instead of it being done in each request.
+
 ## 4.41.0
 * Add extra fields in `sender` and `receiver` details in `transfer` to `Transaction`
 * Remove unused error code `AdjustmentAmountMustBeGreaterThanZero`

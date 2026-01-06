@@ -55,9 +55,10 @@ class Http(object):
         else:
             raise UnexpectedError("Unexpected HTTP_RESPONSE " + str(status))
 
-    def __init__(self, config, environment=None):
+    def __init__(self, config, environment=None, requests_session=None):
         self.config = config
         self.environment = environment or self.config.environment
+        self.requests_session = requests_session or requests.Session()
 
     def post(self, path, params=None):
         return self._make_request("POST", path, Http.ContentType.Xml, params)
@@ -100,35 +101,26 @@ class Http(object):
                     return XmlUtil.dict_from_xml(response_body)
 
     def http_do(self, http_verb, path, headers, request_body):
-        data = request_body
-        files = None
+        data, files = request_body, None
         full_path = self.__full_path(path)
 
-        if type(request_body) is tuple:
-            data = request_body[0]
-            files = request_body[1]
+        if isinstance(request_body, tuple):
+            data, files = request_body[0], request_body[1]
 
         if (self.config.environment == Environment.Development):
           verify = False
         else:
           verify = self.environment.ssl_certificate
 
-        with requests.Session() as session:
-            request = requests.Request(
-                method=http_verb,
-                url=full_path,
-                headers=headers,
-                data=data,
-                files=files)
-            prepared_request = request.prepare()
-            prepared_request.url = full_path
-            # there's a bug in requests module that requires we manually update proxy settings,
-            # see https://github.com/psf/requests/issues/5677
-            session.proxies.update(requests.utils.getproxies())
-
-            response = session.send(prepared_request,
-                verify=verify,
-                timeout=self.config.timeout)
+        response = self.requests_session.request(
+            method=http_verb,
+            url=full_path,
+            headers=headers,
+            data=data,
+            files=files,
+            verify=verify,
+            timeout=self.config.timeout,
+        )
 
         return [response.status_code, response.text]
 
@@ -174,7 +166,8 @@ class Http(object):
         if content_type == Http.ContentType.Xml:
             headers["Content-type"] = Http.ContentType.Xml
 
-        headers.update(header_overrides or {})
+        if header_overrides is not None:
+            headers.update(header_overrides)
 
         return headers
 

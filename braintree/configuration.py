@@ -1,3 +1,4 @@
+import requests
 import braintree
 from braintree.credentials_parser import CredentialsParser
 from braintree.environment import Environment
@@ -101,8 +102,10 @@ class Configuration(object):
         self.access_token = parser.access_token
         self.timeout = kwargs.get("timeout", 60)
         self.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
-
         http_strategy = kwargs.get("http_strategy", None)
+        self.requests_session = requests.Session()
+        # Work around known proxy bug (see https://github.com/psf/requests/issues/5677)
+        self.requests_session.proxies.update(requests.utils.getproxies())
 
         if http_strategy:
             self._http_strategy = http_strategy(self, self.environment)
@@ -119,7 +122,7 @@ class Configuration(object):
         return self.environment.protocol + self.environment.graphql_server_and_port + "/graphql"
 
     def http(self):
-        return braintree.util.http.Http(self)
+        return braintree.util.http.Http(self, requests_session=self.requests_session)
 
     def graphql_client(self):
         return GraphQLClient(self)

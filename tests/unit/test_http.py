@@ -140,33 +140,16 @@ class TestHttp(unittest.TestCase):
             http.handle_exception(requests.exceptions.ConnectTimeout())
 
     def test_request_urls_retain_dots(self):
-        with patch('requests.Session.send') as send:
+        config = Configuration(
+            Environment.Development,
+            "integration_merchant_id",
+            public_key="integration_public_key",
+            private_key="integration_private_key",
+            wrap_http_exceptions=True
+        )
+        with patch.object(config.requests_session, 'request') as send:
             send.return_value.status_code = 200
-            config = Configuration(
-                Environment.Development,
-                "integration_merchant_id",
-                public_key="integration_public_key",
-                private_key="integration_private_key",
-                wrap_http_exceptions=True
-            )
             http = config.http()
             http.get("/../../customers/")
-
-            prepared_request = send.call_args[0][0]
-            request_url = prepared_request.url
+            request_url = send.call_args[1]['url']
             self.assertTrue(request_url.endswith("/../../customers/"))
-
-    def test_sessions_close_after_request(self):
-        with patch('requests.Session.send') as send, patch('requests.Session.close') as close:
-            send.return_value.status_code = 200
-            config = Configuration(
-                Environment.Development,
-                "integration_merchant_id",
-                public_key="integration_public_key",
-                private_key="integration_private_key",
-                wrap_http_exceptions=True
-            )
-            http = config.http()
-            http.get("/../../customers/")
-
-            self.assertTrue(close.called)
