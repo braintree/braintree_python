@@ -12,7 +12,7 @@ class UsBankAccount(Resource):
     @staticmethod
     def sale(token, transactionRequest):
         transactionRequest["payment_method_token"] = token
-        if "options" not in transactionRequest:
+        if not "options" in transactionRequest:
             transactionRequest["options"] = {}
         transactionRequest["options"]["submit_for_settlement"] = True
         return Configuration.gateway().transaction.sale(transactionRequest)

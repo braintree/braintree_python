@@ -77,7 +77,7 @@ class TestPayPalPaymentResourceGateway(unittest.TestCase):
         }
         try:
             self.paypal_payment_resource_gateway.update(request)
-        except Exception:
+        except:
             pass
 
         self.gateway.config.http().put.assert_called_once_with(

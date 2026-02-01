@@ -52,7 +52,7 @@ class ResourceCollection(object):
 
     @staticmethod
     def _extract_as_array(results, attribute):
-        if attribute not in results:
+        if not attribute in results:
             return []
 
         value = results[attribute]
