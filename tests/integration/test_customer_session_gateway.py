@@ -12,9 +12,7 @@ from braintree import (
 )
 from braintree.graphql.enums.recommended_payment_option import RecommendedPaymentOption
 from braintree.exceptions.authorization_error import AuthorizationError
-from braintree.util.graphql_client import GraphQLClient
 from decimal import Decimal 
-import json 
 
 class CustomerSessionIT(unittest.TestCase):
 

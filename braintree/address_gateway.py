@@ -1,5 +1,4 @@
 import re
-import braintree
 from braintree.address import Address
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError

@@ -1,7 +1,5 @@
 import re
-import sys
 from base64 import decodebytes
-import sys
 from braintree.exceptions.invalid_signature_error import InvalidSignatureError
 from braintree.exceptions.invalid_challenge_error import InvalidChallengeError
 from braintree.util.crypto import Crypto

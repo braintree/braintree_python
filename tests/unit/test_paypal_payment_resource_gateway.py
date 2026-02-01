@@ -4,7 +4,6 @@ from braintree.paypal_payment_resource import PayPalPaymentResource
 from braintree.resource import Resource
 from unittest.mock import patch, MagicMock
 from decimal import Decimal
-from braintree.util.xml_util import XmlUtil
 class TestPayPalPaymentResourceGateway(unittest.TestCase):
     def setUp(self):
         self.gateway = MagicMock()
@@ -78,7 +77,7 @@ class TestPayPalPaymentResourceGateway(unittest.TestCase):
         }
         try:
             self.paypal_payment_resource_gateway.update(request)
-        except:
+        except Exception:
             pass
 
         self.gateway.config.http().put.assert_called_once_with(

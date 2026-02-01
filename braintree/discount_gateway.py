@@ -1,4 +1,3 @@
-import braintree
 from braintree.discount import Discount
 from braintree.resource_collection import ResourceCollection
 

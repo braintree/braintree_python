@@ -1,4 +1,3 @@
-import braintree
 from braintree.add_on import AddOn
 from braintree.resource_collection import ResourceCollection
 

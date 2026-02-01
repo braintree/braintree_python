@@ -1,7 +1,3 @@
-import warnings
-from braintree.util.http import Http
-from braintree.successful_result import SuccessfulResult
-from braintree.error_result import ErrorResult
 from braintree.resource import Resource
 from braintree.apple_pay_card import ApplePayCard
 from braintree.android_pay_card import AndroidPayCard
@@ -16,9 +12,6 @@ from braintree.visa_checkout_card import VisaCheckoutCard
 from braintree.masterpass_card import MasterpassCard
 from braintree.address import Address
 from braintree.configuration import Configuration
-from braintree.ids_search import IdsSearch
-from braintree.exceptions.not_found_error import NotFoundError
-from braintree.resource_collection import ResourceCollection
 # NEXT_MAJOR_VERSION remove SamsungPayCard
 from braintree.samsung_pay_card import SamsungPayCard
 

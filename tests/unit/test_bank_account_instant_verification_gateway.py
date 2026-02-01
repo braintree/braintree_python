@@ -1,10 +1,7 @@
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from braintree.bank_account_instant_verification_gateway import BankAccountInstantVerificationGateway
 from braintree.bank_account_instant_verification_jwt_request import BankAccountInstantVerificationJwtRequest
-from braintree.bank_account_instant_verification_jwt import BankAccountInstantVerificationJwt
-from braintree.successful_result import SuccessfulResult
-from braintree.error_result import ErrorResult
 
 
 class TestBankAccountInstantVerificationGateway(unittest.TestCase):

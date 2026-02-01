@@ -1,7 +1,6 @@
 from braintree.resource import Resource
 from braintree.paypal_payment_resource import PayPalPaymentResource
 from braintree.payment_method_nonce import PaymentMethodNonce
-from braintree.util.xml_util import XmlUtil
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.unexpected_error import UnexpectedError

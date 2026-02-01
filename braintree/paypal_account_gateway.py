@@ -1,4 +1,3 @@
-import braintree
 from braintree.paypal_account import PayPalAccount
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError

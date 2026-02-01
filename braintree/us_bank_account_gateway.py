@@ -1,4 +1,3 @@
-import braintree
 from braintree.us_bank_account import UsBankAccount
 from braintree.exceptions.not_found_error import NotFoundError
 

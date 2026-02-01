@@ -1,10 +1,6 @@
 from tests.test_helper import *
 import json
-import urllib
-import datetime
 import braintree
-from braintree.util import Http
-from base64 import b64decode
 
 class TestClientTokenGenerate(unittest.TestCase):
     def test_allows_client_token_version_to_be_specified(self):

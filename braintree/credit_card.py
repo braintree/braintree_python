@@ -1,5 +1,4 @@
 import braintree
-import warnings
 from braintree.resource import Resource
 from braintree.address import Address
 from braintree.configuration import Configuration

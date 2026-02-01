@@ -1,4 +1,3 @@
-from braintree.configuration import Configuration
 from braintree.resource import Resource
 
 class AccountUpdaterDailyReport(Resource):

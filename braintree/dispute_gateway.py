@@ -1,6 +1,3 @@
-import braintree
-import re
-import warnings
 from braintree.dispute import Dispute
 from braintree.dispute_details import DisputeEvidence
 from braintree.error_result import ErrorResult

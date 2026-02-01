@@ -3,17 +3,14 @@ from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
-from http.client import HTTPConnection
-from subprocess import Popen, PIPE
 from braintree.successful_result import SuccessfulResult
 from braintree.attribute_getter import AttributeGetter
-from urllib.parse import urlencode, quote_plus
+from urllib.parse import quote_plus
 import json
 import os
 import random
 import re
 import requests
-import subprocess
 import sys
 import time
 import unittest
@@ -22,7 +19,6 @@ import warnings
 from braintree import *
 from braintree.exceptions import *
 from braintree.test.credit_card_numbers import CreditCardNumbers
-from braintree.test.nonces import Nonces
 from braintree.testing_gateway import *
 from braintree.util import *
 

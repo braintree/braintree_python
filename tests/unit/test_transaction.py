@@ -6,7 +6,6 @@ from braintree.meta_checkout_card import MetaCheckoutCard
 from braintree.meta_checkout_token import MetaCheckoutToken
 from datetime import datetime
 from datetime import date
-from braintree.authorization_adjustment import AuthorizationAdjustment
 from unittest.mock import MagicMock
 
 

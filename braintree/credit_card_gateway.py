@@ -1,4 +1,3 @@
-import braintree
 import warnings
 from braintree.credit_card import CreditCard
 from braintree.error_result import ErrorResult

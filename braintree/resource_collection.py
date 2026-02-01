@@ -1,4 +1,3 @@
-import braintree
 from braintree.exceptions.unexpected_error import UnexpectedError
 
 class ResourceCollection(object):
@@ -53,7 +52,7 @@ class ResourceCollection(object):
 
     @staticmethod
     def _extract_as_array(results, attribute):
-        if not attribute in results:
+        if attribute not in results:
             return []
 
         value = results[attribute]

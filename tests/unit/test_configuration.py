@@ -1,6 +1,5 @@
 from tests.test_helper import *
 import braintree
-import os
 import importlib
 
 class TestConfiguration(unittest.TestCase):

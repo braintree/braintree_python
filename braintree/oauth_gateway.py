@@ -1,10 +1,7 @@
-import braintree
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
-from braintree.exceptions.not_found_error import NotFoundError
 from braintree.oauth_credentials import OAuthCredentials
 
-import sys
 from urllib.parse import quote_plus
 from functools import reduce
 

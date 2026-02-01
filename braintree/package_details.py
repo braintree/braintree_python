@@ -1,5 +1,4 @@
 from braintree.attribute_getter import AttributeGetter
-from warnings import warn
 
 class PackageDetails(AttributeGetter):
     """

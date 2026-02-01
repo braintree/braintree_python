@@ -1,4 +1,3 @@
-import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 from braintree.ach_mandate import AchMandate
@@ -13,7 +12,7 @@ class UsBankAccount(Resource):
     @staticmethod
     def sale(token, transactionRequest):
         transactionRequest["payment_method_token"] = token
-        if not "options" in transactionRequest:
+        if "options" not in transactionRequest:
             transactionRequest["options"] = {}
         transactionRequest["options"]["submit_for_settlement"] = True
         return Configuration.gateway().transaction.sale(transactionRequest)

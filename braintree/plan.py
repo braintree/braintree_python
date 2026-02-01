@@ -1,12 +1,7 @@
-from braintree.util.http import Http
-import braintree
 from braintree.add_on import AddOn
 from braintree.configuration import Configuration
 from braintree.discount import Discount
-from braintree.resource_collection import ResourceCollection
 from braintree.resource import Resource
-from braintree.successful_result import SuccessfulResult
-from braintree.error_result import ErrorResult
 
 class Plan(Resource):
 

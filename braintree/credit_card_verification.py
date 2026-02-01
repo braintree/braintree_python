@@ -49,7 +49,7 @@ class CreditCardVerification(AttributeGetter):
         else:
             self.risk_data = None
 
-        if "three_d_secure_info" in attributes and not attributes["three_d_secure_info"] is None:
+        if "three_d_secure_info" in attributes and attributes["three_d_secure_info"] is not None:
             self.three_d_secure_info = ThreeDSecureInfo(attributes["three_d_secure_info"])
         else:
             self.three_d_secure_info = None

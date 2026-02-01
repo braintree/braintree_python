@@ -1,6 +1,5 @@
 from braintree.util.crypto import Crypto
 from braintree.webhook_notification import WebhookNotification
-import sys
 from base64 import encodebytes
 from datetime import datetime
 

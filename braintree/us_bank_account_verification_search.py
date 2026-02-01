@@ -1,4 +1,3 @@
-from braintree.us_bank_account import UsBankAccount
 from braintree.us_bank_account_verification import UsBankAccountVerification
 from braintree.search import Search
 from braintree.util import Constants

@@ -1,4 +1,3 @@
-from unittest.mock import patch
 from tests.test_helper import *
 
 class TestTransactionSearch(unittest.TestCase):

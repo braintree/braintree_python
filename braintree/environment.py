@@ -64,7 +64,7 @@ class Environment(object):
             return environment
         try:
             return Environment.All[environment]
-        except KeyError as e:
+        except KeyError:
             raise ConfigurationError("Unable to process supplied environment")
 
     @staticmethod

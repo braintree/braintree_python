@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any
 from braintree.exceptions.server_error import ServerError
 from braintree.graphql.enums.recommended_payment_option import RecommendedPaymentOption
 from braintree.graphql.unions.customer_recommendations import CustomerRecommendations

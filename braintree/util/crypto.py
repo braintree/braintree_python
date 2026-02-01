@@ -1,6 +1,5 @@
 import hashlib
 import hmac
-import sys
 
 text_type = str
 

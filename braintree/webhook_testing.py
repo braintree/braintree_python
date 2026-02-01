@@ -1,4 +1,3 @@
-import braintree
 from braintree.configuration import Configuration
 
 class WebhookTesting(object):

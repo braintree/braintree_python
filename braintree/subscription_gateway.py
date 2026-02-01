@@ -1,4 +1,3 @@
-import re
 import braintree
 from braintree.subscription import Subscription
 from braintree.error_result import ErrorResult
