@@ -2,7 +2,6 @@ from tests.test_helper import *
 from braintree.configuration import Configuration
 from braintree.us_bank_account_verification import UsBankAccountVerification
 import requests
-import json
 
 class TestBankAccountInstantVerification(unittest.TestCase):
 

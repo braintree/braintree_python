@@ -1,4 +1,3 @@
-import braintree
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 from braintree.three_d_secure_info import ThreeDSecureInfo

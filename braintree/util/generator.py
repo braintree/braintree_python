@@ -1,5 +1,4 @@
 import datetime
-import sys
 from decimal import Decimal
 
 integer_types = int

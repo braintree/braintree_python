@@ -1,13 +1,5 @@
 from tests.test_helper import *
-from braintree.test.credit_card_numbers import CreditCardNumbers
-from braintree.payment_facilitator import PaymentFacilitator
-from braintree.sub_merchant import SubMerchant
-from braintree.meta_checkout_card import MetaCheckoutCard
-from braintree.meta_checkout_token import MetaCheckoutToken
-from datetime import datetime
 from datetime import date
-from braintree.authorization_adjustment import AuthorizationAdjustment
-from unittest.mock import MagicMock
 
 transfer_type = ["account_to_account", "person_to_person", "wallet_transfer", "fund_transfer", "fund_disbursement", "payroll_disbursement", "prepaid_top_up"]
 class TestTransactionTransferType(unittest.TestCase):

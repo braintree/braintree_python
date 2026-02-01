@@ -3,7 +3,6 @@ import warnings
 from braintree.customer import Customer
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.ids_search import IdsSearch
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult

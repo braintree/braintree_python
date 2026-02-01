@@ -1,5 +1,3 @@
-import mimetypes
-from braintree.successful_result import SuccessfulResult
 from braintree.resource import Resource
 from braintree.configuration import Configuration
 

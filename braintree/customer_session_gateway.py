@@ -1,5 +1,4 @@
 from typing import Dict
-import braintree
 from braintree.error_result import ErrorResult
 from braintree.exceptions.unexpected_error import UnexpectedError
 from braintree.successful_result import SuccessfulResult
@@ -7,11 +6,8 @@ from braintree.util.graphql_client import GraphQLClient
 from braintree.graphql import (
     CreateCustomerSessionInput,
     UpdateCustomerSessionInput,
-    CustomerRecommendations,
     CustomerRecommendationsInput,
     CustomerRecommendationsPayload,
-    RecommendedPaymentOption,
-    PaymentOptions,
 )
 
 class CustomerSessionGateway:

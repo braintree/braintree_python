@@ -1,4 +1,3 @@
-import urllib
 from braintree.util.crypto import Crypto
 
 class SignatureService(object):

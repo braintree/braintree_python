@@ -4,7 +4,6 @@ from braintree.connected_merchant_paypal_status_changed import ConnectedMerchant
 from braintree.connected_merchant_status_transitioned import ConnectedMerchantStatusTransitioned
 from braintree.disbursement import Disbursement
 from braintree.dispute import Dispute
-from braintree.error_result import ErrorResult
 from braintree.granted_payment_instrument_update import GrantedPaymentInstrumentUpdate
 from braintree.local_payment_completed import LocalPaymentCompleted
 from braintree.local_payment_expired import LocalPaymentExpired

@@ -1,4 +1,3 @@
-import sys
 import requests
 from base64 import encodebytes
 import json

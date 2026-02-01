@@ -1,5 +1,4 @@
 from tests.test_helper import *
-import time
 from braintree.test.nonces import Nonces
 
 class TestSepaDirectDebitAccount(unittest.TestCase):

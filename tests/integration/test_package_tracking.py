@@ -1,4 +1,3 @@
-import json
 from tests.test_helper import *
 from braintree.transaction import Transaction
 

@@ -1,8 +1,5 @@
-import braintree
-import warnings
 
 from braintree.attribute_getter import AttributeGetter
-from braintree.resource import Resource
 from braintree.configuration import Configuration
 
 class TransactionLineItem(AttributeGetter):

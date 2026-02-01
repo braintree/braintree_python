@@ -1,4 +1,3 @@
-import braintree
 import mimetypes
 from braintree.document_upload import DocumentUpload
 from braintree.error_result import ErrorResult

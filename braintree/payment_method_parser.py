@@ -1,7 +1,5 @@
-import braintree
 from braintree.apple_pay_card import ApplePayCard
 from braintree.credit_card import CreditCard
-from braintree.payment_method import PaymentMethod
 from braintree.paypal_account import PayPalAccount
 from braintree.europe_bank_account import EuropeBankAccount
 from braintree.android_pay_card import AndroidPayCard

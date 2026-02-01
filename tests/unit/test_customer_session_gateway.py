@@ -2,20 +2,12 @@ from braintree.braintree_gateway import BraintreeGateway
 from braintree.customer_session_gateway import CustomerSessionGateway
 from braintree.graphql import (
     CreateCustomerSessionInput,
-    CustomerSessionInput,
     UpdateCustomerSessionInput,
     CustomerRecommendationsInput,
-    CustomerRecommendations,
-    CustomerRecommendationsPayload,
-    PaymentOptions,
-    RecommendedPaymentOption,
     Recommendations
 )
-from braintree.error_result import ErrorResult
-from braintree.successful_result import SuccessfulResult
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 from tests.test_helper import unittest
-import json 
 
 class TestCustomerSessionGateway(unittest.TestCase):
     def setUp(self):

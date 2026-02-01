@@ -1,31 +1,14 @@
-import braintree
-from braintree.apple_pay_card import ApplePayCard
-from braintree.credit_card import CreditCard
 from braintree.payment_method import PaymentMethod
-from braintree.paypal_account import PayPalAccount
-from braintree.europe_bank_account import EuropeBankAccount
-from braintree.android_pay_card import AndroidPayCard
 # NEXT_MAJOR_VERSION remove amex express checkout
-from braintree.amex_express_checkout_card import AmexExpressCheckoutCard
-from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
-from braintree.venmo_account import VenmoAccount
-from braintree.us_bank_account import UsBankAccount
-from braintree.visa_checkout_card import VisaCheckoutCard
 # NEXT_MAJOR_VERSION remove masterpass
-from braintree.masterpass_card import MasterpassCard
 # NEXT_MAJOR_VERSION remove SamsungPayCard
-from braintree.samsung_pay_card import SamsungPayCard
-from braintree.unknown_payment_method import UnknownPaymentMethod
 from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
-from braintree.ids_search import IdsSearch
 from braintree.payment_method_nonce import PaymentMethodNonce
 from braintree.payment_method_parser import parse_payment_method
 from braintree.resource import Resource
-from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 
-import sys
 from urllib.parse import urlencode
 
 
@@ -38,7 +21,7 @@ class PaymentMethodGateway(object):
         if params is None:
             params = {}
         Resource.verify_keys(params, PaymentMethod.create_signature())
-        self.__check_for_deprecated_attributes(params);
+        self.__check_for_deprecated_attributes(params)
         return self._post("/payment_methods", {"payment_method": params})
 
     def find(self, payment_method_token):
@@ -53,7 +36,7 @@ class PaymentMethodGateway(object):
 
     def update(self, payment_method_token, params):
         Resource.verify_keys(params, PaymentMethod.update_signature())
-        self.__check_for_deprecated_attributes(params);
+        self.__check_for_deprecated_attributes(params)
         try:
             if payment_method_token is None or payment_method_token.strip() == "":
                 raise NotFoundError()

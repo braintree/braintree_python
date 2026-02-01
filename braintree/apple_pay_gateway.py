@@ -2,7 +2,6 @@ from urllib.parse import quote
 from braintree.apple_pay_options import ApplePayOptions
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
-from braintree.exceptions.unexpected_error import UnexpectedError
 
 class ApplePayGateway(object):
     def __init__(self, gateway):

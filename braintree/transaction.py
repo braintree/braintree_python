@@ -1,4 +1,3 @@
-import braintree
 import warnings
 from decimal import Decimal
 from braintree.add_on import AddOn
@@ -14,31 +13,24 @@ from braintree.descriptor import Descriptor
 from braintree.disbursement_detail import DisbursementDetail
 from braintree.discount import Discount
 from braintree.dispute import Dispute
-from braintree.error_result import ErrorResult
 from braintree.europe_bank_account import EuropeBankAccount
-from braintree.exceptions.not_found_error import NotFoundError
 from braintree.facilitated_details import FacilitatedDetails
 from braintree.facilitator_details import FacilitatorDetails
-from braintree.liability_shift import LiabilityShift
 from braintree.local_payment import LocalPayment
 from braintree.masterpass_card import MasterpassCard
 from braintree.meta_checkout_card import MetaCheckoutCard
 from braintree.meta_checkout_token import MetaCheckoutToken
 from braintree.payment_facilitator import PaymentFacilitator
-from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.paypal_account import PayPalAccount
 from braintree.paypal_here import PayPalHere
 from braintree.resource import Resource
-from braintree.resource_collection import ResourceCollection
 from braintree.risk_data import RiskData
 from braintree.samsung_pay_card import SamsungPayCard
 from braintree.sepa_direct_debit_account import SepaDirectDebitAccount
 from braintree.package_details import PackageDetails
 from braintree.status_event import StatusEvent
 from braintree.subscription_details import SubscriptionDetails
-from braintree.successful_result import SuccessfulResult
 from braintree.three_d_secure_info import ThreeDSecureInfo
-from braintree.transaction_line_item import TransactionLineItem
 from braintree.transfer import Transfer
 from braintree.us_bank_account import UsBankAccount
 from braintree.venmo_account import VenmoAccount

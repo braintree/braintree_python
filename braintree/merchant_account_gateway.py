@@ -1,9 +1,7 @@
-import warnings
 from braintree.error_result import ErrorResult
 from braintree.merchant_account import MerchantAccount
 from braintree.paginated_collection import PaginatedCollection
 from braintree.paginated_result import PaginatedResult
-from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError

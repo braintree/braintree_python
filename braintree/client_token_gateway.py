@@ -1,4 +1,3 @@
-import braintree
 from braintree.resource import Resource
 from braintree.client_token import ClientToken
 from braintree import exceptions

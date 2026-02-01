@@ -1,5 +1,3 @@
-import braintree
-from braintree.address import Address
 from braintree.resource import Resource
 
 class MetaCheckoutToken(Resource):

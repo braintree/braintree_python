@@ -1,6 +1,3 @@
-import braintree
-from braintree.error_result import ErrorResult
-from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.exceptions.not_found_error import NotFoundError

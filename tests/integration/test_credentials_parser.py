@@ -1,5 +1,4 @@
 from tests.test_helper import *
-from braintree.test.nonces import Nonces
 from braintree.credentials_parser import CredentialsParser
 
 class TestCredentialsParser(unittest.TestCase):

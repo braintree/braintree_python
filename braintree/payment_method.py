@@ -1,4 +1,3 @@
-import braintree
 from braintree.address import Address
 from braintree.resource import Resource
 from braintree.configuration import Configuration

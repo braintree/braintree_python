@@ -1,6 +1,5 @@
 import os
 from tests.test_helper import *
-from braintree.test.nonces import Nonces
 
 class TestDocumentUpload(unittest.TestCase):
     def setUp(self):

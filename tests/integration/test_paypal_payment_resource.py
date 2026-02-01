@@ -1,7 +1,4 @@
-import braintree
 import unittest
-import os
-from braintree.test.nonces import Nonces
 from tests.test_helper import *
 
 

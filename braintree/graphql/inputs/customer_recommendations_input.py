@@ -1,7 +1,6 @@
 from typing import List, Dict
 from braintree.graphql.inputs.customer_session_input import CustomerSessionInput
 from braintree.graphql.inputs.paypal_purchase_unit_input import PayPalPurchaseUnitInput
-from braintree.graphql.enums.recommendations import Recommendations
 from braintree.util.experimental import Experimental
 
 @Experimental

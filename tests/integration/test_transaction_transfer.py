@@ -1,7 +1,4 @@
-import json
 from tests.test_helper import *
-from braintree.test.credit_card_numbers import CreditCardNumbers
-from braintree.payment_instrument_type import PaymentInstrumentType
 from braintree.transaction import Transaction
 from datetime import date
 

@@ -1,4 +1,3 @@
-import braintree
 
 class PaginatedCollection(object):
     """

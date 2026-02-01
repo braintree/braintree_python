@@ -1,5 +1,3 @@
-import braintree
-from braintree.resource import Resource
 from braintree.settlement_batch_summary import SettlementBatchSummary
 from braintree.successful_result import SuccessfulResult
 from braintree.error_result import ErrorResult

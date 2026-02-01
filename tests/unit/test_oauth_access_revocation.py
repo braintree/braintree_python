@@ -1,5 +1,4 @@
 from tests.test_helper import *
-import datetime
 
 class TestOAuthAccessRevocation(unittest.TestCase):
     def test_assigns_merchant_id(self):
