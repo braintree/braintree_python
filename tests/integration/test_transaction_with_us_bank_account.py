@@ -96,6 +96,26 @@ class TestTransactionWithUsBankAccount(unittest.TestCase):
         self.assertEqual(us_bank_account.verifications[0].verification_method, UsBankAccountVerification.VerificationMethod.TokenizedCheck)
         self.assertEqual(us_bank_account.verifications[0].status, UsBankAccountVerification.Status.Verified)
 
+    def test_sale_with_ach_type_option(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.us_bank_merchant_account_id,
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "options": {
+                "submit_for_settlement": True,
+                "store_in_vault": True,
+                "us_bank_account": {
+                    "ach_type": "standard"
+                }
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsNotNone(transaction.id)
+        self.assertEqual(transaction.ach_type, "standard")
+        self.assertEqual(transaction.requested_ach_type, "standard")
+
 class TestTransactionWithUsBankAccountCompliantMerchant(unittest.TestCase):
     def setUp(self):
         braintree.Configuration.configure(

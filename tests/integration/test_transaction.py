@@ -22,6 +22,21 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("1000", transaction.processor_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, transaction.processor_response_type)
 
+    def test_partially_authorized_value_set(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.PartiallyAuthorized,
+            "accept_partial_authorization": True,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("1004", transaction.processor_response_code)
+        self.assertTrue(transaction.partially_authorized)
+
     def test_sale_returns_risk_data(self):
         with FraudProtectionEnterpriseIntegrationMerchant():
             result = Transaction.sale({
@@ -5178,6 +5193,24 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Dispute.Reason.Retrieval, dispute.reason)
         self.assertEqual("retrievaltransaction", dispute.transaction_details.id)
         self.assertEqual(Decimal("1000.00"), dispute.transaction_details.amount)
+
+    def test_find_returns_transaction_with_sameday_ach_sameday_requested(self):
+        transaction = Transaction.find("sameday_ach_sameday_requested")
+
+        self.assertEqual("same_day", transaction.ach_type)
+        self.assertEqual("same_day", transaction.requested_ach_type)
+
+    def test_find_returns_transaction_with_standard_ach_sameday_requested(self):
+        transaction = Transaction.find("standard_ach_sameday_requested")
+
+        self.assertEqual("standard", transaction.ach_type)
+        self.assertEqual("same_day", transaction.requested_ach_type)
+
+    def test_find_returns_transaction_with_standard_ach_standard_requested(self):
+        transaction = Transaction.find("standard_ach_standard_requested")
+
+        self.assertEqual("standard", transaction.ach_type)
+        self.assertEqual("standard", transaction.requested_ach_type)
 
     def test_creating_paypal_transaction_with_one_time_use_nonce(self):
         result = Transaction.sale({

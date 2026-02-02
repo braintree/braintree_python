@@ -156,9 +156,10 @@ class TestHttp(unittest.TestCase):
             request_url = prepared_request.url
             self.assertTrue(request_url.endswith("/../../customers/"))
 
-    def test_sessions_close_after_request(self):
-        with patch('requests.Session.send') as send, patch('requests.Session.close') as close:
+    def test_sessions_reused_across_requests(self):
+        with patch('requests.Session.send') as send:
             send.return_value.status_code = 200
+            send.return_value.text = ""
             config = Configuration(
                 Environment.Development,
                 "integration_merchant_id",
@@ -167,6 +168,76 @@ class TestHttp(unittest.TestCase):
                 wrap_http_exceptions=True
             )
             http = config.http()
+
             http.get("/../../customers/")
 
-            self.assertTrue(close.called)
+            session_instance = http._get_session()
+            self.assertIsNotNone(session_instance)
+            self.assertIsInstance(session_instance, requests.Session)
+
+            http.get("/../../transactions/")
+
+            self.assertIs(http._get_session(), session_instance)
+            self.assertEqual(send.call_count, 2)
+
+    def test_sessions_are_thread_local(self):
+        import threading
+
+        with patch('requests.Session.send') as send:
+            send.return_value.status_code = 200
+            send.return_value.text = ""
+            config = Configuration(
+                Environment.Development,
+                "integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key",
+                wrap_http_exceptions=True
+            )
+            http = config.http()
+
+            sessions = {}
+
+            def make_request(thread_id):
+                http.get("/../../customers/")
+                sessions[thread_id] = http._get_session()
+
+            threads = []
+            for i in range(3):
+                t = threading.Thread(target=make_request, args=(i,))
+                threads.append(t)
+                t.start()
+
+            for t in threads:
+                t.join()
+
+            self.assertEqual(len(sessions), 3)
+            session_ids = [id(s) for s in sessions.values()]
+            self.assertEqual(len(session_ids), len(set(session_ids)))
+
+    def test_close_method_closes_session(self):
+        with patch('requests.Session.send') as send:
+            send.return_value.status_code = 200
+            send.return_value.text = ""
+            config = Configuration(
+                Environment.Development,
+                "integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key",
+                wrap_http_exceptions=True
+            )
+            http = config.http()
+
+            http.get("/../../customers/")
+            session = http._get_session()
+            self.assertIsNotNone(session)
+
+            with patch.object(session, 'close') as close:
+                http.close()
+                self.assertTrue(close.called)
+
+            self.assertFalse(hasattr(http._thread_local, 'session'))
+
+            http.get("/../../transactions/")
+            new_session = http._get_session()
+            self.assertIsNotNone(new_session)
+            self.assertIsNot(session, new_session)

@@ -64,6 +64,30 @@ else:
         print("  message: " + error.message)
 ```
 
+## Resource Management (Optional)
+
+For long-running applications, you can optionally call `close()` to explicitly release HTTP connections when you're done with a gateway instance:
+
+```python
+gateway = braintree.BraintreeGateway(config)
+
+# Process transactions...
+result = gateway.transaction.sale({...})
+
+# When completely done with this gateway instance
+gateway.close()
+```
+
+**When to use `close()`:**
+- Long-running web applications that create/destroy gateway instances frequently
+- Applications with strict resource management requirements
+- High-traffic applications with many concurrent threads
+
+**When you don't need `close()`:**
+- Short-lived scripts (resources are cleaned up when the script exits)
+- Applications that create a single gateway instance at startup and reuse it
+- Most typical use cases (Python's garbage collector handles cleanup automatically)
+
 ## Developing
 
 1. Create a [virtualenv](https://virtualenv.pypa.io/) called `venv`:

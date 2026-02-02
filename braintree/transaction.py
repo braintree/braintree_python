@@ -139,6 +139,7 @@ class Transaction(Resource):
        "network_transaction_id",
        "order_id",
        "packages",
+       "partially_authorized",
        "payment_instrument_type",
        "payment_method_token",
        "plan_id",
@@ -475,6 +476,7 @@ class Transaction(Resource):
     @staticmethod
     def create_signature():
         return [
+            "accept_partial_authorization",
             "account_funding_transaction",
             "amount",
             # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
@@ -583,6 +585,9 @@ class Transaction(Resource):
                         ],
                         "venmo": [
                             "profile_id"
+                        ],
+                        "us_bank_account": [
+                            "ach_type"
                         ],
                     },
                     {
@@ -925,6 +930,8 @@ class Transaction(Resource):
             self.payment_facilitator = PaymentFacilitator(attributes.pop("payment_facilitator"))
         if "transfer" in attributes:
             self.transfer = Transfer(attributes.pop("transfer"))
+        if "processor_response_code" in attributes:
+            self.partially_authorized = attributes["processor_response_code"] == "1004"
 
     @property
     def vault_billing_address(self):

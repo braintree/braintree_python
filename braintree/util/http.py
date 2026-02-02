@@ -1,4 +1,5 @@
 import sys
+import threading
 import requests
 from base64 import encodebytes
 import json
@@ -58,6 +59,17 @@ class Http(object):
     def __init__(self, config, environment=None):
         self.config = config
         self.environment = environment or self.config.environment
+        self._thread_local = threading.local()
+
+    def _get_session(self):
+        if not hasattr(self._thread_local, 'session'):
+            self._thread_local.session = requests.Session()
+        return self._thread_local.session
+
+    def close(self):
+        if hasattr(self._thread_local, 'session'):
+            self._thread_local.session.close()
+            del self._thread_local.session
 
     def post(self, path, params=None):
         return self._make_request("POST", path, Http.ContentType.Xml, params)
@@ -113,22 +125,23 @@ class Http(object):
         else:
           verify = self.environment.ssl_certificate
 
-        with requests.Session() as session:
-            request = requests.Request(
-                method=http_verb,
-                url=full_path,
-                headers=headers,
-                data=data,
-                files=files)
-            prepared_request = request.prepare()
-            prepared_request.url = full_path
-            # there's a bug in requests module that requires we manually update proxy settings,
-            # see https://github.com/psf/requests/issues/5677
-            session.proxies.update(requests.utils.getproxies())
+        session = self._get_session()
 
-            response = session.send(prepared_request,
-                verify=verify,
-                timeout=self.config.timeout)
+        request = requests.Request(
+            method=http_verb,
+            url=full_path,
+            headers=headers,
+            data=data,
+            files=files)
+        prepared_request = request.prepare()
+        prepared_request.url = full_path
+        # there's a bug in requests module that requires we manually update proxy settings,
+        # see https://github.com/psf/requests/issues/5677
+        session.proxies.update(requests.utils.getproxies())
+
+        response = session.send(prepared_request,
+            verify=verify,
+            timeout=self.config.timeout)
 
         return [response.status_code, response.text]
 

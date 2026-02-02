@@ -76,3 +76,7 @@ class BraintreeGateway(object):
         self.verification = CreditCardVerificationGateway(self)
         self.webhook_notification = WebhookNotificationGateway(self)
         self.webhook_testing = WebhookTestingGateway(self)
+
+    def close(self):
+        if self.config:
+            self.config.close()

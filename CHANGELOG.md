@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.42.0 
+* Update requests to not create a new request for every session
+* Add `accept_partial_authorization` to Transaction Gateway and `partially_authorized` to Transaction
+* Deprecate transactions for `visa_checkout_card` and maintain search functionality
+* Add `ach_type` to `options` -> `us_bank_account` in `Transaction.create`
+* Add `ach_type` and `requested_ach_type` response fields to `Transaction`
+
 ## 4.41.0
 * Add extra fields in `sender` and `receiver` details in `transfer` to `Transaction`
 * Remove unused error code `AdjustmentAmountMustBeGreaterThanZero`

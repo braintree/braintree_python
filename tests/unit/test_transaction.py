@@ -496,3 +496,45 @@ class TestTransaction(unittest.TestCase):
         transaction_gateway.sale(attributes)
         transaction_param = transaction_gateway._post.call_args[0][1]
         self.assertEqual(transaction_param['transaction']['processing_merchant_category_code'], "5411")
+
+    def test_partially_authorized_value_set(self):
+        attributes = {
+            "amount": '50.00',
+            "accept_partial_authorization": True,
+            "processor_response_code": "1004"
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertTrue(transaction.accept_partial_authorization)
+        self.assertTrue(transaction.partially_authorized)
+        self.assertEqual(transaction.processor_response_code, "1004")
+
+    def test_ach_type_and_requested_ach_type(self):
+        attributes = {
+            'amount': TransactionAmounts.Authorize,
+            'ach_type': 'standard',
+            'requested_ach_type': 'standard'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.ach_type, 'standard')
+        self.assertEqual(transaction.requested_ach_type, 'standard')
+
+    def test_sale_with_us_bank_account_ach_type_option(self):
+        attributes = {
+            "amount": TransactionAmounts.Authorize,
+            "payment_method_nonce": "fake-us-bank-account-nonce",
+            "options": {
+                "us_bank_account": {
+                    "ach_type": "standard"
+                }
+            }
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+        transaction_gateway.sale(attributes)
+        transaction_param = transaction_gateway._post.call_args[0][1]
+        self.assertEqual(
+            transaction_param['transaction']['options']['us_bank_account']['ach_type'],
+            'standard'
+        )

@@ -5,7 +5,10 @@ from braintree.credit_card_verification import CreditCardVerification
 
 class VisaCheckoutCard(Resource):
     """
-    A class representing Visa Checkout card
+    A class representing Visa Checkout card.
+
+    DEPRECATED: Visa Checkout is no longer supported for creating new transactions.
+    This class is retained for search functionality and historical transaction data only.
     """
     def __init__(self, gateway, attributes):
         Resource.__init__(self, gateway, attributes)

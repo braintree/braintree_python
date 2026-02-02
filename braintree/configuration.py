@@ -127,6 +127,10 @@ class Configuration(object):
     def http_strategy(self):
         return self._http_strategy
 
+    def close(self):
+        if self._http_strategy:
+            self._http_strategy.close()
+
     def has_client_credentials(self):
         return self.client_secret is not None and self.client_id is not None
 
