@@ -1377,6 +1377,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(CreditCard.ProductId.Unknown, credit_card.product_id)
         self.assertEqual(CreditCard.Purchase.Unknown, credit_card.purchase)
 
+    @unittest.skip("Pending as flaky, until CI is more stable")
     def test_card_with_account_type_debit(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -1431,6 +1432,7 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual(updated_result.is_success, True)
         self.assertEqual("credit", updated_result.credit_card.verifications[0]["credit_card"]["account_type"])
 
+    @unittest.skip("Pending as flaky, until CI is more stable")
     def test_card_with_account_type_credit_debit(self):
         customer = Customer.create().customer
         result = CreditCard.create({

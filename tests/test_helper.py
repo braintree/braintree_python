@@ -99,6 +99,7 @@ class TestHelper(object):
     hiper_brl_merchant_account_id = "hiper_brl"
     non_default_merchant_account_id = "sandbox_credit_card_non_default"
     pinless_debit_merchant_account_id = "pinless_debit"
+    suspended_merchant_account_id = "suspended_account"
     three_d_secure_merchant_account_id = "three_d_secure_merchant_account"
     us_bank_merchant_account_id = "us_bank_merchant_account"
 

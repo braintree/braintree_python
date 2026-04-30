@@ -538,3 +538,12 @@ class TestTransaction(unittest.TestCase):
             transaction_param['transaction']['options']['us_bank_account']['ach_type'],
             'standard'
         )
+    
+    def test_surcharge_amount_set(self):
+        attributes = {
+            "amount": '50.00',
+            "surcharge_amount": Decimal('1.00'),
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.surcharge_amount, Decimal("1.00"))

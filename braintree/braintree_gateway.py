@@ -12,6 +12,7 @@ from braintree.discount_gateway import DiscountGateway
 from braintree.dispute_gateway import DisputeGateway
 from braintree.document_upload_gateway import DocumentUploadGateway
 from braintree.exchange_rate_quote_gateway import ExchangeRateQuoteGateway
+from braintree.local_payment_context_gateway import LocalPaymentContextGateway
 from braintree.merchant_account_gateway import MerchantAccountGateway
 from braintree.merchant_gateway import MerchantGateway
 from braintree.oauth_gateway import OAuthGateway
@@ -57,8 +58,10 @@ class BraintreeGateway(object):
         self.dispute = DisputeGateway(self)
         self.document_upload = DocumentUploadGateway(self)
         self.exchange_rate_quote = ExchangeRateQuoteGateway(self)
+        self.local_payment_context = LocalPaymentContextGateway(self)
+        # NEXT_MAJOR_VERSION remove the merchant create endpoint and this method
         self.merchant = MerchantGateway(self)
-        self.merchant_account = MerchantAccountGateway(self) 
+        self.merchant_account = MerchantAccountGateway(self)
         self.oauth = OAuthGateway(self)
         self.payment_method = PaymentMethodGateway(self)
         self.payment_method_nonce = PaymentMethodNonceGateway(self)

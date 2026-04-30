@@ -62,6 +62,7 @@ class ErrorCodes(object):
         MerchantNotConfigured = "93514"
         MerchantKeysAlreadyConfigured = "93515"
         MerchantKeysNotConfigured = "93516"
+        NetworkTransactionIdNotAllowed = "93532"
         CertificateInvalid = "93517"
         CertificateMismatch = "93519"
         InvalidToken = "83520"
@@ -69,6 +70,18 @@ class ErrorCodes(object):
         KeyMismatchStoringCertificate = "93522"
         CustomerIdIsInvalid = "93528"
         BillingAddressFormatIsInvalid = "93529"
+
+        class Options(object):
+            class Verification(object):
+                AccountTypeIsInvalid = "93538"
+                AccountTypeNotSupported = "93543"
+                AmountCannotBeNegative = "93535"
+                AmountFormatIsInvalid = "93534"
+                AmountIsTooLarge = "93537"
+                AmountNotSupportedByProcessor = "93536"
+                MerchantAccountIdIsInvalid = "93540"
+                MerchantAccountIsSuspended = "93541"
+                NotSupportedByProcessor = "93533"
 
     class AuthorizationFingerprint(object):
         MissingFingerprint = "93201"
@@ -168,12 +181,15 @@ class ErrorCodes(object):
         IdIsInvalid = "91610"
         IdIsNotAllowed = "91611"
         IdIsRequired = "91613"
-        IdIsTooLong = "91612"
+        IdIsTooLong = "91612" 
+        InternationalPhoneCountryCodeIsInvalid = "91625"
+        InternationalPhoneNationalNumberIsInvalid = "91626"
         LastNameIsTooLong = "81613"
         PhoneIsTooLong = "81614"
         VaultedPaymentInstrumentNonceBelongsToDifferentCustomer = "91617"
         WebsiteIsInvalid = WebsiteFormatIsInvalid = "81616"
         WebsiteIsTooLong = "81615"
+        
 
     class Descriptor(object):
         DynamicDescriptorsDisabled = "92203"
@@ -491,6 +507,12 @@ class ErrorCodes(object):
         DiscountAmountFormatIsInvalid = "915159"
         DiscountAmountIsTooLarge = "915161"
         ExchangeRateQuoteIdIsTooLong = "915229"
+        ApiRequestKeyTooLong = "915230"
+        ApiRequestKeyNotAllowed = "915231"
+        ApiRequestKeyCanBeReusedOnlyWithTheSameRequest = "915232"
+        ApiRequestKeyIsInFlight = "915233"
+        ApiRequestKeyWithFailedRequest = "915234"
+        ApiRequestKeyServerError = "915235"
         FailedAuthAdjustmentAllowRetry = "95603"
         FailedAuthAdjustmentHardDecline = "95602"
         FinalAuthSubmitForSettlementForDifferentAmount = "95601"

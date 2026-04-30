@@ -1,8 +1,6 @@
+import warnings
 from braintree.error_result import ErrorResult
-from braintree.resource import Resource
-from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
-from braintree.exceptions.not_found_error import NotFoundError
 from braintree.merchant import Merchant
 from braintree.oauth_credentials import OAuthCredentials
 
@@ -12,7 +10,10 @@ class MerchantGateway(object):
         self.gateway = gateway
         self.config = gateway.config
 
+    # NEXT_MAJOR_VERSION remove this method
+    # The merchant create endpoint has been disabled and this method will be removed in a future major version
     def create(self, params):
+        warnings.warn("gateway.merchant.create(...) is deprecated and will be removed in a future version.", DeprecationWarning)
         return self.__create_merchant(params)
 
     def __create_merchant(self, params=None):
@@ -29,4 +30,3 @@ class MerchantGateway(object):
             })
         else:
             return ErrorResult(self.gateway, response["api_error_response"])
-

@@ -39,6 +39,31 @@ pipeline {
             }
           }
         }
+
+        stage("SonarQube") {
+          agent {
+            node {
+              label ""
+              customWorkspace "workspace/${REPO_NAME}-sonar"
+            }
+          }
+
+          steps {
+            script {
+              sh "docker build -t braintree-python ."
+              sh "docker run --rm -e COVERAGE=1 -v \"\$(pwd):/braintree-python\" braintree-python /bin/bash -l -c 'pip3 install coverage && pip3 install . && python3 -m coverage run -m unittest discover tests/unit && python3 -m coverage xml'"
+              executeSonarQubeScan()
+            }
+          }
+
+          post {
+            failure {
+              script {
+                FAILED_STAGE = env.STAGE_NAME
+              }
+            }
+          }
+        }
       }
     }
 

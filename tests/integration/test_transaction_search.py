@@ -64,6 +64,7 @@ class TestTransactionSearch(unittest.TestCase):
         transaction = Transaction.find(transaction.id)
 
         collection = Transaction.search([
+            TransactionSearch.acquirer_reference_number == transaction.acquirer_reference_number,
             TransactionSearch.billing_company == "Braintree",
             TransactionSearch.billing_country_name == "United States of America",
             TransactionSearch.billing_extended_address == "Suite 123",
@@ -155,6 +156,7 @@ class TestTransactionSearch(unittest.TestCase):
         }).transaction
 
         search_criteria = {
+            "acquirer_reference_number" : transaction.acquirer_reference_number,
             "billing_company": "Braintree",
             "billing_country_name": "United States of America",
             "billing_extended_address": "Suite 123",

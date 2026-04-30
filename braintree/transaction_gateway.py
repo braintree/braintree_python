@@ -140,8 +140,14 @@ class TransactionGateway(object):
         except NotFoundError:
             raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
 
-    def void(self, transaction_id):
-        response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/void")
+    def void(self, transaction_id, params=None):
+
+        if params:
+            Resource.verify_keys(params, ["api_request_key"])
+        response = self.config.http().put(
+            self.config.base_merchant_path() + "/transactions/" + transaction_id + "/void",
+            {"transaction": params} if params else None
+        )
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
         elif "api_error_response" in response:

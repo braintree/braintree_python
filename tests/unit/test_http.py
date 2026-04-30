@@ -156,10 +156,11 @@ class TestHttp(unittest.TestCase):
             request_url = prepared_request.url
             self.assertTrue(request_url.endswith("/../../customers/"))
 
-    def test_sessions_reused_across_requests(self):
-        with patch('requests.Session.send') as send:
-            send.return_value.status_code = 200
-            send.return_value.text = ""
+    def test_sessions_reused_across_requests_within_idle_timeout(self):
+        with patch('requests.Session') as MockSession, \
+             patch('braintree.util.http.time.monotonic', side_effect=[0.0, 30.0]):
+            MockSession.return_value.send.return_value.status_code = 200
+            MockSession.return_value.send.return_value.text = ""
             config = Configuration(
                 Environment.Development,
                 "integration_merchant_id",
@@ -170,15 +171,48 @@ class TestHttp(unittest.TestCase):
             http = config.http()
 
             http.get("/../../customers/")
-
-            session_instance = http._get_session()
-            self.assertIsNotNone(session_instance)
-            self.assertIsInstance(session_instance, requests.Session)
-
             http.get("/../../transactions/")
 
-            self.assertIs(http._get_session(), session_instance)
-            self.assertEqual(send.call_count, 2)
+            self.assertEqual(MockSession.call_count, 1)
+
+    def test_session_recreated_after_idle_timeout(self):
+        with patch('requests.Session') as MockSession, \
+             patch('braintree.util.http.time.monotonic', side_effect=[0.0, 61.0]):
+            MockSession.return_value.send.return_value.status_code = 200
+            MockSession.return_value.send.return_value.text = ""
+            config = Configuration(
+                Environment.Development,
+                "integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key",
+                wrap_http_exceptions=True
+            )
+            http = config.http()
+
+            http.get("/../../customers/")
+            http.get("/../../transactions/")
+
+            self.assertEqual(MockSession.call_count, 2)
+
+    def test_max_connection_idle_seconds_is_configurable(self):
+        with patch('requests.Session') as MockSession, \
+             patch('braintree.util.http.time.monotonic', side_effect=[0.0, 11.0]):
+            MockSession.return_value.send.return_value.status_code = 200
+            MockSession.return_value.send.return_value.text = ""
+            config = Configuration(
+                Environment.Development,
+                "integration_merchant_id",
+                public_key="integration_public_key",
+                private_key="integration_private_key",
+                wrap_http_exceptions=True,
+                max_connection_idle_seconds=10
+            )
+            http = config.http()
+
+            http.get("/../../customers/")
+            http.get("/../../transactions/")
+
+            self.assertEqual(MockSession.call_count, 2)
 
     def test_sessions_are_thread_local(self):
         import threading

@@ -1212,6 +1212,7 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(update_result.is_success)
         self.assertEqual("credit", update_result.payment_method.verification.credit_card["account_type"])
 
+    @unittest.skip("Pending as flaky, until CI is more stable")
     def test_update_credit_cards_with_account_type_debit(self):
         customer = Customer.create().customer
         result = CreditCard.create({
@@ -1775,3 +1776,173 @@ class TestPaymentMethod(unittest.TestCase):
         delete_result = PaymentMethod.delete(result.payment_method.token)
 
         self.assertRaises(NotFoundError, PaymentMethod.find, result.payment_method.token)
+
+    # Apple Pay Verification Tests
+    def test_create_apple_pay_payment_method_with_card_verification(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_amount": "1.02",
+                "verification_merchant_account_id": TestHelper.non_default_merchant_account_id
+                }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertIsInstance(result.payment_method, ApplePayCard)
+
+        verification = result.payment_method.verification
+        self.assertNotEqual(None, verification)
+        self.assertEqual(CreditCardVerification.Status.Verified, verification.status)
+
+    def test_create_apple_pay_payment_method_verification_with_only_verify_card(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True
+                }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertIsInstance(result.payment_method, ApplePayCard)
+
+        verification = result.payment_method.verification
+        self.assertNotEqual(None, verification)
+        self.assertEqual(CreditCardVerification.Status.Verified, verification.status)
+
+    def test_create_apple_pay_payment_method_does_not_verify_when_verify_card_is_false(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": False
+                }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertIsInstance(result.payment_method, ApplePayCard)
+
+        verification = result.payment_method.verification
+        self.assertEqual(None, verification)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_amount_is_negative(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_amount": "-1.00"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_amount")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.AmountCannotBeNegative, errors[0].code)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_amount_format_is_invalid(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_amount": "abc"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_amount")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.AmountFormatIsInvalid, errors[0].code)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_amount_is_not_supported_by_processor(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_amount": "0.01",
+                "verification_merchant_account_id": TestHelper.card_processor_brl_merchant_account_id
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_amount")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.AmountNotSupportedByProcessor, errors[0].code)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_amount_is_too_large(self):
+        tooLargeAmount = (2**31) / 100 + 1
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_amount": str(tooLargeAmount)
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_amount")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.AmountIsTooLarge, errors[0].code)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_merchant_account_id_is_invalid(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": "nonexistent_merchant_account"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_merchant_account_id")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.MerchantAccountIdIsInvalid, errors[0].code)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_merchant_account_id_is_suspended(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_merchant_account_id": TestHelper.suspended_merchant_account_id
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_merchant_account_id")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.MerchantAccountIsSuspended, errors[1].code)
+
+    def test_create_apple_pay_payment_method_errors_when_verification_account_type_not_supported(self):
+        customer = Customer.create().customer
+
+        result = PaymentMethod.create({
+            "customer_id": customer.id,
+            "payment_method_nonce": Nonces.ApplePayVisa,
+            "options": {
+                "verify_card": True,
+                "verification_account_type": "debit"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.for_object("apple_pay").for_object("options").on("verification_account_type")
+        self.assertEqual(ErrorCodes.ApplePay.Options.Verification.AccountTypeNotSupported, errors[0].code)

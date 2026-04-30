@@ -1,5 +1,6 @@
 import braintree
 from braintree.resource import Resource
+from braintree.credit_card_verification import CreditCardVerification
 
 class ApplePayCard(Resource):
     """
@@ -26,6 +27,12 @@ class ApplePayCard(Resource):
         if "subscriptions" in attributes:
             self.subscriptions = [braintree.subscription.Subscription(gateway, subscription) for subscription in self.subscriptions]
 
+        if "verifications" in attributes and len(attributes["verifications"]) > 0:
+            sorted_verifications = sorted(attributes["verifications"], key=lambda verification: verification["created_at"], reverse=True)
+            self.verification = CreditCardVerification(gateway, sorted_verifications[0])
+        else:
+            self.verification = None
+
     @property
     def expiration_date(self):
         if not self.expiration_month or not self.expiration_year:
@@ -34,13 +41,20 @@ class ApplePayCard(Resource):
 
     @staticmethod
     def signature():
-        options = ["make_default"]
+        options = [
+            "make_default",
+            "verification_account_type",
+            "verification_amount",
+            "verification_merchant_account_id",
+            "verify_card"
+        ]
 
         signature = [
             "customer_id",
             "cardholder_name",
             "expiration_month",
             "expiration_year",
+            "network_transaction_id",
             "number",
             "cryptogram",
             "eci_indicator",

@@ -4,6 +4,7 @@ from braintree.transaction import Transaction
 from braintree.util import Constants
 
 class TransactionSearch:
+    acquirer_reference_number    = Search.TextNodeBuilder("acquirer_reference_number")
     billing_first_name           = Search.TextNodeBuilder("billing_first_name")
     billing_company              = Search.TextNodeBuilder("billing_company")
     billing_country_name         = Search.TextNodeBuilder("billing_country_name")

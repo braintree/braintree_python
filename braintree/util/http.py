@@ -1,5 +1,6 @@
 import sys
 import threading
+import time
 import requests
 from base64 import encodebytes
 import json
@@ -60,10 +61,19 @@ class Http(object):
         self.config = config
         self.environment = environment or self.config.environment
         self._thread_local = threading.local()
+        self._max_idle_seconds = getattr(config, 'max_connection_idle_seconds', 60)
 
     def _get_session(self):
-        if not hasattr(self._thread_local, 'session'):
+        now = time.monotonic()
+        last_used = getattr(self._thread_local, 'last_used', 0)
+
+        if not hasattr(self._thread_local, 'session') or \
+           (now - last_used) > self._max_idle_seconds:
+            if hasattr(self._thread_local, 'session'):
+                self._thread_local.session.close()
             self._thread_local.session = requests.Session()
+
+        self._thread_local.last_used = now
         return self._thread_local.session
 
     def close(self):

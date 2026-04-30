@@ -164,6 +164,7 @@ class Transaction(Resource):
        "status",
        "status_history",
        "subscription_id",
+       "surcharge_amount",
        "tax_amount",
        "tax_exempt",
        "type",
@@ -428,17 +429,18 @@ class Transaction(Resource):
         return Configuration.gateway().transaction.update_details(transaction_id, params)
 
     @staticmethod
-    def void(transaction_id):
+    def void(transaction_id, params=None):
         """
         Voids an existing transaction.
 
-        It expects a transaction_id.::
+        It expects a transaction_id and optional params.::
 
             result = braintree.Transaction.void("my_transaction_id")
+            result = braintree.Transaction.void("my_transaction_id", {"api_request_key": "key"})
 
         """
 
-        return Configuration.gateway().transaction.void(transaction_id)
+        return Configuration.gateway().transaction.void(transaction_id, params)
 
     @staticmethod
     def create(params):
@@ -477,8 +479,8 @@ class Transaction(Resource):
     def create_signature():
         return [
             "accept_partial_authorization",
-            "account_funding_transaction",
             "amount",
+            "api_request_key",
             # NEXT_MAJOR_VERSION use google_pay_card in public API (map to android_pay_card internally)
             {"android_pay_card": ["number", "cryptogram", "expiration_month", "expiration_year", "eci_indicator", "source_card_type", "source_card_last_four", "google_transaction_id"]},
             {"apple_pay_card": ["number", "cardholder_name", "cryptogram", "expiration_month", "expiration_year", "eci_indicator"]},
@@ -503,7 +505,9 @@ class Transaction(Resource):
             },
             {
                 "customer": [
-                    "id", "company", "email", "fax", "first_name", "last_name", "phone", "website"
+                    "id", "company", "email", "fax", "first_name",
+                    {"international_phone": ["country_code", "national_number"]},
+                    "last_name", "phone", "website"
                 ]
             },
             "customer_id",
@@ -628,6 +632,7 @@ class Transaction(Resource):
             },
             "shipping_address_id",
             "shipping_amount", "shipping_tax_amount", "ships_from_postal_code",
+            "surcharge_amount",
             "tax_amount",
             "tax_exempt", "three_d_secure_authentication_id",
             {
@@ -711,6 +716,7 @@ class Transaction(Resource):
     @staticmethod
     def submit_for_settlement_signature():
         return [
+                "api_request_key",
                 "order_id",
                 {"descriptor": ["name", "phone", "url"]},
                 "purchase_order_number",
@@ -818,7 +824,7 @@ class Transaction(Resource):
 
     @staticmethod
     def refund_signature():
-        return ["amount", "order_id", "merchant_account_id"]
+        return ["amount", "api_request_key", "order_id", "merchant_account_id"]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount, params=None):
@@ -846,6 +852,8 @@ class Transaction(Resource):
             self.shipping_amount = Decimal(self.shipping_amount)
         if "shipping_tax_amount" in attributes and getattr(self, "shipping_tax_amount", None):
             self.shipping_tax_amount = Decimal(self.shipping_tax_amount)
+        if "surcharge_amount" in attributes and getattr(self, "surcharge_amount", None):
+            self.surcharge_amount = Decimal(self.surcharge_amount)
         if "billing" in attributes:
             self.billing_details = Address(gateway, attributes.pop("billing"))
         if "credit_card" in attributes:

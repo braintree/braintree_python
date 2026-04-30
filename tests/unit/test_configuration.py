@@ -162,6 +162,43 @@ class TestConfiguration(unittest.TestCase):
         finally:
             Configuration.default_http_strategy = old_http_strategy
 
+    def test_configure_forwards_max_connection_idle_seconds_through_instantiate(self):
+        try:
+            Configuration.configure(
+                braintree.Environment.Sandbox,
+                'my_merchant_id',
+                'public_key',
+                'private_key',
+                max_connection_idle_seconds=30
+            )
+            config = Configuration.instantiate()
+            self.assertEqual(config.max_connection_idle_seconds, 30)
+        finally:
+            reset_braintree_configuration()
+
+    def test_for_partner_forwards_max_connection_idle_seconds(self):
+        config = Configuration.for_partner(
+            braintree.Environment.Sandbox,
+            'my_partner_id',
+            'public_key',
+            'private_key',
+            max_connection_idle_seconds=30
+        )
+        self.assertEqual(config.max_connection_idle_seconds, 30)
+
+    def test_max_connection_idle_seconds_defaults_to_60(self):
+        Configuration.configure(
+            braintree.Environment.Sandbox,
+            'my_merchant_id',
+            'public_key',
+            'private_key'
+        )
+        try:
+            config = Configuration.instantiate()
+            self.assertEqual(config.max_connection_idle_seconds, 60)
+        finally:
+            reset_braintree_configuration()
+
     def test_configuring_with_partial_client_credentials(self):
         with self.assertRaises(ConfigurationError) as error:
             Configuration(client_id='client_id$development$integration_client_id')

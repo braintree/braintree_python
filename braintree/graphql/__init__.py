@@ -3,14 +3,17 @@ from braintree.graphql.enums import (
     Recommendations, 
 )
 from braintree.graphql.inputs import (
-    PhoneInput,
-    CustomerSessionInput,
+    BillingAddressInput,
     CreateCustomerSessionInput,
-    UpdateCustomerSessionInput,
+    CreateLocalPaymentContextInput,
     CustomerRecommendationsInput,
-    MonetaryAmountInput, 
+    CustomerSessionInput,
+    MonetaryAmountInput,
+    PayerInfoInput,
     PayPalPayeeInput,
     PayPalPurchaseUnitInput,
+    PhoneInput,
+    UpdateCustomerSessionInput,
 )
 from braintree.graphql.types import (
     CustomerRecommendationsPayload,

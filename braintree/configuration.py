@@ -27,6 +27,7 @@ class Configuration(object):
         Configuration.default_http_strategy = kwargs.get("http_strategy", None)
         Configuration.timeout = kwargs.get("timeout", 60)
         Configuration.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
+        Configuration.max_connection_idle_seconds = kwargs.get("max_connection_idle_seconds", 60)
 
     @staticmethod
     def for_partner(environment, partner_id, public_key, private_key, **kwargs):
@@ -37,7 +38,8 @@ class Configuration(object):
             private_key=private_key,
             http_strategy=kwargs.get("http_strategy", None),
             timeout=kwargs.get("timeout", 60),
-            wrap_http_exceptions=kwargs.get("wrap_http_exceptions", False)
+            wrap_http_exceptions=kwargs.get("wrap_http_exceptions", False),
+            max_connection_idle_seconds=kwargs.get("max_connection_idle_seconds", 60)
         )
 
     @staticmethod
@@ -53,7 +55,8 @@ class Configuration(object):
             private_key=Configuration.private_key,
             http_strategy=Configuration.default_http_strategy,
             timeout=Configuration.timeout,
-            wrap_http_exceptions=Configuration.wrap_http_exceptions
+            wrap_http_exceptions=Configuration.wrap_http_exceptions,
+            max_connection_idle_seconds=Configuration.max_connection_idle_seconds
         )
 
     @staticmethod
@@ -101,6 +104,7 @@ class Configuration(object):
         self.access_token = parser.access_token
         self.timeout = kwargs.get("timeout", 60)
         self.wrap_http_exceptions = kwargs.get("wrap_http_exceptions", False)
+        self.max_connection_idle_seconds = kwargs.get("max_connection_idle_seconds", 60)
 
         http_strategy = kwargs.get("http_strategy", None)
 

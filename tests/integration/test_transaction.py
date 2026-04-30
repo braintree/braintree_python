@@ -437,6 +437,70 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual("3121234567", transaction.shipping_details.international_phone["national_number"])
         self.assertEqual(None, transaction.additional_processor_response)
 
+    def test_sale_with_invalid_customer_national_number_returns_error(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2011",
+            },
+            "customer": {
+                "first_name": "Dan",
+                "last_name": "Smith",
+                "international_phone": {"country_code": "1", "national_number": "3121234567111"},
+            },
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.deep_errors 
+        error_codes = [error.code for error in errors] 
+        self.assertEqual(len(error_codes), 1)
+        self.assertIn(ErrorCodes.Customer.InternationalPhoneNationalNumberIsInvalid, error_codes)
+        
+
+    def test_sale_with_invalid_customer_country_code_returns_error(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2011",
+            },
+            "customer": {
+                "first_name": "Dan",
+                "last_name": "Smith",
+                "international_phone": {"country_code": "1181", "national_number": "3121234567"},
+            },
+        })
+
+        self.assertFalse(result.is_success)
+        errors = result.errors.deep_errors
+        error_codes = [error.code for error in errors]
+        self.assertEqual(len(error_codes), 1)
+        self.assertIn(ErrorCodes.Customer.InternationalPhoneCountryCodeIsInvalid, error_codes)
+        
+
+    def test_sale_with_customer_international_phone(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "5105105105105100",
+                "expiration_date": "05/2011",
+            },
+            "customer": {
+                "first_name": "Dan",
+                "last_name": "Smith",
+                "international_phone": {"country_code": "1", "national_number": "3121234567"},
+            },
+        })
+
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual("Dan", transaction.customer_details.first_name)
+        self.assertEqual("Smith", transaction.customer_details.last_name)
+        self.assertEqual("1", transaction.customer_details.international_phone["country_code"])
+        self.assertEqual("3121234567", transaction.customer_details.international_phone["national_number"])
+
+    
     def test_sale_with_exchange_rate_quote_id(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -6514,10 +6578,23 @@ class TestTransaction(unittest.TestCase):
     def test_ach_reject_reason_field(self):
         transaction = Transaction.find("ach_txn_ret3")
         self.assertEqual(transaction.ach_return_code, "RJCT")
-        self.assertEqual(transaction.ach_reject_reason, "Bank accounts located outside of the U.S. are not supported.")
+        self.assertEqual(transaction.ach_reject_reason, "Bank accounts located outside of the U.S. are not supported")
 
     def _assert_processing_merchant_category_code_invalid(self, result):
         self.assertFalse(result.is_success)
         processing_merchant_category_code_errors = result.errors.for_object("transaction").on("processing_merchant_category_code")
         self.assertEqual(1, len(processing_merchant_category_code_errors))
         self.assertEqual(ErrorCodes.Transaction.ProcessingMerchantCategoryCodeIsInvalid, processing_merchant_category_code_errors[0].code)
+
+    def test_sale_with_surcharge_amount(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "surcharge_amount": Decimal("1.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertEqual(Decimal("1.00"), transaction.surcharge_amount)
