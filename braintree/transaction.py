@@ -131,6 +131,7 @@ class Transaction(Resource):
        "id",
        "installments",
        "liability_shift",
+       "mastercard_transaction_link_id",
        "merchant_account_id",
        "merchant_advice_code",
        "merchant_advice_code_text",
@@ -940,6 +941,10 @@ class Transaction(Resource):
             self.transfer = Transfer(attributes.pop("transfer"))
         if "processor_response_code" in attributes:
             self.partially_authorized = attributes["processor_response_code"] == "1004"
+        if "mastercard_transaction_link_id" in attributes:
+            self.mastercard_transaction_link_id = attributes["mastercard_transaction_link_id"]
+        else:
+            self.mastercard_transaction_link_id = None
 
     @property
     def vault_billing_address(self):

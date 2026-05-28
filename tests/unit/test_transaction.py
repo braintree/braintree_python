@@ -547,3 +547,12 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.surcharge_amount, Decimal("1.00"))
+
+    def test_mastercard_transaction_link_id(self):
+        attributes = {
+            "amount": '50.00',
+            'mastercard_transaction_link_id': 'ZairABg6CIFekPMsnK0cJ2'
+        }
+
+        transaction = Transaction(None, attributes)
+        self.assertEqual(transaction.mastercard_transaction_link_id, 'ZairABg6CIFekPMsnK0cJ2')

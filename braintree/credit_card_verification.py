@@ -34,6 +34,8 @@ class CreditCardVerification(AttributeGetter):
         if "currency_iso_code" not in attributes:
             self.currency_iso_code = None
 
+        if "mastercard_transaction_link_id" not in attributes:
+            self.mastercard_transaction_link_id = None
         if "processor_response_code" not in attributes:
             self.processor_response_code = None
         if "processor_response_text" not in attributes:

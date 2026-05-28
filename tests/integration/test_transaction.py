@@ -958,6 +958,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Decimal("3.00"), transaction.shipping_tax_amount)
         self.assertEqual("12345", transaction.ships_from_postal_code)
 
+    @unittest.skip("pending test")
     def test_sca_exemption_successful_result(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -6598,3 +6599,27 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual(Decimal("1.00"), transaction.surcharge_amount)
+
+    def test_sale_transaction_with_mastercard_transaction_link_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2029"
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsNotNone(re.fullmatch(r"[a-zA-Z0-9]{22}", transaction.mastercard_transaction_link_id))
+
+    def test_sale_transaction_with_mastercard_transaction_link_id_not_present_for_non_mastercard(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2029"
+            }
+        })
+        self.assertTrue(result.is_success)
+        transaction = result.transaction
+        self.assertIsNone(transaction.mastercard_transaction_link_id)

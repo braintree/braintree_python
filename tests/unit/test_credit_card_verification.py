@@ -137,3 +137,10 @@ class TestCreditCardVerification(unittest.TestCase):
         }
         verification = CreditCardVerification(None, attributes)
         self.assertEqual(verification.credit_card['payment_account_reference'], 'V0010013019339005665779448477')
+
+    def test_mastercard_transaction_link_id(self):
+        attributes = {
+            'mastercard_transaction_link_id': 'ZairABg6CIFekPMsnK0cJ2'
+        }
+        verification = CreditCardVerification(None, attributes)
+        self.assertEqual(verification.mastercard_transaction_link_id, 'ZairABg6CIFekPMsnK0cJ2')

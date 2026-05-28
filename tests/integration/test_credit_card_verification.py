@@ -328,3 +328,29 @@ class TestCreditCardVerfication(unittest.TestCase):
 
         self.assertIsNotNone(verification.credit_card)
         self.assertIn("payment_account_reference", verification.credit_card)
+    
+    def test_verification_with_mastercard_transaction_link_id(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2029",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertIsNotNone(re.fullmatch(r"[a-zA-Z0-9]{22}", verification.mastercard_transaction_link_id))
+
+    def test_verification_with_mastercard_transaction_link_id_not_present_for_non_mastercard(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.Visa,
+                "expiration_date": "05/2029",
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertIsNone(verification.mastercard_transaction_link_id)
