@@ -4,6 +4,7 @@ from braintree.configuration import Configuration
 
 
 class PayPalAccount(Resource):
+    # NEXT_MAJOR_VERSION Remove debug_id attribute (deprecated)
     @staticmethod
     def find(paypal_account_token):
         return Configuration.gateway().paypal_account.find(paypal_account_token)

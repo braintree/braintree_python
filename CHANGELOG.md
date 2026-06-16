@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.45.0
+* Deprecate `debug_id` on `PayPalAccount`, `LocalPayment`, and `SepaDirectDebitAccount` transaction detail objects
+* Add `account_reference_number_type` to sender and receiver in transfer on `Transaction`
+* Add `CannotCloneThirdPartyCofNetworkTokenTransaction (915274)` transaction validation error code
+
 ## 4.44.0
 * Add `mastercard_transaction_link_id` to `Transaction` and `CreditCardVerification`
 

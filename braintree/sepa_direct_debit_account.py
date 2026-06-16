@@ -4,6 +4,7 @@ from braintree.configuration import Configuration
 
 
 class SepaDirectDebitAccount(Resource):
+    # NEXT_MAJOR_VERSION Remove debug_id attribute (deprecated)
     @staticmethod
     def find(sepa_direct_debit_account_token):
         return Configuration.gateway().sepa_direct_debit_account.find(sepa_direct_debit_account_token)

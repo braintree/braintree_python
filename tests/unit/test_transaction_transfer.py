@@ -21,7 +21,8 @@ class TestTransactionTransferType(unittest.TestCase):
                             "first_name": "Alice",
                             "middle_name": "A",
                             "last_name": "Silva",
-                            "account_reference_number": "1000012345",
+                            "account_reference_number": "9876543210",
+                            "account_reference_number_type": "PHONE_NUMBER",
                             "address": {
                                 "street_address": "1st Main Road",
                                 "locality": "Los Angeles",
@@ -34,6 +35,8 @@ class TestTransactionTransferType(unittest.TestCase):
                             "first_name": "Bob",
                             "middle_name": "A",
                             "last_name": "Souza",
+                            "account_reference_number": "1000012345",
+                            "account_reference_number_type": "IBAN",
                             "address": {
                                 "street_address": "2nd Main Road",
                                 "locality": "Los Angeles",
@@ -60,7 +63,8 @@ class TestTransactionTransferType(unittest.TestCase):
                     "sender": {
                         "first_name": "Alice",
                         "last_name": "Silva",
-                        "account_reference_number": "1000012345",
+                        "account_reference_number": "test-12112",
+                        "account_reference_number_type": "SOCIAL_NETWORK_PROFILE_ID",
                         "tax_id": "12345678900",
                         "address": {
                             "street_address": "Rua das Flores, 100",
@@ -79,6 +83,7 @@ class TestTransactionTransferType(unittest.TestCase):
                         "first_name": "Bob",
                         "last_name": "Souza",
                         "account_reference_number": "2000012345",
+                        "account_reference_number_type": "IBAN",
                         "tax_id": "98765432100",
                         "address": {
                             "street_address": "Avenida Brasil, 200",
