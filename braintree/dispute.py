@@ -5,7 +5,15 @@ from braintree.transaction_details import TransactionDetails
 from braintree.dispute_details import DisputeEvidence, DisputeStatusHistory, DisputePayPalMessage
 from braintree.configuration import Configuration
 
-class Dispute(AttributeGetter):
+
+class _DisputeType(type):
+    @property
+    def ChargebackProtectionLevel(cls):
+        warnings.warn("Use ProtectionLevel enum instead", DeprecationWarning)
+        return cls._ChargebackProtectionLevel
+
+
+class Dispute(AttributeGetter, metaclass=_DisputeType):
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class Status(object):
         """
@@ -72,7 +80,7 @@ class Dispute(AttributeGetter):
         Retrieval      = "retrieval"
 
     # NEXT_MAJOR_VERSION Remove this enum
-    class ChargebackProtectionLevel(object):
+    class _ChargebackProtectionLevel(object):
         """
         Constants representing dispute ChargebackProtectionLevel. Available types are:
 
@@ -80,10 +88,13 @@ class Dispute(AttributeGetter):
         * braintree.Dispute.ChargebackProtectionLevel.STANDARD
         * braintree.Dispute.ChargebackProtectionLevel.NOT_PROTECTED
         """
-        warnings.warn("Use ProtectionLevel enum instead", DeprecationWarning)
         Effortless     = "effortless"
         Standard       = "standard"
         NotProtected   = "not_protected"
+
+    @property
+    def ChargebackProtectionLevel(self):
+        return self.__class__.ChargebackProtectionLevel
 
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class PreDisputeProgram(object):
