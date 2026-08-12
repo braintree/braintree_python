@@ -56,3 +56,23 @@ class TestAddress(unittest.TestCase):
     def test_find_raises_key_error_if_given_invalid_address_id(self):
         with self.assertRaisesRegex(KeyError, "'address_id contains invalid characters'"):
             Address.find("foo", "!@#$%")
+
+    def test_find_raises_key_error_if_given_traversal_customer_id(self):
+        with self.assertRaisesRegex(KeyError, "'customer_id contains invalid characters'"):
+            Address.find("../../foo", "address_id")
+
+    def test_find_raises_key_error_if_given_traversal_address_id(self):
+        with self.assertRaisesRegex(KeyError, "'address_id contains invalid characters'"):
+            Address.find("customer_id", "../../foo")
+
+    def test_find_raises_key_error_if_given_dot_dot_address_id(self):
+        with self.assertRaisesRegex(KeyError, "'address_id contains invalid characters'"):
+            Address.find("customer_id", "..")
+
+    def test_find_raises_key_error_if_given_dotted_customer_id(self):
+        with self.assertRaisesRegex(KeyError, "'customer_id contains invalid characters'"):
+            Address.find("foo.bar", "address_id")
+
+    def test_find_raises_key_error_if_given_dotted_address_id(self):
+        with self.assertRaisesRegex(KeyError, "'address_id contains invalid characters'"):
+            Address.find("customer_id", "foo.bar")

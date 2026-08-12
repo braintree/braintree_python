@@ -4,7 +4,7 @@ import urllib
 import datetime
 import braintree
 from braintree.util import Http
-from base64 import b64decode
+from base64 import b64decode, urlsafe_b64decode
 
 class TestClientTokenGenerate(unittest.TestCase):
     def test_allows_client_token_version_to_be_specified(self):
@@ -214,6 +214,22 @@ class TestClientToken(unittest.TestCase):
 
         customer = braintree.Customer.find(customer_id)
         self.assertEqual(1, len(customer.credit_cards))
+
+    def test_can_pass_preferred_payment_method_token(self):
+        result = braintree.Customer.create()
+        customer_id = result.customer.id
+
+        raw_client_token = ClientToken.generate({
+            "customer_id": customer_id,
+            "preferred_payment_method_token": "a-pmt",
+        })
+        client_token = json.loads(b64decode(raw_client_token).decode())
+
+        self.assertIsNotNone(client_token["paymentMethodIdJwt"])
+        jwt_segment = client_token["paymentMethodIdJwt"].split(".")[1]
+        padding = (4 - len(jwt_segment) % 4) % 4
+        jwt_payload = json.loads(urlsafe_b64decode(jwt_segment + "=" * padding))
+        self.assertEqual("a-pmt", jwt_payload["pmid"])
 
     def test_can_pass_merchant_account_id(self):
         expected_merchant_account_id = TestHelper.non_default_merchant_account_id

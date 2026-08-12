@@ -509,7 +509,7 @@ class TestSubscription(unittest.TestCase):
                 "expiration_date": "05/2009"
             },
             "descriptor": {
-                "name": "badcompanyname12*badproduct12",
+                "name": "a" * 31,
                 "phone": "%bad4445555"
             }
         })

@@ -249,6 +249,10 @@ class TestDispute(unittest.TestCase):
         with self.assertRaisesRegex(NotFoundError, "dispute_id cannot be blank"):
             Dispute.add_text_evidence(None, "evidence")
 
+    def test_add_text_evidence_non_string_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "Dispute with ID 123 not found"):
+            Dispute.add_text_evidence(123, "evidence")
+
     def test_add_text_evidence_empty_evidence_raises_value_exception(self):
         with self.assertRaisesRegex(ValueError, "content cannot be blank"):
             Dispute.add_text_evidence("dispute_id", " ")
@@ -320,3 +324,31 @@ class TestDispute(unittest.TestCase):
     def test_remove_evidence_empty_evidence_id_raises_value_exception(self):
         with self.assertRaisesRegex(NotFoundError, "evidence with id ' ' for dispute with id 'dispute_id' not found"):
             Dispute.remove_evidence("dispute_id", " ")
+
+    def test_remove_evidence_traversal_dispute_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "evidence with id 'evidence' for dispute with id '../../foo' not found"):
+            Dispute.remove_evidence("../../foo", "evidence")
+
+    def test_remove_evidence_traversal_evidence_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "evidence with id '../../foo' for dispute with id 'dispute_id' not found"):
+            Dispute.remove_evidence("dispute_id", "../../foo")
+
+    def test_accept_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "dispute with id '../../foo' not found"):
+            Dispute.accept("../../foo")
+
+    def test_finalize_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "dispute with id '../../foo' not found"):
+            Dispute.finalize("../../foo")
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "dispute with id '../../foo' not found"):
+            Dispute.find("../../foo")
+
+    def test_add_file_evidence_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "dispute with id '../../foo' not found"):
+            Dispute.add_file_evidence("../../foo", "document_id")
+
+    def test_add_text_evidence_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "Dispute with ID '../../foo' not found"):
+            Dispute.add_text_evidence("../../foo", "evidence")

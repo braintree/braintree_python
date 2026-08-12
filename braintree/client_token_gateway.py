@@ -21,6 +21,10 @@ class ClientTokenGateway(object):
             params["version"] = 2
 
         Resource.verify_keys(params, ClientToken.generate_signature())
+
+        if "preferred_payment_method_token" in params:
+            params["payment_method_id"] = params.pop("preferred_payment_method_token")
+
         params = {'client_token': params}
 
         response = self.config.http().post(self.config.base_merchant_path() + "/client_token", params)

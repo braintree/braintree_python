@@ -726,6 +726,7 @@ class Transaction(Resource):
                 "tax_amount",
                 "tax_exempt",
                 "discount_amount",
+                "shipping_address_id",
                 "shipping_amount",
                 "shipping_tax_amount",
                 "ships_from_postal_code",
@@ -759,9 +760,9 @@ class Transaction(Resource):
                 },
                 {"shipping":
                     [
-                        "first_name", "last_name", "company", "country_code_alpha2", "country_code_alpha3",
-                        "country_code_numeric", "country_name", "extended_address", "locality",
-                        "postal_code", "region", "street_address",
+                        "company", "country_code_alpha2", "country_code_alpha3", "country_code_numeric", "country_name",
+                        "extended_address", "first_name", {"international_phone": ["country_code", "national_number"]},
+                        "last_name", "locality", "phone_number", "postal_code", "region", "street_address",
                     ]
                 },
                 {"industry":

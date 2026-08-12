@@ -8,7 +8,6 @@ from braintree import (
 from braintree.exceptions.not_found_error import NotFoundError
 
 
-@unittest.skip("LocalPaymentContext tests pending")
 class LocalPaymentIT(unittest.TestCase):
 
     def pwpp_gateway(self):

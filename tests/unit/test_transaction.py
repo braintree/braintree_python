@@ -187,6 +187,7 @@ class TestTransaction(unittest.TestCase):
     def setup_transaction_gateway_and_mock_post(self):
         transaction_gateway = TransactionGateway(BraintreeGateway(None))
         transaction_gateway._post = MagicMock(name='config.http.post')
+        transaction_gateway.config.merchant_id = "test_merchant"
         return transaction_gateway
 
     def test_constructor_doesnt_includes_auth_adjustments(self):
@@ -556,3 +557,91 @@ class TestTransaction(unittest.TestCase):
 
         transaction = Transaction(None, attributes)
         self.assertEqual(transaction.mastercard_transaction_link_id, 'ZairABg6CIFekPMsnK0cJ2')
+
+
+    def test_submit_for_settlement_with_all_level_2_and_level_3_fields(self):
+        attributes_sfs = {
+             "order_id": "ABC123",
+             "descriptor": {
+                 "name": "123*123456789012345678",
+                 "phone": "3334445555",
+                 "url": "ebay.com"
+             },
+             "purchase_order_number": "123456",
+             "tax_amount": "2.00",
+             "tax_exempt": False,
+             "discount_amount": "12.33",
+             "shipping_address_id": "the_shipping_address_id",
+             "shipping_amount": "5.00",
+             "shipping_tax_amount": "2.00",
+             "ships_from_postal_code": "90210",
+             "line_items": [{
+                 "quantity": "1.0232",
+                 "name": "Name #1",
+                 "kind": TransactionLineItem.Kind.Debit,
+                 "unit_amount": "45.1232",
+                 "total_amount": "45.15",
+                 "description": "Description #1",
+                 "product_code": "54321",
+                 "commodity_code": "12",
+                 "unit_of_measure": "kg",
+                 "unit_tax_amount": "1.23",
+                 "tax_amount": "4.00",
+                 "discount_amount": "5.00",
+             }],
+             "shipping": {
+                 "first_name": "Andrew",
+                 "last_name": "Mason",
+                 "company": "Braintree",
+                 "street_address": "456 W Main St",
+                 "extended_address": "Apt 2F",
+                 "locality": "Bartlett",
+                 "region": "IL",
+                 "postal_code": "60103",
+                 "country_name": "United States of America",
+                 "country_code_alpha2": "US",
+                 "country_code_alpha3": "USA",
+                 "country_code_numeric": "840",
+                 "international_phone": {
+                     "country_code": "1",
+                     "national_number": "8989765234",
+                 },
+                 "phone_number": "8989765234",
+             }
+        }
+
+        transaction_gateway = self.setup_transaction_gateway_and_mock_post()
+
+        mock_http = MagicMock()
+        mock_http.put = MagicMock(return_value={"transaction": {"amount": "100.00"}})
+        transaction_gateway.config.http = MagicMock(return_value=mock_http)
+
+        transaction_gateway.submit_for_settlement("validtxnid1", None, attributes_sfs)
+        transaction_param = mock_http.put.call_args[0][1]["transaction"]
+
+        self.assertEqual(transaction_param["order_id"], "ABC123")
+        self.assertEqual(transaction_param["descriptor"]["name"], "123*123456789012345678")
+        self.assertEqual(transaction_param["purchase_order_number"], "123456")
+        self.assertEqual(transaction_param["tax_amount"], "2.00")
+        self.assertEqual(transaction_param["tax_exempt"], False)
+        self.assertEqual(transaction_param["discount_amount"], "12.33")
+        self.assertEqual(transaction_param["shipping_address_id"], "the_shipping_address_id")
+        self.assertEqual(transaction_param["shipping_amount"], "5.00")
+        self.assertEqual(transaction_param["shipping_tax_amount"], "2.00")
+        self.assertEqual(transaction_param["shipping"]["first_name"], "Andrew")
+        self.assertEqual(transaction_param["shipping"]["last_name"], "Mason")
+        self.assertEqual(transaction_param["shipping"]["company"], "Braintree")
+        self.assertEqual(transaction_param["shipping"]["street_address"], "456 W Main St")
+        self.assertEqual(transaction_param["shipping"]["extended_address"], "Apt 2F")
+        self.assertEqual(transaction_param["shipping"]["locality"], "Bartlett")
+        self.assertEqual(transaction_param["shipping"]["region"], "IL")
+        self.assertEqual(transaction_param["shipping"]["country_name"], "United States of America")
+        self.assertEqual(transaction_param["shipping"]["country_code_alpha2"], "US")
+        self.assertEqual(transaction_param["shipping"]["country_code_alpha3"], "USA")
+        self.assertEqual(transaction_param["shipping"]["country_code_numeric"], "840")
+        self.assertEqual(transaction_param["shipping"]["postal_code"], "60103")
+        self.assertEqual(transaction_param["shipping"]["phone_number"], "8989765234")
+        self.assertEqual(transaction_param["shipping"]["international_phone"]["country_code"], "1")
+        self.assertEqual(transaction_param["shipping"]["international_phone"]["national_number"], "8989765234")
+        self.assertEqual(transaction_param["line_items"][0]["name"], "Name #1")
+        self.assertEqual(transaction_param["ships_from_postal_code"], "90210")

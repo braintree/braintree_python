@@ -1212,7 +1212,6 @@ class TestPaymentMethod(unittest.TestCase):
         self.assertTrue(update_result.is_success)
         self.assertEqual("credit", update_result.payment_method.verification.credit_card["account_type"])
 
-    @unittest.skip("Pending as flaky, until CI is more stable")
     def test_update_credit_cards_with_account_type_debit(self):
         customer = Customer.create().customer
         result = CreditCard.create({

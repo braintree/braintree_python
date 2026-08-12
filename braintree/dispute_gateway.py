@@ -1,11 +1,11 @@
 import braintree
-import re
 import warnings
 from braintree.dispute import Dispute
 from braintree.dispute_details import DisputeEvidence
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.util.validation import is_invalid_path_segment
 from braintree.paginated_result import PaginatedResult
 from braintree.paginated_collection import PaginatedCollection
 from braintree.resource_collection import ResourceCollection
@@ -17,7 +17,7 @@ class DisputeGateway(object):
 
     def accept(self, dispute_id):
         try:
-            if dispute_id is None or dispute_id.strip() == "":
+            if is_invalid_path_segment(dispute_id):
                 raise NotFoundError()
 
             response = self.config.http().put(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/accept")
@@ -33,7 +33,7 @@ class DisputeGateway(object):
         request = document_upload_id_or_request if isinstance(document_upload_id_or_request, dict) else { "document_id": document_upload_id_or_request }
 
         try:
-            if dispute_id is None or dispute_id.strip() == "":
+            if is_invalid_path_segment(dispute_id):
                 raise NotFoundError()
 
             if request.get("category") is not None and not isinstance(request["category"], str):
@@ -62,8 +62,10 @@ class DisputeGateway(object):
     def add_text_evidence(self, dispute_id, content_or_request):
         request = content_or_request if isinstance(content_or_request, dict) else { "content": content_or_request }
 
-        if dispute_id is None or dispute_id.strip() == "":
+        if dispute_id is None or (isinstance(dispute_id, str) and dispute_id.strip() == ""):
             raise NotFoundError("dispute_id cannot be blank")
+        if is_invalid_path_segment(dispute_id):
+            raise NotFoundError("Dispute with ID " + repr(dispute_id) + " not found")
         if request.get("content") is None or request["content"].strip() == "":
             raise ValueError("content cannot be blank")
 
@@ -96,7 +98,7 @@ class DisputeGateway(object):
 
     def finalize(self, dispute_id):
         try:
-            if dispute_id is None or dispute_id.strip() == "":
+            if is_invalid_path_segment(dispute_id):
                 raise NotFoundError()
 
             response = self.config.http().put(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/finalize")
@@ -110,7 +112,7 @@ class DisputeGateway(object):
 
     def find(self, dispute_id):
         try:
-            if dispute_id is None or dispute_id.strip() == "":
+            if is_invalid_path_segment(dispute_id):
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/disputes/" + dispute_id)
@@ -120,9 +122,9 @@ class DisputeGateway(object):
 
     def remove_evidence(self, dispute_id, evidence_id):
         try:
-            if dispute_id is None or dispute_id.strip() == "":
+            if is_invalid_path_segment(dispute_id):
                 raise NotFoundError()
-            if evidence_id is None or evidence_id.strip() == "":
+            if is_invalid_path_segment(evidence_id):
                 raise NotFoundError()
 
             response = self.config.http().delete(self.config.base_merchant_path() + "/disputes/" + dispute_id + "/evidence/" + evidence_id)

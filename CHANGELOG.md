@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.46.0
+* Add `shipping_address_id` to `Transaction.submit_for_settlement()`
+* Add `phone_number`, `international_phone` to `shipping` for `Transaction.submit_for_settlement()`
+* Fix path traversal vulnerability in `Dispute` and `Address` gateways by validating that IDs used in request paths do not contain path separators or relative-path segments
+* Add `EmailFormatIsInvalid (92963)` and `EmailIsTooLong (92964)` validation error codes to `PayPalAccount`
+* Prevent `OAuthCredentials` from exposing `access_token` and `refresh_token` in `repr()` output (e.g. logs and error trackers)
+* Add `preferred_payment_method_token` parameter to `ClientToken.generate`
+
 ## 4.45.0
 * Deprecate `debug_id` on `PayPalAccount`, `LocalPayment`, and `SepaDirectDebitAccount` transaction detail objects
 * Add `account_reference_number_type` to sender and receiver in transfer on `Transaction`

@@ -328,6 +328,8 @@ class ErrorCodes(object):
         CannotVaultOneTimeUsePayPalAccount = "82902"
         ConsentCodeOrAccessTokenIsRequired = "82901"
         CustomerIdIsRequiredForVaulting = "82905"
+        EmailFormatIsInvalid = "92963"
+        EmailIsTooLong = "92964"
         InvalidParamsForPayPalAccountUpdate = "92915"
         PayPalAccountsAreNotAccepted = "82904"
         PayPalCommunicationError = "92910"

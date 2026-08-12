@@ -958,7 +958,104 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Decimal("3.00"), transaction.shipping_tax_amount)
         self.assertEqual("12345", transaction.ships_from_postal_code)
 
-    @unittest.skip("pending test")
+    def test_submit_for_settlement_with_all_level_2_and_level_3_fields_and_shipping_address_id(self):
+        customer = Customer.create({
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "06/2009"
+            }
+        }).customer
+
+        address = Address.create({
+            "customer_id": customer.id,
+            "first_name": "Andrew",
+            "last_name": "Mason",
+            "company": "Braintree",
+            "street_address": "1 Main St",
+            "extended_address": "Apt 2F",
+            "locality": "Chicago",
+            "region": "IL",
+            "postal_code": "60601",
+            "phone_number": "9876543210",
+            "country_name": "United States of America",
+            "international_phone": {"country_code": "1", "national_number": "3121234500"},
+        }).address
+
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "customer_id": customer.id,
+            "payment_method_token": customer.credit_cards[0].token,
+            "options": {
+                "submit_for_settlement": False
+            },
+        }).transaction
+
+        params = {
+            "order_id": "ABC123",
+            "descriptor": {
+                "name": "123*123456789012345678",
+                "phone": "3334445555",
+            },
+            "purchase_order_number": "123456",
+            "tax_amount": "2.00",
+            "tax_exempt": False,
+            "discount_amount": "12.33",
+            "shipping_address_id": address.id,
+            "shipping_amount": "5.00",
+            "shipping_tax_amount": "2.00",
+            "ships_from_postal_code": "90210",
+            "line_items": [{
+                "quantity": "1.0232",
+                "name": "Name #1",
+                "kind": TransactionLineItem.Kind.Debit,
+                "unit_amount": "45.1232",
+                "total_amount": "45.15",
+                "description": "Description #1",
+                "product_code": "54321",
+                "commodity_code": "12",
+                "unit_of_measure": "kg",
+                "unit_tax_amount": "1.23",
+                "tax_amount": "4.00",
+                "discount_amount": "5.00",
+            }],
+            "shipping": {
+                "first_name": "Override",
+                "last_name": "Name",
+                "company": "Override Co",
+                "street_address": "456 W Main St",
+                "extended_address": "Unit 3",
+                "locality": "Bartlett",
+                "region": "IL",
+                "postal_code": "60103",
+                "country_name": "United States of America",
+                "country_code_alpha2": "US",
+                "country_code_alpha3": "USA",
+                "country_code_numeric": "840",
+                "phone_number": "312-123-4567",
+                "international_phone": {"country_code": "1", "national_number": "3121234567"},
+            }
+        }
+
+        result = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params)
+
+        self.assertTrue(result.is_success)
+        submitted_transaction = result.transaction
+
+        self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual(Decimal("900.00"), submitted_transaction.amount)
+        self.assertEqual("ABC123", submitted_transaction.order_id)
+        self.assertEqual("123*123456789012345678", submitted_transaction.descriptor.name)
+        self.assertEqual("3334445555", submitted_transaction.descriptor.phone)
+        self.assertEqual(Decimal("2.00"), submitted_transaction.tax_amount)
+        self.assertEqual(Decimal("12.33"), submitted_transaction.discount_amount)
+        self.assertEqual(Decimal("5.00"), submitted_transaction.shipping_amount)
+        self.assertEqual(Decimal("2.00"), submitted_transaction.shipping_tax_amount)
+        self.assertEqual("1 Main St", submitted_transaction.shipping_details.street_address)
+        self.assertEqual("60601", submitted_transaction.shipping_details.postal_code)
+        self.assertEqual("9876543210", submitted_transaction.shipping_details.phone_number)
+        self.assertEqual("1", submitted_transaction.shipping_details.international_phone["country_code"])
+        self.assertEqual("3121234500", submitted_transaction.shipping_details.international_phone["national_number"])
+
     def test_sca_exemption_successful_result(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -1223,7 +1320,6 @@ class TestTransaction(unittest.TestCase):
             Configuration.public_key = old_public_key
             Configuration.private_key = old_private_key
 
-    @unittest.skip("pending")
     def test_sale_with_gateway_rejected_with_excessive_retry(self):
         with DuplicateCheckingMerchant():
             excessive_retry = False
@@ -2716,7 +2812,6 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").on("line_items")[0].code
         )
 
-    @unittest.skip("Flaky test")
     def test_sale_with_debit_network(self):
         result = Transaction.sale({
 
@@ -3553,12 +3648,17 @@ class TestTransaction(unittest.TestCase):
                     "region": "IL",
                     "postal_code": "60103",
                     "country_name": "United States of America",
+                    "phone_number": "9876543210",
+                    "international_phone": {"country_code": "1", "national_number": "3121234500"},
                     }
                 }
 
         submitted_transaction = Transaction.submit_for_settlement(transaction.id, Decimal("900"), params).transaction
 
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
+        self.assertEqual("9876543210", submitted_transaction.shipping_details.phone_number)
+        self.assertEqual("1", submitted_transaction.shipping_details.international_phone["country_code"])
+        self.assertEqual("3121234500", submitted_transaction.shipping_details.international_phone["national_number"])
 
     def test_submit_for_settlement_with_invalid_params(self):
         transaction = Transaction.sale({
@@ -3859,7 +3959,7 @@ class TestTransaction(unittest.TestCase):
             "amount" : "9.00",
             "order_id": "123",
             "descriptor": {
-                "name": "invalid name",
+                "name": "a" * 31,
                 "phone": "invalid phone",
                 "url": "12345678901234567890"
             }
@@ -4552,7 +4652,7 @@ class TestTransaction(unittest.TestCase):
                 "expiration_date": "05/2009"
             },
             "descriptor": {
-                "name": "badcompanyname12*badproduct12",
+                "name": "a" * 31,
                 "phone": "%bad4445555",
                 "url": "12345678901234"
             }
@@ -4988,7 +5088,6 @@ class TestTransaction(unittest.TestCase):
             result.errors.for_object("transaction").for_object("three_d_secure_pass_thru").on("eci_flag")[0].code
         )
 
-    @unittest.skip("until we have a more stable ci env")
     def test_sale_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
@@ -5013,7 +5112,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
-    @unittest.skip("until we have a more stable ci env")
     def test_sale_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
@@ -5038,7 +5136,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
-    @unittest.skip("until we have a more stable ci env")
     def test_sale_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
@@ -5063,7 +5160,6 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(Transaction.Type.Sale, transaction.type)
         self.assertEqual(Transaction.Status.SubmittedForSettlement, transaction.status)
 
-    @unittest.skip("until we have a more stable ci env")
     def test_submit_for_settlement_with_amex_rewards_succeeds(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
@@ -5090,7 +5186,6 @@ class TestTransaction(unittest.TestCase):
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
-    @unittest.skip("until we have a more stable ci env")
     def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_is_ineligible(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,
@@ -5117,7 +5212,6 @@ class TestTransaction(unittest.TestCase):
         submitted_transaction = Transaction.submit_for_settlement(transaction.id).transaction
         self.assertEqual(Transaction.Status.SubmittedForSettlement, submitted_transaction.status)
 
-    @unittest.skip("until we have a more stable ci env")
     def test_submit_for_settlement_with_amex_rewards_succeeds_even_if_card_balance_is_insufficient(self):
         result = Transaction.sale({
             "merchant_account_id": TestHelper.fake_amex_direct_merchant_account_id,

@@ -23,6 +23,7 @@ class ClientToken(object):
         return [
             "customer_id",
             "merchant_account_id",
+            "preferred_payment_method_token",
             "proxy_merchant_id",
             "version",
             {"domains": ["__any_key__"]},

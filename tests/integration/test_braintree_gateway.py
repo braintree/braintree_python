@@ -13,7 +13,6 @@ class TestBraintreeGateway(unittest.TestCase):
                                private_key="integration_private_key")
         return BraintreeGateway(config)
 
-    @unittest.skip("until we have a more stable ci env")
     def test_can_make_tokenize_credit_card_via_graphql(self):
         definition = """
           mutation ExampleServerSideSingleUseToken($input: TokenizeCreditCardInput!) {
