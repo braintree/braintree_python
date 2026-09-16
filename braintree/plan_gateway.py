@@ -6,6 +6,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 class PlanGateway(object):
     def __init__(self, gateway):
@@ -28,7 +29,7 @@ class PlanGateway(object):
 
     def find(self, plan_id):
         try:
-            if plan_id is None or plan_id.strip() == "":
+            if is_invalid_path_segment(plan_id):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/plans/" + plan_id)
             return Plan(self.gateway, response["plan"])
@@ -36,6 +37,9 @@ class PlanGateway(object):
             raise NotFoundError("Plan with id " + repr(plan_id) + " not found")
 
     def update(self, plan_id, params=None):
+        if is_invalid_path_segment(plan_id):
+            raise NotFoundError("Plan with id " + repr(plan_id) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, Plan.update_signature())

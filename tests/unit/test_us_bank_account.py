@@ -47,3 +47,8 @@ class TestUsBankAccount(unittest.TestCase):
 
         self.assertEqual(verification.status, UsBankAccountVerification.Status.Verified)
         self.assertEqual(verification.verification_method, UsBankAccountVerification.VerificationMethod.NetworkCheck)
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "US bank account with token '\\.\\./\\.\\./foo' not found"):
+            UsBankAccount.find("../../foo")
+

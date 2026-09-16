@@ -16,3 +16,16 @@ class TestSubscription(unittest.TestCase):
     def test_finding_None_id_raises_not_found_exception(self):
         with self.assertRaises(NotFoundError):
             Subscription.find(None)
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "subscription with id '\\.\\./\\.\\./foo' not found"):
+            Subscription.find("../../foo")
+
+    def test_cancel_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "subscription with id '\\.\\./\\.\\./foo' not found"):
+            Subscription.cancel("../../foo")
+
+    def test_update_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "subscription with id '\\.\\./\\.\\./foo' not found"):
+            Subscription.update("../../foo", {"price": "1.00"})
+

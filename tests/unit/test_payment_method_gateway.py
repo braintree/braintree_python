@@ -190,6 +190,24 @@ class TestPaymentMethodGateway(unittest.TestCase):
         with self.assertRaises(KeyError):
             payment_method_gateway.delete("some_token", {"invalid_keys": False})
 
+    def test_delete_traversal_id_raises_not_found_exception_without_calling_http(self):
+        payment_method_gateway, http_mock = self.setup_payment_method_gateway_and_mock_http()
+        with self.assertRaisesRegex(NotFoundError, "payment method with token '\\.\\./\\.\\./foo' not found"):
+            payment_method_gateway.delete("../../foo")
+        self.assertFalse(http_mock.called)
+
+    def test_find_traversal_id_raises_not_found_exception_without_calling_http(self):
+        payment_method_gateway, http_mock = self.setup_payment_method_gateway_and_mock_http()
+        with self.assertRaisesRegex(NotFoundError, "payment method with token '\\.\\./\\.\\./foo' not found"):
+            payment_method_gateway.find("../../foo")
+        self.assertFalse(http_mock.called)
+
+    def test_update_traversal_id_raises_not_found_exception_without_calling_http(self):
+        payment_method_gateway, http_mock = self.setup_payment_method_gateway_and_mock_http()
+        with self.assertRaisesRegex(NotFoundError, "payment method with token '\\.\\./\\.\\./foo' not found"):
+            payment_method_gateway.update("../../foo", {})
+        self.assertFalse(http_mock.called)
+
     def setup_payment_method_gateway_and_mock_http(self):
         braintree_gateway = BraintreeGateway(Configuration.instantiate())
         payment_method_gateway = PaymentMethodGateway(braintree_gateway)

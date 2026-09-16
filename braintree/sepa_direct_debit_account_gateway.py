@@ -4,6 +4,7 @@ from braintree.error_result import ErrorResult
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource import Resource
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 
 class SepaDirectDebitAccountGateway(object):
@@ -13,7 +14,7 @@ class SepaDirectDebitAccountGateway(object):
 
     def find(self, sepa_direct_debit_account_token):
         try:
-            if sepa_direct_debit_account_token is None or sepa_direct_debit_account_token.strip() == "":
+            if is_invalid_path_segment(sepa_direct_debit_account_token):
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/sepa_debit_account/" + sepa_direct_debit_account_token)
@@ -23,5 +24,8 @@ class SepaDirectDebitAccountGateway(object):
             raise NotFoundError("sepa direct debit account with token " + repr(sepa_direct_debit_account_token) + " not found")
 
     def delete(self, sepa_direct_debit_account_token):
+        if is_invalid_path_segment(sepa_direct_debit_account_token):
+            raise NotFoundError("sepa direct debit account with token " + repr(sepa_direct_debit_account_token) + " not found")
+
         self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/sepa_debit_account/" + sepa_direct_debit_account_token)
         return SuccessfulResult()

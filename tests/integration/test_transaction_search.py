@@ -520,6 +520,99 @@ class TestTransactionSearch(unittest.TestCase):
         with self.assertRaisesRegex(AttributeError, "Invalid argument\(s\) for created_using: noSuchCreatedUsing"):
             Transaction.search([TransactionSearch.created_using == "noSuchCreatedUsing"])
 
+    def test_advanced_search_multiple_value_node_ach_type(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "merchant_account_id": TestHelper.us_bank_merchant_account_id,
+            "payment_method_nonce": TestHelper.generate_valid_us_bank_account_nonce(),
+            "options": {
+                "submit_for_settlement": True,
+                "store_in_vault": True,
+                "us_bank_account": {
+                    "ach_type": "standard"
+                }
+            }
+        }).transaction
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.ach_type == Transaction.AchType.Standard
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.ach_type.in_list([Transaction.AchType.SameDay, Transaction.AchType.Standard])
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == transaction.id,
+            TransactionSearch.ach_type == Transaction.AchType.SameDay
+        ])
+
+        self.assertEqual(0, collection.maximum_size)
+
+        same_day_transaction = Transaction.find("sameday_ach_sameday_requested")
+
+        collection = Transaction.search([
+            TransactionSearch.id == same_day_transaction.id,
+            TransactionSearch.ach_type == Transaction.AchType.SameDay
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(same_day_transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == same_day_transaction.id,
+            TransactionSearch.ach_type == Transaction.AchType.Standard
+        ])
+
+        self.assertEqual(0, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == same_day_transaction.id,
+            TransactionSearch.ach_type.in_list([Transaction.AchType.SameDay, Transaction.AchType.Standard])
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(same_day_transaction.id, collection.first.id)
+
+        divergent_transaction = Transaction.find("standard_ach_sameday_requested")
+        self.assertEqual(Transaction.AchType.Standard, divergent_transaction.ach_type)
+        self.assertEqual(Transaction.AchType.SameDay, divergent_transaction.requested_ach_type)
+
+        collection = Transaction.search([
+            TransactionSearch.id == divergent_transaction.id,
+            TransactionSearch.ach_type == Transaction.AchType.Standard
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(divergent_transaction.id, collection.first.id)
+
+        collection = Transaction.search([
+            TransactionSearch.id == divergent_transaction.id,
+            TransactionSearch.ach_type == Transaction.AchType.SameDay
+        ])
+
+        self.assertEqual(0, collection.maximum_size)
+
+        collection = Transaction.search([
+            TransactionSearch.id == divergent_transaction.id,
+            TransactionSearch.ach_type.in_list([Transaction.AchType.SameDay, Transaction.AchType.Standard])
+        ])
+
+        self.assertEqual(1, collection.maximum_size)
+        self.assertEqual(divergent_transaction.id, collection.first.id)
+
+    def test_advanced_search_multiple_value_node_allowed_values_ach_type(self):
+        with self.assertRaisesRegex(AttributeError, "Invalid argument\(s\) for ach_type: noSuchAchType"):
+            Transaction.search([TransactionSearch.ach_type == "noSuchAchType"])
+
     def test_advanced_search_multiple_value_node_credit_card_customer_location(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Authorize,

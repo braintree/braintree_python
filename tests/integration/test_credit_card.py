@@ -578,11 +578,10 @@ class TestCreditCard(unittest.TestCase):
         self.assertEqual("411111", result.credit_card.bin)
 
     def test_delete_customer_with_path_traversal(self):
-        try:
-            customer = Customer.create({"first_name":"Waldo"}).customer
+        customer = Customer.create({"first_name":"Waldo"}).customer
+
+        with self.assertRaises(NotFoundError):
             CreditCard.delete("../../customers/{}".format(customer.id))
-        except NotFoundError:
-            pass
 
         found_customer = Customer.find(customer.id)
         self.assertNotEqual(None, found_customer)

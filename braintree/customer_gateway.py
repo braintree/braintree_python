@@ -7,6 +7,7 @@ from braintree.ids_search import IdsSearch
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 
 class CustomerGateway(object):
@@ -26,12 +27,15 @@ class CustomerGateway(object):
         return self._post("/customers", {"customer": params})
 
     def delete(self, customer_id):
+        if is_invalid_path_segment(customer_id):
+            raise NotFoundError("customer with id " + repr(customer_id) + " not found")
+
         self.config.http().delete(self.config.base_merchant_path() + "/customers/" + customer_id)
         return SuccessfulResult()
 
     def find(self, customer_id, association_filter_id=None):
         try:
-            if customer_id is None or customer_id.strip() == "":
+            if is_invalid_path_segment(customer_id):
                 raise NotFoundError()
 
             query_params = ""
@@ -51,6 +55,9 @@ class CustomerGateway(object):
         return ResourceCollection(query, response, self.__fetch)
 
     def update(self, customer_id, params=None):
+        if is_invalid_path_segment(customer_id):
+            raise NotFoundError("customer with id " + repr(customer_id) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, Customer.update_signature())

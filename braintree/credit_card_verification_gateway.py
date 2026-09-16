@@ -5,6 +5,7 @@ from braintree.ids_search import IdsSearch
 from braintree.resource_collection import ResourceCollection
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 
 class CreditCardVerificationGateway(object):
@@ -14,7 +15,7 @@ class CreditCardVerificationGateway(object):
 
     def find(self, verification_id):
         try:
-            if verification_id is None or verification_id.strip() == "":
+            if is_invalid_path_segment(verification_id):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/verifications/" + verification_id)
             return CreditCardVerification(self.gateway, response["verification"])

@@ -7,6 +7,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.request_timeout_error import RequestTimeoutError
+from braintree.util.validation import is_invalid_path_segment
 
 
 class TransactionGateway(object):
@@ -15,6 +16,9 @@ class TransactionGateway(object):
         self.config = gateway.config
 
     def adjust_authorization(self, transaction_id, amount):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         transaction_params = {"amount": amount}
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/adjust_authorization", {"transaction": transaction_params})
         if "transaction" in response:
@@ -23,10 +27,16 @@ class TransactionGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def clone_transaction(self, transaction_id, params):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         Resource.verify_keys(params, Transaction.clone_signature())
         return self._post("/transactions/" + transaction_id + "/clone", {"transaction-clone": params})
 
     def cancel_release(self, transaction_id):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         response = self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/cancel_release", {})
         if "transaction" in response:
             return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
@@ -46,7 +56,7 @@ class TransactionGateway(object):
 
     def find(self, transaction_id):
         try:
-            if transaction_id is None or transaction_id.strip() == "":
+            if is_invalid_path_segment(transaction_id):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/transactions/" + transaction_id)
             return Transaction(self.gateway, response["transaction"])
@@ -59,6 +69,9 @@ class TransactionGateway(object):
 
             result = braintree.Transaction.refund("my_transaction_id")
         """
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         if isinstance(amount_or_options, dict):
             options = amount_or_options
         else:
@@ -89,6 +102,9 @@ class TransactionGateway(object):
             raise RequestTimeoutError("search timeout")
 
     def submit_for_settlement(self, transaction_id, amount=None, params=None):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, Transaction.submit_for_settlement_signature())
@@ -102,6 +118,9 @@ class TransactionGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def update_details(self, transaction_id, params=None):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, Transaction.update_details_signature())
@@ -113,6 +132,9 @@ class TransactionGateway(object):
             return ErrorResult(self.gateway, response["api_error_response"])
 
     def submit_for_partial_settlement(self, transaction_id, amount, params=None):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, Transaction.submit_for_partial_settlement_signature())
@@ -129,7 +151,7 @@ class TransactionGateway(object):
         try:
             if params is None:
                 params = {}
-            if transaction_id is None or transaction_id.strip() == "":
+            if is_invalid_path_segment(transaction_id):
                 raise NotFoundError()
             Resource.verify_keys(params, Transaction.package_tracking_signature())
             response = self.config.http().post(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/shipments", {"shipment": params})
@@ -141,6 +163,8 @@ class TransactionGateway(object):
             raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
 
     def void(self, transaction_id, params=None):
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
 
         if params:
             Resource.verify_keys(params, ["api_request_key"])

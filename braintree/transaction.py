@@ -177,6 +177,18 @@ class Transaction(Resource):
       return super(Transaction, self).__repr__(detail_list)
 
     # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
+    class AchType(object):
+        """
+        Constants representing the ACH type of the transaction.  Available types are:
+
+        * braintree.Transaction.AchType.SameDay
+        * braintree.Transaction.AchType.Standard
+        """
+
+        SameDay  = "same_day"
+        Standard = "standard"
+
+    # NEXT_MAJOR_VERSION this can be an enum! they were added as of python 3.4 and we support 3.5+
     class CreatedUsing(object):
         """
         Constants representing how the transaction was created.  Available types are:
@@ -828,7 +840,7 @@ class Transaction(Resource):
 
     @staticmethod
     def refund_signature():
-        return ["amount", "api_request_key", "order_id", "merchant_account_id"]
+        return ["amount", "api_request_key", "order_id", "merchant_account_id", "surcharge_amount"]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount, params=None):

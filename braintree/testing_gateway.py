@@ -1,8 +1,10 @@
 import braintree
 from braintree.error_result import ErrorResult
+from braintree.exceptions.not_found_error import NotFoundError
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
 from braintree.exceptions.test_operation_performed_in_production_error import TestOperationPerformedInProductionError
+from braintree.util.validation import is_invalid_path_segment
 
 class TestingGateway(object):
     def __init__(self, gateway):
@@ -11,26 +13,38 @@ class TestingGateway(object):
 
     def make_past_due(self, subscription_id, number_of_days_past_due=1):
         self.__check_environment()
+        if is_invalid_path_segment(subscription_id):
+            raise NotFoundError("subscription with id " + repr(subscription_id) + " not found")
         self.config.http().put(self.config.base_merchant_path() + "/subscriptions/%s/make_past_due?days_past_due=%s" % (subscription_id, number_of_days_past_due))
 
     def settle_transaction(self, transaction_id):
         self.__check_environment()
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
         return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settle"))
 
     def settlement_confirm_transaction(self, transaction_id):
         self.__check_environment()
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
         return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settlement_confirm"))
 
     def settlement_decline_transaction(self, transaction_id):
         self.__check_environment()
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
         return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settlement_decline"))
 
     def settlement_pending_transaction(self, transaction_id):
         self.__check_environment()
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
         return self.__create_result(self.config.http().put(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/settlement_pending"))
 
     def create_3ds_verification(self, merchant_account_id, params):
         self.__check_environment()
+        if is_invalid_path_segment(merchant_account_id):
+            raise NotFoundError("merchant account with id " + repr(merchant_account_id) + " not found")
         response = self.config.http().post(self.config.base_merchant_path() + "/three_d_secure/create_verification/" + merchant_account_id, {
             "three_d_secure_verification": params
         })

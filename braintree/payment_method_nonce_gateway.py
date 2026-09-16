@@ -6,6 +6,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 class PaymentMethodNonceGateway(object):
     def __init__(self, gateway):
@@ -14,6 +15,9 @@ class PaymentMethodNonceGateway(object):
 
     def create(self, payment_method_token, params = {"payment_method_nonce": {}}):
         try:
+            if is_invalid_path_segment(payment_method_token):
+                raise NotFoundError()
+
             schema = [{"payment_method_nonce": ["merchant_account_id", "authentication_insight", {"authentication_insight_options": ["amount", "recurring_customer_consent", "recurring_max_amount"]}]}]
             Resource.verify_keys(params, schema)
             response = self.config.http().post(self.config.base_merchant_path() + "/payment_methods/" + payment_method_token + "/nonces", params)
@@ -27,7 +31,7 @@ class PaymentMethodNonceGateway(object):
 
     def find(self, payment_method_nonce):
         try:
-            if payment_method_nonce is None or payment_method_nonce.strip() == "":
+            if is_invalid_path_segment(payment_method_nonce):
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_method_nonces/" + payment_method_nonce)

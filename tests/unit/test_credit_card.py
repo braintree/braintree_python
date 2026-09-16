@@ -184,3 +184,20 @@ class TestCreditCard(unittest.TestCase):
             },
         )
         self.assertEqual(credit_card.payment_account_reference, "V0010013019339005665779448477")
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "payment method with token '\\.\\./\\.\\./foo' not found"):
+            CreditCard.find("../../foo")
+
+    def test_from_nonce_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "payment method with nonce '\\.\\./\\.\\./foo' locked, consumed or not found"):
+            CreditCard.from_nonce("../../foo")
+
+    def test_delete_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "payment method with token '\\.\\./\\.\\./foo' not found"):
+            CreditCard.delete("../../foo")
+
+    def test_update_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "payment method with token '\\.\\./\\.\\./foo' not found"):
+            CreditCard.update("../../foo", {"cardholder_name": "HackerOne"})
+

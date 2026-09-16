@@ -7,6 +7,7 @@ from braintree.ids_search import IdsSearch
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 
 class CreditCardGateway(object):
@@ -22,6 +23,9 @@ class CreditCardGateway(object):
         return self._post("/payment_methods", {"credit_card": params})
 
     def delete(self, credit_card_token):
+        if is_invalid_path_segment(credit_card_token):
+            raise NotFoundError("payment method with token " + repr(credit_card_token) + " not found")
+
         self.config.http().delete(self.config.base_merchant_path() + "/payment_methods/credit_card/" + credit_card_token)
         return SuccessfulResult()
 
@@ -38,7 +42,7 @@ class CreditCardGateway(object):
 
     def find(self, credit_card_token):
         try:
-            if credit_card_token is None or credit_card_token.strip() == "":
+            if is_invalid_path_segment(credit_card_token):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/credit_card/" + credit_card_token)
             return CreditCard(self.gateway, response["credit_card"])
@@ -50,7 +54,7 @@ class CreditCardGateway(object):
 
     def from_nonce(self, nonce):
         try:
-            if nonce is None or nonce.strip() == "":
+            if is_invalid_path_segment(nonce):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/from_nonce/" + nonce)
             return CreditCard(self.gateway, response["credit_card"])
@@ -58,6 +62,9 @@ class CreditCardGateway(object):
             raise NotFoundError("payment method with nonce " + repr(nonce) + " locked, consumed or not found")
 
     def update(self, credit_card_token, params=None):
+        if is_invalid_path_segment(credit_card_token):
+            raise NotFoundError("payment method with token " + repr(credit_card_token) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, CreditCard.update_signature())

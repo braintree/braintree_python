@@ -38,3 +38,12 @@ class TestUsBankAccountVerification(unittest.TestCase):
 
         self.assertEqual(verification.us_bank_account.token, "abc123")
         self.assertEqual(verification.us_bank_account.last_4, 9999)
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "UsBankAccountVerification with id '\\.\\./\\.\\./foo' not found"):
+            UsBankAccountVerification.find("../../foo")
+
+    def test_confirm_micro_transfer_amounts_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "UsBankAccountVerification with id '\\.\\./\\.\\./foo' not found"):
+            UsBankAccountVerification.confirm_micro_transfer_amounts("../../foo", ["0.01", "0.02"])
+

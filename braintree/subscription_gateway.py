@@ -7,6 +7,7 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.transaction import Transaction
+from braintree.util.validation import is_invalid_path_segment
 
 
 class SubscriptionGateway(object):
@@ -15,6 +16,9 @@ class SubscriptionGateway(object):
         self.config = gateway.config
 
     def cancel(self, subscription_id):
+        if is_invalid_path_segment(subscription_id):
+            raise NotFoundError("subscription with id " + repr(subscription_id) + " not found")
+
         response = self.config.http().put(self.config.base_merchant_path() + "/subscriptions/" + subscription_id + "/cancel")
         if "subscription" in response:
             return SuccessfulResult({"subscription": Subscription(self.gateway, response["subscription"])})
@@ -33,7 +37,7 @@ class SubscriptionGateway(object):
 
     def find(self, subscription_id):
         try:
-            if subscription_id is None or subscription_id.strip() == "":
+            if is_invalid_path_segment(subscription_id):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/subscriptions/" + subscription_id)
             return Subscription(self.gateway, response["subscription"])
@@ -60,6 +64,9 @@ class SubscriptionGateway(object):
         return ResourceCollection(query, response, self.__fetch)
 
     def update(self, subscription_id, params=None):
+        if is_invalid_path_segment(subscription_id):
+            raise NotFoundError("subscription with id " + repr(subscription_id) + " not found")
+
         if params is None:
             params = {}
         Resource.verify_keys(params, Subscription.update_signature())

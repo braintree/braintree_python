@@ -529,6 +529,7 @@ class ErrorCodes(object):
         MerchantAccountIsSuspended = "91514"
         NoNetAmountToPerformAuthAdjustment = "95606"
         OrderIdIsTooLong = "91501"
+        OriginalTransactionNotSurcharged = "97605"
         PayPalAuthExpired = "91579"
         PayPalNotEnabled = "91576"
         PayPalVaultRecordMissingData = "91583"

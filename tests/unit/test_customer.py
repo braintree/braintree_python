@@ -43,3 +43,19 @@ class TestCustomer(unittest.TestCase):
         self.assertEqual(2, len(customer.sepa_direct_debit_accounts))
         self.assertEqual("sdd1", customer.sepa_direct_debit_accounts[0].token)
         self.assertEqual("sdd2", customer.sepa_direct_debit_accounts[1].token)
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "customer with id '\\.\\./\\.\\./foo' not found"):
+            Customer.find("../../foo")
+
+    def test_find_dotted_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "customer with id 'foo\\.bar' not found"):
+            Customer.find("foo.bar")
+
+    def test_delete_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "customer with id '\\.\\./\\.\\./foo' not found"):
+            Customer.delete("../../foo")
+
+    def test_update_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "customer with id '\\.\\./\\.\\./foo' not found"):
+            Customer.update("../../foo", {"first_name": "HackerOne"})

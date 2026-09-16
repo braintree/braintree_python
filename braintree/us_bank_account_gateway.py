@@ -1,6 +1,7 @@
 import braintree
 from braintree.us_bank_account import UsBankAccount
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.util.validation import is_invalid_path_segment
 
 class UsBankAccountGateway(object):
     def __init__(self, gateway):
@@ -9,7 +10,7 @@ class UsBankAccountGateway(object):
 
     def find(self, us_bank_account_token):
         try:
-            if us_bank_account_token is None or us_bank_account_token.strip() == "":
+            if is_invalid_path_segment(us_bank_account_token):
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/us_bank_account/" + us_bank_account_token)

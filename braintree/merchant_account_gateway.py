@@ -7,6 +7,7 @@ from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
 from braintree.exceptions.not_found_error import NotFoundError
+from braintree.util.validation import is_invalid_path_segment
 
 class MerchantAccountGateway(object):
     def __init__(self, gateway):
@@ -15,7 +16,7 @@ class MerchantAccountGateway(object):
 
     def find(self, merchant_account_id):
         try:
-            if merchant_account_id is None or merchant_account_id.strip() == "":
+            if is_invalid_path_segment(merchant_account_id):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/merchant_accounts/" + merchant_account_id)
             return MerchantAccount(self.gateway, response["merchant_account"])

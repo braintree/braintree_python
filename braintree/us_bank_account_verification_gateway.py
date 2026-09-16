@@ -4,6 +4,7 @@ from braintree.exceptions.not_found_error import NotFoundError
 from braintree.error_result import ErrorResult
 from braintree.successful_result import SuccessfulResult
 from braintree.resource_collection import ResourceCollection
+from braintree.util.validation import is_invalid_path_segment
 
 class UsBankAccountVerificationGateway(object):
     def __init__(self, gateway):
@@ -12,7 +13,7 @@ class UsBankAccountVerificationGateway(object):
 
     def confirm_micro_transfer_amounts(self, verification_id, amounts):
         try:
-            if verification_id is None or verification_id.strip() == "":
+            if is_invalid_path_segment(verification_id):
                 raise NotFoundError()
 
             response = self.config.http().put(
@@ -34,7 +35,7 @@ class UsBankAccountVerificationGateway(object):
 
     def find(self, verification_id):
         try:
-            if verification_id is None or verification_id.strip() == "":
+            if is_invalid_path_segment(verification_id):
                 raise NotFoundError()
 
             response = self.config.http().get(

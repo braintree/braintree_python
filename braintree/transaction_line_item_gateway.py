@@ -5,6 +5,7 @@ from braintree.resource_collection import ResourceCollection
 from braintree.transaction_line_item import TransactionLineItem
 from braintree.exceptions.not_found_error import NotFoundError
 from braintree.exceptions.request_timeout_error import RequestTimeoutError
+from braintree.util.validation import is_invalid_path_segment
 
 class TransactionLineItemGateway(object):
     def __init__(self, gateway):
@@ -13,7 +14,7 @@ class TransactionLineItemGateway(object):
 
     def find_all(self, transaction_id):
         try:
-            if transaction_id is None or transaction_id.strip() == "":
+            if is_invalid_path_segment(transaction_id):
                 raise NotFoundError()
             response = self.config.http().get(self.config.base_merchant_path() + "/transactions/" + transaction_id + "/line_items")
             if "line_items" in response:

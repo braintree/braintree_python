@@ -953,24 +953,37 @@ class TestCustomer(unittest.TestCase):
             Customer.delete(customer.id)
 
     def test_delete_payment_method_with_path_traversal(self):
-        try:
-            customer = Customer.create().customer
-            credit_card = CreditCard.create({
-                "customer_id": customer.id,
-                "number": "4111111111111111",
-                "expiration_date": "05/2009",
-                "cvv": "100",
-                "cardholder_name": "John Doe"
-            }).credit_card
+        customer = Customer.create().customer
+        credit_card = CreditCard.create({
+            "customer_id": customer.id,
+            "number": "4111111111111111",
+            "expiration_date": "05/2009",
+            "cvv": "100",
+            "cardholder_name": "John Doe"
+        }).credit_card
+
+        with self.assertRaises(NotFoundError):
             Customer.delete("../payment_methods/any/{}".format(credit_card.token))
-        except NotFoundError:
-            pass
 
         payment_method = PaymentMethod.find(credit_card.token)
         self.assertNotEqual(None, payment_method)
-        self.assertEqual(credit_card.token, payment_method.token)
-        self.assertEqual(credit_card.customer_id, payment_method.customer_id)
-        self.assertEqual("John Doe", payment_method.cardholder_name)
+
+    def test_update_with_path_traversal_does_not_void_the_victim_transaction(self):
+        result = Transaction.sale({
+            "amount": "5.00",
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2030"
+            },
+            "options": {"submit_for_settlement": False}
+        })
+        transaction_id = result.transaction.id
+
+        with self.assertRaises(NotFoundError):
+            Customer.update("../transactions/{}/void".format(transaction_id), {"first_name": "HackerOne"})
+
+        transaction = Transaction.find(transaction_id)
+        self.assertEqual("authorized", transaction.status)
 
     def test_find_with_valid_customer(self):
         customer = Customer.create({

@@ -24,6 +24,7 @@ from braintree.payment_method_parser import parse_payment_method
 from braintree.resource import Resource
 from braintree.resource_collection import ResourceCollection
 from braintree.successful_result import SuccessfulResult
+from braintree.util.validation import is_invalid_path_segment
 
 import sys
 from urllib.parse import urlencode
@@ -43,7 +44,7 @@ class PaymentMethodGateway(object):
 
     def find(self, payment_method_token):
         try:
-            if payment_method_token is None or payment_method_token.strip() == "":
+            if is_invalid_path_segment(payment_method_token):
                 raise NotFoundError()
 
             response = self.config.http().get(self.config.base_merchant_path() + "/payment_methods/any/" + payment_method_token)
@@ -55,7 +56,7 @@ class PaymentMethodGateway(object):
         Resource.verify_keys(params, PaymentMethod.update_signature())
         self.__check_for_deprecated_attributes(params);
         try:
-            if payment_method_token is None or payment_method_token.strip() == "":
+            if is_invalid_path_segment(payment_method_token):
                 raise NotFoundError()
 
             return self._put(
@@ -66,6 +67,9 @@ class PaymentMethodGateway(object):
             raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
 
     def delete(self, payment_method_token, options=None):
+        if is_invalid_path_segment(payment_method_token):
+            raise NotFoundError("payment method with token " + repr(payment_method_token) + " not found")
+
         if options is None:
             options = {}
         Resource.verify_keys(options, PaymentMethod.delete_signature())

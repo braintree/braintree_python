@@ -56,6 +56,11 @@ class TransactionSearch:
     payment_instrument_type      = Search.MultipleValueNodeBuilder("payment_instrument_type")
     store_ids                    = Search.MultipleValueNodeBuilder("store_ids")
 
+    ach_type = Search.MultipleValueNodeBuilder(
+        "ach_type",
+        Constants.get_all_constant_values_from_class(Transaction.AchType)
+    )
+
     created_using = Search.MultipleValueNodeBuilder(
         "created_using",
         Constants.get_all_constant_values_from_class(Transaction.CreatedUsing)

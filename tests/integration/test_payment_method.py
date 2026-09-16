@@ -1076,11 +1076,10 @@ class TestPaymentMethod(unittest.TestCase):
          
 
     def test_delete_customer_with_path_traversal(self):
-        try:
-            customer = Customer.create({"first_name":"Waldo"}).customer
+        customer = Customer.create({"first_name":"Waldo"}).customer
+
+        with self.assertRaises(NotFoundError):
             PaymentMethod.delete("../../customers/{}".format(customer.id))
-        except NotFoundError:
-            pass
 
         found_customer = Customer.find(customer.id)
         self.assertNotEqual(None, found_customer)

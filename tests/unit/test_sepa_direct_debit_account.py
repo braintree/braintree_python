@@ -31,3 +31,11 @@ class TestSepaDirectDebitAccount(unittest.TestCase):
         self.assertEqual(subscription.price, Decimal("10.00"))
         self.assertEqual(sepa_direct_debit_account.updated_at, date(2013, 4, 10))
         self.assertEqual(sepa_direct_debit_account.view_mandate_url, "a-view-mandate-url")
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "sepa direct debit account with token '\\.\\./\\.\\./foo' not found"):
+            SepaDirectDebitAccount.find("../../foo")
+
+    def test_delete_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "sepa direct debit account with token '\\.\\./\\.\\./foo' not found"):
+            SepaDirectDebitAccount.delete("../../foo")

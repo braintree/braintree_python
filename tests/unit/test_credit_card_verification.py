@@ -144,3 +144,8 @@ class TestCreditCardVerification(unittest.TestCase):
         }
         verification = CreditCardVerification(None, attributes)
         self.assertEqual(verification.mastercard_transaction_link_id, 'ZairABg6CIFekPMsnK0cJ2')
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "Verification with id '\\.\\./\\.\\./foo' not found"):
+            CreditCardVerification.find("../../foo")
+

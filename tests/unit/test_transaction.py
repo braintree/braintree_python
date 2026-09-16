@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 class TestTransaction(unittest.TestCase):
     def test_clone_transaction_raises_exception_with_bad_keys(self):
         with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
-            Transaction.clone_transaction("an id", {"bad_key": "value"})
+            Transaction.clone_transaction("an_id", {"bad_key": "value"})
 
     def test_sale_raises_exception_with_bad_keys(self):
         with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
@@ -645,3 +645,53 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction_param["shipping"]["international_phone"]["national_number"], "8989765234")
         self.assertEqual(transaction_param["line_items"][0]["name"], "Name #1")
         self.assertEqual(transaction_param["ships_from_postal_code"], "90210")
+
+    def test_refund_signature_includes_surcharge_amount(self):
+        self.assertIn("surcharge_amount", Transaction.refund_signature())
+
+    def test_find_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.find("../../foo")
+
+    def test_void_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./transactions/victim' not found"):
+            Transaction.void("../transactions/victim")
+
+    def test_adjust_authorization_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.adjust_authorization("../../foo", "10.00")
+
+    def test_clone_transaction_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.clone_transaction("../../foo", {"amount": "10.00"})
+
+    def test_refund_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.refund("../../foo")
+
+    def test_submit_for_settlement_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.submit_for_settlement("../../foo")
+
+    def test_submit_for_partial_settlement_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.submit_for_partial_settlement("../../foo", "10.00")
+
+    def test_update_details_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.update_details("../../foo")
+
+    def test_package_tracking_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            Transaction.package_tracking("../../foo")
+
+    def test_cancel_release_traversal_id_raises_not_found_exception(self):
+        braintree_gateway = BraintreeGateway(Configuration.instantiate())
+        transaction_gateway = TransactionGateway(braintree_gateway)
+        http_mock = MagicMock(name="config.http")
+        braintree_gateway.config.http = http_mock
+
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
+            transaction_gateway.cancel_release("../../foo")
+
+        self.assertFalse(http_mock.called)

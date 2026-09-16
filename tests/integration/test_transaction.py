@@ -3450,6 +3450,21 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.id, result.transaction.id)
         self.assertEqual(Transaction.Status.Voided, result.transaction.status)
 
+    def test_void_with_path_traversal_does_not_void_the_victim_transaction(self):
+        victim = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        with self.assertRaises(NotFoundError):
+            Transaction.void("../transactions/{}".format(victim.id))
+
+        transaction = Transaction.find(victim.id)
+        self.assertEqual(Transaction.Status.Authorized, transaction.status)
+
     def test_void_with_unsuccessful_result(self):
         transaction = Transaction.sale({
             "amount": TransactionAmounts.Decline,
@@ -6693,6 +6708,19 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertEqual(Decimal("1.00"), transaction.surcharge_amount)
+    
+    def test_credit_with_surcharge_amount(self):
+        result = Transaction.credit({
+            "amount": TransactionAmounts.Authorize,
+            "surcharge_amount": Decimal("1.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        })
+        self.assertTrue(result.is_success)
+        credit = result.transaction
+        self.assertEqual(Decimal("1.00"), credit.surcharge_amount)
 
     def test_sale_transaction_with_mastercard_transaction_link_id(self):
         result = Transaction.sale({
@@ -6717,3 +6745,68 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         transaction = result.transaction
         self.assertIsNone(transaction.mastercard_transaction_link_id)
+
+    def test_full_refund_with_surcharge_amount(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "surcharge_amount": Decimal("1.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, {"surcharge_amount": Decimal("1.00")})
+
+        self.assertTrue(result.is_success)
+        refund = result.transaction
+        self.assertEqual(Transaction.Type.Credit, refund.type)
+        self.assertEqual(transaction.id, refund.refunded_transaction_id)
+        self.assertEqual(Decimal("1.00"), refund.surcharge_amount)
+
+    def test_partial_refund_with_surcharge_amount(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "surcharge_amount": Decimal("1.00"),
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, {"amount": Decimal("500.00"), "surcharge_amount": Decimal("0.50")})
+
+        self.assertTrue(result.is_success)
+        refund = result.transaction
+        self.assertEqual(Transaction.Type.Credit, refund.type)
+        self.assertEqual(Decimal("500.00"), refund.amount)
+        self.assertEqual(Decimal("0.50"), refund.surcharge_amount)
+
+    def test_refund_with_surcharge_amount_fails_when_original_transaction_not_surcharged(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            },
+            "options": {
+                "submit_for_settlement": True
+            }
+        }).transaction
+        TestHelper.settle_transaction(transaction.id)
+
+        result = Transaction.refund(transaction.id, {"surcharge_amount": Decimal("1.00")})
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.OriginalTransactionNotSurcharged,
+            result.errors.for_object("surcharge_transaction").on("surcharge_amount")[0].code
+        )
