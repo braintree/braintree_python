@@ -214,3 +214,35 @@ class TestPaymentMethodGateway(unittest.TestCase):
         http_mock = MagicMock(name='config.http.delete')
         braintree_gateway.config.http = http_mock
         return payment_method_gateway, http_mock
+
+
+class TestPaymentMethodGatewayDeprecation(unittest.TestCase):
+    def test_create_with_deprecated_device_session_id(self):
+        gateway = PaymentMethodGateway(BraintreeGateway(Configuration.instantiate()))
+        gateway._post = MagicMock()
+        params = {"device_session_id": "legacy-session"}
+
+        with self.assertWarnsRegex(DeprecationWarning, "device_session_id is deprecated"):
+            result = gateway.create(params)
+
+        gateway._post.assert_called_once_with("/payment_methods", {"payment_method": params})
+        self.assertIs(result, gateway._post.return_value)
+
+    def test_update_with_deprecated_attributes(self):
+        cases = [
+            ("device_session_id", "device_session_id is deprecated"),
+            ("fraud_merchant_id", "fraud_merchant_id is deprecated"),
+            ("venmo_sdk_payment_method_code", "The Venmo SDK integration is Unsupported"),
+        ]
+        for attribute, message in cases:
+            with self.subTest(attribute=attribute):
+                gateway = PaymentMethodGateway(BraintreeGateway(Configuration.instantiate()))
+                gateway._put = MagicMock()
+                params = {attribute: "legacy-value"}
+
+                with self.assertWarnsRegex(DeprecationWarning, message):
+                    result = gateway.update("some_token", params)
+
+                gateway._put.assert_called_once_with(
+                    "/payment_methods/any/some_token", {"payment_method": params})
+                self.assertIs(result, gateway._put.return_value)
