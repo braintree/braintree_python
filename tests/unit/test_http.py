@@ -1,4 +1,6 @@
 import traceback
+import pickle
+import threading
 
 from tests.test_helper import *
 from braintree.exceptions.http.timeout_error import *
@@ -6,6 +8,67 @@ from braintree.attribute_getter import AttributeGetter
 from unittest.mock import patch
 
 class TestHttp(unittest.TestCase):
+    def test_unpickled_http_keeps_sessions_thread_local(self):
+        config = braintree.configuration.Configuration(
+            Environment.Sandbox, "merchant", public_key="public", private_key="private")
+        http = pickle.loads(pickle.dumps(config.http_strategy()))
+        sessions = []
+
+        def get_session():
+            sessions.append(http._get_session())
+            http.close()
+
+        threads = [threading.Thread(target=get_session) for _ in range(2)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        self.assertEqual(len(sessions), 2)
+        self.assertIsNot(sessions[0], sessions[1])
+        self.assertFalse(hasattr(http._thread_local, 'session'))
+
+    def test_pickling_recreates_thread_local_sessions(self):
+        config = braintree.configuration.Configuration(
+            Environment.Sandbox, "merchant", public_key="public", private_key="private",
+            max_connection_idle_seconds=15)
+        http = config.http_strategy()
+        session = http._get_session()
+        # An unpickleable value demonstrates that live session state is not copied.
+        session.hooks['response'].append(lambda response: response)
+        try:
+            restored = pickle.loads(pickle.dumps(http))
+            self.assertEqual(restored._max_idle_seconds, 15)
+            self.assertIs(restored.config.http_strategy(), restored)
+            self.assertFalse(hasattr(restored._thread_local, 'session'))
+            self.assertIs(http._get_session(), session)
+            restored_session = restored._get_session()
+            self.assertIsNot(restored_session, session)
+            self.assertIs(restored._get_session(), restored_session)
+            self.assertEqual(restored_session.hooks['response'], [])
+            restored.close()
+        finally:
+            http.close()
+
+    def test_pickling_customer_returned_by_find(self):
+        gateway = BraintreeGateway(braintree.configuration.Configuration(
+            Environment.Sandbox, "merchant", public_key="public", private_key="private"))
+        with patch('requests.Session.send') as send:
+            send.return_value.status_code = 200
+            send.return_value.text = '<customer><id>customer-id</id><first-name>Jane</first-name></customer>'
+            customer = gateway.customer.find('customer-id')
+        try:
+            restored = pickle.loads(pickle.dumps(customer))
+            self.assertEqual(restored.id, 'customer-id')
+            self.assertEqual(restored.first_name, 'Jane')
+            with patch('requests.Session.send') as send:
+                send.return_value.status_code = 200
+                send.return_value.text = '<customer><id>customer-id</id></customer>'
+                self.assertEqual(restored.gateway.customer.find(restored.id).id, 'customer-id')
+                self.assertEqual(send.call_count, 1)
+            restored.gateway.close()
+        finally:
+            gateway.close()
+
     def test_raise_exception_from_request_timeout(self):
         with self.assertRaises(RequestTimeoutError):
             Http.raise_exception_from_status(408)
