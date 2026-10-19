@@ -293,6 +293,11 @@ class ErrorCodes(object):
             CavvAlgorithmIsInvalid = "942122"
 
 
+        class ExternalVault(object):
+            StatusWithPreviousMastercardTransactionLinkIdIsInvalid = "942205"
+            PreviousMastercardTransactionLinkIdIsInvalid = "942206"
+
+
         class Options(object):
             AmountCannotBeNegative = "94201"
             AmountFormatIsInvalid = "94202"
@@ -494,6 +499,7 @@ class ErrorCodes(object):
         CannotRefundUnlessSettled = "91506"
         CannotRefundWithPendingMerchantAccount = "91559"
         CannotRefundWithSuspendedMerchantAccount = "91538"
+        CannotReverseAtThisTime = "915282"
         CannotSimulateTransactionSettlement = "91575"
         CannotSubmitForPartialSettlement = "915103"
         CannotSubmitForSettlement = "91507"
@@ -636,6 +642,8 @@ class ErrorCodes(object):
             # NEXT_MAJOR_VERSION remove this validation error as it is no longer returned by the gateway
             CardTypeIsInvalid = "915178"
             PreviousNetworkTransactionIdIsInvalid = "915179"
+            StatusWithPreviousMastercardTransactionLinkIdIsInvalid = "915278"
+            PreviousMastercardTransactionLinkIdIsInvalid = "915279"
 
         class Options(object):
             SubmitForSettlementIsRequiredForCloning = "91544"

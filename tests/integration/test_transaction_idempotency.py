@@ -173,6 +173,33 @@ class TestTransactionIdempotency(unittest.TestCase):
         self.assertEqual(voided_transaction1.status, voided_transaction2.status)
         self.assertEqual(Transaction.Status.Voided, voided_transaction2.status)
 
+    def test_reverse_with_api_request_key_returns_original_reverse_on_duplicate_request(self):
+        api_request_key = "reverse-idempotency-key-%d" % random.randint(0, 1000000)
+
+        sale_request = {
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2035"
+            }
+        }
+
+        sale_result = Transaction.sale(sale_request)
+        self.assertTrue(sale_result.is_success)
+        transaction_id = sale_result.transaction.id
+
+        reverse_request = {
+            "api_request_key": api_request_key
+        }
+
+        reverse_result1 = Transaction.reverse(transaction_id, reverse_request)
+        self.assertTrue(reverse_result1.is_success)
+
+        reverse_result2 = Transaction.reverse(transaction_id, reverse_request)
+        self.assertTrue(reverse_result2.is_success)
+        self.assertEqual(reverse_result1.transaction.id, reverse_result2.transaction.id)
+        self.assertEqual(Transaction.Status.Voided, reverse_result2.transaction.status)
+
     def test_refund_with_api_request_key_returns_original_refund_on_duplicate_request(self):
         api_request_key = "refund-idempotency-key-%d" % random.randint(0, 1000000)
 

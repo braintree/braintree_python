@@ -649,6 +649,27 @@ class TestTransaction(unittest.TestCase):
     def test_refund_signature_includes_surcharge_amount(self):
         self.assertIn("surcharge_amount", Transaction.refund_signature())
 
+    def test_reverse_signature_includes_api_request_key(self):
+        self.assertEqual(["api_request_key"], Transaction.reverse_signature())
+
+    def test_reverse_posts_api_request_key(self):
+        transaction_gateway = TransactionGateway(BraintreeGateway(None))
+        transaction_gateway.config.merchant_id = "test_merchant"
+        mock_http = MagicMock()
+        mock_http.post = MagicMock(return_value={"transaction": {"amount": "100.00"}})
+        transaction_gateway.config.http = MagicMock(return_value=mock_http)
+
+        transaction_gateway.reverse("validtxnid1", {"api_request_key": "reverse-key-789"})
+
+        mock_http.post.assert_called_once_with(
+            "/merchants/test_merchant/transactions/validtxnid1/reverse",
+            {"transaction": {"api_request_key": "reverse-key-789"}}
+        )
+
+    def test_reverse_raises_exception_with_bad_keys(self):
+        with self.assertRaisesRegex(KeyError, "'Invalid keys: bad_key'"):
+            Transaction.reverse("an_id", {"bad_key": "value"})
+
     def test_find_traversal_id_raises_not_found_exception(self):
         with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):
             Transaction.find("../../foo")
@@ -656,6 +677,10 @@ class TestTransaction(unittest.TestCase):
     def test_void_traversal_id_raises_not_found_exception(self):
         with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./transactions/victim' not found"):
             Transaction.void("../transactions/victim")
+
+    def test_reverse_traversal_id_raises_not_found_exception(self):
+        with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./transactions/victim' not found"):
+            Transaction.reverse("../transactions/victim")
 
     def test_adjust_authorization_traversal_id_raises_not_found_exception(self):
         with self.assertRaisesRegex(NotFoundError, "transaction with id '\\.\\./\\.\\./foo' not found"):

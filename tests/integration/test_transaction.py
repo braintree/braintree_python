@@ -217,6 +217,60 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertNotEqual(result.transaction.network_transaction_id, "")
 
+    def test_sale_accepts_external_vault_previous_mastercard_transaction_link_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_mastercard_transaction_link_id": "1234567890123456789012"
+            }
+        })
+
+        self.assertTrue(result.is_success)
+        self.assertNotEqual(result.transaction.network_transaction_id, "")
+
+    def test_sale_with_external_vault_validation_error_invalid_status_with_previous_mastercard_transaction_link_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "will_vault",
+                "previous_mastercard_transaction_link_id": "1234567890123456789012"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ExternalVault.StatusWithPreviousMastercardTransactionLinkIdIsInvalid,
+            result.errors.for_object("transaction").for_object("external_vault").on("status")[0].code
+        )
+
+    def test_sale_with_external_vault_validation_error_invalid_previous_mastercard_transaction_link_id(self):
+        result = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "expiration_date": "05/2009"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_mastercard_transaction_link_id": "1234567890123456789012123"
+            }
+        })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.ExternalVault.PreviousMastercardTransactionLinkIdIsInvalid,
+            result.errors.for_object("transaction").for_object("external_vault").on("previous_mastercard_transaction_link_id")[0].code
+        )
+
     def test_sale_with_external_vault_validation_error_invalid_status(self):
         result = Transaction.sale({
             "amount": TransactionAmounts.Authorize,
@@ -3449,6 +3503,61 @@ class TestTransaction(unittest.TestCase):
         self.assertTrue(result.is_success)
         self.assertEqual(transaction.id, result.transaction.id)
         self.assertEqual(Transaction.Status.Voided, result.transaction.status)
+
+    def test_reverse_voids_a_voidable_transaction(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        result = Transaction.reverse(transaction.id)
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(transaction.id, result.transaction.id)
+        self.assertEqual(Transaction.Status.Voided, result.transaction.status)
+        self.assertIsNone(result.transaction.refunded_transaction_id)
+
+    def test_reverse_without_api_request_key_cannot_be_repeated(self):
+        transaction = Transaction.sale({
+            "amount": TransactionAmounts.Authorize,
+            "credit_card": {
+                "number": "4111111111111111",
+                "expiration_date": "05/2009"
+            }
+        }).transaction
+
+        self.assertTrue(Transaction.reverse(transaction.id).is_success)
+        result = Transaction.reverse(transaction.id)
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Transaction.CannotRefundUnlessSettled,
+            result.errors.for_object("transaction").on("base")[0].code
+        )
+
+    def test_reverse_voids_an_explicitly_created_voidable_refund(self):
+        transaction = self.__create_transaction_to_refund()
+        refund_result = Transaction.refund(transaction.id)
+        self.assertTrue(refund_result.is_success)
+
+        result = Transaction.reverse(refund_result.transaction.id)
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(refund_result.transaction.id, result.transaction.id)
+        self.assertEqual(Transaction.Status.Voided, result.transaction.status)
+        self.assertEqual(transaction.id, result.transaction.refunded_transaction_id)
+
+    def test_reverse_refunds_a_settled_transaction(self):
+        transaction = self.__create_transaction_to_refund()
+
+        result = Transaction.reverse(transaction.id)
+
+        self.assertTrue(result.is_success)
+        self.assertEqual(Transaction.Type.Credit, result.transaction.type)
+        self.assertEqual(transaction.id, result.transaction.refunded_transaction_id)
 
     def test_void_with_path_traversal_does_not_void_the_victim_transaction(self):
         victim = Transaction.sale({
