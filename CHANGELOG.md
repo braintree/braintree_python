@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Fix missing deprecation warnings import causing payment method creation and updates with legacy fields to raise `NameError`
+
 ## 4.48.0
 * Add `Transaction.reverse()` to automatically void or fully refund a transaction
 * Add `previous_mastercard_transaction_link_id` to `external_vault` on `Transaction` and `CreditCardVerification.create`

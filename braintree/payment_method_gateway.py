@@ -27,6 +27,7 @@ from braintree.successful_result import SuccessfulResult
 from braintree.util.validation import is_invalid_path_segment
 
 import sys
+import warnings
 from urllib.parse import urlencode
 
 
