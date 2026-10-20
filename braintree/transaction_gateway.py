@@ -85,6 +85,25 @@ class TransactionGateway(object):
         elif "api_error_response" in response:
             return ErrorResult(self.gateway, response["api_error_response"])
 
+    def reverse(self, transaction_id, params=None):
+        """
+        Reverses an existing transaction. If the transaction can still be
+        voided, it will be; otherwise, it creates a full refund.
+        """
+        if is_invalid_path_segment(transaction_id):
+            raise NotFoundError("transaction with id " + repr(transaction_id) + " not found")
+
+        if params:
+            Resource.verify_keys(params, Transaction.reverse_signature())
+        response = self.config.http().post(
+            self.config.base_merchant_path() + "/transactions/" + transaction_id + "/reverse",
+            {"transaction": params} if params else None
+        )
+        if "transaction" in response:
+            return SuccessfulResult({"transaction": Transaction(self.gateway, response["transaction"])})
+        elif "api_error_response" in response:
+            return ErrorResult(self.gateway, response["api_error_response"])
+
     def sale(self, params):
         if "recurring" in params.keys():
             warnings.warn("Use transaction_source parameter instead", DeprecationWarning)

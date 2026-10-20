@@ -3,6 +3,10 @@
 ## Unreleased
 * Restore pickling of gateway resources by recreating thread-local HTTP sessions when unpickling
 
+## 4.48.0
+* Add `Transaction.reverse()` to automatically void or fully refund a transaction
+* Add `previous_mastercard_transaction_link_id` to `external_vault` on `Transaction` and `CreditCardVerification.create`
+
 ## 4.47.0
 * Fix path traversal vulnerability in `CreditCard`, `CreditCardVerification`, `Customer`, `MerchantAccount`, `PayPalAccount`, `PaymentMethod`, `PaymentMethodNonce`, `Plan`, `SepaDirectDebitAccount`, `Subscription`, `Testing`, `Transaction`, `TransactionLineItem`, `UsBankAccount`, and `UsBankAccountVerification` gateways by validating that IDs used in request paths do not contain path separators or relative-path segments
 * Add `ach_type` to transaction search

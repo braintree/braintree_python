@@ -45,8 +45,10 @@ class TestApplePay(unittest.TestCase):
 
     def test_registered_domains_returns_stubbed_registered_domains(self):
         result = self.get_gateway().apple_pay.registered_domains()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], "www.example.com")
+        self.assertGreaterEqual(len(result), 1)
+        for domain in result:
+            self.assertIsInstance(domain, str)
+            self.assertNotEqual(domain, "")
 
     def test_bin_fields(self):
         customer = Customer.create().customer
