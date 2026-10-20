@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Restore pickling of gateway resources by recreating thread-local HTTP sessions when unpickling
+
 ## 4.48.0
 * Add `Transaction.reverse()` to automatically void or fully refund a transaction
 * Add `previous_mastercard_transaction_link_id` to `external_vault` on `Transaction` and `CreditCardVerification.create`

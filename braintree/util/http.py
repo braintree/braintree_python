@@ -63,6 +63,17 @@ class Http(object):
         self._thread_local = threading.local()
         self._max_idle_seconds = getattr(config, 'max_connection_idle_seconds', 60)
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state.pop('_thread_local', None)
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._thread_local = threading.local()
+        # Objects cached before session reuse did not have this setting.
+        self._max_idle_seconds = state.get('_max_idle_seconds', 60)
+
     def _get_session(self):
         now = time.monotonic()
         last_used = getattr(self._thread_local, 'last_used', 0)
