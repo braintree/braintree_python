@@ -82,6 +82,7 @@ class CreditCardVerification(AttributeGetter):
             ]
         external_vault_params = [
                 "previous_network_transaction_id",
+                "previous_mastercard_transaction_link_id",
                 "status"
             ]
         options_params = [

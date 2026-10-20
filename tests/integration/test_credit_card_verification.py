@@ -130,6 +130,62 @@ class TestCreditCardVerfication(unittest.TestCase):
         self.assertEqual("1000", verification.processor_response_code)
         self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
 
+    def test_create_with_external_vault_previous_mastercard_transaction_link_id(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_mastercard_transaction_link_id": "1234567890123456789012"
+            }
+            })
+
+        self.assertTrue(result.is_success)
+        verification = result.verification
+        self.assertEqual("1000", verification.processor_response_code)
+        self.assertEqual(ProcessorResponseTypes.Approved, verification.processor_response_type)
+
+    def test_create_with_external_vault_validation_error_invalid_status_with_previous_mastercard_transaction_link_id(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+            },
+            "external_vault": {
+                "status": "will_vault",
+                "previous_mastercard_transaction_link_id": "1234567890123456789012"
+            }
+            })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Verification.ExternalVault.StatusWithPreviousMastercardTransactionLinkIdIsInvalid,
+            result.errors.for_object("verification").for_object("external_vault").on("status")[0].code
+        )
+
+    def test_create_with_external_vault_validation_error_invalid_previous_mastercard_transaction_link_id(self):
+        result = CreditCardVerification.create({
+            "credit_card": {
+                "number": CreditCardNumbers.MasterCard,
+                "cardholder_name": "John Smith",
+                "expiration_date": "05/2012"
+            },
+            "external_vault": {
+                "status": "vaulted",
+                "previous_mastercard_transaction_link_id": "1234567890123456789012123"
+            }
+            })
+
+        self.assertFalse(result.is_success)
+        self.assertEqual(
+            ErrorCodes.Verification.ExternalVault.PreviousMastercardTransactionLinkIdIsInvalid,
+            result.errors.for_object("verification").for_object("external_vault").on("previous_mastercard_transaction_link_id")[0].code
+        )
+
     def test_create_with_risk_data(self):
         result = CreditCardVerification.create({
             "credit_card": {

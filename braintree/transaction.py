@@ -369,6 +369,19 @@ class Transaction(Resource):
 
         return Configuration.gateway().transaction.refund(transaction_id, amount_or_options)
 
+    @staticmethod
+    def reverse(transaction_id, params=None):
+        """
+        Reverses an existing transaction. If the transaction can still be
+        voided, it will be; otherwise, it creates a full refund.
+
+        It expects a transaction_id and optional params.::
+
+            result = braintree.Transaction.reverse("my_transaction_id")
+            result = braintree.Transaction.reverse("my_transaction_id", {"api_request_key": "key"})
+        """
+        return Configuration.gateway().transaction.reverse(transaction_id, params)
+
 
     @staticmethod
     def sale(params=None):
@@ -531,7 +544,7 @@ class Transaction(Resource):
             "device_session_id", # NEXT_MAJOR_VERSION remove device_session_id
             "discount_amount",
             "exchange_rate_quote_id",
-            {"external_vault": ["status", "previous_network_transaction_id"]},
+            {"external_vault": ["status", "previous_network_transaction_id", "previous_mastercard_transaction_link_id"]},
             "foreign_retailer",
             "fraud_merchant_id", # NEXT_MAJOR_VERSION remove fraud_merchant_id
             {"industry":
@@ -841,6 +854,10 @@ class Transaction(Resource):
     @staticmethod
     def refund_signature():
         return ["amount", "api_request_key", "order_id", "merchant_account_id", "surcharge_amount"]
+
+    @staticmethod
+    def reverse_signature():
+        return ["api_request_key"]
 
     @staticmethod
     def submit_for_partial_settlement(transaction_id, amount, params=None):
