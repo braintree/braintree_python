@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Convert timezone-aware datetimes to UTC before serializing them with a `Z` suffix
+
 ## 4.48.0
 * Add `Transaction.reverse()` to automatically void or fully refund a transaction
 * Add `previous_mastercard_transaction_link_id` to `external_vault` on `Transaction` and `CreditCardVerification.create`
