@@ -20,6 +20,8 @@ class Generator(object):
         return str(value).lower()
 
     def __generate_datetime(self, value):
+        if isinstance(value, datetime.datetime) and value.utcoffset() is not None:
+            value = value.astimezone(datetime.timezone.utc)
         return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def __generate_dict(self, dictionary):
